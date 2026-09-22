@@ -1,8 +1,6 @@
 name: Crypto Alert Bot
 
 on:
-  schedule:
-    - cron: '0,15,30,45 * * * *' # 15분마다 자동으로 실행
   workflow_dispatch:       # 깃허브 페이지에서 수동으로 실행해볼 수 있는 버튼 생성
 
 jobs:
