@@ -8,8 +8,11 @@ SYMBOLS = [
     'SOL/USDT:USDT'
 ]
 
-TIMEFRAME_HIGH = '4h'
-TIMEFRAME_LOW = '15m'
+STRATEGY_PAIRS = [
+    ('1d', '2h'),
+    ('4h', '15m'),
+    ('1h', '5m')
+]
 
 # 보조지표 파라미터
 RSI_PERIOD = 14
