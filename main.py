@@ -8,33 +8,39 @@ from src.notifier import send_message
 def main():
     print("🚀 다중 MTF 알림 봇 실행 시작...")
     
+    alerts = [] # 여러 알림을 모아둘 빈 바구니 생성
+    
     for symbol in settings.SYMBOLS:
         print(f"\n🔍 [{symbol}] 분석 중...")
         
-        # 3가지 전략 조합(1d-2h, 4h-15m, 1h-5m)을 순서대로 검사
         for tf_high, tf_low in settings.STRATEGY_PAIRS:
-            df_high = fetch_ohlcv(symbol, tf_high, limit=1000)
-            df_low = fetch_ohlcv(symbol, tf_low, limit=1000)
+            df_high = fetch_ohlcv(symbol, tf_high, limit=100)
+            df_low = fetch_ohlcv(symbol, tf_low, limit=100)
             
             if df_high is None or df_low is None:
-                print(f"  -> ⚠️ {tf_high} & {tf_low} 데이터 로드 실패.")
                 continue
                 
             df_high = add_indicators(df_high)
             df_low = add_indicators(df_low)
             
-            # strategy.py에 변경된 시간대 변수(tf_high, tf_low)를 함께 넘겨줌
-            result = check_signals(symbol, df_high, df_low, tf_high, tf_low)
+            # strategy.py에서 반환된 알림 메시지 받기
+            msg = check_signals(symbol, df_high, df_low, tf_high, tf_low)
             
-            if result["signal"]:
-                print(f"  -> 🎯 타점 발견! ({tf_high} & {tf_low}) 텔레그램 발송")
-                send_message(result["message"])
+            if msg:
+                print(f"  -> 🎯 타점 발견! ({tf_high} & {tf_low})")
+                alerts.append(msg) # 바로 안 보내고 바구니에 담기
             else:
                 print(f"  -> ⏳ {tf_high} & {tf_low} 조건 미달")
             
             time.sleep(1)
             
-    print("\n✅ 모든 코인 분석 완료!")
+    # 모든 코인 검사가 끝나고, 바구니에 알림이 1개라도 있다면 한 번에 묶어서 발송
+    if alerts:
+        final_message = "🚨 통합 포지션 알림 🚨\n\n" + "\n\n---\n\n".join(alerts)
+        send_message(final_message)
+        print("\n✅ 텔레그램 통합 발송 완료!")
+    else:
+        print("\n✅ 포착된 타점이 없습니다.")
 
 if __name__ == "__main__":
     main()
