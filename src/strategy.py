@@ -10,7 +10,7 @@ def check_signals(symbol, df_high, df_low, tf_high, tf_low):
     
     current_low_candle = df_low.iloc[-1]
     
-    # 시간 오차(찐빠)를 막기 위해 KST 변환을 없애고 무조건 UTC 기준으로 일괄 비교
+    # 봇 내부 계산용: UTC 시간 유지 (찐빠 방지용)
     now_utc = datetime.datetime.utcnow()
     candle_open_time = current_low_candle['datetime']
     
@@ -19,8 +19,6 @@ def check_signals(symbol, df_high, df_low, tf_high, tf_low):
         
     time_diff = (now_utc - candle_open_time).total_seconds()
     
-    # [핵심] 봇 실행 주기인 5분(300초)보다 짧게 270초(4분 30초)로 설정.
-    # 이렇게 해야 다음 5분 뒤 실행 시 겹치지 않고 깔끔하게 한 번만 신호를 잡습니다.
     if time_diff > 270 or time_diff < 0:
         return None
 
@@ -36,10 +34,14 @@ def check_signals(symbol, df_high, df_low, tf_high, tf_low):
     is_long = (high_k <= 30 and high_d <= 30) and (low_k <= 30 and low_d <= 30)
     is_short = (high_k >= 70 and high_d >= 70) and (low_k >= 70 and low_d >= 70)
 
-    # main.py에서 하나로 합치기 쉽도록 문자열(알림 내용)만 바로 반환
+    # 텔레그램 발송용: 동언 님이 보기 편한 한국 시간(KST)으로 변환
+    now_kst = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
+    kst_str = now_kst.strftime('%Y-%m-%d %H:%M')
+
     if is_long:
         return (
             f"🟢 [LONG] {symbol}\n"
+            f"⏰ {kst_str} (KST)\n"
             f"📊 {tf_high}: K({high_k:.1f}) / D({high_d:.1f})\n"
             f"⚡ {tf_low}: K({low_k:.1f}) / D({low_d:.1f})\n"
             f"💵 진입가: {current_price}"
@@ -47,6 +49,7 @@ def check_signals(symbol, df_high, df_low, tf_high, tf_low):
     elif is_short:
         return (
             f"🔴 [SHORT] {symbol}\n"
+            f"⏰ {kst_str} (KST)\n"
             f"📊 {tf_high}: K({high_k:.1f}) / D({high_d:.1f})\n"
             f"⚡ {tf_low}: K({low_k:.1f}) / D({low_d:.1f})\n"
             f"💵 진입가: {current_price}"
