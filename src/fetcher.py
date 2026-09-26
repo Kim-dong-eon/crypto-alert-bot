@@ -9,8 +9,16 @@ from config import settings
 def fetch_ohlcv(symbol, timeframe, limit=1000):
     """지정된 거래소에서 코인의 캔들(OHLCV) 데이터를 가져옵니다."""
     try:
+        # config.py의 EXCHANGE_ID ('bybit')를 가져옴
         exchange_class = getattr(ccxt, settings.EXCHANGE_ID)
-        exchange = exchange_class()
+        
+        # ★ 중요: 바이비트 USDT 선물 차트를 가져오기 위한 필수 옵션 추가
+        exchange = exchange_class({
+            'enableRateLimit': True,
+            'options': {
+                'defaultType': 'linear'  # linear = USDT 무기한 선물
+            }
+        })
         
         ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=limit)
         df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
