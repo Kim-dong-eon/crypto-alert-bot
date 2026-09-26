@@ -9,14 +9,13 @@ from config import settings
 def fetch_ohlcv(symbol, timeframe, limit=1000):
     """지정된 거래소에서 코인의 캔들(OHLCV) 데이터를 가져옵니다."""
     try:
-        # config.py의 EXCHANGE_ID ('bybit')를 가져옴
         exchange_class = getattr(ccxt, settings.EXCHANGE_ID)
         
-        # ★ 중요: 바이비트 USDT 선물 차트를 가져오기 위한 필수 옵션 추가
+        # ★ 비트겟(Bitget) 또는 MEXC는 무기한 선물을 'swap'이라고 부릅니다.
         exchange = exchange_class({
             'enableRateLimit': True,
             'options': {
-                'defaultType': 'linear'  # linear = USDT 무기한 선물
+                'defaultType': 'swap'  
             }
         })
         
@@ -32,7 +31,6 @@ def fetch_ohlcv(symbol, timeframe, limit=1000):
         return None
 
 if __name__ == "__main__":
-    # 설정된 첫 번째 코인으로 테스트
     test_symbol = settings.SYMBOLS[0]
     print(f"[{settings.EXCHANGE_ID}] {test_symbol} 차트 데이터 수집 테스트 중...\n")
     

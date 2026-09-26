@@ -1,4 +1,4 @@
-EXCHANGE_ID = 'bybit'
+EXCHANGE_ID = 'bitget'
 
 # 4개의 타겟 코인 (바이낸스 선물 .p 기준 -> CCXT에서는 :USDT 로 표기)
 SYMBOLS = [
