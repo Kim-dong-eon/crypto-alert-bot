@@ -1,5 +1,4 @@
 import pandas as pd
-import datetime
 import json
 import os
 from src.channel import find_touched_or_closest_channel, generate_touched_pair_images
@@ -21,7 +20,6 @@ def save_history(history):
 
 
 def is_htf_zero_locked(df_high: pd.DataFrame, direction: str, history: dict, lock_key: str) -> bool:
-    """모든 상위 프레임(1d, 4h, 1h)에 적용되는 0,0 (숏은 100,100) 잠금 및 리셋 함수"""
     curr = df_high.iloc[-1]
     curr_k, curr_d = curr['stoch_rsi_k'], curr['stoch_rsi_d']
 
@@ -77,27 +75,22 @@ def is_htf_zero_locked(df_high: pd.DataFrame, direction: str, history: dict, loc
 
 
 def check_signals(symbol, df_high, df_low, tf_high, tf_low):
-    """
-    1. 상위봉(1d, 4h, 1h) K,D <= 20 (또는 >= 80) & 0-0(100-100) 잠금 통과
-    2. 하위봉(2h, 15m, 5m) K,D <= 20 (또는 >= 80)
-    3. 하위봉 캔들이 상위봉 채널 라인(0.0 ~ 5.0)에 실제로 닿았을 때!
-    """
     if len(df_high) < 20 or len(df_low) < 10:
         return None
 
     history = load_history()
     current_high = df_high.iloc[-1]
     current_low = df_low.iloc[-1]
-    current_price = current_low['close']
     low_candle_time = str(current_low['datetime'])
 
     high_k, high_d = current_high['stoch_rsi_k'], current_high['stoch_rsi_d']
     low_k, low_d = current_low['stoch_rsi_k'], current_low['stoch_rsi_d']
 
-    now_kst = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
-    kst_str = now_kst.strftime('%Y-%m-%d %H:%M')
+    coin_name = symbol.split('/')[0]
+    tf_h_str = tf_high.upper()
+    tf_l_str = tf_low.upper()
 
-    # 🟢 1. LONG 판별
+    # 🟢 1. LONG 판별 (상위 20 이하 & 잠금 아님 + 하위 20 이하 + 15분봉 실제 캔들 터치)
     lock_key_long = f"LOCK_LONG_{symbol}_{tf_high}"
     is_locked_long = is_htf_zero_locked(df_high, "LONG", history, lock_key_long)
 
@@ -112,24 +105,16 @@ def check_signals(symbol, df_high, df_low, tf_high, tf_low):
             history[history_key] = low_candle_time
             save_history(history)
 
-            touch_details = []
-            for ch in touched_list:
-                lvls = ", ".join([f"[{r:.1f}] ({p:,.1f})" for r, p in ch["touched_ratios"]])
-                touch_details.append(f"  • {ch['scale_kor']}({ch['mode_kor']}): {lvls}")
-            touch_summary = "\n".join(touch_details)
-
+            r_hit = target_ch["touched_ratios"][0][0]
             msg = (
-                f"🟢 [LONG - {tf_low} 채널 터치 & 과매도(20 이하)] {symbol}\n"
-                f"⏰ {kst_str} (KST)\n"
-                f"📊 상위({tf_high}) 20 이하: K({high_k:.1f}) / D({high_d:.1f})\n"
-                f"⚡ 하위({tf_low}) 20 이하: K({low_k:.1f}) / D({low_d:.1f})\n"
-                f"📐 {tf_low} 봉이 터치한 {tf_high} 채널 라인:\n{touch_summary}\n"
-                f"💵 실시간 현재가: {current_price:,.2f}"
+                f"🟢 LONG | {coin_name} {tf_h_str} {target_ch['scale_kor']} [{r_hit:.1f}]\n"
+                f"{tf_h_str} K/D : {high_k:.1f} / {high_d:.1f}\n"
+                f"{tf_l_str} K/D : {low_k:.1f} / {low_d:.1f}"
             )
             images = generate_touched_pair_images(symbol, tf_high, tf_low, df_high, df_low, target_ch)
             return msg, images
 
-    # 🔴 2. SHORT 판별
+    # 🔴 2. SHORT 판별 (상위 80 이상 & 잠금 아님 + 하위 80 이상 + 15분봉 실제 캔들 터치)
     lock_key_short = f"LOCK_SHORT_{symbol}_{tf_high}"
     is_locked_short = is_htf_zero_locked(df_high, "SHORT", history, lock_key_short)
 
@@ -144,19 +129,11 @@ def check_signals(symbol, df_high, df_low, tf_high, tf_low):
             history[history_key] = low_candle_time
             save_history(history)
 
-            touch_details = []
-            for ch in touched_list:
-                lvls = ", ".join([f"[{r:.1f}] ({p:,.1f})" for r, p in ch["touched_ratios"]])
-                touch_details.append(f"  • {ch['scale_kor']}({ch['mode_kor']}): {lvls}")
-            touch_summary = "\n".join(touch_details)
-
+            r_hit = target_ch["touched_ratios"][0][0]
             msg = (
-                f"🔴 [SHORT - {tf_low} 채널 터치 & 과매수(80 이상)] {symbol}\n"
-                f"⏰ {kst_str} (KST)\n"
-                f"📊 상위({tf_high}) 80 이상: K({high_k:.1f}) / D({high_d:.1f})\n"
-                f"⚡ 하위({tf_low}) 80 이상: K({low_k:.1f}) / D({low_d:.1f})\n"
-                f"📐 {tf_low} 봉이 터치한 {tf_high} 채널 라인:\n{touch_summary}\n"
-                f"💵 실시간 현재가: {current_price:,.2f}"
+                f"🔴 SHORT | {coin_name} {tf_h_str} {target_ch['scale_kor']} [{r_hit:.1f}]\n"
+                f"{tf_h_str} K/D : {high_k:.1f} / {high_d:.1f}\n"
+                f"{tf_l_str} K/D : {low_k:.1f} / {low_d:.1f}"
             )
             images = generate_touched_pair_images(symbol, tf_high, tf_low, df_high, df_low, target_ch)
             return msg, images
