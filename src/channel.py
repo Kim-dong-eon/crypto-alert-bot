@@ -22,14 +22,12 @@ SCALE_KOR_NAMES = {
     "LONG": "장기"
 }
 
-# 채널 스케일별 우선순위 가중치 (장기 > 중기 > 단기)
 SCALE_WEIGHTS = {
     "LONG": 1.25,
     "MEDIUM": 1.00,
     "SHORT": 0.85
 }
 
-# 기본 배율별 가중치 (-1.5 ~ 2.5는 0.50 이상으로 즉시 활성, 3.0 ~ 5.0은 초기 비활성)
 BASE_RATIO_WEIGHTS = {
     -1.5: 0.65,
     -1.0: 0.95,
@@ -40,14 +38,13 @@ BASE_RATIO_WEIGHTS = {
      1.5: 0.85,
      2.0: 0.80,
      2.5: 0.65,
-     3.0: 0.35,  # 하위봉 5개 미만 시 차단 (< 0.50)
-     3.5: 0.30,  # 하위봉 10개 미만 시 차단
-     4.0: 0.25,  # 하위봉 15개 미만 시 차단
-     4.5: 0.20,  # 하위봉 20개 미만 시 차단
-     5.0: 0.15   # 하위봉 25개 미만 시 차단
+     3.0: 0.35,
+     3.5: 0.30,
+     4.0: 0.25,
+     4.5: 0.20,
+     5.0: 0.15
 }
 
-# ★ 3.0 이상 배율이 해금되기 위한 최소 하위봉(LTF) 개수 기준 (3.0 = 5봉 이상부터 5봉 단위로 증가)
 REQUIRED_LTF_BARS = {
     3.0: 5,
     3.5: 10,
@@ -56,7 +53,6 @@ REQUIRED_LTF_BARS = {
     5.0: 25
 }
 
-# 해금 시 부여할 활성 가중치 (>= 0.50)
 UNLOCKED_RATIO_WEIGHTS = {
     3.0: 0.60,
     3.5: 0.58,
@@ -65,14 +61,10 @@ UNLOCKED_RATIO_WEIGHTS = {
     5.0: 0.50
 }
 
-MIN_ALERT_RATIO_WEIGHT = 0.50  # 유효 터치 인정 기준치
+MIN_ALERT_RATIO_WEIGHT = 0.50
 
 
 def count_ltf_bars_beyond_2_5(df_low: pd.DataFrame, t1: float, t2: float, c1: float, slope_ms: float, channel_height: float, mode: str) -> int:
-    """
-    2번 고/저점(t2) 이후 하위봉(df_low)에서 2.5 라인에 최초 도달/돌파한 시점부터
-    현재 하위봉까지 쌓인 하위봉(LTF) 개수를 계산합니다.
-    """
     post_p2_df = df_low[df_low['timestamp'] >= t2]
     if post_p2_df.empty:
         return 0
@@ -96,15 +88,10 @@ def count_ltf_bars_beyond_2_5(df_low: pd.DataFrame, t1: float, t2: float, c1: fl
     if first_break_pos is None:
         return 0
 
-    # 최초 2.5 도달 봉을 포함하여 이후 생성된 하위봉 총 개수 반환
     return len(post_p2_df) - first_break_pos
 
 
 def get_dynamic_ratio_weight(r: float, ltf_bars_count: int) -> float:
-    """
-    -1.5 ~ 2.5 구간은 즉시 기본 가중치(>= 0.65)를 반환하고,
-    3.0 ~ 5.0 구간은 하위봉 개수가 기준(3.0=5봉, 3.5=10봉...) 이상일 때만 0.50 이상으로 해금합니다.
-    """
     r_key = round(r, 1)
     base_w = BASE_RATIO_WEIGHTS.get(r_key, 0.1)
 
@@ -217,6 +204,21 @@ def find_pre_high_close(df: pd.DataFrame, valley1_idx: int, wall_valleys: list):
     return int(sub_closes.idxmax())
 
 
+def is_channel_height_valid(df_high: pd.DataFrame, idx1: int, third_idx: int, channel_height: float) -> bool:
+    """
+    ★ 사진처럼 채널 폭(channel_height)이 극단적으로 좁아져 선들이 다닥다닥 뭉치는 현상을 차단합니다.
+    - 조건 1: 상위봉 최근 구간 전체 고저 변동폭의 최소 8% 이상이어야 함
+    - 조건 2: 상위봉 평균 캔들 길이(high - low)의 최소 1.8배 이상이어야 함
+    """
+    start_lookback = max(0, min(idx1, third_idx) - 5)
+    sub = df_high.iloc[start_lookback:]
+    total_range = float(sub['high'].max() - sub['low'].min())
+    avg_candle_size = float((sub['high'] - sub['low']).mean())
+
+    min_required_height = max(total_range * 0.08, avg_candle_size * 1.8)
+    return channel_height >= min_required_height
+
+
 def build_channel_with_ltf(df_high: pd.DataFrame, df_low: pd.DataFrame, idx1: int, idx2: int, wall_points: list, mode: str, scale_type: str):
     if mode == "HIGH":
         third_idx = find_pre_low_close(df_high, idx1, wall_points)
@@ -236,9 +238,13 @@ def build_channel_with_ltf(df_high: pd.DataFrame, df_low: pd.DataFrame, idx1: in
 
     line0_at_third = c1 + slope_idx * (third_idx - idx1)
     if mode == "HIGH":
-        channel_height = max(line0_at_third - c3, 1e-4)
+        channel_height = line0_at_third - c3
     else:
-        channel_height = max(c3 - line0_at_third, 1e-4)
+        channel_height = c3 - line0_at_third
+
+    # ★ 찌그러진 좁은 채널(국수가락 채널)이면 즉시 무효(None) 반환!
+    if not is_channel_height_valid(df_high, idx1, third_idx, channel_height):
+        return None
 
     ratios = [round(r * 0.5, 1) for r in range(-3, 11)]
 
@@ -248,13 +254,16 @@ def build_channel_with_ltf(df_high: pd.DataFrame, df_low: pd.DataFrame, idx1: in
     ltf_low = float(ltf_curr['low'])
     ltf_high = float(ltf_curr['high'])
 
+    # ★ 하위봉 캔들 1개 길이가 채널 1칸(1.0) 폭보다 크면(한 캔들에 선이 3개 이상 뭉치면) 제외
+    if (ltf_high - ltf_low) > channel_height * 0.95:
+        return None
+
     line0_at_ltf = c1 + slope_ms * (ltf_t - t1)
     if mode == "HIGH":
         ltf_levels = {r: line0_at_ltf - (r * channel_height) for r in ratios}
     else:
         ltf_levels = {r: line0_at_ltf + (r * channel_height) for r in ratios}
 
-    # ★ 2.5 라인 돌파 이후 진행된 하위봉(LTF) 개수 계산
     ltf_bars_count = count_ltf_bars_beyond_2_5(
         df_low, t1, t2, c1, slope_ms, channel_height, mode
     )
@@ -280,7 +289,8 @@ def build_channel_with_ltf(df_high: pd.DataFrame, df_low: pd.DataFrame, idx1: in
             touched_ratios.append((r, lvl_price, r_weight))
 
     touched_ratios.sort(key=lambda x: (-x[2], abs(ltf_close - x[1])))
-    clean_touched = [(r, p) for r, p, _ in touched_ratios]
+    # 가장 우선순위가 높은 대표 터치 라인 1개만 남겨 초록색 중복 도배 방지
+    clean_touched = [(touched_ratios[0][0], touched_ratios[0][1])] if touched_ratios else []
 
     scale_weight = SCALE_WEIGHTS.get(scale_type, 1.0)
     best_r_weight = touched_ratios[0][2] if touched_ratios else ratio_weights.get(closest_ratio, 0.1)
@@ -333,8 +343,10 @@ def extract_channels_by_mode(df_high: pd.DataFrame, df_low: pd.DataFrame, mode: 
             for j in range(i - 1, -1, -1):
                 pt2, pt1 = short_pts[i], short_pts[j]
                 if 4 <= (pt2 - pt1) <= 12 and validator(df_high, pt1, pt2):
-                    channels.append(build_channel_with_ltf(df_high, df_low, pt1, pt2, wall_pts, mode, "SHORT"))
-                    break
+                    ch = build_channel_with_ltf(df_high, df_low, pt1, pt2, wall_pts, mode, "SHORT")
+                    if ch is not None:
+                        channels.append(ch)
+                        break
             if any(c["scale_type"] == "SHORT" for c in channels):
                 break
 
@@ -343,8 +355,10 @@ def extract_channels_by_mode(df_high: pd.DataFrame, df_low: pd.DataFrame, mode: 
             for j in range(i - 1, -1, -1):
                 pt2, pt1 = med_pts[i], med_pts[j]
                 if 13 <= (pt2 - pt1) <= 30 and validator(df_high, pt1, pt2):
-                    channels.append(build_channel_with_ltf(df_high, df_low, pt1, pt2, wall_pts, mode, "MEDIUM"))
-                    break
+                    ch = build_channel_with_ltf(df_high, df_low, pt1, pt2, wall_pts, mode, "MEDIUM")
+                    if ch is not None:
+                        channels.append(ch)
+                        break
             if any(c["scale_type"] == "MEDIUM" for c in channels):
                 break
 
@@ -352,15 +366,19 @@ def extract_channels_by_mode(df_high: pd.DataFrame, df_low: pd.DataFrame, mode: 
         for i in range(len(long_pts) - 1, 0, -1):
             pt2, pt1 = long_pts[i], long_pts[i - 1]
             if (pt2 - pt1) >= 31 and validator(df_high, pt1, pt2):
-                channels.append(build_channel_with_ltf(df_high, df_low, pt1, pt2, wall_pts, mode, "LONG"))
-                break
+                ch = build_channel_with_ltf(df_high, df_low, pt1, pt2, wall_pts, mode, "LONG")
+                if ch is not None:
+                    channels.append(ch)
+                    break
         if not any(c["scale_type"] == "LONG" for c in channels):
             for i in range(len(long_pts) - 1, 0, -1):
                 for j in range(i - 1, -1, -1):
                     pt2, pt1 = long_pts[i], long_pts[j]
                     if (pt2 - pt1) >= 31 and validator(df_high, pt1, pt2):
-                        channels.append(build_channel_with_ltf(df_high, df_low, pt1, pt2, wall_pts, mode, "LONG"))
-                        break
+                        ch = build_channel_with_ltf(df_high, df_low, pt1, pt2, wall_pts, mode, "LONG")
+                        if ch is not None:
+                            channels.append(ch)
+                            break
                 if any(c["scale_type"] == "LONG" for c in channels):
                     break
 
