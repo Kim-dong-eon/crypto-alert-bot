@@ -81,6 +81,7 @@ def check_signals(symbol, df_high, df_low, tf_high, tf_low):
     history = load_history()
     current_high = df_high.iloc[-1]
     current_low = df_low.iloc[-1]
+    high_candle_time = str(current_high['datetime'])
     low_candle_time = str(current_low['datetime'])
 
     high_k, high_d = current_high['stoch_rsi_k'], current_high['stoch_rsi_d']
@@ -90,7 +91,7 @@ def check_signals(symbol, df_high, df_low, tf_high, tf_low):
     tf_h_str = tf_high.upper()
     tf_l_str = tf_low.upper()
 
-    # 🟢 1. LONG 판별 (상위 20 이하 & 잠금 아님 + 하위 20 이하 + 15분봉 실제 캔들 터치)
+    # 🟢 1. LONG 판별
     lock_key_long = f"LOCK_LONG_{symbol}_{tf_high}"
     is_locked_long = is_htf_zero_locked(df_high, "LONG", history, lock_key_long)
 
@@ -98,14 +99,19 @@ def check_signals(symbol, df_high, df_low, tf_high, tf_low):
         target_ch, touched_list = find_touched_or_closest_channel(df_high, df_low)
 
         if touched_list and target_ch is not None:
-            history_key = f"{symbol}_{tf_high}_{tf_low}_LONG"
-            if history.get(history_key) == low_candle_time:
+            r_hit = target_ch["touched_ratios"][0][0]
+            candle_key = f"{symbol}_{tf_high}_{tf_low}_LONG_CANDLE"
+            line_key = f"{symbol}_{tf_high}_{tf_low}_LONG_LINE"
+            line_sig = f"{high_candle_time}_{target_ch['scale_type']}_{target_ch['mode']}_{r_hit}"
+
+            # 같은 15분봉이거나, 이미 알림을 보낸 동일한 채널 라인이면 중복 발송 차단!
+            if history.get(candle_key) == low_candle_time or history.get(line_key) == line_sig:
                 return None
 
-            history[history_key] = low_candle_time
+            history[candle_key] = low_candle_time
+            history[line_key] = line_sig
             save_history(history)
 
-            r_hit = target_ch["touched_ratios"][0][0]
             msg = (
                 f"🟢 LONG | {coin_name} {tf_h_str} {target_ch['scale_kor']} [{r_hit:.1f}]\n"
                 f"{tf_h_str} K/D : {high_k:.1f} / {high_d:.1f}\n"
@@ -114,7 +120,7 @@ def check_signals(symbol, df_high, df_low, tf_high, tf_low):
             images = generate_touched_pair_images(symbol, tf_high, tf_low, df_high, df_low, target_ch)
             return msg, images
 
-    # 🔴 2. SHORT 판별 (상위 80 이상 & 잠금 아님 + 하위 80 이상 + 15분봉 실제 캔들 터치)
+    # 🔴 2. SHORT 판별
     lock_key_short = f"LOCK_SHORT_{symbol}_{tf_high}"
     is_locked_short = is_htf_zero_locked(df_high, "SHORT", history, lock_key_short)
 
@@ -122,14 +128,18 @@ def check_signals(symbol, df_high, df_low, tf_high, tf_low):
         target_ch, touched_list = find_touched_or_closest_channel(df_high, df_low)
 
         if touched_list and target_ch is not None:
-            history_key = f"{symbol}_{tf_high}_{tf_low}_SHORT"
-            if history.get(history_key) == low_candle_time:
+            r_hit = target_ch["touched_ratios"][0][0]
+            candle_key = f"{symbol}_{tf_high}_{tf_low}_SHORT_CANDLE"
+            line_key = f"{symbol}_{tf_high}_{tf_low}_SHORT_LINE"
+            line_sig = f"{high_candle_time}_{target_ch['scale_type']}_{target_ch['mode']}_{r_hit}"
+
+            if history.get(candle_key) == low_candle_time or history.get(line_key) == line_sig:
                 return None
 
-            history[history_key] = low_candle_time
+            history[candle_key] = low_candle_time
+            history[line_key] = line_sig
             save_history(history)
 
-            r_hit = target_ch["touched_ratios"][0][0]
             msg = (
                 f"🔴 SHORT | {coin_name} {tf_h_str} {target_ch['scale_kor']} [{r_hit:.1f}]\n"
                 f"{tf_h_str} K/D : {high_k:.1f} / {high_d:.1f}\n"

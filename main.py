@@ -8,7 +8,6 @@ from src.strategy import check_signals
 from src.notifier import send_message, send_photo
 
 def fetch_and_prepare(args):
-    """단일 (코인, 타임프레임) 데이터를 가져와 지표를 계산하는 작업 함수"""
     symbol, tf = args
     time.sleep(0.15)
     df = fetch_ohlcv(symbol, tf, limit=120)
@@ -51,7 +50,6 @@ def main():
                 alert_count += 1
                 print(f"  -> 🎯 채널 터치 & 스토캐스틱 타점 포착! ({tf_high} & {tf_low})")
                 
-                # 타점 포착 즉시 텍스트와 해당 차트 2장(상위봉 + 하위봉) 발송
                 send_message(msg)
                 for img_path, caption in images:
                     send_photo(img_path, caption)
@@ -66,35 +64,26 @@ def main():
     else:
         print("✅ 새로 포착된 타점이 없습니다.")
 
-    # 기록 변경 시 깃허브 저장 및 3일 지난 auto 커밋 정리
+    # PNG 파일이 Git 저장을 방해하지 않도록 정리 후 alert_history.json 확실히 저장
     if os.path.exists("alert_history.json"):
-        # ★ PNG 파일이 Git 작업을 방해하지 않도록 임시 이미지 정리
-        for png_file in ["channel_htf.png", "channel_ltf.png"]:
-            if os.path.exists(png_file):
-                try:
-                    os.remove(png_file)
-                except:
-                    pass
-
         os.system('git config --global user.name "github-actions[bot]"')
         os.system('git config --global user.email "github-actions[bot]@users.noreply.github.com"')
+        
+        os.system('git rm --cached *.png 2>/dev/null || true')
+        os.system('git checkout -- *.png 2>/dev/null || true')
         os.system('git add alert_history.json')
         
         if os.system('git diff --staged --quiet') != 0:
-            print("💾 기록 변경 감지! 깃허브 자동 저장 및 3일 지난 auto 커밋 정리 중...")
-            os.system('git commit -m "auto: 알림 발송 기록 업데이트 (중복 방지)"')
-            os.system('git pull --rebase origin HEAD')
+            print("💾 기록 변경 감지! 깃허브에 알림 기록 저장 중...")
+            last_msg = os.popen('git log -1 --format=%s').read().strip()
             
-            os.system(
-                "git filter-branch -f --commit-filter '"
-                "case $(git log -1 --format=%s $GIT_COMMIT) in "
-                "auto:*) if [ $(git log -1 --format=%ct $GIT_COMMIT) -lt $(( $(date +%s) - 259200 )) ]; "
-                "then skip_commit \"$@\"; else git commit-tree \"$@\"; fi ;; "
-                "*) git commit-tree \"$@\" ;; esac' HEAD"
-            )
-            
+            if last_msg.startswith("auto:"):
+                os.system('git commit --amend -m "auto: 알림 발송 기록 업데이트 (중복 방지)"')
+            else:
+                os.system('git commit -m "auto: 알림 발송 기록 업데이트 (중복 방지)"')
+                
             os.system('git push origin HEAD --force')
-            print("✅ 알림 기록장 저장 및 오래된 커밋 청소 성공!")
+            print("✅ 알림 기록장 저장 성공! (중복 발송 완벽 차단)")
 
 if __name__ == "__main__":
     main()
