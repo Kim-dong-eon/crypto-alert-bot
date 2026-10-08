@@ -22,6 +22,100 @@ SCALE_KOR_NAMES = {
     "LONG": "장기"
 }
 
+# 채널 스케일별 우선순위 가중치 (장기 > 중기 > 단기)
+SCALE_WEIGHTS = {
+    "LONG": 1.25,
+    "MEDIUM": 1.00,
+    "SHORT": 0.85
+}
+
+# 기본 배율별 가중치 (-1.5 ~ 2.5는 0.50 이상으로 즉시 활성, 3.0 ~ 5.0은 초기 비활성)
+BASE_RATIO_WEIGHTS = {
+    -1.5: 0.65,
+    -1.0: 0.95,
+    -0.5: 0.80,
+     0.0: 1.00,
+     0.5: 0.85,
+     1.0: 1.00,
+     1.5: 0.85,
+     2.0: 0.80,
+     2.5: 0.65,
+     3.0: 0.35,  # 하위봉 5개 미만 시 차단 (< 0.50)
+     3.5: 0.30,  # 하위봉 10개 미만 시 차단
+     4.0: 0.25,  # 하위봉 15개 미만 시 차단
+     4.5: 0.20,  # 하위봉 20개 미만 시 차단
+     5.0: 0.15   # 하위봉 25개 미만 시 차단
+}
+
+# ★ 3.0 이상 배율이 해금되기 위한 최소 하위봉(LTF) 개수 기준 (3.0 = 5봉 이상부터 5봉 단위로 증가)
+REQUIRED_LTF_BARS = {
+    3.0: 5,
+    3.5: 10,
+    4.0: 15,
+    4.5: 20,
+    5.0: 25
+}
+
+# 해금 시 부여할 활성 가중치 (>= 0.50)
+UNLOCKED_RATIO_WEIGHTS = {
+    3.0: 0.60,
+    3.5: 0.58,
+    4.0: 0.55,
+    4.5: 0.52,
+    5.0: 0.50
+}
+
+MIN_ALERT_RATIO_WEIGHT = 0.50  # 유효 터치 인정 기준치
+
+
+def count_ltf_bars_beyond_2_5(df_low: pd.DataFrame, t1: float, t2: float, c1: float, slope_ms: float, channel_height: float, mode: str) -> int:
+    """
+    2번 고/저점(t2) 이후 하위봉(df_low)에서 2.5 라인에 최초 도달/돌파한 시점부터
+    현재 하위봉까지 쌓인 하위봉(LTF) 개수를 계산합니다.
+    """
+    post_p2_df = df_low[df_low['timestamp'] >= t2]
+    if post_p2_df.empty:
+        return 0
+
+    first_break_pos = None
+    for pos, (_, row) in enumerate(post_p2_df.iterrows()):
+        row_t = float(row['timestamp'])
+        line0_t = c1 + slope_ms * (row_t - t1)
+
+        if mode == "HIGH":
+            lvl_2_5 = line0_t - (2.5 * channel_height)
+            if float(row['low']) <= lvl_2_5:
+                first_break_pos = pos
+                break
+        else:
+            lvl_2_5 = line0_t + (2.5 * channel_height)
+            if float(row['high']) >= lvl_2_5:
+                first_break_pos = pos
+                break
+
+    if first_break_pos is None:
+        return 0
+
+    # 최초 2.5 도달 봉을 포함하여 이후 생성된 하위봉 총 개수 반환
+    return len(post_p2_df) - first_break_pos
+
+
+def get_dynamic_ratio_weight(r: float, ltf_bars_count: int) -> float:
+    """
+    -1.5 ~ 2.5 구간은 즉시 기본 가중치(>= 0.65)를 반환하고,
+    3.0 ~ 5.0 구간은 하위봉 개수가 기준(3.0=5봉, 3.5=10봉...) 이상일 때만 0.50 이상으로 해금합니다.
+    """
+    r_key = round(r, 1)
+    base_w = BASE_RATIO_WEIGHTS.get(r_key, 0.1)
+
+    if r_key >= 3.0:
+        req_bars = REQUIRED_LTF_BARS.get(r_key, 999)
+        if ltf_bars_count >= req_bars:
+            return UNLOCKED_RATIO_WEIGHTS.get(r_key, 0.50)
+        return base_w
+
+    return base_w
+
 
 def find_swing_high_closes(df: pd.DataFrame, left: int = 2, right: int = 2):
     closes = df['close'].values
@@ -72,14 +166,9 @@ def is_valid_floor_line(df: pd.DataFrame, v1_idx: int, v2_idx: int, tolerance: f
 
 
 def find_pre_low_close(df: pd.DataFrame, peak1_idx: int, wall_peaks: list):
-    """
-    ★ 개선: 고점1 바로 옆의 얕은 눌림목에 멈추지 않고,
-    고점1 직전 골짜기 구간(최대 14봉) 내에서 가장 깊은 진짜 저점(종가)을 찾습니다.
-    """
     closes = df['close'].values
     p1_close = closes[peak1_idx]
 
-    # 고점1보다 더 높은 이전 산이 있거나, 최소 10봉 이상 떨어진 큰 산이 있을 때만 탐색 벽으로 인정
     valid_walls = [
         p for p in wall_peaks
         if p < peak1_idx - 2 and (closes[p] >= p1_close * 0.998 or p <= peak1_idx - 10)
@@ -90,13 +179,11 @@ def find_pre_low_close(df: pd.DataFrame, peak1_idx: int, wall_peaks: list):
     else:
         start_idx = max(0, peak1_idx - 12)
 
-    # 구간 내 골짜기(양옆보다 종가가 낮은 바닥 봉) 후보들 추출
     valley_candidates = []
     for i in range(start_idx + 1, peak1_idx):
         if closes[i] <= closes[i - 1] and closes[i] <= closes[i + 1]:
             valley_candidates.append(i)
 
-    # 골짜기 후보들 중 종가가 가장 낮은(가장 깊은) 저점 선택!
     if valley_candidates:
         return int(min(valley_candidates, key=lambda idx: closes[idx]))
 
@@ -105,10 +192,6 @@ def find_pre_low_close(df: pd.DataFrame, peak1_idx: int, wall_peaks: list):
 
 
 def find_pre_high_close(df: pd.DataFrame, valley1_idx: int, wall_valleys: list):
-    """
-    저점1 바로 옆의 얕은 반등에 멈추지 않고,
-    저점1 직전 산 구간(최대 14봉) 내에서 가장 높은 진짜 고점(종가)을 찾습니다.
-    """
     closes = df['close'].values
     v1_close = closes[valley1_idx]
 
@@ -157,9 +240,8 @@ def build_channel_with_ltf(df_high: pd.DataFrame, df_low: pd.DataFrame, idx1: in
     else:
         channel_height = max(c3 - line0_at_third, 1e-4)
 
-    ratios = [round(r * 0.5, 1) for r in range(0, 11)]
+    ratios = [round(r * 0.5, 1) for r in range(-3, 11)]
 
-    # 현재 하위봉(15분봉 등)의 실제 고가/저가
     ltf_curr = df_low.iloc[-1]
     ltf_t = float(ltf_curr['timestamp'])
     ltf_close = float(ltf_curr['close'])
@@ -172,18 +254,37 @@ def build_channel_with_ltf(df_high: pd.DataFrame, df_low: pd.DataFrame, idx1: in
     else:
         ltf_levels = {r: line0_at_ltf + (r * channel_height) for r in ratios}
 
+    # ★ 2.5 라인 돌파 이후 진행된 하위봉(LTF) 개수 계산
+    ltf_bars_count = count_ltf_bars_beyond_2_5(
+        df_low, t1, t2, c1, slope_ms, channel_height, mode
+    )
+
+    ratio_weights = {
+        r: get_dynamic_ratio_weight(r, ltf_bars_count)
+        for r in ratios
+    }
+
     touched_ratios = []
     min_dist = float('inf')
     closest_ratio = 0.0
 
     for r, lvl_price in ltf_levels.items():
+        r_weight = ratio_weights[r]
         dist = abs(ltf_close - lvl_price)
-        if dist < min_dist:
+
+        if r_weight >= MIN_ALERT_RATIO_WEIGHT and dist < min_dist:
             min_dist = dist
             closest_ratio = r
-        # ★ 핵심 수정: 오차 범위(여유 폭) 없이 현재 15분봉의 저가~고가에 선이 실제로 닿았을 때만 터치로 판정!
-        if ltf_low <= lvl_price <= ltf_high:
-            touched_ratios.append((r, lvl_price))
+
+        if r_weight >= MIN_ALERT_RATIO_WEIGHT and (ltf_low <= lvl_price <= ltf_high):
+            touched_ratios.append((r, lvl_price, r_weight))
+
+    touched_ratios.sort(key=lambda x: (-x[2], abs(ltf_close - x[1])))
+    clean_touched = [(r, p) for r, p, _ in touched_ratios]
+
+    scale_weight = SCALE_WEIGHTS.get(scale_type, 1.0)
+    best_r_weight = touched_ratios[0][2] if touched_ratios else ratio_weights.get(closest_ratio, 0.1)
+    priority_score = scale_weight * best_r_weight
 
     mode_kor = "고점기준" if mode == "HIGH" else "저점기준"
     scale_kor = SCALE_KOR_NAMES[scale_type]
@@ -201,10 +302,13 @@ def build_channel_with_ltf(df_high: pd.DataFrame, df_low: pd.DataFrame, idx1: in
         "slope_ms": slope_ms,
         "height": channel_height,
         "ratios": ratios,
+        "ratio_weights": ratio_weights,
+        "ltf_bars_beyond_2_5": ltf_bars_count,
         "ltf_levels": ltf_levels,
-        "touched_ratios": touched_ratios,
+        "touched_ratios": clean_touched,
         "closest_ratio": closest_ratio,
-        "min_dist": min_dist
+        "min_dist": min_dist,
+        "priority_score": priority_score
     }
 
 
@@ -271,13 +375,25 @@ def find_touched_or_closest_channel(df_high: pd.DataFrame, df_low: pd.DataFrame)
     touched_list = [ch for ch in all_channels if ch["touched_ratios"]]
 
     if touched_list:
-        best_target = min(touched_list, key=lambda x: x["min_dist"])
+        best_target = min(touched_list, key=lambda x: (-x["priority_score"], x["min_dist"]))
     elif all_channels:
         best_target = min(all_channels, key=lambda x: x["min_dist"])
     else:
         best_target = None
 
     return best_target, touched_list
+
+
+def _get_line_style(r: float, r_weight: float, touched_r_set: set, target_r: float = None, is_ltf: bool = False):
+    if r in touched_r_set:
+        return '#00e676', (2.4 if is_ltf else 2.1), 1.0
+    if is_ltf and target_r is not None and r == target_r:
+        return '#00bcd4', 1.8, 0.95
+    if r_weight < MIN_ALERT_RATIO_WEIGHT:
+        return '#787b86', 0.8, 0.35
+    if r < 0:
+        return ('#ba68c8' if r.is_integer() else '#ce93d8'), (1.3 if r.is_integer() else 1.0), 0.80
+    return ('#ffffff' if r.is_integer() else '#f5d142'), (1.3 if r.is_integer() else 1.0), (0.85 if r.is_integer() else 0.75)
 
 
 def plot_htf_channel(symbol: str, tf_high: str, df_high: pd.DataFrame, ch: dict) -> str:
@@ -332,6 +448,7 @@ def plot_htf_channel(symbol: str, tf_high: str, df_high: pd.DataFrame, ch: dict)
     line0_y = ch['p1_price'] + ch['slope_idx'] * (x_vals - ch['p1_idx'])
 
     touched_r_set = {r for r, _ in ch['touched_ratios']}
+    ratio_weights = ch.get('ratio_weights', {})
 
     for r in ch['ratios']:
         if ch['mode'] == "HIGH":
@@ -339,15 +456,8 @@ def plot_htf_channel(symbol: str, tf_high: str, df_high: pd.DataFrame, ch: dict)
         else:
             y_vals = line0_y + (r * ch['height'])
 
-        if r in touched_r_set:
-            line_color = '#00e676'
-            lw = 2.1
-            alpha = 1.0
-        else:
-            line_color = '#ffffff' if r.is_integer() else '#f5d142'
-            lw = 1.3 if r.is_integer() else 1.0
-            alpha = 0.85 if r.is_integer() else 0.75
-
+        r_w = ratio_weights.get(r, 0.5)
+        line_color, lw, alpha = _get_line_style(r, r_w, touched_r_set, is_ltf=False)
         ax.plot(x_vals, y_vals, color=line_color, alpha=alpha, linewidth=lw, zorder=4, clip_on=True)
 
         end_y = y_vals[1]
@@ -442,6 +552,7 @@ def plot_ltf_channel_touch(symbol: str, tf_high: str, tf_low: str, df_low: pd.Da
     line0_y = np.array([line0_start, line0_end])
 
     touched_r_set = {r for r, _ in ch['touched_ratios']}
+    ratio_weights = ch.get('ratio_weights', {})
 
     for r in ch['ratios']:
         if ch['mode'] == "HIGH":
@@ -449,19 +560,8 @@ def plot_ltf_channel_touch(symbol: str, tf_high: str, tf_low: str, df_low: pd.Da
         else:
             y_vals = line0_y + (r * ch['height'])
 
-        if r in touched_r_set:
-            line_color = '#00e676'
-            lw = 2.4
-            alpha = 1.0
-        elif r == target_r:
-            line_color = '#00bcd4'
-            lw = 1.8
-            alpha = 0.95
-        else:
-            line_color = '#ffffff' if r.is_integer() else '#f5d142'
-            lw = 1.3 if r.is_integer() else 1.0
-            alpha = 0.80 if r.is_integer() else 0.70
-
+        r_w = ratio_weights.get(r, 0.5)
+        line_color, lw, alpha = _get_line_style(r, r_w, touched_r_set, target_r=target_r, is_ltf=True)
         ax.plot(x_vals, y_vals, color=line_color, alpha=alpha, linewidth=lw, zorder=4, clip_on=True)
 
         end_y = y_vals[1]
@@ -502,7 +602,6 @@ def generate_touched_pair_images(symbol: str, tf_high: str, tf_low: str, df_high
 
     r_hit = target_ch["touched_ratios"][0][0] if target_ch["touched_ratios"] else target_ch["closest_ratio"]
 
-    # ★ 사진 설명도 군더더기 없이 직관적으로 딱 한 줄씩만 표시
     htf_caption = f"{coin_name} {tf_high.upper()} {target_ch['scale_kor']} [{r_hit:.1f}]"
     ltf_caption = f"{coin_name} {tf_low.upper()} ({tf_high.upper()} {target_ch['scale_kor']} [{r_hit:.1f}])"
 

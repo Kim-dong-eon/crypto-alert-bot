@@ -7,6 +7,7 @@ from src.indicators import add_indicators
 from src.strategy import check_signals
 from src.notifier import send_message, send_photo
 
+
 def fetch_and_prepare(args):
     symbol, tf = args
     time.sleep(0.15)
@@ -15,10 +16,11 @@ def fetch_and_prepare(args):
         df = add_indicators(df)
     return (symbol, tf), df
 
+
 def main():
     start_time = time.time()
     print("🚀 고속 병렬 MTF 채널 & 스토캐스틱 알림 봇 실행 시작...")
-    
+
     tasks = []
     seen = set()
     for symbol in settings.SYMBOLS:
@@ -27,7 +29,7 @@ def main():
                 if (symbol, tf) not in seen:
                     seen.add((symbol, tf))
                     tasks.append((symbol, tf))
-            
+
     data_map = {}
     with ThreadPoolExecutor(max_workers=3) as executor:
         results = executor.map(fetch_and_prepare, tasks)
@@ -40,50 +42,35 @@ def main():
         for tf_high, tf_low in settings.STRATEGY_PAIRS:
             df_high = data_map.get((symbol, tf_high))
             df_low = data_map.get((symbol, tf_low))
-            
+
             if df_high is None or df_low is None:
                 continue
-                
+
             result = check_signals(symbol, df_high, df_low, tf_high, tf_low)
             if result:
                 msg, images = result
                 alert_count += 1
                 print(f"  -> 🎯 채널 터치 & 스토캐스틱 타점 포착! ({tf_high} & {tf_low})")
-                
+
                 send_message(msg)
                 for img_path, caption in images:
                     send_photo(img_path, caption)
+                    if os.path.exists(img_path):
+                        try:
+                            os.remove(img_path)
+                        except OSError:
+                            pass
             else:
-                print(f"  -> ⏳ 조건 미달, 0-0 잠금 또는 이미 발송됨 ({tf_high} & {tf_low})")
-            
+                print(f"  -> ⏳ 조건 미달, 상위봉 잠금 또는 이미 발송됨 ({tf_high} & {tf_low})")
+
     elapsed = time.time() - start_time
     print(f"\n⚡ 전체 분석 완료! (소요 시간: {elapsed:.2f}초)")
 
     if alert_count > 0:
-        print(f"✅ 총 {alert_count}건의 타점 텍스트 및 채널 이미지 발송 완료!")
+        print(f"✅ 총 {alert_count}건의 타점 텍스트 및 채널 이미지 발송 완료! (alert_history.json 갱신됨)")
     else:
         print("✅ 새로 포착된 타점이 없습니다.")
 
-    # PNG 파일이 Git 저장을 방해하지 않도록 정리 후 alert_history.json 확실히 저장
-    if os.path.exists("alert_history.json"):
-        os.system('git config --global user.name "github-actions[bot]"')
-        os.system('git config --global user.email "github-actions[bot]@users.noreply.github.com"')
-        
-        os.system('git rm --cached *.png 2>/dev/null || true')
-        os.system('git checkout -- *.png 2>/dev/null || true')
-        os.system('git add alert_history.json')
-        
-        if os.system('git diff --staged --quiet') != 0:
-            print("💾 기록 변경 감지! 깃허브에 알림 기록 저장 중...")
-            last_msg = os.popen('git log -1 --format=%s').read().strip()
-            
-            if last_msg.startswith("auto:"):
-                os.system('git commit --amend -m "auto: 알림 발송 기록 업데이트 (중복 방지)"')
-            else:
-                os.system('git commit -m "auto: 알림 발송 기록 업데이트 (중복 방지)"')
-                
-            os.system('git push origin HEAD --force')
-            print("✅ 알림 기록장 저장 성공! (중복 발송 완벽 차단)")
 
 if __name__ == "__main__":
     main()
