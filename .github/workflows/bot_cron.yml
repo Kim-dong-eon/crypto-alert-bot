@@ -9,7 +9,9 @@ jobs:
     steps:
       - name: 1. 저장소 코드 불러오기
         uses: actions/checkout@v3
-
+        with:
+          fetch-depth: 0  # ★ 봇이 과거 커밋을 정리할 수 있도록 1번 단계에서 전체 기록 불러오기
+          
       - name: 2. 파이썬 세팅
         uses: actions/setup-python@v4
         with:
@@ -23,3 +25,4 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python main.py
+      
