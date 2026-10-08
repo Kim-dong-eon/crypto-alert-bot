@@ -1,4 +1,5 @@
 import os
+import time
 from concurrent.futures import ThreadPoolExecutor
 from config import settings
 from src.fetcher import fetch_ohlcv
@@ -9,29 +10,34 @@ from src.notifier import send_message
 def fetch_and_prepare(args):
     """단일 (코인, 타임프레임) 데이터를 가져와 지표를 계산하는 작업 함수"""
     symbol, tf = args
+    time.sleep(0.15)  # ★ 동시 폭격(429 에러) 방지를 위한 0.15초 미세 간격
     df = fetch_ohlcv(symbol, tf, limit=100)
     if df is not None:
         df = add_indicators(df)
     return (symbol, tf), df
 
 def main():
-    print("🚀 초고속 병렬 MTF 알림 봇 실행 시작...")
+    start_time = time.time()
+    print("🚀 고속 병렬 MTF 알림 봇 실행 시작...")
     
     # 1. 필요한 모든 (코인, 시간대) 목록 추출 (중복 제거)
-    tasks = set()
+    tasks = []
+    seen = set()
     for symbol in settings.SYMBOLS:
         for tf_high, tf_low in settings.STRATEGY_PAIRS:
-            tasks.add((symbol, tf_high))
-            tasks.add((symbol, tf_low))
+            for tf in (tf_high, tf_low):
+                if (symbol, tf) not in seen:
+                    seen.add((symbol, tf))
+                    tasks.append((symbol, tf))
             
-    # 2. 멀티스레딩으로 24개 차트 데이터를 동시에 병렬 수집 (약 1~2초 소요)
+    # 2. 3개의 스레드로 안전하고 빠르게 병렬 수집 (429 에러 완벽 방지)
     data_map = {}
-    with ThreadPoolExecutor(max_workers=8) as executor:
+    with ThreadPoolExecutor(max_workers=3) as executor:
         results = executor.map(fetch_and_prepare, tasks)
         for key, df in results:
             data_map[key] = df
 
-    # 3. 수집된 데이터로 즉시 전략 판별 (대기 시간 0초)
+    # 3. 수집된 데이터로 즉시 전략 판별
     alerts = []
     for symbol in settings.SYMBOLS:
         print(f"\n🔍 [{symbol}] 분석 결과:")
@@ -49,12 +55,15 @@ def main():
             else:
                 print(f"  -> ⏳ 조건 미달, 0-0 잠금 또는 이미 발송됨 ({tf_high} & {tf_low})")
             
+    elapsed = time.time() - start_time
+    print(f"\n⚡ 전체 분석 완료! (소요 시간: {elapsed:.2f}초)")
+
     if alerts:
         final_message = "🚨 통합 포지션 알림 🚨\n\n" + "\n\n---\n\n".join(alerts)
         send_message(final_message)
-        print("\n✅ 텔레그램 통합 발송 완료!")
+        print("✅ 텔레그램 통합 발송 완료!")
     else:
-        print("\n✅ 새로 포착된 타점이 없습니다.")
+        print("✅ 새로 포착된 타점이 없습니다.")
 
     # 4. 기록 변경 시에만 깃허브 저장 및 오래된 커밋 정리
     if os.path.exists("alert_history.json"):
