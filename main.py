@@ -1,38 +1,53 @@
-import time
 import os
+from concurrent.futures import ThreadPoolExecutor
 from config import settings
 from src.fetcher import fetch_ohlcv
 from src.indicators import add_indicators
 from src.strategy import check_signals
 from src.notifier import send_message
 
+def fetch_and_prepare(args):
+    """단일 (코인, 타임프레임) 데이터를 가져와 지표를 계산하는 작업 함수"""
+    symbol, tf = args
+    df = fetch_ohlcv(symbol, tf, limit=100)
+    if df is not None:
+        df = add_indicators(df)
+    return (symbol, tf), df
+
 def main():
-    print("🚀 다중 MTF 알림 봇 실행 시작 (4h 0-0 잠금 & 하위 30이하 오더블록 모드)...")
+    print("🚀 초고속 병렬 MTF 알림 봇 실행 시작...")
     
-    alerts = []
-    
+    # 1. 필요한 모든 (코인, 시간대) 목록 추출 (중복 제거)
+    tasks = set()
     for symbol in settings.SYMBOLS:
-        print(f"\n🔍 [{symbol}] 분석 중...")
-        
         for tf_high, tf_low in settings.STRATEGY_PAIRS:
-            df_high = fetch_ohlcv(symbol, tf_high, limit=100)
-            df_low = fetch_ohlcv(symbol, tf_low, limit=100)
+            tasks.add((symbol, tf_high))
+            tasks.add((symbol, tf_low))
+            
+    # 2. 멀티스레딩으로 24개 차트 데이터를 동시에 병렬 수집 (약 1~2초 소요)
+    data_map = {}
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        results = executor.map(fetch_and_prepare, tasks)
+        for key, df in results:
+            data_map[key] = df
+
+    # 3. 수집된 데이터로 즉시 전략 판별 (대기 시간 0초)
+    alerts = []
+    for symbol in settings.SYMBOLS:
+        print(f"\n🔍 [{symbol}] 분석 결과:")
+        for tf_high, tf_low in settings.STRATEGY_PAIRS:
+            df_high = data_map.get((symbol, tf_high))
+            df_low = data_map.get((symbol, tf_low))
             
             if df_high is None or df_low is None:
                 continue
                 
-            df_high = add_indicators(df_high)
-            df_low = add_indicators(df_low)
-            
             msg = check_signals(symbol, df_high, df_low, tf_high, tf_low)
-            
             if msg:
                 print(f"  -> 🎯 오더블록 타점 최초 포착! ({tf_high} & {tf_low})")
                 alerts.append(msg)
             else:
-                print(f"  -> ⏳ 조건 미달, 0-0 잠금 상태 또는 이미 알림 발송됨")
-            
-            time.sleep(1)
+                print(f"  -> ⏳ 조건 미달, 0-0 잠금 또는 이미 발송됨 ({tf_high} & {tf_low})")
             
     if alerts:
         final_message = "🚨 통합 포지션 알림 🚨\n\n" + "\n\n---\n\n".join(alerts)
@@ -41,19 +56,17 @@ def main():
     else:
         print("\n✅ 새로 포착된 타점이 없습니다.")
 
-    # ★ 알림 발송 기록 또는 4h 0-0 잠금 상태(alert_history.json)가 바뀌었는지 확인 후 저장
+    # 4. 기록 변경 시에만 깃허브 저장 및 오래된 커밋 정리
     if os.path.exists("alert_history.json"):
         os.system('git config --global user.name "github-actions[bot]"')
         os.system('git config --global user.email "github-actions[bot]@users.noreply.github.com"')
         os.system('git add alert_history.json')
         
-        # alert_history.json 파일 내용이 실제로 변경되었을 때만 커밋 & 3일 지난 기록 삭제 실행
         if os.system('git diff --staged --quiet') != 0:
             print("💾 기록 변경 감지! 깃허브 자동 저장 및 3일 지난 auto 커밋 정리 중...")
             os.system('git commit -m "auto: 알림 발송 기록 업데이트 (중복 방지)"')
             os.system('git pull --rebase origin HEAD')
             
-            # 최근 3일(259,200초)이 지난 'auto:' 커밋만 골라서 자동 삭제 (feat 등 일반 커밋은 보존)
             os.system(
                 "git filter-branch -f --commit-filter '"
                 "case $(git log -1 --format=%s $GIT_COMMIT) in "
