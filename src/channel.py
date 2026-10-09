@@ -64,6 +64,14 @@ UNLOCKED_RATIO_WEIGHTS = {
 MIN_ALERT_RATIO_WEIGHT = 0.50
 
 
+# ★ 개선: 캔들 몸통의 상단(양봉 종가 or 음봉 시가)과 하단(음봉 종가 or 양봉 시가)을 추출하는 함수
+def get_body_tops(df: pd.DataFrame) -> np.ndarray:
+    return np.maximum(df['open'].values, df['close'].values)
+
+def get_body_bottoms(df: pd.DataFrame) -> np.ndarray:
+    return np.minimum(df['open'].values, df['close'].values)
+
+
 def count_ltf_bars_beyond_2_5(df_low: pd.DataFrame, t1: float, t2: float, c1: float, slope_ms: float, channel_height: float, mode: str) -> int:
     post_p2_df = df_low[df_low['timestamp'] >= t2]
     if post_p2_df.empty:
@@ -104,112 +112,101 @@ def get_dynamic_ratio_weight(r: float, ltf_bars_count: int) -> float:
     return base_w
 
 
-def find_swing_high_closes(df: pd.DataFrame, left: int = 2, right: int = 2):
-    closes = df['close'].values
+def find_swing_body_highs(df: pd.DataFrame, left: int = 2, right: int = 2):
+    tops = get_body_tops(df)
     peaks = []
     for i in range(left, len(df) - max(right, 2)):
-        window = closes[i - left : i + right + 1]
-        if closes[i] == np.max(window):
+        window = tops[i - left : i + right + 1]
+        if tops[i] == np.max(window):
             if not peaks or (i - peaks[-1] >= left):
                 peaks.append(i)
-            elif closes[i] > closes[peaks[-1]]:
+            elif tops[i] > tops[peaks[-1]]:
                 peaks[-1] = i
     return peaks
 
 
-def find_swing_low_closes(df: pd.DataFrame, left: int = 2, right: int = 2):
-    closes = df['close'].values
+def find_swing_body_lows(df: pd.DataFrame, left: int = 2, right: int = 2):
+    bottoms = get_body_bottoms(df)
     valleys = []
     for i in range(left, len(df) - max(right, 2)):
-        window = closes[i - left : i + right + 1]
-        if closes[i] == np.min(window):
+        window = bottoms[i - left : i + right + 1]
+        if bottoms[i] == np.min(window):
             if not valleys or (i - valleys[-1] >= left):
                 valleys.append(i)
-            elif closes[i] < closes[valleys[-1]]:
+            elif bottoms[i] < bottoms[valleys[-1]]:
                 valleys[-1] = i
     return valleys
 
 
 def is_valid_roof_line(df: pd.DataFrame, p1_idx: int, p2_idx: int, tolerance: float = 0.0005) -> bool:
-    closes = df['close'].values
-    p1_c, p2_c = closes[p1_idx], closes[p2_idx]
+    tops = get_body_tops(df)
+    p1_c, p2_c = tops[p1_idx], tops[p2_idx]
     slope = (p2_c - p1_c) / (p2_idx - p1_idx)
     for idx in range(p1_idx + 1, p2_idx):
         line_val = p1_c + slope * (idx - p1_idx)
-        if closes[idx] > line_val * (1 + tolerance):
+        if tops[idx] > line_val * (1 + tolerance):
             return False
     return True
 
 
 def is_valid_floor_line(df: pd.DataFrame, v1_idx: int, v2_idx: int, tolerance: float = 0.0005) -> bool:
-    closes = df['close'].values
-    v1_c, v2_c = closes[v1_idx], closes[v2_idx]
+    bottoms = get_body_bottoms(df)
+    v1_c, v2_c = bottoms[v1_idx], bottoms[v2_idx]
     slope = (v2_c - v1_c) / (v2_idx - v1_idx)
     for idx in range(v1_idx + 1, v2_idx):
         line_val = v1_c + slope * (idx - v1_idx)
-        if closes[idx] < line_val * (1 - tolerance):
+        if bottoms[idx] < line_val * (1 - tolerance):
             return False
     return True
 
 
-def find_pre_low_close(df: pd.DataFrame, peak1_idx: int, wall_peaks: list):
-    closes = df['close'].values
-    p1_close = closes[peak1_idx]
+def find_pre_body_low(df: pd.DataFrame, peak1_idx: int, wall_peaks: list):
+    bottoms = get_body_bottoms(df)
+    tops = get_body_tops(df)
+    p1_top = tops[peak1_idx]
 
     valid_walls = [
         p for p in wall_peaks
-        if p < peak1_idx - 2 and (closes[p] >= p1_close * 0.998 or p <= peak1_idx - 10)
+        if p < peak1_idx - 2 and (tops[p] >= p1_top * 0.998 or p <= peak1_idx - 10)
     ]
 
-    if valid_walls:
-        start_idx = max(valid_walls[-1] + 1, peak1_idx - 16)
-    else:
-        start_idx = max(0, peak1_idx - 12)
+    start_idx = max(valid_walls[-1] + 1, peak1_idx - 16) if valid_walls else max(0, peak1_idx - 12)
 
     valley_candidates = []
     for i in range(start_idx + 1, peak1_idx):
-        if closes[i] <= closes[i - 1] and closes[i] <= closes[i + 1]:
+        if bottoms[i] <= bottoms[i - 1] and bottoms[i] <= bottoms[i + 1]:
             valley_candidates.append(i)
 
     if valley_candidates:
-        return int(min(valley_candidates, key=lambda idx: closes[idx]))
+        return int(min(valley_candidates, key=lambda idx: bottoms[idx]))
 
-    sub_closes = df['close'].iloc[start_idx:peak1_idx]
-    return int(sub_closes.idxmin())
+    return int(np.argmin(bottoms[start_idx:peak1_idx]) + start_idx)
 
 
-def find_pre_high_close(df: pd.DataFrame, valley1_idx: int, wall_valleys: list):
-    closes = df['close'].values
-    v1_close = closes[valley1_idx]
+def find_pre_body_high(df: pd.DataFrame, valley1_idx: int, wall_valleys: list):
+    tops = get_body_tops(df)
+    bottoms = get_body_bottoms(df)
+    v1_bottom = bottoms[valley1_idx]
 
     valid_walls = [
         v for v in wall_valleys
-        if v < valley1_idx - 2 and (closes[v] <= v1_close * 1.002 or v <= valley1_idx - 10)
+        if v < valley1_idx - 2 and (bottoms[v] <= v1_bottom * 1.002 or v <= valley1_idx - 10)
     ]
 
-    if valid_walls:
-        start_idx = max(valid_walls[-1] + 1, valley1_idx - 16)
-    else:
-        start_idx = max(0, valley1_idx - 12)
+    start_idx = max(valid_walls[-1] + 1, valley1_idx - 16) if valid_walls else max(0, valley1_idx - 12)
 
     peak_candidates = []
     for i in range(start_idx + 1, valley1_idx):
-        if closes[i] >= closes[i - 1] and closes[i] >= closes[i + 1]:
+        if tops[i] >= tops[i - 1] and tops[i] >= tops[i + 1]:
             peak_candidates.append(i)
 
     if peak_candidates:
-        return int(max(peak_candidates, key=lambda idx: closes[idx]))
+        return int(max(peak_candidates, key=lambda idx: tops[idx]))
 
-    sub_closes = df['close'].iloc[start_idx:valley1_idx]
-    return int(sub_closes.idxmax())
+    return int(np.argmax(tops[start_idx:valley1_idx]) + start_idx)
 
 
 def is_channel_height_valid(df_high: pd.DataFrame, idx1: int, third_idx: int, channel_height: float) -> bool:
-    """
-    ★ 사진처럼 채널 폭(channel_height)이 극단적으로 좁아져 선들이 다닥다닥 뭉치는 현상을 차단합니다.
-    - 조건 1: 상위봉 최근 구간 전체 고저 변동폭의 최소 8% 이상이어야 함
-    - 조건 2: 상위봉 평균 캔들 길이(high - low)의 최소 1.8배 이상이어야 함
-    """
     start_lookback = max(0, min(idx1, third_idx) - 5)
     sub = df_high.iloc[start_lookback:]
     total_range = float(sub['high'].max() - sub['low'].min())
@@ -220,14 +217,19 @@ def is_channel_height_valid(df_high: pd.DataFrame, idx1: int, third_idx: int, ch
 
 
 def build_channel_with_ltf(df_high: pd.DataFrame, df_low: pd.DataFrame, idx1: int, idx2: int, wall_points: list, mode: str, scale_type: str):
-    if mode == "HIGH":
-        third_idx = find_pre_low_close(df_high, idx1, wall_points)
-    else:
-        third_idx = find_pre_high_close(df_high, idx1, wall_points)
+    tops = get_body_tops(df_high)
+    bottoms = get_body_bottoms(df_high)
 
-    c1 = float(df_high.loc[idx1, 'close'])
-    c2 = float(df_high.loc[idx2, 'close'])
-    c3 = float(df_high.loc[third_idx, 'close'])
+    if mode == "HIGH":
+        third_idx = find_pre_body_low(df_high, idx1, wall_points)
+        c1 = float(tops[idx1])
+        c2 = float(tops[idx2])
+        c3 = float(bottoms[third_idx])
+    else:
+        third_idx = find_pre_body_high(df_high, idx1, wall_points)
+        c1 = float(bottoms[idx1])
+        c2 = float(bottoms[idx2])
+        c3 = float(tops[third_idx])
 
     t1 = float(df_high.loc[idx1, 'timestamp'])
     t2 = float(df_high.loc[idx2, 'timestamp'])
@@ -242,7 +244,6 @@ def build_channel_with_ltf(df_high: pd.DataFrame, df_low: pd.DataFrame, idx1: in
     else:
         channel_height = c3 - line0_at_third
 
-    # ★ 찌그러진 좁은 채널(국수가락 채널)이면 즉시 무효(None) 반환!
     if not is_channel_height_valid(df_high, idx1, third_idx, channel_height):
         return None
 
@@ -254,7 +255,6 @@ def build_channel_with_ltf(df_high: pd.DataFrame, df_low: pd.DataFrame, idx1: in
     ltf_low = float(ltf_curr['low'])
     ltf_high = float(ltf_curr['high'])
 
-    # ★ 하위봉 캔들 1개 길이가 채널 1칸(1.0) 폭보다 크면(한 캔들에 선이 3개 이상 뭉치면) 제외
     if (ltf_high - ltf_low) > channel_height * 0.95:
         return None
 
@@ -289,7 +289,6 @@ def build_channel_with_ltf(df_high: pd.DataFrame, df_low: pd.DataFrame, idx1: in
             touched_ratios.append((r, lvl_price, r_weight))
 
     touched_ratios.sort(key=lambda x: (-x[2], abs(ltf_close - x[1])))
-    # 가장 우선순위가 높은 대표 터치 라인 1개만 남겨 초록색 중복 도배 방지
     clean_touched = [(touched_ratios[0][0], touched_ratios[0][1])] if touched_ratios else []
 
     scale_weight = SCALE_WEIGHTS.get(scale_type, 1.0)
@@ -324,16 +323,16 @@ def build_channel_with_ltf(df_high: pd.DataFrame, df_low: pd.DataFrame, idx1: in
 
 def extract_channels_by_mode(df_high: pd.DataFrame, df_low: pd.DataFrame, mode: str = "HIGH") -> list:
     if mode == "HIGH":
-        short_pts = find_swing_high_closes(df_high, left=2, right=2)
-        wall_pts = find_swing_high_closes(df_high, left=3, right=3)
-        med_pts = find_swing_high_closes(df_high, left=4, right=4)
-        long_pts = find_swing_high_closes(df_high, left=6, right=6)
+        short_pts = find_swing_body_highs(df_high, left=2, right=2)
+        wall_pts = find_swing_body_highs(df_high, left=3, right=3)
+        med_pts = find_swing_body_highs(df_high, left=4, right=4)
+        long_pts = find_swing_body_highs(df_high, left=6, right=6)
         validator = is_valid_roof_line
     else:
-        short_pts = find_swing_low_closes(df_high, left=2, right=2)
-        wall_pts = find_swing_low_closes(df_high, left=3, right=3)
-        med_pts = find_swing_low_closes(df_high, left=4, right=4)
-        long_pts = find_swing_low_closes(df_high, left=6, right=6)
+        short_pts = find_swing_body_lows(df_high, left=2, right=2)
+        wall_pts = find_swing_body_lows(df_high, left=3, right=3)
+        med_pts = find_swing_body_lows(df_high, left=4, right=4)
+        long_pts = find_swing_body_lows(df_high, left=6, right=6)
         validator = is_valid_floor_line
 
     channels = []
