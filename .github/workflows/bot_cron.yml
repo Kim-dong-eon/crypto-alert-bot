@@ -5,6 +5,10 @@ on:
   schedule:
     - cron: '*/5 * * * *'
 
+# ★ 깃허브 액션 봇이 에러 없이 파일을 저장(push)할 수 있도록 쓰기 권한 부여
+permissions:
+  contents: write
+
 jobs:
   run-bot:
     runs-on: ubuntu-latest
@@ -13,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.ref_name }} # 현재 브랜치(v2-channel) 명시적 연결
+          ref: ${{ github.ref_name }}
 
       - name: 2. 파이썬 세팅
         uses: actions/setup-python@v5
@@ -39,11 +43,10 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add alert_history.json
           
-          # 파일에 변경사항이 있을 때만 커밋 및 푸시 진행
           if ! git diff-index --quiet HEAD; then
-            # [skip ci] 태그를 달아 이 커밋으로 인해 다른 워크플로우가 연쇄 실행되는 것을 방지
             git commit -m "auto: alert_history.json 기록 갱신 [skip ci]"
-            git push origin HEAD
+            # 현재 실행 중인 브랜치로 명확하게 푸시하여 에러 차단
+            git push origin HEAD:${{ github.ref_name }}
           else
             echo "알림 기록에 변경사항이 없어 커밋을 건너뜁니다."
           fi
