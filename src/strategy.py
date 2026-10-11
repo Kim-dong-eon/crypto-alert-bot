@@ -1,7 +1,7 @@
 import pandas as pd
 import json
 import os
-from src.channel import find_touched_or_closest_channel, generate_touched_pair_images
+from src.channel import find_touched_or_closest_channel, generate_alert_image
 
 HISTORY_FILE = "alert_history.json"
 
@@ -172,11 +172,12 @@ def check_signals(symbol, df_high, df_low, tf_high, tf_low):
             save_history(history)
 
             msg = (
-                f"🟢 LONG | {coin_name} {tf_h_str} {target_ch['scale_kor']} [{r_hit:.1f}]\n"
+                f"🟢 LONG | {coin_name} {tf_h_str} {target_ch['scale_kor']} [{r_hit:.1f}] 터치 대기 완료\n"
+                f"{tf_l_str} 스토캐스틱 타점 포착!\n"
                 f"{tf_h_str} K/D : {high_k:.1f} / {high_d:.1f}\n"
                 f"{tf_l_str} K/D : {low_k:.1f} / {low_d:.1f}"
             )
-            images = generate_touched_pair_images(symbol, tf_high, tf_low, df_high, df_low, target_ch)
+            images = generate_alert_image(symbol, tf_high, df_high, target_ch)
             return msg, images
 
     # 🔴 2. SHORT 판별
@@ -206,11 +207,12 @@ def check_signals(symbol, df_high, df_low, tf_high, tf_low):
             save_history(history)
 
             msg = (
-                f"🔴 SHORT | {coin_name} {tf_h_str} {target_ch['scale_kor']} [{r_hit:.1f}]\n"
+                f"🔴 SHORT | {coin_name} {tf_h_str} {target_ch['scale_kor']} [{r_hit:.1f}] 터치 대기 완료\n"
+                f"{tf_l_str} 스토캐스틱 타점 포착!\n"
                 f"{tf_h_str} K/D : {high_k:.1f} / {high_d:.1f}\n"
                 f"{tf_l_str} K/D : {low_k:.1f} / {low_d:.1f}"
             )
-            images = generate_touched_pair_images(symbol, tf_high, tf_low, df_high, df_low, target_ch)
+            images = generate_alert_image(symbol, tf_high, df_high, target_ch)
             return msg, images
 
     return None
