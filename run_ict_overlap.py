@@ -86,12 +86,14 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
 def main(argv=None):
     parser=argparse.ArgumentParser(description="BTC+거래소 주식/ETF: 단기4H/1H·중기1D/4H·장기1W/1D 중첩 관찰")
     parser.add_argument('--send',action='store_true');parser.add_argument('--watch',action='store_true')
+    parser.add_argument('--resend-current',action='store_true',help='이번 검사만 기존 발송 잠금을 무시하고 현재 조건 충족 구간 재발송')
     parser.add_argument('--render-preview',action='store_true',help='미리보기에서도 현재 중첩 차트 이미지 생성')
     parser.add_argument('--bases',nargs='+',default=list(BASES),help='거래소 기초 심볼. 코인은BTC만 허용')
     parser.add_argument('--state',type=Path,default=ROOT/'runtime/ict_overlap/state.json')
     parser.add_argument('--snapshot',type=Path,default=ROOT/'runtime/ict_overlap/preview.json')
     parser.add_argument('--unlock',nargs=2,metavar=('SYMBOL','TRACK'),help='특정 종목·단기/중기/장기 잠금만 수동 해제')
     args=parser.parse_args(argv)
+    if args.resend_current and args.watch:parser.error('--resend-current is one-shot only; omit --watch')
     if args.unlock:
         symbol,track=args.unlock
         if track not in ('short','medium','long'):parser.error('TRACK must be short, medium or long')
@@ -108,7 +110,7 @@ def main(argv=None):
         from dotenv import load_dotenv
         load_dotenv(ROOT/'.env');sender=telegram_sender(os.getenv('TELEGRAM_BOT_TOKEN'),os.getenv('TELEGRAM_CHAT_ID'))
     with single_writer(args.state.with_suffix('.lock')) if args.send or args.watch else nullcontext():
-        ledger=OverlapLedger(args.state,require_images=args.send,overlap_only=True,approach_only=True)
+        ledger=OverlapLedger(args.state,require_images=args.send,overlap_only=True,approach_only=True,force_resend=args.resend_current)
         image_sender=None
         if args.send:
             from src.overlap_telegram import TelegramMedia

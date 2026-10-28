@@ -89,6 +89,8 @@ Actions의 실제 실행 명령은 아래와 같다. 무한 감시 옵션은 사
 
 GitHub Actions 화면의 Run workflow에서 dry_run=true로 이미지 미리보기 검사를 할 수 있다. dry_run=false는 실제 발송이다. 선택 사항 unlock_symbol=BTCUSDT, unlock_track=short를 지정하면 해당 종목·단기 잠금만 해제한 뒤 검사한다. 로컬 조작은 아래와 같다.
 
+기존 기록을 지우지 않고 현재 조건 충족 구간만 한 번 다시 받으려면 `resend_current=true`로 실행한다. 그 실행에서만 중복 잠금을 건너뛰며, 0.5·구간 유효성 조건은 유지한다. 다음 예약 실행은 기본값 false여서 다시 중복 방지가 적용된다. 로컬의 같은 옵션은 `--resend-current`이고 `--watch`와 함께 사용할 수 없다.
+
 ```powershell
 .\venv\Scripts\python.exe .\run_ict_overlap.py --state alert_state/ict_overlap.json --unlock BTCUSDT short
 ```

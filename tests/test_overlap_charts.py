@@ -18,6 +18,21 @@ def chart_example(direction=1):
 
 
 class ChartTests(unittest.TestCase):
+    def test_one_shot_resend_keeps_history_and_next_run_stays_locked(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'s.json';s=snapshot();s['tracks']['short']['candidate']['equilibrium']={'eligible':True,'midpoint':115}
+            def ledger(force=False):return OverlapLedger(path,require_images=True,overlap_only=True,approach_only=True,force_resend=force)
+            first=ledger();first.observe(s);first.dispatch_symbols(lambda _:True,lambda _:Path('x'),{})
+            retry=ledger(True);before=dict(retry.state['images_delivered']);retry.observe(s)
+            self.assertEqual(retry.dispatch_symbols(lambda _:True,lambda _:Path('x'),{})['images_sent'],1)
+            self.assertEqual(set(before),set(retry.state['images_delivered']))
+            normal=ledger();normal.observe(s);self.assertFalse(normal.state['pending'])
+
+    def test_resend_does_not_bypass_equilibrium_condition(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ledger=OverlapLedger(Path(directory)/'s.json',require_images=True,overlap_only=True,approach_only=True,force_resend=True)
+            s=snapshot();s['tracks']['short']['candidate']['equilibrium']={'eligible':False,'midpoint':115};ledger.observe(s);self.assertFalse(ledger.state['pending'])
+
     def test_eq50_approach_long_and_short_are_mirrored(self):
         self.assertFalse(equilibrium_gate(110,115,125,1,100,140)['eligible'])
         self.assertTrue(equilibrium_gate(110,115,119,1,100,140)['eligible'])

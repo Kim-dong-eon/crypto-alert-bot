@@ -11,6 +11,10 @@ on:
         description: 'Optional: unlock this exchange symbol, e.g. BTCUSDT'
         type: string
         default: ''
+      resend_current:
+        description: 'One run only: resend currently eligible zones without clearing existing locks'
+        type: boolean
+        default: false
       unlock_track:
         description: 'Scope to unlock: short=단기, medium=중기, long=장기'
         type: choice
@@ -79,12 +83,17 @@ jobs:
           BOT_SEND: ${{ github.event_name == 'schedule' || inputs.dry_run == false }}
           UNLOCK_SYMBOL: ${{ inputs.unlock_symbol }}
           UNLOCK_TRACK: ${{ inputs.unlock_track }}
+          BOT_RESEND: ${{ inputs.resend_current }}
         run: |
           if [ "$BOT_SEND" = "true" ]; then
             if [ -n "$UNLOCK_SYMBOL" ]; then
               python run_ict_overlap.py --state alert_state/ict_overlap.json --unlock "$UNLOCK_SYMBOL" "$UNLOCK_TRACK"
             fi
-            python -u run_ict_overlap.py --send --state alert_state/ict_overlap.json --snapshot runtime/ict_overlap/actions.json
+            args=(--send --state alert_state/ict_overlap.json --snapshot runtime/ict_overlap/actions.json)
+            if [ "$BOT_RESEND" = "true" ]; then
+              args+=(--resend-current)
+            fi
+            python -u run_ict_overlap.py "${args[@]}"
           else
             python -u run_ict_overlap.py --render-preview --state alert_state/ict_overlap.json --snapshot runtime/ict_overlap/actions.json
           fi

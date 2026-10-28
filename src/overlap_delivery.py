@@ -11,7 +11,7 @@ from src.ict_engine import TF_MS
 
 
 class OverlapLedger:
-    def __init__(self, path, require_images=False,overlap_only=False,approach_only=False):
+    def __init__(self, path, require_images=False,overlap_only=False,approach_only=False,force_resend=False):
         self.path = Path(path)
         self.state = json.loads(self.path.read_text(encoding="utf-8")) if self.path.exists() else {"version":VERSION,"tracks":{},"delivered":{},"pending":{}}
         if self.state.get("version") != VERSION:
@@ -21,6 +21,7 @@ class OverlapLedger:
         self.require_images=require_images
         self.overlap_only=overlap_only
         self.approach_only=approach_only
+        self.force_resend=force_resend
         if overlap_only:
             wanted='approach' if approach_only else 'prepared'
             self.state['pending']={k:e for k,e in self.state['pending'].items() if e['stage']==wanted}
@@ -47,7 +48,7 @@ class OverlapLedger:
         def add(candidate,stage,previous,reason=None):
             key=self.key(candidate,stage)
             image_due=self.require_images and stage in ('prepared','touched','approach') and key not in self.state['images_delivered']
-            if key not in self.state["delivered"] or image_due:
+            if self.force_resend or key not in self.state["delivered"] or image_due:
                 self.state["pending"][key]={"candidate":candidate,"stage":stage,"timestamp":stamp,
                     "new_formation":bool(previous and candidate["formed_at"]>previous["checked_at"]),"display_name":display_name or candidate["symbol"],"reason":reason}
         for name,current in snapshot["tracks"].items():
