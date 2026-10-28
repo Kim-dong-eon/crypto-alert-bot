@@ -6,7 +6,7 @@ on:
       dry_run:
         description: 'Preview only: no Telegram delivery or lock-state update'
         type: boolean
-        default: true
+        default: false
       unlock_symbol:
         description: 'Optional: unlock this exchange symbol, e.g. BTCUSDT'
         type: string
