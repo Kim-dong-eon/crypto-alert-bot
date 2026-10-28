@@ -193,6 +193,6 @@ def compact_notice(events):
         evidence=' + '.join(f"{tf.upper()} {kind}" for tf,kind in sorted(groups,key=lambda x:(tf_order.get(x[0],9),x[1]!='OB')))
         proof=f"근거: {evidence}"
         if c.get('equilibrium',{}).get('midpoint') is not None:proof+=f" / 0.5 {number(c['equilibrium']['midpoint'])}"
-        lines += [f"{TRACK_LABELS[c['track']]} 겹침 · {'LONG' if c['direction']==1 else 'SHORT'}",f"{number(c['low'])} ~ {number(c['high'])}",proof,'']
+        lines += [f"{TRACK_LABELS[c['track']]} 겹침 · {'강세(LONG)' if c['direction']==1 else '약세(SHORT)'}",f"{number(c['low'])} ~ {number(c['high'])}",proof,'']
     lines.append(kst(max(e['timestamp'] for e in ordered)))
     return '\n'.join(lines)

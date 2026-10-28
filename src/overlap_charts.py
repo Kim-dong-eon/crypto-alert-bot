@@ -8,6 +8,7 @@ from matplotlib import font_manager
 from src.ict_engine import TF_MS
 from src.ict_overlap import LABELS,kst
 from config.overlap_settings import TRACK_LABELS
+from src.ict_swings import ConfirmedSwings
 
 TF_COLORS={'1w':'#b59aff','1d':'#fa81b0','4h':'#4d9dff','1h':'#22d3d3','15m':'#f7ce56'}
 FVG_COLORS={'1w':'#d6c5ff','1d':'#ffc0d9','4h':'#94c5ff','1h':'#93e9e5','15m':'#f6a96c'}
@@ -25,9 +26,15 @@ def box_color(zone):
     return (TF_COLORS if zone['kind']=='OB' else FVG_COLORS)[zone['timeframe']]
 
 
-def draw_scope(ax,event,frames):
-    c=event['candidate'];asof=event['timestamp'];tf=c['pair'][-1]
-    bars=[b for b in frames[tf] if b.timestamp+TF_MS[tf]<=asof][-90:]
+def draw_scope(ax,event,frames,overview=False):
+    c=event['candidate'];asof=event['timestamp'];tf=c['pair'][0 if overview else -1]
+    all_bars=[b for b in frames[tf] if b.timestamp+TF_MS[tf]<=asof]
+    start=max(0,len(all_bars)-(160 if overview else 90))
+    if overview and c.get('context',{}).get('sweep_time'):
+        raid=c['context']['sweep_time']-TF_MS[tf]
+        raid_index=next((i for i,b in enumerate(all_bars) if b.timestamp>=raid),start)
+        start=max(0,len(all_bars)-400,min(start,max(0,raid_index-20)))
+    bars=all_bars[start:]
     if len(bars)<2:raise ValueError('Chart needs closed candles')
     ax.set_facecolor('#18202d');ax.tick_params(colors='#b4bfce');ax.grid(alpha=.10,color='white');ax.set_axisbelow(True)
     lows=[b.low for b in bars];highs=[b.high for b in bars];n=len(bars);end=n+7
@@ -53,21 +60,62 @@ def draw_scope(ax,event,frames):
         ax.axhline(midpoint,color='#b5bdca',linestyle='--',linewidth=.6,zorder=2)
         ax.annotate(f'0.5 {midpoint:,.2f}',xy=(.01,midpoint),xycoords=('axes fraction','data'),va='bottom',color='#b5bdca',fontsize=8)
         known.append(midpoint)
+    if overview:
+        context=c.get('context',{})
+        if context.get('sweep_time',asof)-TF_MS[tf]<bars[0].timestamp:
+            ax.text(.99,.02,'기준 스윕은 표시 범위 이전',transform=ax.transAxes,ha='right',color='#aebbd0',fontsize=7)
+        for name,key in [('기준 저점','range_low'),('기준 고점','range_high')]:
+            value=c.get('equilibrium',{}).get(key)
+            if value is not None:
+                ax.axhline(value,color='#7e8ca2',linestyle=':',linewidth=.5,zorder=1)
+                ax.annotate(name,xy=(.01,value),xycoords=('axes fraction','data'),color='#aebbd0',fontsize=8,va='bottom');known.append(value)
+        detector=ConfirmedSwings(tf)
+        for bar in all_bars:detector.step(bar)
+        by_origin={}
+        for point in detector.all_confirmed:by_origin.setdefault(point.origin,{})[point.kind]=point
+        chain=[]
+        for origin,points in sorted(by_origin.items()):
+            if len(points)!=1:continue
+            point=next(iter(points.values()))
+            if chain and chain[-1].kind==point.kind:
+                if (point.price>chain[-1].price if point.kind=='high' else point.price<chain[-1].price):chain[-1]=point
+            else:chain.append(point)
+        visible=[p for p in chain if bars[0].timestamp<=p.origin<=bars[-1].timestamp][-8:]
+        if visible:
+            xs=[(p.origin-bars[0].timestamp)/TF_MS[tf] for p in visible]
+            ax.plot(xs,[p.price for p in visible],color='#a6b7cc',linewidth=.8,linestyle='--',alpha=.7,zorder=4)
+            previous={}
+            for p,x in zip(visible,xs):
+                old=previous.get(p.kind);label='고점' if p.kind=='high' else '저점'
+                if old is not None:label+='↑' if p.price>old else '↓' if p.price<old else '='
+                previous[p.kind]=p.price
+                ax.annotate(label,xy=(x,p.price),xytext=(0,7 if p.kind=='high' else -12),textcoords='offset points',ha='center',color='#d1dbe8',fontsize=7,zorder=5)
+        for field,label,color in [('sweep_time','유동성 스윕','#f4c75e'),('formed','MSS 확정','#d9b3ff')]:
+            stamp=context.get(field)
+            point=next((b for b in bars if b.timestamp+TF_MS[tf]==stamp),None)
+            if point:
+                x=(point.timestamp-bars[0].timestamp)/TF_MS[tf]
+                y=(point.low if c['direction']==1 else point.high) if field=='sweep_time' else point.close
+                ax.scatter([x],[y],s=25,color=color,zorder=6)
+                ax.annotate(label,xy=(x,y),xytext=(8,25 if field=='sweep_time' else -30),textcoords='offset points',color=color,fontsize=8,arrowprops={'arrowstyle':'->','color':color,'linewidth':.7},zorder=6)
     bottom=min(lows+known);top=max(highs+known);pad=max((top-bottom)*.09,top*.0005)
     ax.set_ylim(bottom-pad,top+pad);ax.set_xlim(-1,end+.5);ax.yaxis.tick_right()
     indices=list(range(0,n,max(1,n//6)));ax.set_xticks(indices,[kst(bars[i].timestamp).replace(' KST','') for i in indices],fontsize=8)
     ax.legend(handles=handles,loc='upper left',ncol=min(5,len(handles)),fontsize=8,facecolor='#111722',edgecolor='#344154',labelcolor='#dce2eb',framealpha=.85)
-    side='LONG' if c['direction']==1 else 'SHORT'
-    ax.set_title(f"{TRACK_LABELS[c['track']]} 겹침 · {side} · {c['low']:,.2f} ~ {c['high']:,.2f}  |  {LABELS[tf]} 차트",color='#e0e5ee',loc='left',fontsize=11)
+    regime='강세 구조' if c['direction']==1 else '약세 구조'
+    view=f'{LABELS[tf]} 전체 구조' if overview else f'{LABELS[tf]} 중첩 확대'
+    ax.set_title(f"{TRACK_LABELS[c['track']]} {regime} · {view}",color='#e0e5ee',loc='left',fontsize=11)
 
 
 def render_symbol_chart(events,frames,path):
     configure_font();ordered=sorted(events,key=lambda e:{'short':0,'medium':1,'long':2}.get(e['candidate']['track'],9))
     if not 1<=len(ordered)<=3 or len({e['candidate']['symbol'] for e in ordered})!=1:raise ValueError('One symbol and1-3overlap scopes required')
-    count=len(ordered);fig,axes=plt.subplots(count,1,figsize=(13,7+4*(count-1)),squeeze=False,layout='constrained');fig.patch.set_facecolor('#111722')
+    count=len(ordered);fig,axes=plt.subplots(count,2,figsize=(18,7+5*(count-1)),squeeze=False,layout='constrained');fig.patch.set_facecolor('#111722')
     try:
-        fig.suptitle(f"{ordered[0]['candidate']['symbol']} · {kst(max(e['timestamp'] for e in ordered))}",color='#e3e8f0',fontsize=14)
-        for ax,event in zip(axes[:,0],ordered):draw_scope(ax,event,frames)
+        regimes=' / '.join(f"{TRACK_LABELS[e['candidate']['track']]} {'강세' if e['candidate']['direction']==1 else '약세'}" for e in ordered)
+        fig.suptitle(f"{ordered[0]['candidate']['symbol']} · {regimes}\n{kst(max(e['timestamp'] for e in ordered))}",color='#e3e8f0',fontsize=14)
+        for row,event in zip(axes,ordered):
+            draw_scope(row[0],event,frames,overview=True);draw_scope(row[1],event,frames)
         path=Path(path);path.parent.mkdir(parents=True,exist_ok=True);fig.savefig(path,dpi=125,facecolor=fig.get_facecolor());return path
     finally:plt.close(fig)
 
