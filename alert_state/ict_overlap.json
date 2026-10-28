@@ -58,6 +58,13 @@
           }
         ],
         "latest_source": 1792713600000,
+        "equilibrium": {
+          "midpoint": 83800.5,
+          "eligible": false,
+          "range_low": 80379.0,
+          "range_high": 87222.0,
+          "distance_to_zone": 2430.5999999999913
+        },
         "id": "39f55a505c7d71ae0ce02d54",
         "track": "medium",
         "symbol": "BTCUSDT",
@@ -71,7 +78,7 @@
           "swept_level": 85132.7,
           "structure_level": 82829.0,
           "invalidation": 87222.0,
-          "swing_low": 79170.3,
+          "swing_low": 80379.0,
           "swing_high": 87222.0
         },
         "pair": [
@@ -80,7 +87,7 @@
         ],
         "formed_at": 1792713600000,
         "location": "waiting",
-        "price": 81140.0,
+        "price": 81087.6,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -111,11 +118,11 @@
           }
         ]
       },
-      "checked_at": 1793213448966
+      "checked_at": 1793214525716
     },
     "BTCUSDT|long": {
       "candidate": null,
-      "checked_at": 1793213448966
+      "checked_at": 1793214525716
     },
     "SKHYNIXUSDT|medium": {
       "candidate": {
@@ -159,6 +166,13 @@
           }
         ],
         "latest_source": 1793145600000,
+        "equilibrium": {
+          "midpoint": 972.5799999999999,
+          "eligible": false,
+          "range_low": 887.05,
+          "range_high": 1058.11,
+          "distance_to_zone": 144.3599999999999
+        },
         "id": "f98a22dbfdb25345464054cd",
         "track": "medium",
         "symbol": "SKHYNIXUSDT",
@@ -181,7 +195,7 @@
         ],
         "formed_at": 1793145600000,
         "location": "waiting",
-        "price": 1152.54,
+        "price": 1153.55,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -212,11 +226,11 @@
           }
         ]
       },
-      "checked_at": 1793213448985
+      "checked_at": 1793214526042
     },
     "SKHYNIXUSDT|long": {
       "candidate": null,
-      "checked_at": 1793213448985
+      "checked_at": 1793214526042
     },
     "NVDAUSDT|medium": {
       "candidate": {
@@ -260,6 +274,13 @@
           }
         ],
         "latest_source": 1792627200000,
+        "equilibrium": {
+          "midpoint": 228.37,
+          "eligible": false,
+          "range_low": 213.21,
+          "range_high": 243.53,
+          "distance_to_zone": 4.599999999999994
+        },
         "id": "43896b492ce5df58375fbba6",
         "track": "medium",
         "symbol": "NVDAUSDT",
@@ -273,7 +294,7 @@
           "swept_level": 234.85,
           "structure_level": 221.41,
           "invalidation": 243.53,
-          "swing_low": 210.62,
+          "swing_low": 213.21,
           "swing_high": 243.53
         },
         "pair": [
@@ -282,7 +303,7 @@
         ],
         "formed_at": 1792627200000,
         "location": "waiting",
-        "price": 216.92,
+        "price": 216.21,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -313,19 +334,19 @@
           }
         ]
       },
-      "checked_at": 1793213449004
+      "checked_at": 1793214526330
     },
     "NVDAUSDT|long": {
       "candidate": null,
-      "checked_at": 1793213449004
+      "checked_at": 1793214526330
     },
     "TSLAUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793213449022
+      "checked_at": 1793214526544
     },
     "TSLAUSDT|long": {
       "candidate": null,
-      "checked_at": 1793213449022
+      "checked_at": 1793214526544
     },
     "AAPLUSDT|medium": {
       "candidate": {
@@ -384,6 +405,13 @@
           }
         ],
         "latest_source": 1793116800000,
+        "equilibrium": {
+          "midpoint": 343.08500000000004,
+          "eligible": false,
+          "range_low": 337.44,
+          "range_high": 348.73,
+          "distance_to_zone": 1.4600000000000364
+        },
         "id": "07b1abcd44276f28d251b49d",
         "track": "medium",
         "symbol": "AAPLUSDT",
@@ -398,7 +426,7 @@
           "structure_level": 348.33,
           "invalidation": 337.44,
           "swing_low": 337.44,
-          "swing_high": 351.68
+          "swing_high": 348.73
         },
         "pair": [
           "1d",
@@ -406,15 +434,15 @@
         ],
         "formed_at": 1793116800000,
         "location": "waiting",
-        "price": 344.9,
+        "price": 344.86,
         "context_price_breach": false,
         "resistance_support": []
       },
-      "checked_at": 1793213449040
+      "checked_at": 1793214526762
     },
     "AAPLUSDT|long": {
       "candidate": null,
-      "checked_at": 1793213449040
+      "checked_at": 1793214526762
     },
     "MSFTUSDT|medium": {
       "candidate": {
@@ -488,6 +516,13 @@
           }
         ],
         "latest_source": 1793059200000,
+        "equilibrium": {
+          "midpoint": 517.5250000000001,
+          "eligible": false,
+          "range_low": 491.72,
+          "range_high": 543.33,
+          "distance_to_zone": 6.260000000000105
+        },
         "id": "8120355da1a38696a503e66d",
         "track": "medium",
         "symbol": "MSFTUSDT",
@@ -502,7 +537,7 @@
           "structure_level": 502.04,
           "invalidation": 491.72,
           "swing_low": 491.72,
-          "swing_high": 551.95
+          "swing_high": 543.33
         },
         "pair": [
           "1d",
@@ -510,7 +545,7 @@
         ],
         "formed_at": 1793059200000,
         "location": "waiting",
-        "price": 529.82,
+        "price": 530.07,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -528,23 +563,23 @@
           }
         ]
       },
-      "checked_at": 1793213449057
+      "checked_at": 1793214526975
     },
     "MSFTUSDT|long": {
       "candidate": null,
-      "checked_at": 1793213449057
+      "checked_at": 1793214526975
     },
     "AMZNUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793213449077
+      "checked_at": 1793214527177
     },
     "AMZNUSDT|long": {
       "candidate": null,
-      "checked_at": 1793213449077
+      "checked_at": 1793214527177
     },
     "GOOGLUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793213449094
+      "checked_at": 1793214527384
     },
     "GOOGLUSDT|long": {
       "candidate": {
@@ -588,6 +623,13 @@
           }
         ],
         "latest_source": 1792540800000,
+        "equilibrium": {
+          "midpoint": 341.47,
+          "eligible": false,
+          "range_low": 318.48,
+          "range_high": 364.46,
+          "distance_to_zone": 19.269999999999982
+        },
         "id": "b2be9ccbfc66bc774427dfed",
         "track": "long",
         "symbol": "GOOGLUSDT",
@@ -610,11 +652,11 @@
         ],
         "formed_at": 1792972800000,
         "location": "waiting",
-        "price": 325.51,
+        "price": 325.54,
         "context_price_breach": false,
         "resistance_support": []
       },
-      "checked_at": 1793213449094
+      "checked_at": 1793214527384
     },
     "METAUSDT|medium": {
       "candidate": {
@@ -658,6 +700,13 @@
           }
         ],
         "latest_source": 1792800000000,
+        "equilibrium": {
+          "midpoint": 681.925,
+          "eligible": false,
+          "range_low": 615.0,
+          "range_high": 748.85,
+          "distance_to_zone": 48.09000000000003
+        },
         "id": "3b5b97980d6a00895844a59c",
         "track": "medium",
         "symbol": "METAUSDT",
@@ -680,7 +729,7 @@
         ],
         "formed_at": 1792800000000,
         "location": "waiting",
-        "price": 614.37,
+        "price": 613.38,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -711,19 +760,19 @@
           }
         ]
       },
-      "checked_at": 1793213449112
+      "checked_at": 1793214527606
     },
     "METAUSDT|long": {
       "candidate": null,
-      "checked_at": 1793213449112
+      "checked_at": 1793214527606
     },
     "QQQUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793213449131
+      "checked_at": 1793214527835
     },
     "QQQUSDT|long": {
       "candidate": null,
-      "checked_at": 1793213449131
+      "checked_at": 1793214527835
     },
     "SPYUSDT|medium": {
       "candidate": {
@@ -782,6 +831,13 @@
           }
         ],
         "latest_source": 1792627200000,
+        "equilibrium": {
+          "midpoint": 771.28,
+          "eligible": true,
+          "range_low": 759.81,
+          "range_high": 782.75,
+          "distance_to_zone": 1.5599999999999454
+        },
         "id": "f741b7cc5a2394ced01455b6",
         "track": "medium",
         "symbol": "SPYUSDT",
@@ -795,7 +851,7 @@
           "swept_level": 782.06,
           "structure_level": 771.55,
           "invalidation": 782.75,
-          "swing_low": 759.61,
+          "swing_low": 759.81,
           "swing_high": 782.75
         },
         "pair": [
@@ -804,7 +860,7 @@
         ],
         "formed_at": 1792627200000,
         "location": "waiting",
-        "price": 773.42,
+        "price": 772.44,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -835,11 +891,11 @@
           }
         ]
       },
-      "checked_at": 1793213449150
+      "checked_at": 1793214528075
     },
     "SPYUSDT|long": {
       "candidate": null,
-      "checked_at": 1793213449150
+      "checked_at": 1793214528075
     },
     "NDX100USDT|medium": {
       "candidate": {
@@ -883,6 +939,13 @@
           }
         ],
         "latest_source": 1792972800000,
+        "equilibrium": {
+          "midpoint": 30066.5,
+          "eligible": true,
+          "range_low": 28807.0,
+          "range_high": 31326.0,
+          "distance_to_zone": 715.0
+        },
         "id": "396866a38db02130a349edfc",
         "track": "medium",
         "symbol": "NDX100USDT",
@@ -905,9 +968,22 @@
         ],
         "formed_at": 1792972800000,
         "location": "waiting",
-        "price": 29875.0,
+        "price": 29803.0,
         "context_price_breach": false,
         "resistance_support": [
+          {
+            "id": "1d:OB:1792022400000:1792195200000:-1",
+            "timeframe": "1d",
+            "kind": "OB",
+            "direction": -1,
+            "low": 29834.0,
+            "high": 29842.0,
+            "created": 1792195200000,
+            "origin": 1792022400000,
+            "stop": 30059.0,
+            "invalidation": 29842.0,
+            "expiry": 9223372036854775807
+          },
           {
             "id": "1d:FVG:1791849600000:1792108800000:-1",
             "timeframe": "1d",
@@ -920,43 +996,30 @@
             "stop": 30463.0,
             "invalidation": 30463.0,
             "expiry": 9223372036854775807
-          },
-          {
-            "id": "1d:FVG:1791676800000:1791936000000:-1",
-            "timeframe": "1d",
-            "kind": "FVG",
-            "direction": -1,
-            "low": 30731.0,
-            "high": 30882.0,
-            "created": 1791936000000,
-            "origin": 1791676800000,
-            "stop": 30882.0,
-            "invalidation": 30882.0,
-            "expiry": 9223372036854775807
           }
         ]
       },
-      "checked_at": 1793213449167
+      "checked_at": 1793214528299
     },
     "NDX100USDT|long": {
       "candidate": null,
-      "checked_at": 1793213449167
+      "checked_at": 1793214528299
     },
     "SP500USDT|medium": {
       "candidate": null,
-      "checked_at": 1793213449186
+      "checked_at": 1793214528521
     },
     "SP500USDT|long": {
       "candidate": null,
-      "checked_at": 1793213449186
+      "checked_at": 1793214528521
     },
     "BTCUSDT|short": {
       "candidate": null,
-      "checked_at": 1793213448966
+      "checked_at": 1793214525716
     },
     "SKHYNIXUSDT|short": {
       "candidate": null,
-      "checked_at": 1793213448985
+      "checked_at": 1793214526042
     },
     "NVDAUSDT|short": {
       "candidate": {
@@ -1000,6 +1063,13 @@
           }
         ],
         "latest_source": 1793203200000,
+        "equilibrium": {
+          "midpoint": 219.03,
+          "eligible": false,
+          "range_low": 217.41,
+          "range_high": 220.65,
+          "distance_to_zone": 3.359999999999985
+        },
         "id": "602977a525792efe5879886c",
         "track": "short",
         "symbol": "NVDAUSDT",
@@ -1022,7 +1092,7 @@
         ],
         "formed_at": 1793203200000,
         "location": "waiting",
-        "price": 216.92,
+        "price": 216.21,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -1053,7 +1123,7 @@
           }
         ]
       },
-      "checked_at": 1793213449004
+      "checked_at": 1793214526330
     },
     "TSLAUSDT|short": {
       "candidate": {
@@ -1112,6 +1182,13 @@
           }
         ],
         "latest_source": 1793203200000,
+        "equilibrium": {
+          "midpoint": 391.905,
+          "eligible": false,
+          "range_low": 370.57,
+          "range_high": 413.24,
+          "distance_to_zone": 2.3100000000000023
+        },
         "id": "9736eb6b4a1a7a1ff341fc64",
         "track": "short",
         "symbol": "TSLAUSDT",
@@ -1134,15 +1211,15 @@
         ],
         "formed_at": 1793203200000,
         "location": "waiting",
-        "price": 404.96,
+        "price": 403.8,
         "context_price_breach": false,
         "resistance_support": []
       },
-      "checked_at": 1793213449022
+      "checked_at": 1793214526544
     },
     "AAPLUSDT|short": {
       "candidate": null,
-      "checked_at": 1793213449040
+      "checked_at": 1793214526762
     },
     "MSFTUSDT|short": {
       "candidate": {
@@ -1216,6 +1293,13 @@
           }
         ],
         "latest_source": 1793188800000,
+        "equilibrium": {
+          "midpoint": 530.415,
+          "eligible": false,
+          "range_low": 516.22,
+          "range_high": 544.61,
+          "distance_to_zone": 1.509999999999991
+        },
         "id": "eb5de1bb9b3a9e453899c4e4",
         "track": "short",
         "symbol": "MSFTUSDT",
@@ -1238,7 +1322,7 @@
         ],
         "formed_at": 1793188800000,
         "location": "waiting",
-        "price": 529.82,
+        "price": 530.07,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -1269,7 +1353,7 @@
           }
         ]
       },
-      "checked_at": 1793213449057
+      "checked_at": 1793214526975
     },
     "AMZNUSDT|short": {
       "candidate": {
@@ -1313,6 +1397,13 @@
           }
         ],
         "latest_source": 1793131200000,
+        "equilibrium": {
+          "midpoint": 251.70499999999998,
+          "eligible": false,
+          "range_low": 248.29,
+          "range_high": 255.12,
+          "distance_to_zone": 1.799999999999983
+        },
         "id": "f4a30794f609b29fe036f725",
         "track": "short",
         "symbol": "AMZNUSDT",
@@ -1326,8 +1417,8 @@
           "swept_level": 248.5,
           "structure_level": 248.71,
           "invalidation": 248.29,
-          "swing_low": 247.85,
-          "swing_high": 255.79
+          "swing_low": 248.29,
+          "swing_high": 255.12
         },
         "pair": [
           "4h",
@@ -1335,7 +1426,7 @@
         ],
         "formed_at": 1793131200000,
         "location": "waiting",
-        "price": 254.21,
+        "price": 254.41,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -1366,15 +1457,15 @@
           }
         ]
       },
-      "checked_at": 1793213449077
+      "checked_at": 1793214527177
     },
     "GOOGLUSDT|short": {
       "candidate": null,
-      "checked_at": 1793213449094
+      "checked_at": 1793214527384
     },
     "METAUSDT|short": {
       "candidate": null,
-      "checked_at": 1793213449112
+      "checked_at": 1793214527606
     },
     "QQQUSDT|short": {
       "candidate": {
@@ -1433,6 +1524,13 @@
           }
         ],
         "latest_source": 1793102400000,
+        "equilibrium": {
+          "midpoint": 715.115,
+          "eligible": false,
+          "range_low": 703.61,
+          "range_high": 726.62,
+          "distance_to_zone": 11.919999999999959
+        },
         "id": "73776d258302fdd1b000bd5e",
         "track": "short",
         "symbol": "QQQUSDT",
@@ -1447,7 +1545,7 @@
           "structure_level": 706.6,
           "invalidation": 703.61,
           "swing_low": 703.61,
-          "swing_high": 726.66
+          "swing_high": 726.62
         },
         "pair": [
           "4h",
@@ -1455,22 +1553,9 @@
         ],
         "formed_at": 1793102400000,
         "location": "waiting",
-        "price": 725.83,
+        "price": 724.43,
         "context_price_breach": false,
         "resistance_support": [
-          {
-            "id": "4h:OB:1793160000000:1793188800000:-1",
-            "timeframe": "4h",
-            "kind": "OB",
-            "direction": -1,
-            "low": 725.55,
-            "high": 726.34,
-            "created": 1793188800000,
-            "origin": 1793160000000,
-            "stop": 726.66,
-            "invalidation": 726.34,
-            "expiry": 9223372036854775807
-          },
           {
             "id": "4h:FVG:1792137600000:1792180800000:-1",
             "timeframe": "4h",
@@ -1483,10 +1568,23 @@
             "stop": 727.65,
             "invalidation": 727.65,
             "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:OB:1793160000000:1793188800000:-1",
+            "timeframe": "4h",
+            "kind": "OB",
+            "direction": -1,
+            "low": 725.55,
+            "high": 726.34,
+            "created": 1793188800000,
+            "origin": 1793160000000,
+            "stop": 726.66,
+            "invalidation": 726.34,
+            "expiry": 9223372036854775807
           }
         ]
       },
-      "checked_at": 1793213449131
+      "checked_at": 1793214527835
     },
     "SPYUSDT|short": {
       "candidate": {
@@ -1530,6 +1628,13 @@
           }
         ],
         "latest_source": 1793131200000,
+        "equilibrium": {
+          "midpoint": 766.265,
+          "eligible": false,
+          "range_low": 760.62,
+          "range_high": 771.91,
+          "distance_to_zone": 2.0300000000000864
+        },
         "id": "dcd4ed9ccfa56ce97abe3a34",
         "track": "short",
         "symbol": "SPYUSDT",
@@ -1544,7 +1649,7 @@
           "structure_level": 763.01,
           "invalidation": 760.62,
           "swing_low": 760.62,
-          "swing_high": 773.14
+          "swing_high": 771.91
         },
         "pair": [
           "4h",
@@ -1552,7 +1657,7 @@
         ],
         "formed_at": 1793131200000,
         "location": "waiting",
-        "price": 773.42,
+        "price": 772.44,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -1583,7 +1688,7 @@
           }
         ]
       },
-      "checked_at": 1793213449150
+      "checked_at": 1793214528075
     },
     "NDX100USDT|short": {
       "candidate": {
@@ -1642,6 +1747,13 @@
           }
         ],
         "latest_source": 1793203200000,
+        "equilibrium": {
+          "midpoint": 29405.5,
+          "eligible": false,
+          "range_low": 28903.0,
+          "range_high": 29908.0,
+          "distance_to_zone": 140.0
+        },
         "id": "3396babe286622c6321aa882",
         "track": "short",
         "symbol": "NDX100USDT",
@@ -1656,7 +1768,7 @@
           "structure_level": 29149.0,
           "invalidation": 28903.0,
           "swing_low": 28903.0,
-          "swing_high": 29925.0
+          "swing_high": 29908.0
         },
         "pair": [
           "4h",
@@ -1664,22 +1776,9 @@
         ],
         "formed_at": 1793203200000,
         "location": "waiting",
-        "price": 29875.0,
+        "price": 29803.0,
         "context_price_breach": false,
         "resistance_support": [
-          {
-            "id": "4h:OB:1792598400000:1792627200000:-1",
-            "timeframe": "4h",
-            "kind": "OB",
-            "direction": -1,
-            "low": 29854.0,
-            "high": 29897.0,
-            "created": 1792627200000,
-            "origin": 1792598400000,
-            "stop": 29927.0,
-            "invalidation": 29897.0,
-            "expiry": 9223372036854775807
-          },
           {
             "id": "4h:FVG:1792137600000:1792180800000:-1",
             "timeframe": "4h",
@@ -1692,14 +1791,27 @@
             "stop": 29919.0,
             "invalidation": 29919.0,
             "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:OB:1792598400000:1792627200000:-1",
+            "timeframe": "4h",
+            "kind": "OB",
+            "direction": -1,
+            "low": 29854.0,
+            "high": 29897.0,
+            "created": 1792627200000,
+            "origin": 1792598400000,
+            "stop": 29927.0,
+            "invalidation": 29897.0,
+            "expiry": 9223372036854775807
           }
         ]
       },
-      "checked_at": 1793213449167
+      "checked_at": 1793214528299
     },
     "SP500USDT|short": {
       "candidate": null,
-      "checked_at": 1793213449186
+      "checked_at": 1793214528521
     }
   },
   "delivered": {
@@ -1817,6 +1929,16 @@
       "symbol": "NDX100USDT",
       "stage": "prepared",
       "timestamp": 1793213224472
+    },
+    "d17f257269ea844a0cbd644a": {
+      "symbol": "SPYUSDT",
+      "stage": "approach",
+      "timestamp": 1793214528075
+    },
+    "7e695eae7bc245fd01c309eb": {
+      "symbol": "NDX100USDT",
+      "stage": "approach",
+      "timestamp": 1793214528299
     }
   },
   "pending": {},
@@ -1881,6 +2003,13 @@
             }
           ],
           "latest_source": 1792713600000,
+          "equilibrium": {
+            "midpoint": 83800.5,
+            "eligible": false,
+            "range_low": 80379.0,
+            "range_high": 87222.0,
+            "distance_to_zone": 2430.5999999999913
+          },
           "id": "39f55a505c7d71ae0ce02d54",
           "track": "medium",
           "symbol": "BTCUSDT",
@@ -1894,7 +2023,7 @@
             "swept_level": 85132.7,
             "structure_level": 82829.0,
             "invalidation": 87222.0,
-            "swing_low": 79170.3,
+            "swing_low": 80379.0,
             "swing_high": 87222.0
           },
           "pair": [
@@ -1903,7 +2032,7 @@
           ],
           "formed_at": 1792713600000,
           "location": "waiting",
-          "price": 81140.0,
+          "price": 81087.6,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -1982,6 +2111,13 @@
             }
           ],
           "latest_source": 1793145600000,
+          "equilibrium": {
+            "midpoint": 972.5799999999999,
+            "eligible": false,
+            "range_low": 887.05,
+            "range_high": 1058.11,
+            "distance_to_zone": 144.3599999999999
+          },
           "id": "f98a22dbfdb25345464054cd",
           "track": "medium",
           "symbol": "SKHYNIXUSDT",
@@ -2004,7 +2140,7 @@
           ],
           "formed_at": 1793145600000,
           "location": "waiting",
-          "price": 1152.54,
+          "price": 1153.55,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -2083,6 +2219,13 @@
             }
           ],
           "latest_source": 1792627200000,
+          "equilibrium": {
+            "midpoint": 228.37,
+            "eligible": false,
+            "range_low": 213.21,
+            "range_high": 243.53,
+            "distance_to_zone": 4.599999999999994
+          },
           "id": "43896b492ce5df58375fbba6",
           "track": "medium",
           "symbol": "NVDAUSDT",
@@ -2096,7 +2239,7 @@
             "swept_level": 234.85,
             "structure_level": 221.41,
             "invalidation": 243.53,
-            "swing_low": 210.62,
+            "swing_low": 213.21,
             "swing_high": 243.53
           },
           "pair": [
@@ -2105,7 +2248,7 @@
           ],
           "formed_at": 1792627200000,
           "location": "waiting",
-          "price": 216.92,
+          "price": 216.21,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -2201,6 +2344,13 @@
             }
           ],
           "latest_source": 1793116800000,
+          "equilibrium": {
+            "midpoint": 343.08500000000004,
+            "eligible": false,
+            "range_low": 337.44,
+            "range_high": 348.73,
+            "distance_to_zone": 1.4600000000000364
+          },
           "id": "07b1abcd44276f28d251b49d",
           "track": "medium",
           "symbol": "AAPLUSDT",
@@ -2215,7 +2365,7 @@
             "structure_level": 348.33,
             "invalidation": 337.44,
             "swing_low": 337.44,
-            "swing_high": 351.68
+            "swing_high": 348.73
           },
           "pair": [
             "1d",
@@ -2223,7 +2373,7 @@
           ],
           "formed_at": 1793116800000,
           "location": "waiting",
-          "price": 344.9,
+          "price": 344.86,
           "context_price_breach": false,
           "resistance_support": []
         }
@@ -2305,6 +2455,13 @@
             }
           ],
           "latest_source": 1793059200000,
+          "equilibrium": {
+            "midpoint": 517.5250000000001,
+            "eligible": false,
+            "range_low": 491.72,
+            "range_high": 543.33,
+            "distance_to_zone": 6.260000000000105
+          },
           "id": "8120355da1a38696a503e66d",
           "track": "medium",
           "symbol": "MSFTUSDT",
@@ -2319,7 +2476,7 @@
             "structure_level": 502.04,
             "invalidation": 491.72,
             "swing_low": 491.72,
-            "swing_high": 551.95
+            "swing_high": 543.33
           },
           "pair": [
             "1d",
@@ -2327,7 +2484,7 @@
           ],
           "formed_at": 1793059200000,
           "location": "waiting",
-          "price": 529.82,
+          "price": 530.07,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -2396,6 +2553,13 @@
             }
           ],
           "latest_source": 1792540800000,
+          "equilibrium": {
+            "midpoint": 341.47,
+            "eligible": false,
+            "range_low": 318.48,
+            "range_high": 364.46,
+            "distance_to_zone": 19.269999999999982
+          },
           "id": "b2be9ccbfc66bc774427dfed",
           "track": "long",
           "symbol": "GOOGLUSDT",
@@ -2418,7 +2582,7 @@
           ],
           "formed_at": 1792972800000,
           "location": "waiting",
-          "price": 325.51,
+          "price": 325.54,
           "context_price_breach": false,
           "resistance_support": []
         }
@@ -2469,6 +2633,13 @@
             }
           ],
           "latest_source": 1792800000000,
+          "equilibrium": {
+            "midpoint": 681.925,
+            "eligible": false,
+            "range_low": 615.0,
+            "range_high": 748.85,
+            "distance_to_zone": 48.09000000000003
+          },
           "id": "3b5b97980d6a00895844a59c",
           "track": "medium",
           "symbol": "METAUSDT",
@@ -2491,7 +2662,7 @@
           ],
           "formed_at": 1792800000000,
           "location": "waiting",
-          "price": 614.37,
+          "price": 613.38,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -2587,6 +2758,13 @@
             }
           ],
           "latest_source": 1792627200000,
+          "equilibrium": {
+            "midpoint": 771.28,
+            "eligible": true,
+            "range_low": 759.81,
+            "range_high": 782.75,
+            "distance_to_zone": 1.5599999999999454
+          },
           "id": "f741b7cc5a2394ced01455b6",
           "track": "medium",
           "symbol": "SPYUSDT",
@@ -2600,7 +2778,7 @@
             "swept_level": 782.06,
             "structure_level": 771.55,
             "invalidation": 782.75,
-            "swing_low": 759.61,
+            "swing_low": 759.81,
             "swing_high": 782.75
           },
           "pair": [
@@ -2609,7 +2787,7 @@
           ],
           "formed_at": 1792627200000,
           "location": "waiting",
-          "price": 773.42,
+          "price": 772.44,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -2688,6 +2866,13 @@
             }
           ],
           "latest_source": 1792972800000,
+          "equilibrium": {
+            "midpoint": 30066.5,
+            "eligible": true,
+            "range_low": 28807.0,
+            "range_high": 31326.0,
+            "distance_to_zone": 715.0
+          },
           "id": "396866a38db02130a349edfc",
           "track": "medium",
           "symbol": "NDX100USDT",
@@ -2710,9 +2895,22 @@
           ],
           "formed_at": 1792972800000,
           "location": "waiting",
-          "price": 29875.0,
+          "price": 29803.0,
           "context_price_breach": false,
           "resistance_support": [
+            {
+              "id": "1d:OB:1792022400000:1792195200000:-1",
+              "timeframe": "1d",
+              "kind": "OB",
+              "direction": -1,
+              "low": 29834.0,
+              "high": 29842.0,
+              "created": 1792195200000,
+              "origin": 1792022400000,
+              "stop": 30059.0,
+              "invalidation": 29842.0,
+              "expiry": 9223372036854775807
+            },
             {
               "id": "1d:FVG:1791849600000:1792108800000:-1",
               "timeframe": "1d",
@@ -2724,19 +2922,6 @@
               "origin": 1791849600000,
               "stop": 30463.0,
               "invalidation": 30463.0,
-              "expiry": 9223372036854775807
-            },
-            {
-              "id": "1d:FVG:1791676800000:1791936000000:-1",
-              "timeframe": "1d",
-              "kind": "FVG",
-              "direction": -1,
-              "low": 30731.0,
-              "high": 30882.0,
-              "created": 1791936000000,
-              "origin": 1791676800000,
-              "stop": 30882.0,
-              "invalidation": 30882.0,
               "expiry": 9223372036854775807
             }
           ]
@@ -2793,6 +2978,13 @@
             }
           ],
           "latest_source": 1793203200000,
+          "equilibrium": {
+            "midpoint": 219.03,
+            "eligible": false,
+            "range_low": 217.41,
+            "range_high": 220.65,
+            "distance_to_zone": 3.359999999999985
+          },
           "id": "602977a525792efe5879886c",
           "track": "short",
           "symbol": "NVDAUSDT",
@@ -2815,7 +3007,7 @@
           ],
           "formed_at": 1793203200000,
           "location": "waiting",
-          "price": 216.92,
+          "price": 216.21,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -2908,6 +3100,13 @@
             }
           ],
           "latest_source": 1793203200000,
+          "equilibrium": {
+            "midpoint": 391.905,
+            "eligible": false,
+            "range_low": 370.57,
+            "range_high": 413.24,
+            "distance_to_zone": 2.3100000000000023
+          },
           "id": "9736eb6b4a1a7a1ff341fc64",
           "track": "short",
           "symbol": "TSLAUSDT",
@@ -2930,7 +3129,7 @@
           ],
           "formed_at": 1793203200000,
           "location": "waiting",
-          "price": 404.96,
+          "price": 403.8,
           "context_price_breach": false,
           "resistance_support": []
         }
@@ -3012,6 +3211,13 @@
             }
           ],
           "latest_source": 1793188800000,
+          "equilibrium": {
+            "midpoint": 530.415,
+            "eligible": false,
+            "range_low": 516.22,
+            "range_high": 544.61,
+            "distance_to_zone": 1.509999999999991
+          },
           "id": "eb5de1bb9b3a9e453899c4e4",
           "track": "short",
           "symbol": "MSFTUSDT",
@@ -3034,7 +3240,7 @@
           ],
           "formed_at": 1793188800000,
           "location": "waiting",
-          "price": 529.82,
+          "price": 530.07,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -3112,6 +3318,13 @@
             }
           ],
           "latest_source": 1793131200000,
+          "equilibrium": {
+            "midpoint": 251.70499999999998,
+            "eligible": false,
+            "range_low": 248.29,
+            "range_high": 255.12,
+            "distance_to_zone": 1.799999999999983
+          },
           "id": "f4a30794f609b29fe036f725",
           "track": "short",
           "symbol": "AMZNUSDT",
@@ -3125,8 +3338,8 @@
             "swept_level": 248.5,
             "structure_level": 248.71,
             "invalidation": 248.29,
-            "swing_low": 247.85,
-            "swing_high": 255.79
+            "swing_low": 248.29,
+            "swing_high": 255.12
           },
           "pair": [
             "4h",
@@ -3134,7 +3347,7 @@
           ],
           "formed_at": 1793131200000,
           "location": "waiting",
-          "price": 254.21,
+          "price": 254.41,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -3229,6 +3442,13 @@
             }
           ],
           "latest_source": 1793102400000,
+          "equilibrium": {
+            "midpoint": 715.115,
+            "eligible": false,
+            "range_low": 703.61,
+            "range_high": 726.62,
+            "distance_to_zone": 11.919999999999959
+          },
           "id": "73776d258302fdd1b000bd5e",
           "track": "short",
           "symbol": "QQQUSDT",
@@ -3243,7 +3463,7 @@
             "structure_level": 706.6,
             "invalidation": 703.61,
             "swing_low": 703.61,
-            "swing_high": 726.66
+            "swing_high": 726.62
           },
           "pair": [
             "4h",
@@ -3251,22 +3471,9 @@
           ],
           "formed_at": 1793102400000,
           "location": "waiting",
-          "price": 725.83,
+          "price": 724.43,
           "context_price_breach": false,
           "resistance_support": [
-            {
-              "id": "4h:OB:1793160000000:1793188800000:-1",
-              "timeframe": "4h",
-              "kind": "OB",
-              "direction": -1,
-              "low": 725.55,
-              "high": 726.34,
-              "created": 1793188800000,
-              "origin": 1793160000000,
-              "stop": 726.66,
-              "invalidation": 726.34,
-              "expiry": 9223372036854775807
-            },
             {
               "id": "4h:FVG:1792137600000:1792180800000:-1",
               "timeframe": "4h",
@@ -3278,6 +3485,19 @@
               "origin": 1792137600000,
               "stop": 727.65,
               "invalidation": 727.65,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "4h:OB:1793160000000:1793188800000:-1",
+              "timeframe": "4h",
+              "kind": "OB",
+              "direction": -1,
+              "low": 725.55,
+              "high": 726.34,
+              "created": 1793188800000,
+              "origin": 1793160000000,
+              "stop": 726.66,
+              "invalidation": 726.34,
               "expiry": 9223372036854775807
             }
           ]
@@ -3329,6 +3549,13 @@
             }
           ],
           "latest_source": 1793131200000,
+          "equilibrium": {
+            "midpoint": 766.265,
+            "eligible": false,
+            "range_low": 760.62,
+            "range_high": 771.91,
+            "distance_to_zone": 2.0300000000000864
+          },
           "id": "dcd4ed9ccfa56ce97abe3a34",
           "track": "short",
           "symbol": "SPYUSDT",
@@ -3343,7 +3570,7 @@
             "structure_level": 763.01,
             "invalidation": 760.62,
             "swing_low": 760.62,
-            "swing_high": 773.14
+            "swing_high": 771.91
           },
           "pair": [
             "4h",
@@ -3351,7 +3578,7 @@
           ],
           "formed_at": 1793131200000,
           "location": "waiting",
-          "price": 773.42,
+          "price": 772.44,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -3444,6 +3671,13 @@
             }
           ],
           "latest_source": 1793203200000,
+          "equilibrium": {
+            "midpoint": 29405.5,
+            "eligible": false,
+            "range_low": 28903.0,
+            "range_high": 29908.0,
+            "distance_to_zone": 140.0
+          },
           "id": "3396babe286622c6321aa882",
           "track": "short",
           "symbol": "NDX100USDT",
@@ -3458,7 +3692,7 @@
             "structure_level": 29149.0,
             "invalidation": 28903.0,
             "swing_low": 28903.0,
-            "swing_high": 29925.0
+            "swing_high": 29908.0
           },
           "pair": [
             "4h",
@@ -3466,22 +3700,9 @@
           ],
           "formed_at": 1793203200000,
           "location": "waiting",
-          "price": 29875.0,
+          "price": 29803.0,
           "context_price_breach": false,
           "resistance_support": [
-            {
-              "id": "4h:OB:1792598400000:1792627200000:-1",
-              "timeframe": "4h",
-              "kind": "OB",
-              "direction": -1,
-              "low": 29854.0,
-              "high": 29897.0,
-              "created": 1792627200000,
-              "origin": 1792598400000,
-              "stop": 29927.0,
-              "invalidation": 29897.0,
-              "expiry": 9223372036854775807
-            },
             {
               "id": "4h:FVG:1792137600000:1792180800000:-1",
               "timeframe": "4h",
@@ -3493,6 +3714,19 @@
               "origin": 1792137600000,
               "stop": 29919.0,
               "invalidation": 29919.0,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "4h:OB:1792598400000:1792627200000:-1",
+              "timeframe": "4h",
+              "kind": "OB",
+              "direction": -1,
+              "low": 29854.0,
+              "high": 29897.0,
+              "created": 1792627200000,
+              "origin": 1792598400000,
+              "stop": 29927.0,
+              "invalidation": 29897.0,
               "expiry": 9223372036854775807
             }
           ]
@@ -3592,6 +3826,16 @@
       "symbol": "NDX100USDT",
       "stage": "prepared",
       "timestamp": 1793213224472
+    },
+    "d17f257269ea844a0cbd644a": {
+      "symbol": "SPYUSDT",
+      "stage": "approach",
+      "timestamp": 1793214528075
+    },
+    "7e695eae7bc245fd01c309eb": {
+      "symbol": "NDX100USDT",
+      "stage": "approach",
+      "timestamp": 1793214528299
     }
   }
 }
