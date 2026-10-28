@@ -160,3 +160,21 @@ def format_notice(event):
         lines.append({"waiting": "가격 재방문 대기", "inside": "현재가가 관찰 구간 안에 있음", "passed": "현재가가 구간을 통과함 · 해당 시간대 종가 확인 필요"}[c["location"]])
     lines.append("구간 관찰 알림 · 자동 진입·주문 없음")
     return "\n".join(lines)
+
+
+def compact_notice(events):
+    """One symbol, only actual overlap scopes, without lifecycle narration."""
+    ordered=sorted(events,key=lambda e:{'short':0,'medium':1,'long':2}.get(e['candidate']['track'],9))
+    if not ordered:raise ValueError('No overlap events')
+    symbols={e['candidate']['symbol'] for e in ordered}
+    if len(symbols)!=1:raise ValueError('One symbol per notice')
+    number=lambda x:f'{x:,.2f}'.rstrip('0').rstrip('.')
+    lines=[f"[{ordered[0]['candidate']['symbol']}]",'']
+    for event in ordered:
+        c=event['candidate'];tf_order={tf:i for i,tf in enumerate(c['pair'])}
+        groups={(z['timeframe'],z['kind']) for z in c['sources']}
+        if not groups:groups={tuple(x.split(':',1)) for x in c['groups']}
+        evidence=' + '.join(f"{tf.upper()} {kind}" for tf,kind in sorted(groups,key=lambda x:(tf_order.get(x[0],9),x[1]!='OB')))
+        lines += [f"{TRACK_LABELS[c['track']]} 겹침 · {'LONG' if c['direction']==1 else 'SHORT'}",f"{number(c['low'])} ~ {number(c['high'])}",f"근거: {evidence}",'']
+    lines.append(kst(max(e['timestamp'] for e in ordered)))
+    return '\n'.join(lines)

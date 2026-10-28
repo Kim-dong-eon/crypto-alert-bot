@@ -4,7 +4,8 @@ import unittest
 from unittest.mock import Mock,patch
 from PIL import Image
 from src.ict_engine import Bar,TF_MS
-from src.overlap_charts import render_chart,TF_COLORS
+from src.overlap_charts import render_chart,render_symbol_chart,TF_COLORS
+from src.ict_overlap import compact_notice
 from src.overlap_telegram import TelegramMedia
 from src.overlap_delivery import OverlapLedger
 from tests.test_ict_overlap import snapshot
@@ -17,6 +18,41 @@ def chart_example(direction=1):
 
 
 class ChartTests(unittest.TestCase):
+    def test_compact_caption_lists_only_overlaps_in_scope_order(self):
+        import copy
+        short=snapshot()['tracks']['short']['candidate'];medium=copy.deepcopy(short);medium.update(track='medium',pair=['1d','4h'],groups=['1d:OB','4h:FVG'])
+        events=[{'candidate':medium,'timestamp':1000},{'candidate':short,'timestamp':1000}]
+        text=compact_notice(events);self.assertLess(text.index('단기 겹침'),text.index('중기 겹침'));self.assertNotIn('장기',text);self.assertNotIn('MSS',text);self.assertNotIn('무효화',text);self.assertLess(len(text),250)
+
+    def test_two_scopes_of_one_symbol_produce_one_image_and_two_locks(self):
+        import copy
+        with tempfile.TemporaryDirectory() as directory:
+            ledger=OverlapLedger(Path(directory)/'s.json',require_images=True,overlap_only=True);s=snapshot();medium=copy.deepcopy(s['tracks']['short']);medium['candidate'].update(id='medium',track='medium');s['tracks']['medium']=medium
+            ledger.observe(s);images=Mock(return_value=True);renderer=Mock(return_value=Path('symbol.png'))
+            r=ledger.dispatch_symbols(images,renderer,{})
+            self.assertEqual(r,{'sent':2,'failed':0,'images_sent':1});self.assertEqual(len(images.call_args.args[0]),1);self.assertEqual(len(ledger.state['images_delivered']),2)
+            ledger.observe(s);self.assertEqual(ledger.dispatch_symbols(images,renderer,{})['images_sent'],0)
+
+    def test_overlap_only_does_not_repeat_on_touch_or_send_termination(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ledger=OverlapLedger(Path(directory)/'s.json',require_images=True,overlap_only=True);ledger.observe(snapshot());ledger.dispatch_symbols(lambda _:True,lambda _:Path('x'),{})
+            ledger.observe(snapshot(price=105,stamp=2000));self.assertFalse(ledger.state['pending'])
+            s=snapshot();s['tracks']['short']['candidate']=None;s['tracks']['short']['context']=None;s['tracks']['short']['status']='sweep_mss_unconfirmed';ledger.observe(s);self.assertFalse(ledger.state['pending'])
+
+    def test_failed_combined_photo_keeps_all_scopes_for_retry(self):
+        import copy
+        with tempfile.TemporaryDirectory() as directory:
+            ledger=OverlapLedger(Path(directory)/'s.json',require_images=True,overlap_only=True);s=snapshot();medium=copy.deepcopy(s['tracks']['short']);medium['candidate'].update(id='medium',track='medium');s['tracks']['medium']=medium;ledger.observe(s)
+            self.assertEqual(ledger.dispatch_symbols(lambda _:False,lambda _:Path('x'),{})['failed'],2);self.assertEqual(len(ledger.state['pending']),2)
+            self.assertEqual(ledger.dispatch_symbols(lambda _:True,lambda _:Path('x'),{})['images_sent'],1);self.assertFalse(ledger.state['pending'])
+
+    def test_symbol_image_can_hold_only_the_matching_scopes(self):
+        import copy
+        with tempfile.TemporaryDirectory() as directory:
+            e,frames=chart_example();medium=copy.deepcopy(e);medium['candidate'].update(track='medium',pair=['1d','4h']);frames['1d']=frames['4h']
+            p=render_symbol_chart([medium,e],frames,Path(directory)/'one_symbol.png')
+            with Image.open(p) as im:self.assertGreater(im.height,1000)
+
     def test_long_and_short_render_readable_single_panel_box_images(self):
         with tempfile.TemporaryDirectory() as directory:
             for d in (1,-1):

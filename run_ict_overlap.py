@@ -50,21 +50,30 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
     # symbol fetch failure cannot leak an older pending alert into delivery.
     delivery={"sent":0,"failed":0}
     if render_previews and sender is None:
-        from src.overlap_charts import render_chart
+        from src.overlap_charts import render_symbol_chart
         for result in results:
+            symbol_events=[]
             for name,state in result['tracks'].items():
                 if name=='auxiliary' or state['candidate'] is None:continue
                 c=state['candidate'];event={'candidate':c,'timestamp':result['as_of'],'stage':'prepared','new_formation':False}
-                render_chart(event,chart_frames[c['symbol']],ROOT/'runtime/ict_overlap/charts'/f"{c['symbol']}_{name}_{c['id']}_preview.png")
+                if not c['context_price_breach']:symbol_events.append(event)
+            if symbol_events:render_symbol_chart(symbol_events,chart_frames[result['symbol']],ROOT/'runtime/ict_overlap/charts'/f"{result['symbol']}_overlap_preview.png")
     if sender:
         successful={r['symbol'] for r in results}
         held={k:e for k,e in ledger.state['pending'].items() if e['candidate']['symbol'] not in successful}
         for key in held:del ledger.state['pending'][key]
         if image_sender:
-            from src.overlap_charts import render_chart
-            def renderer(event):
-                c=event['candidate'];return render_chart(event,chart_frames[c['symbol']],ROOT/'runtime/ict_overlap/charts'/f"{c['symbol']}_{c['track']}_{c['id']}_{event['stage']}.png")
-            delivery=ledger.dispatch_media(sender,image_sender,renderer)
+            from src.overlap_charts import render_symbol_chart
+            contexts={}
+            for result in results:
+                events=[]
+                for state in result['tracks'].values():
+                    c=state['candidate']
+                    if c and not c['context_price_breach']:events.append({'candidate':c,'timestamp':result['as_of'],'stage':'prepared','new_formation':False})
+                contexts[result['symbol']]=events
+            def renderer(events):
+                c=events[0]['candidate'];return render_symbol_chart(events,chart_frames[c['symbol']],ROOT/'runtime/ict_overlap/charts'/f"{c['symbol']}_overlap.png")
+            delivery=ledger.dispatch_symbols(image_sender,renderer,contexts)
         else:delivery=ledger.dispatch(sender,batch=True)
         ledger.state['pending'].update(held);ledger.save()
     report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery}
@@ -99,7 +108,7 @@ def main(argv=None):
         from dotenv import load_dotenv
         load_dotenv(ROOT/'.env');sender=telegram_sender(os.getenv('TELEGRAM_BOT_TOKEN'),os.getenv('TELEGRAM_CHAT_ID'))
     with single_writer(args.state.with_suffix('.lock')) if args.send or args.watch else nullcontext():
-        ledger=OverlapLedger(args.state,require_images=args.send)
+        ledger=OverlapLedger(args.state,require_images=args.send,overlap_only=True)
         image_sender=None
         if args.send:
             from src.overlap_telegram import TelegramMedia

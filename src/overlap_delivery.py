@@ -6,12 +6,12 @@ import os
 import time
 from pathlib import Path
 
-from src.ict_overlap import VERSION, format_notice
+from src.ict_overlap import VERSION, format_notice,compact_notice
 from src.ict_engine import TF_MS
 
 
 class OverlapLedger:
-    def __init__(self, path, require_images=False):
+    def __init__(self, path, require_images=False,overlap_only=False):
         self.path = Path(path)
         self.state = json.loads(self.path.read_text(encoding="utf-8")) if self.path.exists() else {"version":VERSION,"tracks":{},"delivered":{},"pending":{}}
         if self.state.get("version") != VERSION:
@@ -19,6 +19,9 @@ class OverlapLedger:
         self.state.setdefault("locks",{})
         self.state.setdefault("images_delivered",{})
         self.require_images=require_images
+        self.overlap_only=overlap_only
+        if overlap_only:
+            self.state['pending']={k:e for k,e in self.state['pending'].items() if e['stage']=='prepared'}
 
     def save(self):
         self.path.parent.mkdir(parents=True,exist_ok=True)
@@ -75,7 +78,7 @@ class OverlapLedger:
                     was_sent=any(self.key(held,stage) in self.state["delivered"] for stage in ("prepared","touched","caution"))
                     for key,event in list(self.state["pending"].items()):
                         if event["candidate"]["id"]==held["id"] and event["stage"]!="cancelled":del self.state["pending"][key]
-                    if was_sent:
+                    if was_sent and not self.overlap_only:
                         add({**held,"price":snapshot["price"]},"cancelled",previous,"상위 스윕·MSS 흐름 종료/변경" if not context_matches else "중첩 근거의 해당 시간대 종가 무효화")
             self.state["locks"][scope]=remaining
             if candidate:
@@ -90,7 +93,7 @@ class OverlapLedger:
                 c=event["candidate"]
                 if c["symbol"]==snapshot["symbol"] and c["track"]==name and event["stage"]!="cancelled" and (not candidate or c["id"]!=candidate["id"]):del self.state["pending"][key]
             if candidate:
-                stage="caution" if candidate["context_price_breach"] else "touched" if candidate["location"]=="inside" else "prepared"
+                stage=(None if candidate['context_price_breach'] else 'prepared') if self.overlap_only else "caution" if candidate["context_price_breach"] else "touched" if candidate["location"]=="inside" else "prepared"
                 # Touch subsumes a pending unannounced formation.
                 if stage!="prepared":self.state["pending"].pop(self.key(candidate,"prepared"),None)
                 if stage=="prepared" and self.key(candidate,"touched") in self.state["delivered"]:stage=None
@@ -141,6 +144,35 @@ class OverlapLedger:
                     del self.state['pending'][key]
                 self.save();result['sent']+=len(batch);result['images_sent']+=len(batch)
             else:result['failed']+=len(batch)
+        return result
+
+    def dispatch_symbols(self,image_sender,renderer,contexts):
+        """A single image/caption per symbol; acknowledge its pending scopes."""
+        result={'sent':0,'failed':0,'images_sent':0};grouped={}
+        for key,event in self.state['pending'].items():
+            if event['stage']!='prepared':continue
+            grouped.setdefault(event['candidate']['symbol'],[]).append((key,event))
+        ready=[]
+        for symbol,pending in grouped.items():
+            events=contexts.get(symbol) or [e for _,e in pending]
+            try:
+                caption=compact_notice(events)
+                if len(caption)>1024:raise ValueError('Caption too long')
+                path=renderer(events);ready.append((pending,path,caption))
+            except Exception:result['failed']+=len(pending)
+        for offset in range(0,len(ready),10):
+            batch=ready[offset:offset+10]
+            try:success=image_sender([(p,c) for _,p,c in batch]) is True
+            except Exception:success=False
+            if not success:
+                result['failed']+=sum(len(events) for events,_,_ in batch);continue
+            for pending,_,_ in batch:
+                for key,event in pending:
+                    record={'symbol':event['candidate']['symbol'],'stage':event['stage'],'timestamp':event['timestamp']}
+                    self.state['delivered'][key]=record;self.state['images_delivered'][key]=record;del self.state['pending'][key]
+                    result['sent']+=1
+                result['images_sent']+=1
+            self.save()
         return result
 
     def dispatch(self,sender,batch=False):
