@@ -1,52 +1,130 @@
-name: Crypto Alert Bot
+name: ICT Overlap Alerts
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Preview only: no Telegram delivery or lock-state update'
+        type: boolean
+        default: true
+      unlock_symbol:
+        description: 'Optional: unlock this exchange symbol, e.g. BTCUSDT'
+        type: string
+        default: ''
+      unlock_track:
+        description: 'Scope to unlock: short=단기, medium=중기, long=장기'
+        type: choice
+        options: [short, medium, long]
+        default: short
   schedule:
     - cron: '*/5 * * * *'
 
-# ★ 깃허브 액션 봇이 에러 없이 파일을 저장(push)할 수 있도록 쓰기 권한 부여
 permissions:
   contents: write
 
+concurrency:
+  group: ict-overlap-${{ github.repository }}
+  cancel-in-progress: false
+
 jobs:
   run-bot:
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      PYTHONIOENCODING: utf-8
+      MPLBACKEND: Agg
     steps:
-      - name: 1. 저장소 코드 불러오기
-        uses: actions/checkout@v4
+      - name: Checkout current default branch
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{ github.ref_name }}
 
-      - name: 2. 파이썬 세팅
-        uses: actions/setup-python@v5
+      - name: Synchronize persisted alert locks
+        env:
+          BOT_BRANCH: ${{ github.ref_name }}
+        run: git pull --ff-only origin "$BOT_BRANCH"
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
         with:
-          python-version: '3.12.4'
-          cache: 'pip'
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-ict.txt
 
-      - name: 3. 필수 라이브러리 및 한글 폰트 설치
+      - name: Install chart fonts and dependencies
         run: |
-          sudo apt-get update && sudo apt-get install -y fonts-nanum
-          rm -rf ~/.cache/matplotlib
-          pip install -r requirements.txt
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-nanum
+          python -m pip install -r requirements-ict.txt
 
-      - name: 4. 봇 실행 (환경변수 주입)
+      - name: Verify overlap, lock and chart behavior
+        run: python -m unittest tests.test_ict_overlap tests.test_overlap_charts -q
+
+      - name: Restore closed-candle cache
+        id: candles
+        uses: actions/cache/restore@v6
+        with:
+          path: runtime/ict_overlap/cache
+          key: ict-candles-v9-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            ict-candles-v9-${{ runner.os }}-
+
+      - name: Scan and deliver LONG/SHORT chart alerts
+        id: scan
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python main.py
-
-      - name: 5. 깃허브 저장소에 json 기록 직접 업데이트 (이메일 에러 방지)
+          BOT_SEND: ${{ github.event_name == 'schedule' || inputs.dry_run == false }}
+          UNLOCK_SYMBOL: ${{ inputs.unlock_symbol }}
+          UNLOCK_TRACK: ${{ inputs.unlock_track }}
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add alert_history.json
-          
-          if ! git diff-index --quiet HEAD; then
-            git commit -m "auto: alert_history.json 기록 갱신 [skip ci]"
-            # 현재 실행 중인 브랜치로 명확하게 푸시하여 에러 차단
-            git push origin HEAD:${{ github.ref_name }}
+          if [ "$BOT_SEND" = "true" ]; then
+            if [ -n "$UNLOCK_SYMBOL" ]; then
+              python run_ict_overlap.py --state alert_state/ict_overlap.json --unlock "$UNLOCK_SYMBOL" "$UNLOCK_TRACK"
+            fi
+            python -u run_ict_overlap.py --send --state alert_state/ict_overlap.json --snapshot runtime/ict_overlap/actions.json
           else
-            echo "알림 기록에 변경사항이 없어 커밋을 건너뜁니다."
+            python -u run_ict_overlap.py --render-preview --state alert_state/ict_overlap.json --snapshot runtime/ict_overlap/actions.json
           fi
+
+      - name: Persist lock state even after a delivery failure
+        if: always() && steps.scan.outcome != 'skipped' && (github.event_name == 'schedule' || inputs.dry_run == false)
+        env:
+          BOT_BRANCH: ${{ github.ref_name }}
+        run: |
+          python -m json.tool alert_state/ict_overlap.json > /dev/null
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- alert_state/ict_overlap.json
+          if git diff --cached --quiet -- alert_state/ict_overlap.json; then
+            exit 0
+          fi
+          git commit -m 'auto: persist ICT overlap locks [skip ci]'
+          for attempt in 1 2 3; do
+            if git push origin "HEAD:$BOT_BRANCH"; then
+              exit 0
+            fi
+            git pull --rebase origin "$BOT_BRANCH"
+          done
+          exit 1
+
+      - name: Save reusable closed-candle cache
+        if: always() && steps.scan.outcome != 'skipped'
+        uses: actions/cache/save@v6
+        with:
+          path: runtime/ict_overlap/cache
+          key: ${{ steps.candles.outputs.cache-primary-key }}
+
+      - name: Save observation and chart preview
+        if: always() && steps.scan.outcome != 'skipped'
+        uses: actions/upload-artifact@v7
+        with:
+          name: ict-observation-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            runtime/ict_overlap/actions.json
+            runtime/ict_overlap/charts/*.png
+            alert_state/ict_overlap.json
+          if-no-files-found: ignore
+          retention-days: 3

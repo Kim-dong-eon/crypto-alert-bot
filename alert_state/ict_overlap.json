@@ -1,0 +1,1975 @@
+{
+  "version": "ict-two-frame-ob-fvg-v9",
+  "tracks": {
+    "BTCUSDT|medium": {
+      "candidate": {
+        "low": 83518.2,
+        "high": 84022.4,
+        "score": 3,
+        "groups": [
+          "1d:FVG",
+          "1d:OB",
+          "4h:FVG"
+        ],
+        "source_ids": [
+          "1d:FVG:1791244800000:1791504000000:-1",
+          "1d:OB:1792540800000:1792713600000:-1",
+          "4h:FVG:1792612800000:1792656000000:-1"
+        ],
+        "sources": [
+          {
+            "id": "1d:FVG:1791244800000:1791504000000:-1",
+            "timeframe": "1d",
+            "kind": "FVG",
+            "direction": -1,
+            "low": 83518.2,
+            "high": 85095.7,
+            "created": 1791504000000,
+            "origin": 1791244800000,
+            "stop": 85095.7,
+            "invalidation": 85095.7,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "1d:OB:1792540800000:1792713600000:-1",
+            "timeframe": "1d",
+            "kind": "OB",
+            "direction": -1,
+            "low": 82983.9,
+            "high": 84054.9,
+            "created": 1792713600000,
+            "origin": 1792540800000,
+            "stop": 84870.0,
+            "invalidation": 84054.9,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:FVG:1792612800000:1792656000000:-1",
+            "timeframe": "4h",
+            "kind": "FVG",
+            "direction": -1,
+            "low": 82974.9,
+            "high": 84022.4,
+            "created": 1792656000000,
+            "origin": 1792612800000,
+            "stop": 84022.4,
+            "invalidation": 84022.4,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "latest_source": 1792713600000,
+        "id": "39f55a505c7d71ae0ce02d54",
+        "track": "medium",
+        "symbol": "BTCUSDT",
+        "direction": -1,
+        "context_id": "real:1d:1790812800000:1791504000000:-1",
+        "context": {
+          "id": "real:1d:1790812800000:1791504000000:-1",
+          "direction": -1,
+          "formed": 1791504000000,
+          "sweep_time": 1790812800000,
+          "swept_level": 85132.7,
+          "structure_level": 82829.0,
+          "invalidation": 87222.0,
+          "swing_low": 79170.3,
+          "swing_high": 87222.0
+        },
+        "pair": [
+          "1d",
+          "4h"
+        ],
+        "formed_at": 1792713600000,
+        "location": "waiting",
+        "price": 80807.4,
+        "context_price_breach": false,
+        "resistance_support": [
+          {
+            "id": "1d:FVG:1789603200000:1789862400000:1",
+            "timeframe": "1d",
+            "kind": "FVG",
+            "direction": 1,
+            "low": 77134.9,
+            "high": 80800.0,
+            "created": 1789862400000,
+            "origin": 1789603200000,
+            "stop": 77134.9,
+            "invalidation": 77134.9,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "1d:OB:1792972800000:1793145600000:1",
+            "timeframe": "1d",
+            "kind": "OB",
+            "direction": 1,
+            "low": 80117.1,
+            "high": 80119.2,
+            "created": 1793145600000,
+            "origin": 1792972800000,
+            "stop": 79320.1,
+            "invalidation": 80117.1,
+            "expiry": 9223372036854775807
+          }
+        ]
+      },
+      "checked_at": 1793211805869
+    },
+    "BTCUSDT|long": {
+      "candidate": null,
+      "checked_at": 1793211805869
+    },
+    "SKHYNIXUSDT|medium": {
+      "candidate": {
+        "low": 998.14,
+        "high": 1009.19,
+        "score": 2,
+        "groups": [
+          "1d:FVG",
+          "4h:FVG"
+        ],
+        "source_ids": [
+          "1d:FVG:1792886400000:1793145600000:1",
+          "4h:FVG:1793030400000:1793073600000:1"
+        ],
+        "sources": [
+          {
+            "id": "1d:FVG:1792886400000:1793145600000:1",
+            "timeframe": "1d",
+            "kind": "FVG",
+            "direction": 1,
+            "low": 974.71,
+            "high": 1009.19,
+            "created": 1793145600000,
+            "origin": 1792886400000,
+            "stop": 974.71,
+            "invalidation": 974.71,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:FVG:1793030400000:1793073600000:1",
+            "timeframe": "4h",
+            "kind": "FVG",
+            "direction": 1,
+            "low": 998.14,
+            "high": 1013.37,
+            "created": 1793073600000,
+            "origin": 1793030400000,
+            "stop": 998.14,
+            "invalidation": 998.14,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "latest_source": 1793145600000,
+        "id": "f98a22dbfdb25345464054cd",
+        "track": "medium",
+        "symbol": "SKHYNIXUSDT",
+        "direction": 1,
+        "context_id": "real:1d:1792713600000:1793059200000:1",
+        "context": {
+          "id": "real:1d:1792713600000:1793059200000:1",
+          "direction": 1,
+          "formed": 1793059200000,
+          "sweep_time": 1792713600000,
+          "swept_level": 897.52,
+          "structure_level": 986.39,
+          "invalidation": 887.05,
+          "swing_low": 887.05,
+          "swing_high": 1058.11
+        },
+        "pair": [
+          "1d",
+          "4h"
+        ],
+        "formed_at": 1793145600000,
+        "location": "waiting",
+        "price": 1140.47,
+        "context_price_breach": false,
+        "resistance_support": [
+          {
+            "id": "1d:FVG:1791763200000:1792022400000:-1",
+            "timeframe": "1d",
+            "kind": "FVG",
+            "direction": -1,
+            "low": 1120.49,
+            "high": 1150.87,
+            "created": 1792022400000,
+            "origin": 1791763200000,
+            "stop": 1150.87,
+            "invalidation": 1150.87,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "1d:FVG:1791676800000:1791936000000:-1",
+            "timeframe": "1d",
+            "kind": "FVG",
+            "direction": -1,
+            "low": 1166.9,
+            "high": 1221.91,
+            "created": 1791936000000,
+            "origin": 1791676800000,
+            "stop": 1221.91,
+            "invalidation": 1221.91,
+            "expiry": 9223372036854775807
+          }
+        ]
+      },
+      "checked_at": 1793211805895
+    },
+    "SKHYNIXUSDT|long": {
+      "candidate": null,
+      "checked_at": 1793211805895
+    },
+    "NVDAUSDT|medium": {
+      "candidate": {
+        "low": 220.81,
+        "high": 222.03,
+        "score": 2,
+        "groups": [
+          "1d:FVG",
+          "4h:OB"
+        ],
+        "source_ids": [
+          "1d:FVG:1791849600000:1792108800000:-1",
+          "4h:OB:1792598400000:1792627200000:-1"
+        ],
+        "sources": [
+          {
+            "id": "1d:FVG:1791849600000:1792108800000:-1",
+            "timeframe": "1d",
+            "kind": "FVG",
+            "direction": -1,
+            "low": 220.31,
+            "high": 223.51,
+            "created": 1792108800000,
+            "origin": 1791849600000,
+            "stop": 223.51,
+            "invalidation": 223.51,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:OB:1792598400000:1792627200000:-1",
+            "timeframe": "4h",
+            "kind": "OB",
+            "direction": -1,
+            "low": 220.81,
+            "high": 222.03,
+            "created": 1792627200000,
+            "origin": 1792598400000,
+            "stop": 222.91,
+            "invalidation": 222.03,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "latest_source": 1792627200000,
+        "id": "43896b492ce5df58375fbba6",
+        "track": "medium",
+        "symbol": "NVDAUSDT",
+        "direction": -1,
+        "context_id": "real:1d:1790985600000:1792022400000:-1",
+        "context": {
+          "id": "real:1d:1790985600000:1792022400000:-1",
+          "direction": -1,
+          "formed": 1792022400000,
+          "sweep_time": 1790985600000,
+          "swept_level": 234.85,
+          "structure_level": 221.41,
+          "invalidation": 243.53,
+          "swing_low": 210.62,
+          "swing_high": 243.53
+        },
+        "pair": [
+          "1d",
+          "4h"
+        ],
+        "formed_at": 1792627200000,
+        "location": "waiting",
+        "price": 217.12,
+        "context_price_breach": false,
+        "resistance_support": [
+          {
+            "id": "1d:FVG:1792886400000:1793145600000:1",
+            "timeframe": "1d",
+            "kind": "FVG",
+            "direction": 1,
+            "low": 213.73,
+            "high": 215.0,
+            "created": 1793145600000,
+            "origin": 1792886400000,
+            "stop": 213.73,
+            "invalidation": 213.73,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "1d:FVG:1785715200000:1785974400000:1",
+            "timeframe": "1d",
+            "kind": "FVG",
+            "direction": 1,
+            "low": 208.91,
+            "high": 214.99,
+            "created": 1785974400000,
+            "origin": 1785715200000,
+            "stop": 208.91,
+            "invalidation": 208.91,
+            "expiry": 9223372036854775807
+          }
+        ]
+      },
+      "checked_at": 1793211805914
+    },
+    "NVDAUSDT|long": {
+      "candidate": null,
+      "checked_at": 1793211805914
+    },
+    "TSLAUSDT|medium": {
+      "candidate": null,
+      "checked_at": 1793211805934
+    },
+    "TSLAUSDT|long": {
+      "candidate": null,
+      "checked_at": 1793211805934
+    },
+    "AAPLUSDT|medium": {
+      "candidate": {
+        "low": 342.96,
+        "high": 343.4,
+        "score": 3,
+        "groups": [
+          "1d:OB",
+          "4h:FVG",
+          "4h:OB"
+        ],
+        "source_ids": [
+          "1d:OB:1792454400000:1792627200000:1",
+          "4h:FVG:1792569600000:1792612800000:1",
+          "4h:OB:1793088000000:1793116800000:1"
+        ],
+        "sources": [
+          {
+            "id": "1d:OB:1792454400000:1792627200000:1",
+            "timeframe": "1d",
+            "kind": "OB",
+            "direction": 1,
+            "low": 338.41,
+            "high": 343.4,
+            "created": 1792627200000,
+            "origin": 1792454400000,
+            "stop": 337.44,
+            "invalidation": 338.41,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:FVG:1792569600000:1792612800000:1",
+            "timeframe": "4h",
+            "kind": "FVG",
+            "direction": 1,
+            "low": 339.06,
+            "high": 343.61,
+            "created": 1792612800000,
+            "origin": 1792569600000,
+            "stop": 339.06,
+            "invalidation": 339.06,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:OB:1793088000000:1793116800000:1",
+            "timeframe": "4h",
+            "kind": "OB",
+            "direction": 1,
+            "low": 342.96,
+            "high": 343.58,
+            "created": 1793116800000,
+            "origin": 1793088000000,
+            "stop": 342.58,
+            "invalidation": 342.96,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "latest_source": 1793116800000,
+        "id": "07b1abcd44276f28d251b49d",
+        "track": "medium",
+        "symbol": "AAPLUSDT",
+        "direction": 1,
+        "context_id": "real:1d:1792454400000:1792713600000:1",
+        "context": {
+          "id": "real:1d:1792454400000:1792713600000:1",
+          "direction": 1,
+          "formed": 1792713600000,
+          "sweep_time": 1792454400000,
+          "swept_level": 340.65,
+          "structure_level": 348.33,
+          "invalidation": 337.44,
+          "swing_low": 337.44,
+          "swing_high": 351.68
+        },
+        "pair": [
+          "1d",
+          "4h"
+        ],
+        "formed_at": 1793116800000,
+        "location": "waiting",
+        "price": 344.55,
+        "context_price_breach": false,
+        "resistance_support": []
+      },
+      "checked_at": 1793211805954
+    },
+    "AAPLUSDT|long": {
+      "candidate": null,
+      "checked_at": 1793211805954
+    },
+    "MSFTUSDT|medium": {
+      "candidate": {
+        "low": 522.95,
+        "high": 523.81,
+        "score": 4,
+        "groups": [
+          "1d:FVG",
+          "1d:OB",
+          "4h:FVG",
+          "4h:OB"
+        ],
+        "source_ids": [
+          "1d:FVG:1791072000000:1791331200000:1",
+          "1d:OB:1792886400000:1793059200000:1",
+          "4h:FVG:1792742400000:1792785600000:1",
+          "4h:OB:1792958400000:1792987200000:1"
+        ],
+        "sources": [
+          {
+            "id": "1d:FVG:1791072000000:1791331200000:1",
+            "timeframe": "1d",
+            "kind": "FVG",
+            "direction": 1,
+            "low": 518.88,
+            "high": 525.25,
+            "created": 1791331200000,
+            "origin": 1791072000000,
+            "stop": 518.88,
+            "invalidation": 518.88,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "1d:OB:1792886400000:1793059200000:1",
+            "timeframe": "1d",
+            "kind": "OB",
+            "direction": 1,
+            "low": 522.95,
+            "high": 524.37,
+            "created": 1793059200000,
+            "origin": 1792886400000,
+            "stop": 522.23,
+            "invalidation": 522.95,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:FVG:1792742400000:1792785600000:1",
+            "timeframe": "4h",
+            "kind": "FVG",
+            "direction": 1,
+            "low": 520.16,
+            "high": 524.38,
+            "created": 1792785600000,
+            "origin": 1792742400000,
+            "stop": 520.16,
+            "invalidation": 520.16,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:OB:1792958400000:1792987200000:1",
+            "timeframe": "4h",
+            "kind": "OB",
+            "direction": 1,
+            "low": 522.95,
+            "high": 523.81,
+            "created": 1792987200000,
+            "origin": 1792958400000,
+            "stop": 522.23,
+            "invalidation": 522.95,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "latest_source": 1793059200000,
+        "id": "8120355da1a38696a503e66d",
+        "track": "medium",
+        "symbol": "MSFTUSDT",
+        "direction": 1,
+        "context_id": "real:1d:1790294400000:1790380800000:1",
+        "context": {
+          "id": "real:1d:1790294400000:1790380800000:1",
+          "direction": 1,
+          "formed": 1790380800000,
+          "sweep_time": 1790294400000,
+          "swept_level": 491.8,
+          "structure_level": 502.04,
+          "invalidation": 491.72,
+          "swing_low": 491.72,
+          "swing_high": 551.95
+        },
+        "pair": [
+          "1d",
+          "4h"
+        ],
+        "formed_at": 1793059200000,
+        "location": "waiting",
+        "price": 527.31,
+        "context_price_breach": false,
+        "resistance_support": [
+          {
+            "id": "1d:OB:1792022400000:1792195200000:-1",
+            "timeframe": "1d",
+            "kind": "OB",
+            "direction": -1,
+            "low": 532.65,
+            "high": 537.61,
+            "created": 1792195200000,
+            "origin": 1792022400000,
+            "stop": 544.61,
+            "invalidation": 537.61,
+            "expiry": 9223372036854775807
+          }
+        ]
+      },
+      "checked_at": 1793211805971
+    },
+    "MSFTUSDT|long": {
+      "candidate": null,
+      "checked_at": 1793211805971
+    },
+    "AMZNUSDT|medium": {
+      "candidate": null,
+      "checked_at": 1793211805989
+    },
+    "AMZNUSDT|long": {
+      "candidate": null,
+      "checked_at": 1793211805989
+    },
+    "GOOGLUSDT|medium": {
+      "candidate": null,
+      "checked_at": 1793211806005
+    },
+    "GOOGLUSDT|long": {
+      "candidate": {
+        "low": 344.81,
+        "high": 345.13,
+        "score": 2,
+        "groups": [
+          "1d:OB",
+          "1w:OB"
+        ],
+        "source_ids": [
+          "1d:OB:1792368000000:1792540800000:-1",
+          "1w:OB:1791158400000:1792368000000:-1"
+        ],
+        "sources": [
+          {
+            "id": "1d:OB:1792368000000:1792540800000:-1",
+            "timeframe": "1d",
+            "kind": "OB",
+            "direction": -1,
+            "low": 343.7,
+            "high": 345.13,
+            "created": 1792540800000,
+            "origin": 1792368000000,
+            "stop": 347.09,
+            "invalidation": 345.13,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "1w:OB:1791158400000:1792368000000:-1",
+            "timeframe": "1w",
+            "kind": "OB",
+            "direction": -1,
+            "low": 344.81,
+            "high": 353.29,
+            "created": 1792368000000,
+            "origin": 1791158400000,
+            "stop": 359.95,
+            "invalidation": 353.29,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "latest_source": 1792540800000,
+        "id": "b2be9ccbfc66bc774427dfed",
+        "track": "long",
+        "symbol": "GOOGLUSDT",
+        "direction": -1,
+        "context_id": "real:1w:1789948800000:1792972800000:-1",
+        "context": {
+          "id": "real:1w:1789948800000:1792972800000:-1",
+          "direction": -1,
+          "formed": 1792972800000,
+          "sweep_time": 1789948800000,
+          "swept_level": 351.94,
+          "structure_level": 338.94,
+          "invalidation": 364.46,
+          "swing_low": 318.48,
+          "swing_high": 364.46
+        },
+        "pair": [
+          "1w",
+          "1d"
+        ],
+        "formed_at": 1792972800000,
+        "location": "waiting",
+        "price": 323.53,
+        "context_price_breach": false,
+        "resistance_support": []
+      },
+      "checked_at": 1793211806005
+    },
+    "METAUSDT|medium": {
+      "candidate": {
+        "low": 661.47,
+        "high": 675.0,
+        "score": 2,
+        "groups": [
+          "1d:FVG",
+          "4h:FVG"
+        ],
+        "source_ids": [
+          "1d:FVG:1792540800000:1792800000000:-1",
+          "4h:FVG:1792656000000:1792699200000:-1"
+        ],
+        "sources": [
+          {
+            "id": "1d:FVG:1792540800000:1792800000000:-1",
+            "timeframe": "1d",
+            "kind": "FVG",
+            "direction": -1,
+            "low": 651.21,
+            "high": 688.55,
+            "created": 1792800000000,
+            "origin": 1792540800000,
+            "stop": 688.55,
+            "invalidation": 688.55,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:FVG:1792656000000:1792699200000:-1",
+            "timeframe": "4h",
+            "kind": "FVG",
+            "direction": -1,
+            "low": 661.47,
+            "high": 675.0,
+            "created": 1792699200000,
+            "origin": 1792656000000,
+            "stop": 675.0,
+            "invalidation": 675.0,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "latest_source": 1792800000000,
+        "id": "3b5b97980d6a00895844a59c",
+        "track": "medium",
+        "symbol": "METAUSDT",
+        "direction": -1,
+        "context_id": "real:1d:1792627200000:1792713600000:-1",
+        "context": {
+          "id": "real:1d:1792627200000:1792713600000:-1",
+          "direction": -1,
+          "formed": 1792713600000,
+          "sweep_time": 1792627200000,
+          "swept_level": 720.32,
+          "structure_level": 711.1,
+          "invalidation": 748.85,
+          "swing_low": 615.0,
+          "swing_high": 748.85
+        },
+        "pair": [
+          "1d",
+          "4h"
+        ],
+        "formed_at": 1792800000000,
+        "location": "waiting",
+        "price": 611.08,
+        "context_price_breach": false,
+        "resistance_support": [
+          {
+            "id": "1d:FVG:1788307200000:1788566400000:1",
+            "timeframe": "1d",
+            "kind": "FVG",
+            "direction": 1,
+            "low": 600.67,
+            "high": 605.6,
+            "created": 1788566400000,
+            "origin": 1788307200000,
+            "stop": 600.67,
+            "invalidation": 600.67,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "1d:FVG:1788220800000:1788480000000:1",
+            "timeframe": "1d",
+            "kind": "FVG",
+            "direction": 1,
+            "low": 585.29,
+            "high": 596.35,
+            "created": 1788480000000,
+            "origin": 1788220800000,
+            "stop": 585.29,
+            "invalidation": 585.29,
+            "expiry": 9223372036854775807
+          }
+        ]
+      },
+      "checked_at": 1793211806023
+    },
+    "METAUSDT|long": {
+      "candidate": null,
+      "checked_at": 1793211806023
+    },
+    "QQQUSDT|medium": {
+      "candidate": null,
+      "checked_at": 1793211806039
+    },
+    "QQQUSDT|long": {
+      "candidate": null,
+      "checked_at": 1793211806039
+    },
+    "SPYUSDT|medium": {
+      "candidate": {
+        "low": 774.0,
+        "high": 774.07,
+        "score": 3,
+        "groups": [
+          "1d:FVG",
+          "4h:FVG",
+          "4h:OB"
+        ],
+        "source_ids": [
+          "1d:FVG:1791849600000:1792108800000:-1",
+          "4h:FVG:1791964800000:1792008000000:-1",
+          "4h:OB:1792598400000:1792627200000:-1"
+        ],
+        "sources": [
+          {
+            "id": "1d:FVG:1791849600000:1792108800000:-1",
+            "timeframe": "1d",
+            "kind": "FVG",
+            "direction": -1,
+            "low": 774.0,
+            "high": 777.35,
+            "created": 1792108800000,
+            "origin": 1791849600000,
+            "stop": 777.35,
+            "invalidation": 777.35,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:FVG:1791964800000:1792008000000:-1",
+            "timeframe": "4h",
+            "kind": "FVG",
+            "direction": -1,
+            "low": 772.45,
+            "high": 780.36,
+            "created": 1792008000000,
+            "origin": 1791964800000,
+            "stop": 780.36,
+            "invalidation": 780.36,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:OB:1792598400000:1792627200000:-1",
+            "timeframe": "4h",
+            "kind": "OB",
+            "direction": -1,
+            "low": 773.76,
+            "high": 774.07,
+            "created": 1792627200000,
+            "origin": 1792598400000,
+            "stop": 775.4,
+            "invalidation": 774.07,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "latest_source": 1792627200000,
+        "id": "f741b7cc5a2394ced01455b6",
+        "track": "medium",
+        "symbol": "SPYUSDT",
+        "direction": -1,
+        "context_id": "real:1d:1791849600000:1792022400000:-1",
+        "context": {
+          "id": "real:1d:1791849600000:1792022400000:-1",
+          "direction": -1,
+          "formed": 1792022400000,
+          "sweep_time": 1791849600000,
+          "swept_level": 782.06,
+          "structure_level": 771.55,
+          "invalidation": 782.75,
+          "swing_low": 759.61,
+          "swing_high": 782.75
+        },
+        "pair": [
+          "1d",
+          "4h"
+        ],
+        "formed_at": 1792627200000,
+        "location": "waiting",
+        "price": 771.42,
+        "context_price_breach": false,
+        "resistance_support": [
+          {
+            "id": "1d:FVG:1792886400000:1793145600000:1",
+            "timeframe": "1d",
+            "kind": "FVG",
+            "direction": 1,
+            "low": 765.14,
+            "high": 765.74,
+            "created": 1793145600000,
+            "origin": 1792886400000,
+            "stop": 765.14,
+            "invalidation": 765.14,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "1d:OB:1788998400000:1789171200000:1",
+            "timeframe": "1d",
+            "kind": "OB",
+            "direction": 1,
+            "low": 758.13,
+            "high": 763.6,
+            "created": 1789171200000,
+            "origin": 1788998400000,
+            "stop": 757.41,
+            "invalidation": 758.13,
+            "expiry": 9223372036854775807
+          }
+        ]
+      },
+      "checked_at": 1793211806056
+    },
+    "SPYUSDT|long": {
+      "candidate": null,
+      "checked_at": 1793211806056
+    },
+    "NDX100USDT|medium": {
+      "candidate": {
+        "low": 29055.0,
+        "high": 29088.0,
+        "score": 2,
+        "groups": [
+          "1d:OB",
+          "4h:OB"
+        ],
+        "source_ids": [
+          "1d:OB:1792800000000:1792972800000:1",
+          "4h:OB:1792915200000:1792944000000:1"
+        ],
+        "sources": [
+          {
+            "id": "1d:OB:1792800000000:1792972800000:1",
+            "timeframe": "1d",
+            "kind": "OB",
+            "direction": 1,
+            "low": 29052.0,
+            "high": 29088.0,
+            "created": 1792972800000,
+            "origin": 1792800000000,
+            "stop": 28903.0,
+            "invalidation": 29052.0,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:OB:1792915200000:1792944000000:1",
+            "timeframe": "4h",
+            "kind": "OB",
+            "direction": 1,
+            "low": 29055.0,
+            "high": 29102.0,
+            "created": 1792944000000,
+            "origin": 1792915200000,
+            "stop": 29017.0,
+            "invalidation": 29055.0,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "latest_source": 1792972800000,
+        "id": "396866a38db02130a349edfc",
+        "track": "medium",
+        "symbol": "NDX100USDT",
+        "direction": 1,
+        "context_id": "real:1d:1789430400000:1789948800000:1",
+        "context": {
+          "id": "real:1d:1789430400000:1789948800000:1",
+          "direction": 1,
+          "formed": 1789948800000,
+          "sweep_time": 1789430400000,
+          "swept_level": 28934.0,
+          "structure_level": 29736.0,
+          "invalidation": 28807.0,
+          "swing_low": 28807.0,
+          "swing_high": 31326.0
+        },
+        "pair": [
+          "1d",
+          "4h"
+        ],
+        "formed_at": 1792972800000,
+        "location": "waiting",
+        "price": 29688.0,
+        "context_price_breach": false,
+        "resistance_support": [
+          {
+            "id": "1d:OB:1792022400000:1792195200000:-1",
+            "timeframe": "1d",
+            "kind": "OB",
+            "direction": -1,
+            "low": 29834.0,
+            "high": 29842.0,
+            "created": 1792195200000,
+            "origin": 1792022400000,
+            "stop": 30059.0,
+            "invalidation": 29842.0,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "1d:FVG:1791849600000:1792108800000:-1",
+            "timeframe": "1d",
+            "kind": "FVG",
+            "direction": -1,
+            "low": 29987.0,
+            "high": 30463.0,
+            "created": 1792108800000,
+            "origin": 1791849600000,
+            "stop": 30463.0,
+            "invalidation": 30463.0,
+            "expiry": 9223372036854775807
+          }
+        ]
+      },
+      "checked_at": 1793211806081
+    },
+    "NDX100USDT|long": {
+      "candidate": null,
+      "checked_at": 1793211806081
+    },
+    "SP500USDT|medium": {
+      "candidate": null,
+      "checked_at": 1793211806099
+    },
+    "SP500USDT|long": {
+      "candidate": null,
+      "checked_at": 1793211806099
+    }
+  },
+  "delivered": {
+    "747ca1c2d9c419b472aa97eb": {
+      "symbol": "BTCUSDT",
+      "stage": "prepared",
+      "timestamp": 1793211438673
+    },
+    "729a10e4e885a9a51d24afca": {
+      "symbol": "SKHYNIXUSDT",
+      "stage": "prepared",
+      "timestamp": 1793211438879
+    },
+    "f6cb603522e5614a64282975": {
+      "symbol": "NVDAUSDT",
+      "stage": "prepared",
+      "timestamp": 1793211439081
+    },
+    "b75da8e286ffce23dba727b8": {
+      "symbol": "NVDAUSDT",
+      "stage": "prepared",
+      "timestamp": 1793211439081
+    },
+    "7ecc4042da3134bea3c81032": {
+      "symbol": "TSLAUSDT",
+      "stage": "prepared",
+      "timestamp": 1793211439290
+    },
+    "29029a8ec85632770224a9ce": {
+      "symbol": "AAPLUSDT",
+      "stage": "prepared",
+      "timestamp": 1793211439499
+    },
+    "122f692f82906478bfa4c7bc": {
+      "symbol": "MSFTUSDT",
+      "stage": "prepared",
+      "timestamp": 1793211439674
+    },
+    "4c9755bb171089f75cffddf7": {
+      "symbol": "MSFTUSDT",
+      "stage": "prepared",
+      "timestamp": 1793211439674
+    },
+    "6ee5e567e0619a735a1f8846": {
+      "symbol": "AMZNUSDT",
+      "stage": "touched",
+      "timestamp": 1793211439898
+    },
+    "8db7ef01fb3e9a69992dbec7": {
+      "symbol": "GOOGLUSDT",
+      "stage": "prepared",
+      "timestamp": 1793211440118
+    },
+    "3021c63280d8cc472e151c8a": {
+      "symbol": "METAUSDT",
+      "stage": "prepared",
+      "timestamp": 1793211440315
+    },
+    "7902c66255bd5807e65ab26a": {
+      "symbol": "QQQUSDT",
+      "stage": "prepared",
+      "timestamp": 1793211440511
+    },
+    "86857db8be021c6b589fc514": {
+      "symbol": "SPYUSDT",
+      "stage": "prepared",
+      "timestamp": 1793211440693
+    },
+    "03e451907c0b40e605604437": {
+      "symbol": "SPYUSDT",
+      "stage": "prepared",
+      "timestamp": 1793211440693
+    },
+    "291e313ae83f5f5d7c11fefb": {
+      "symbol": "NDX100USDT",
+      "stage": "prepared",
+      "timestamp": 1793211440950
+    },
+    "c8fbbf00cb3f6c4fab319632": {
+      "symbol": "NDX100USDT",
+      "stage": "prepared",
+      "timestamp": 1793211440950
+    }
+  },
+  "pending": {},
+  "locks": {
+    "BTCUSDT|medium": [
+      {
+        "anchor_low": 83518.2,
+        "anchor_high": 84022.4,
+        "latest": {
+          "low": 83518.2,
+          "high": 84022.4,
+          "score": 3,
+          "groups": [
+            "1d:FVG",
+            "1d:OB",
+            "4h:FVG"
+          ],
+          "source_ids": [
+            "1d:FVG:1791244800000:1791504000000:-1",
+            "1d:OB:1792540800000:1792713600000:-1",
+            "4h:FVG:1792612800000:1792656000000:-1"
+          ],
+          "sources": [
+            {
+              "id": "1d:FVG:1791244800000:1791504000000:-1",
+              "timeframe": "1d",
+              "kind": "FVG",
+              "direction": -1,
+              "low": 83518.2,
+              "high": 85095.7,
+              "created": 1791504000000,
+              "origin": 1791244800000,
+              "stop": 85095.7,
+              "invalidation": 85095.7,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "1d:OB:1792540800000:1792713600000:-1",
+              "timeframe": "1d",
+              "kind": "OB",
+              "direction": -1,
+              "low": 82983.9,
+              "high": 84054.9,
+              "created": 1792713600000,
+              "origin": 1792540800000,
+              "stop": 84870.0,
+              "invalidation": 84054.9,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "4h:FVG:1792612800000:1792656000000:-1",
+              "timeframe": "4h",
+              "kind": "FVG",
+              "direction": -1,
+              "low": 82974.9,
+              "high": 84022.4,
+              "created": 1792656000000,
+              "origin": 1792612800000,
+              "stop": 84022.4,
+              "invalidation": 84022.4,
+              "expiry": 9223372036854775807
+            }
+          ],
+          "latest_source": 1792713600000,
+          "id": "39f55a505c7d71ae0ce02d54",
+          "track": "medium",
+          "symbol": "BTCUSDT",
+          "direction": -1,
+          "context_id": "real:1d:1790812800000:1791504000000:-1",
+          "context": {
+            "id": "real:1d:1790812800000:1791504000000:-1",
+            "direction": -1,
+            "formed": 1791504000000,
+            "sweep_time": 1790812800000,
+            "swept_level": 85132.7,
+            "structure_level": 82829.0,
+            "invalidation": 87222.0,
+            "swing_low": 79170.3,
+            "swing_high": 87222.0
+          },
+          "pair": [
+            "1d",
+            "4h"
+          ],
+          "formed_at": 1792713600000,
+          "location": "waiting",
+          "price": 80807.4,
+          "context_price_breach": false,
+          "resistance_support": [
+            {
+              "id": "1d:FVG:1789603200000:1789862400000:1",
+              "timeframe": "1d",
+              "kind": "FVG",
+              "direction": 1,
+              "low": 77134.9,
+              "high": 80800.0,
+              "created": 1789862400000,
+              "origin": 1789603200000,
+              "stop": 77134.9,
+              "invalidation": 77134.9,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "1d:OB:1792972800000:1793145600000:1",
+              "timeframe": "1d",
+              "kind": "OB",
+              "direction": 1,
+              "low": 80117.1,
+              "high": 80119.2,
+              "created": 1793145600000,
+              "origin": 1792972800000,
+              "stop": 79320.1,
+              "invalidation": 80117.1,
+              "expiry": 9223372036854775807
+            }
+          ]
+        }
+      }
+    ],
+    "BTCUSDT|long": [],
+    "SKHYNIXUSDT|medium": [
+      {
+        "anchor_low": 998.14,
+        "anchor_high": 1009.19,
+        "latest": {
+          "low": 998.14,
+          "high": 1009.19,
+          "score": 2,
+          "groups": [
+            "1d:FVG",
+            "4h:FVG"
+          ],
+          "source_ids": [
+            "1d:FVG:1792886400000:1793145600000:1",
+            "4h:FVG:1793030400000:1793073600000:1"
+          ],
+          "sources": [
+            {
+              "id": "1d:FVG:1792886400000:1793145600000:1",
+              "timeframe": "1d",
+              "kind": "FVG",
+              "direction": 1,
+              "low": 974.71,
+              "high": 1009.19,
+              "created": 1793145600000,
+              "origin": 1792886400000,
+              "stop": 974.71,
+              "invalidation": 974.71,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "4h:FVG:1793030400000:1793073600000:1",
+              "timeframe": "4h",
+              "kind": "FVG",
+              "direction": 1,
+              "low": 998.14,
+              "high": 1013.37,
+              "created": 1793073600000,
+              "origin": 1793030400000,
+              "stop": 998.14,
+              "invalidation": 998.14,
+              "expiry": 9223372036854775807
+            }
+          ],
+          "latest_source": 1793145600000,
+          "id": "f98a22dbfdb25345464054cd",
+          "track": "medium",
+          "symbol": "SKHYNIXUSDT",
+          "direction": 1,
+          "context_id": "real:1d:1792713600000:1793059200000:1",
+          "context": {
+            "id": "real:1d:1792713600000:1793059200000:1",
+            "direction": 1,
+            "formed": 1793059200000,
+            "sweep_time": 1792713600000,
+            "swept_level": 897.52,
+            "structure_level": 986.39,
+            "invalidation": 887.05,
+            "swing_low": 887.05,
+            "swing_high": 1058.11
+          },
+          "pair": [
+            "1d",
+            "4h"
+          ],
+          "formed_at": 1793145600000,
+          "location": "waiting",
+          "price": 1140.47,
+          "context_price_breach": false,
+          "resistance_support": [
+            {
+              "id": "1d:FVG:1791763200000:1792022400000:-1",
+              "timeframe": "1d",
+              "kind": "FVG",
+              "direction": -1,
+              "low": 1120.49,
+              "high": 1150.87,
+              "created": 1792022400000,
+              "origin": 1791763200000,
+              "stop": 1150.87,
+              "invalidation": 1150.87,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "1d:FVG:1791676800000:1791936000000:-1",
+              "timeframe": "1d",
+              "kind": "FVG",
+              "direction": -1,
+              "low": 1166.9,
+              "high": 1221.91,
+              "created": 1791936000000,
+              "origin": 1791676800000,
+              "stop": 1221.91,
+              "invalidation": 1221.91,
+              "expiry": 9223372036854775807
+            }
+          ]
+        }
+      }
+    ],
+    "SKHYNIXUSDT|long": [],
+    "NVDAUSDT|medium": [
+      {
+        "anchor_low": 220.81,
+        "anchor_high": 222.03,
+        "latest": {
+          "low": 220.81,
+          "high": 222.03,
+          "score": 2,
+          "groups": [
+            "1d:FVG",
+            "4h:OB"
+          ],
+          "source_ids": [
+            "1d:FVG:1791849600000:1792108800000:-1",
+            "4h:OB:1792598400000:1792627200000:-1"
+          ],
+          "sources": [
+            {
+              "id": "1d:FVG:1791849600000:1792108800000:-1",
+              "timeframe": "1d",
+              "kind": "FVG",
+              "direction": -1,
+              "low": 220.31,
+              "high": 223.51,
+              "created": 1792108800000,
+              "origin": 1791849600000,
+              "stop": 223.51,
+              "invalidation": 223.51,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "4h:OB:1792598400000:1792627200000:-1",
+              "timeframe": "4h",
+              "kind": "OB",
+              "direction": -1,
+              "low": 220.81,
+              "high": 222.03,
+              "created": 1792627200000,
+              "origin": 1792598400000,
+              "stop": 222.91,
+              "invalidation": 222.03,
+              "expiry": 9223372036854775807
+            }
+          ],
+          "latest_source": 1792627200000,
+          "id": "43896b492ce5df58375fbba6",
+          "track": "medium",
+          "symbol": "NVDAUSDT",
+          "direction": -1,
+          "context_id": "real:1d:1790985600000:1792022400000:-1",
+          "context": {
+            "id": "real:1d:1790985600000:1792022400000:-1",
+            "direction": -1,
+            "formed": 1792022400000,
+            "sweep_time": 1790985600000,
+            "swept_level": 234.85,
+            "structure_level": 221.41,
+            "invalidation": 243.53,
+            "swing_low": 210.62,
+            "swing_high": 243.53
+          },
+          "pair": [
+            "1d",
+            "4h"
+          ],
+          "formed_at": 1792627200000,
+          "location": "waiting",
+          "price": 217.12,
+          "context_price_breach": false,
+          "resistance_support": [
+            {
+              "id": "1d:FVG:1792886400000:1793145600000:1",
+              "timeframe": "1d",
+              "kind": "FVG",
+              "direction": 1,
+              "low": 213.73,
+              "high": 215.0,
+              "created": 1793145600000,
+              "origin": 1792886400000,
+              "stop": 213.73,
+              "invalidation": 213.73,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "1d:FVG:1785715200000:1785974400000:1",
+              "timeframe": "1d",
+              "kind": "FVG",
+              "direction": 1,
+              "low": 208.91,
+              "high": 214.99,
+              "created": 1785974400000,
+              "origin": 1785715200000,
+              "stop": 208.91,
+              "invalidation": 208.91,
+              "expiry": 9223372036854775807
+            }
+          ]
+        }
+      }
+    ],
+    "NVDAUSDT|long": [],
+    "TSLAUSDT|medium": [],
+    "TSLAUSDT|long": [],
+    "AAPLUSDT|medium": [
+      {
+        "anchor_low": 342.96,
+        "anchor_high": 343.4,
+        "latest": {
+          "low": 342.96,
+          "high": 343.4,
+          "score": 3,
+          "groups": [
+            "1d:OB",
+            "4h:FVG",
+            "4h:OB"
+          ],
+          "source_ids": [
+            "1d:OB:1792454400000:1792627200000:1",
+            "4h:FVG:1792569600000:1792612800000:1",
+            "4h:OB:1793088000000:1793116800000:1"
+          ],
+          "sources": [
+            {
+              "id": "1d:OB:1792454400000:1792627200000:1",
+              "timeframe": "1d",
+              "kind": "OB",
+              "direction": 1,
+              "low": 338.41,
+              "high": 343.4,
+              "created": 1792627200000,
+              "origin": 1792454400000,
+              "stop": 337.44,
+              "invalidation": 338.41,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "4h:FVG:1792569600000:1792612800000:1",
+              "timeframe": "4h",
+              "kind": "FVG",
+              "direction": 1,
+              "low": 339.06,
+              "high": 343.61,
+              "created": 1792612800000,
+              "origin": 1792569600000,
+              "stop": 339.06,
+              "invalidation": 339.06,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "4h:OB:1793088000000:1793116800000:1",
+              "timeframe": "4h",
+              "kind": "OB",
+              "direction": 1,
+              "low": 342.96,
+              "high": 343.58,
+              "created": 1793116800000,
+              "origin": 1793088000000,
+              "stop": 342.58,
+              "invalidation": 342.96,
+              "expiry": 9223372036854775807
+            }
+          ],
+          "latest_source": 1793116800000,
+          "id": "07b1abcd44276f28d251b49d",
+          "track": "medium",
+          "symbol": "AAPLUSDT",
+          "direction": 1,
+          "context_id": "real:1d:1792454400000:1792713600000:1",
+          "context": {
+            "id": "real:1d:1792454400000:1792713600000:1",
+            "direction": 1,
+            "formed": 1792713600000,
+            "sweep_time": 1792454400000,
+            "swept_level": 340.65,
+            "structure_level": 348.33,
+            "invalidation": 337.44,
+            "swing_low": 337.44,
+            "swing_high": 351.68
+          },
+          "pair": [
+            "1d",
+            "4h"
+          ],
+          "formed_at": 1793116800000,
+          "location": "waiting",
+          "price": 344.55,
+          "context_price_breach": false,
+          "resistance_support": []
+        }
+      }
+    ],
+    "AAPLUSDT|long": [],
+    "MSFTUSDT|medium": [
+      {
+        "anchor_low": 522.95,
+        "anchor_high": 523.81,
+        "latest": {
+          "low": 522.95,
+          "high": 523.81,
+          "score": 4,
+          "groups": [
+            "1d:FVG",
+            "1d:OB",
+            "4h:FVG",
+            "4h:OB"
+          ],
+          "source_ids": [
+            "1d:FVG:1791072000000:1791331200000:1",
+            "1d:OB:1792886400000:1793059200000:1",
+            "4h:FVG:1792742400000:1792785600000:1",
+            "4h:OB:1792958400000:1792987200000:1"
+          ],
+          "sources": [
+            {
+              "id": "1d:FVG:1791072000000:1791331200000:1",
+              "timeframe": "1d",
+              "kind": "FVG",
+              "direction": 1,
+              "low": 518.88,
+              "high": 525.25,
+              "created": 1791331200000,
+              "origin": 1791072000000,
+              "stop": 518.88,
+              "invalidation": 518.88,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "1d:OB:1792886400000:1793059200000:1",
+              "timeframe": "1d",
+              "kind": "OB",
+              "direction": 1,
+              "low": 522.95,
+              "high": 524.37,
+              "created": 1793059200000,
+              "origin": 1792886400000,
+              "stop": 522.23,
+              "invalidation": 522.95,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "4h:FVG:1792742400000:1792785600000:1",
+              "timeframe": "4h",
+              "kind": "FVG",
+              "direction": 1,
+              "low": 520.16,
+              "high": 524.38,
+              "created": 1792785600000,
+              "origin": 1792742400000,
+              "stop": 520.16,
+              "invalidation": 520.16,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "4h:OB:1792958400000:1792987200000:1",
+              "timeframe": "4h",
+              "kind": "OB",
+              "direction": 1,
+              "low": 522.95,
+              "high": 523.81,
+              "created": 1792987200000,
+              "origin": 1792958400000,
+              "stop": 522.23,
+              "invalidation": 522.95,
+              "expiry": 9223372036854775807
+            }
+          ],
+          "latest_source": 1793059200000,
+          "id": "8120355da1a38696a503e66d",
+          "track": "medium",
+          "symbol": "MSFTUSDT",
+          "direction": 1,
+          "context_id": "real:1d:1790294400000:1790380800000:1",
+          "context": {
+            "id": "real:1d:1790294400000:1790380800000:1",
+            "direction": 1,
+            "formed": 1790380800000,
+            "sweep_time": 1790294400000,
+            "swept_level": 491.8,
+            "structure_level": 502.04,
+            "invalidation": 491.72,
+            "swing_low": 491.72,
+            "swing_high": 551.95
+          },
+          "pair": [
+            "1d",
+            "4h"
+          ],
+          "formed_at": 1793059200000,
+          "location": "waiting",
+          "price": 527.31,
+          "context_price_breach": false,
+          "resistance_support": [
+            {
+              "id": "1d:OB:1792022400000:1792195200000:-1",
+              "timeframe": "1d",
+              "kind": "OB",
+              "direction": -1,
+              "low": 532.65,
+              "high": 537.61,
+              "created": 1792195200000,
+              "origin": 1792022400000,
+              "stop": 544.61,
+              "invalidation": 537.61,
+              "expiry": 9223372036854775807
+            }
+          ]
+        }
+      }
+    ],
+    "MSFTUSDT|long": [],
+    "AMZNUSDT|medium": [],
+    "AMZNUSDT|long": [],
+    "GOOGLUSDT|medium": [],
+    "GOOGLUSDT|long": [
+      {
+        "anchor_low": 344.81,
+        "anchor_high": 345.13,
+        "latest": {
+          "low": 344.81,
+          "high": 345.13,
+          "score": 2,
+          "groups": [
+            "1d:OB",
+            "1w:OB"
+          ],
+          "source_ids": [
+            "1d:OB:1792368000000:1792540800000:-1",
+            "1w:OB:1791158400000:1792368000000:-1"
+          ],
+          "sources": [
+            {
+              "id": "1d:OB:1792368000000:1792540800000:-1",
+              "timeframe": "1d",
+              "kind": "OB",
+              "direction": -1,
+              "low": 343.7,
+              "high": 345.13,
+              "created": 1792540800000,
+              "origin": 1792368000000,
+              "stop": 347.09,
+              "invalidation": 345.13,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "1w:OB:1791158400000:1792368000000:-1",
+              "timeframe": "1w",
+              "kind": "OB",
+              "direction": -1,
+              "low": 344.81,
+              "high": 353.29,
+              "created": 1792368000000,
+              "origin": 1791158400000,
+              "stop": 359.95,
+              "invalidation": 353.29,
+              "expiry": 9223372036854775807
+            }
+          ],
+          "latest_source": 1792540800000,
+          "id": "b2be9ccbfc66bc774427dfed",
+          "track": "long",
+          "symbol": "GOOGLUSDT",
+          "direction": -1,
+          "context_id": "real:1w:1789948800000:1792972800000:-1",
+          "context": {
+            "id": "real:1w:1789948800000:1792972800000:-1",
+            "direction": -1,
+            "formed": 1792972800000,
+            "sweep_time": 1789948800000,
+            "swept_level": 351.94,
+            "structure_level": 338.94,
+            "invalidation": 364.46,
+            "swing_low": 318.48,
+            "swing_high": 364.46
+          },
+          "pair": [
+            "1w",
+            "1d"
+          ],
+          "formed_at": 1792972800000,
+          "location": "waiting",
+          "price": 323.53,
+          "context_price_breach": false,
+          "resistance_support": []
+        }
+      }
+    ],
+    "METAUSDT|medium": [
+      {
+        "anchor_low": 661.47,
+        "anchor_high": 675.0,
+        "latest": {
+          "low": 661.47,
+          "high": 675.0,
+          "score": 2,
+          "groups": [
+            "1d:FVG",
+            "4h:FVG"
+          ],
+          "source_ids": [
+            "1d:FVG:1792540800000:1792800000000:-1",
+            "4h:FVG:1792656000000:1792699200000:-1"
+          ],
+          "sources": [
+            {
+              "id": "1d:FVG:1792540800000:1792800000000:-1",
+              "timeframe": "1d",
+              "kind": "FVG",
+              "direction": -1,
+              "low": 651.21,
+              "high": 688.55,
+              "created": 1792800000000,
+              "origin": 1792540800000,
+              "stop": 688.55,
+              "invalidation": 688.55,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "4h:FVG:1792656000000:1792699200000:-1",
+              "timeframe": "4h",
+              "kind": "FVG",
+              "direction": -1,
+              "low": 661.47,
+              "high": 675.0,
+              "created": 1792699200000,
+              "origin": 1792656000000,
+              "stop": 675.0,
+              "invalidation": 675.0,
+              "expiry": 9223372036854775807
+            }
+          ],
+          "latest_source": 1792800000000,
+          "id": "3b5b97980d6a00895844a59c",
+          "track": "medium",
+          "symbol": "METAUSDT",
+          "direction": -1,
+          "context_id": "real:1d:1792627200000:1792713600000:-1",
+          "context": {
+            "id": "real:1d:1792627200000:1792713600000:-1",
+            "direction": -1,
+            "formed": 1792713600000,
+            "sweep_time": 1792627200000,
+            "swept_level": 720.32,
+            "structure_level": 711.1,
+            "invalidation": 748.85,
+            "swing_low": 615.0,
+            "swing_high": 748.85
+          },
+          "pair": [
+            "1d",
+            "4h"
+          ],
+          "formed_at": 1792800000000,
+          "location": "waiting",
+          "price": 611.08,
+          "context_price_breach": false,
+          "resistance_support": [
+            {
+              "id": "1d:FVG:1788307200000:1788566400000:1",
+              "timeframe": "1d",
+              "kind": "FVG",
+              "direction": 1,
+              "low": 600.67,
+              "high": 605.6,
+              "created": 1788566400000,
+              "origin": 1788307200000,
+              "stop": 600.67,
+              "invalidation": 600.67,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "1d:FVG:1788220800000:1788480000000:1",
+              "timeframe": "1d",
+              "kind": "FVG",
+              "direction": 1,
+              "low": 585.29,
+              "high": 596.35,
+              "created": 1788480000000,
+              "origin": 1788220800000,
+              "stop": 585.29,
+              "invalidation": 585.29,
+              "expiry": 9223372036854775807
+            }
+          ]
+        }
+      }
+    ],
+    "METAUSDT|long": [],
+    "QQQUSDT|medium": [],
+    "QQQUSDT|long": [],
+    "SPYUSDT|medium": [
+      {
+        "anchor_low": 774.0,
+        "anchor_high": 774.07,
+        "latest": {
+          "low": 774.0,
+          "high": 774.07,
+          "score": 3,
+          "groups": [
+            "1d:FVG",
+            "4h:FVG",
+            "4h:OB"
+          ],
+          "source_ids": [
+            "1d:FVG:1791849600000:1792108800000:-1",
+            "4h:FVG:1791964800000:1792008000000:-1",
+            "4h:OB:1792598400000:1792627200000:-1"
+          ],
+          "sources": [
+            {
+              "id": "1d:FVG:1791849600000:1792108800000:-1",
+              "timeframe": "1d",
+              "kind": "FVG",
+              "direction": -1,
+              "low": 774.0,
+              "high": 777.35,
+              "created": 1792108800000,
+              "origin": 1791849600000,
+              "stop": 777.35,
+              "invalidation": 777.35,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "4h:FVG:1791964800000:1792008000000:-1",
+              "timeframe": "4h",
+              "kind": "FVG",
+              "direction": -1,
+              "low": 772.45,
+              "high": 780.36,
+              "created": 1792008000000,
+              "origin": 1791964800000,
+              "stop": 780.36,
+              "invalidation": 780.36,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "4h:OB:1792598400000:1792627200000:-1",
+              "timeframe": "4h",
+              "kind": "OB",
+              "direction": -1,
+              "low": 773.76,
+              "high": 774.07,
+              "created": 1792627200000,
+              "origin": 1792598400000,
+              "stop": 775.4,
+              "invalidation": 774.07,
+              "expiry": 9223372036854775807
+            }
+          ],
+          "latest_source": 1792627200000,
+          "id": "f741b7cc5a2394ced01455b6",
+          "track": "medium",
+          "symbol": "SPYUSDT",
+          "direction": -1,
+          "context_id": "real:1d:1791849600000:1792022400000:-1",
+          "context": {
+            "id": "real:1d:1791849600000:1792022400000:-1",
+            "direction": -1,
+            "formed": 1792022400000,
+            "sweep_time": 1791849600000,
+            "swept_level": 782.06,
+            "structure_level": 771.55,
+            "invalidation": 782.75,
+            "swing_low": 759.61,
+            "swing_high": 782.75
+          },
+          "pair": [
+            "1d",
+            "4h"
+          ],
+          "formed_at": 1792627200000,
+          "location": "waiting",
+          "price": 771.42,
+          "context_price_breach": false,
+          "resistance_support": [
+            {
+              "id": "1d:FVG:1792886400000:1793145600000:1",
+              "timeframe": "1d",
+              "kind": "FVG",
+              "direction": 1,
+              "low": 765.14,
+              "high": 765.74,
+              "created": 1793145600000,
+              "origin": 1792886400000,
+              "stop": 765.14,
+              "invalidation": 765.14,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "1d:OB:1788998400000:1789171200000:1",
+              "timeframe": "1d",
+              "kind": "OB",
+              "direction": 1,
+              "low": 758.13,
+              "high": 763.6,
+              "created": 1789171200000,
+              "origin": 1788998400000,
+              "stop": 757.41,
+              "invalidation": 758.13,
+              "expiry": 9223372036854775807
+            }
+          ]
+        }
+      }
+    ],
+    "SPYUSDT|long": [],
+    "NDX100USDT|medium": [
+      {
+        "anchor_low": 29055.0,
+        "anchor_high": 29088.0,
+        "latest": {
+          "low": 29055.0,
+          "high": 29088.0,
+          "score": 2,
+          "groups": [
+            "1d:OB",
+            "4h:OB"
+          ],
+          "source_ids": [
+            "1d:OB:1792800000000:1792972800000:1",
+            "4h:OB:1792915200000:1792944000000:1"
+          ],
+          "sources": [
+            {
+              "id": "1d:OB:1792800000000:1792972800000:1",
+              "timeframe": "1d",
+              "kind": "OB",
+              "direction": 1,
+              "low": 29052.0,
+              "high": 29088.0,
+              "created": 1792972800000,
+              "origin": 1792800000000,
+              "stop": 28903.0,
+              "invalidation": 29052.0,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "4h:OB:1792915200000:1792944000000:1",
+              "timeframe": "4h",
+              "kind": "OB",
+              "direction": 1,
+              "low": 29055.0,
+              "high": 29102.0,
+              "created": 1792944000000,
+              "origin": 1792915200000,
+              "stop": 29017.0,
+              "invalidation": 29055.0,
+              "expiry": 9223372036854775807
+            }
+          ],
+          "latest_source": 1792972800000,
+          "id": "396866a38db02130a349edfc",
+          "track": "medium",
+          "symbol": "NDX100USDT",
+          "direction": 1,
+          "context_id": "real:1d:1789430400000:1789948800000:1",
+          "context": {
+            "id": "real:1d:1789430400000:1789948800000:1",
+            "direction": 1,
+            "formed": 1789948800000,
+            "sweep_time": 1789430400000,
+            "swept_level": 28934.0,
+            "structure_level": 29736.0,
+            "invalidation": 28807.0,
+            "swing_low": 28807.0,
+            "swing_high": 31326.0
+          },
+          "pair": [
+            "1d",
+            "4h"
+          ],
+          "formed_at": 1792972800000,
+          "location": "waiting",
+          "price": 29688.0,
+          "context_price_breach": false,
+          "resistance_support": [
+            {
+              "id": "1d:OB:1792022400000:1792195200000:-1",
+              "timeframe": "1d",
+              "kind": "OB",
+              "direction": -1,
+              "low": 29834.0,
+              "high": 29842.0,
+              "created": 1792195200000,
+              "origin": 1792022400000,
+              "stop": 30059.0,
+              "invalidation": 29842.0,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "1d:FVG:1791849600000:1792108800000:-1",
+              "timeframe": "1d",
+              "kind": "FVG",
+              "direction": -1,
+              "low": 29987.0,
+              "high": 30463.0,
+              "created": 1792108800000,
+              "origin": 1791849600000,
+              "stop": 30463.0,
+              "invalidation": 30463.0,
+              "expiry": 9223372036854775807
+            }
+          ]
+        }
+      }
+    ],
+    "NDX100USDT|long": [],
+    "SP500USDT|medium": [],
+    "SP500USDT|long": []
+  },
+  "profile_migration": {
+    "short_pair": [
+      "4h",
+      "1h"
+    ],
+    "retired_short_pair": [
+      "4h",
+      "15m"
+    ],
+    "preserved_medium_long_locks": true
+  }
+}
