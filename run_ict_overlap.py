@@ -7,7 +7,7 @@ from pathlib import Path
 import time
 
 from config.overlap_settings import TRACKS, TRACK_LABELS, BASES, POLL_SECONDS
-from src.ict_overlap import scan,format_notice
+from src.ict_overlap import scan,compact_notice
 from src.overlap_market import PublicMarket,select_instruments,quote_price
 from src.overlap_delivery import OverlapLedger
 from src.ict_notices import single_writer,telegram_sender
@@ -34,7 +34,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         try:price=quote_price(tickers[symbol],observed)
         except (KeyError,ValueError,TypeError):
             failures.append({"symbol":symbol,"reason":"ticker_became_stale_during_scan"});continue
-        result=scan(symbol,frames,observed,price)
+        result=scan(symbol,frames,observed,price,equilibrium_filter=True)
         asset_label={'stock':'주식','etf':'ETF','index':'지수'}.get(instrument.get('instrumentType'),'상품')
         result.update(display_name=f"{instrument.get('fullName',symbol)} ({symbol}) · "+('BTC 무기한' if instrument['baseCoin']=='BTC' else f'거래소 {asset_label} 무기한'),data_errors=errors)
         pending=ledger.observe(result,result["display_name"],persist=persist or sender is not None)
@@ -42,7 +42,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         chart_frames[symbol]=frames
         if sender is None:
             own=[e for e in pending.values() if e['candidate']['symbol']==symbol]
-            for event in own:print(format_notice(event))
+            if own:print(compact_notice(own))
         for name,state in result["tracks"].items():
             c=state["candidate"]
             print(f"{symbol} {TRACK_LABELS[name]}: "+(f"{c['low']:.4f}~{c['high']:.4f} ({c['score']}/4)" if c else state["status"]))
@@ -56,7 +56,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
             for name,state in result['tracks'].items():
                 if name=='auxiliary' or state['candidate'] is None:continue
                 c=state['candidate'];event={'candidate':c,'timestamp':result['as_of'],'stage':'prepared','new_formation':False}
-                if not c['context_price_breach']:symbol_events.append(event)
+                if not c['context_price_breach'] and c.get('equilibrium',{}).get('eligible'):symbol_events.append(event)
             if symbol_events:render_symbol_chart(symbol_events,chart_frames[result['symbol']],ROOT/'runtime/ict_overlap/charts'/f"{result['symbol']}_overlap_preview.png")
     if sender:
         successful={r['symbol'] for r in results}
@@ -69,7 +69,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
                 events=[]
                 for state in result['tracks'].values():
                     c=state['candidate']
-                    if c and not c['context_price_breach']:events.append({'candidate':c,'timestamp':result['as_of'],'stage':'prepared','new_formation':False})
+                    if c and not c['context_price_breach'] and c.get('equilibrium',{}).get('eligible'):events.append({'candidate':c,'timestamp':result['as_of'],'stage':'approach','new_formation':False})
                 contexts[result['symbol']]=events
             def renderer(events):
                 c=events[0]['candidate'];return render_symbol_chart(events,chart_frames[c['symbol']],ROOT/'runtime/ict_overlap/charts'/f"{c['symbol']}_overlap.png")
@@ -108,7 +108,7 @@ def main(argv=None):
         from dotenv import load_dotenv
         load_dotenv(ROOT/'.env');sender=telegram_sender(os.getenv('TELEGRAM_BOT_TOKEN'),os.getenv('TELEGRAM_CHAT_ID'))
     with single_writer(args.state.with_suffix('.lock')) if args.send or args.watch else nullcontext():
-        ledger=OverlapLedger(args.state,require_images=args.send,overlap_only=True)
+        ledger=OverlapLedger(args.state,require_images=args.send,overlap_only=True,approach_only=True)
         image_sender=None
         if args.send:
             from src.overlap_telegram import TelegramMedia

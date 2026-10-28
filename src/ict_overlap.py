@@ -66,12 +66,21 @@ def overlaps(zones, pair, anchor):
     return sorted(segments, key=lambda s: (-s["score"], max(s["low"]-anchor, anchor-s["high"], 0), -s["latest_source"], -(s["high"]-s["low"]), s["low"]))
 
 
-def scan(symbol, frames, now_ms, price, tracks=None):
+def equilibrium_gate(low,high,price,direction,bottom,top):
+    if direction not in (-1,1) or not all(math.isfinite(x) for x in (low,high,price,bottom,top)) or bottom>=top or low>=high:
+        return {'midpoint':None,'eligible':False}
+    mid=(bottom+top)/2
+    eligible=(low<mid and low<=price<=mid) if direction==1 else (high>mid and mid<=price<=high)
+    return {'midpoint':mid,'eligible':eligible,'range_low':bottom,'range_high':top,
+            'distance_to_zone':max(low-price,price-high,0.)}
+
+
+def scan(symbol, frames, now_ms, price, tracks=None,equilibrium_filter=False):
     tracks = TRACKS if tracks is None else tracks
     if not math.isfinite(price) or price <= 0:
         raise ValueError("Invalid current price")
     primary = {pair[0] for pair in tracks.values()}
-    flows = {tf: RealSweepMSS(tf) for tf in primary}
+    flows = {tf: RealSweepMSS(tf,close_ranges=equilibrium_filter) for tf in primary}
     registry = Registry()
     usable = {}
     unavailable = {}
@@ -117,6 +126,10 @@ def scan(symbol, frames, now_ms, price, tracks=None):
         zones = [z for z in registry.zones.values() if z.timeframe in pair and z.direction == flow.direction and z.created >= since]
         relevant = [z for z in zones if (z.low <= usable[lower][-1].close if flow.direction == 1 else z.high >= usable[lower][-1].close)]
         choices = overlaps(relevant, pair, usable[lower][-1].close)
+        if equilibrium_filter:
+            for choice in choices:
+                choice['equilibrium']=equilibrium_gate(choice['low'],choice['high'],price,flow.direction,flow.swing_low,flow.swing_high)
+            choices.sort(key=lambda choice:not choice['equilibrium']['eligible'])
         state["status"] = "no_overlap" if not choices else "watching"
         state["alternatives"] = choices[1:3]
         opponents = [z for z in registry.zones.values() if z.timeframe == top and z.direction == -flow.direction and (z.high > price if flow.direction == 1 else z.low < price)]
@@ -124,6 +137,7 @@ def scan(symbol, frames, now_ms, price, tracks=None):
         state["resistance_support"] = [asdict(z) for z in opponents[:2]]
         if choices:
             best = choices[0]
+            if equilibrium_filter and not best['equilibrium']['eligible']:state['status']='waiting_eq50'
             raw = f"{VERSION}|{symbol}|{name}|{flow.id}|{best['low']:.12g}|{best['high']:.12g}|{'|'.join(best['source_ids'])}"
             location = "inside" if best["low"] <= price <= best["high"] else "waiting" if flow.direction*(price-(best["high"] if flow.direction==1 else best["low"])) > 0 else "passed"
             state["candidate"] = {**best, "id": hashlib.sha256(raw.encode()).hexdigest()[:24], "track": name, "symbol": symbol,
@@ -170,11 +184,15 @@ def compact_notice(events):
     if len(symbols)!=1:raise ValueError('One symbol per notice')
     number=lambda x:f'{x:,.2f}'.rstrip('0').rstrip('.')
     lines=[f"[{ordered[0]['candidate']['symbol']}]",'']
+    if ordered[0]['candidate'].get('equilibrium'):
+        lines[0]+=f" 현재가 {number(ordered[0]['candidate']['price'])}"
     for event in ordered:
         c=event['candidate'];tf_order={tf:i for i,tf in enumerate(c['pair'])}
         groups={(z['timeframe'],z['kind']) for z in c['sources']}
         if not groups:groups={tuple(x.split(':',1)) for x in c['groups']}
         evidence=' + '.join(f"{tf.upper()} {kind}" for tf,kind in sorted(groups,key=lambda x:(tf_order.get(x[0],9),x[1]!='OB')))
-        lines += [f"{TRACK_LABELS[c['track']]} 겹침 · {'LONG' if c['direction']==1 else 'SHORT'}",f"{number(c['low'])} ~ {number(c['high'])}",f"근거: {evidence}",'']
+        proof=f"근거: {evidence}"
+        if c.get('equilibrium',{}).get('midpoint') is not None:proof+=f" / 0.5 {number(c['equilibrium']['midpoint'])}"
+        lines += [f"{TRACK_LABELS[c['track']]} 겹침 · {'LONG' if c['direction']==1 else 'SHORT'}",f"{number(c['low'])} ~ {number(c['high'])}",proof,'']
     lines.append(kst(max(e['timestamp'] for e in ordered)))
     return '\n'.join(lines)

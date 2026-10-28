@@ -11,7 +11,7 @@ from src.ict_engine import TF_MS
 
 
 class OverlapLedger:
-    def __init__(self, path, require_images=False,overlap_only=False):
+    def __init__(self, path, require_images=False,overlap_only=False,approach_only=False):
         self.path = Path(path)
         self.state = json.loads(self.path.read_text(encoding="utf-8")) if self.path.exists() else {"version":VERSION,"tracks":{},"delivered":{},"pending":{}}
         if self.state.get("version") != VERSION:
@@ -20,8 +20,10 @@ class OverlapLedger:
         self.state.setdefault("images_delivered",{})
         self.require_images=require_images
         self.overlap_only=overlap_only
+        self.approach_only=approach_only
         if overlap_only:
-            self.state['pending']={k:e for k,e in self.state['pending'].items() if e['stage']=='prepared'}
+            wanted='approach' if approach_only else 'prepared'
+            self.state['pending']={k:e for k,e in self.state['pending'].items() if e['stage']==wanted}
 
     def save(self):
         self.path.parent.mkdir(parents=True,exist_ok=True)
@@ -44,7 +46,7 @@ class OverlapLedger:
         stamp=snapshot["as_of"];valid=set(snapshot["valid_source_ids"])
         def add(candidate,stage,previous,reason=None):
             key=self.key(candidate,stage)
-            image_due=self.require_images and stage in ('prepared','touched') and key not in self.state['images_delivered']
+            image_due=self.require_images and stage in ('prepared','touched','approach') and key not in self.state['images_delivered']
             if key not in self.state["delivered"] or image_due:
                 self.state["pending"][key]={"candidate":candidate,"stage":stage,"timestamp":stamp,
                     "new_formation":bool(previous and candidate["formed_at"]>previous["checked_at"]),"display_name":display_name or candidate["symbol"],"reason":reason}
@@ -75,7 +77,7 @@ class OverlapLedger:
                 if (context_matches or context_outside) and (sources_valid or outside):
                     remaining.append(lock)
                 else:
-                    was_sent=any(self.key(held,stage) in self.state["delivered"] for stage in ("prepared","touched","caution"))
+                    was_sent=any(self.key(held,stage) in self.state["delivered"] for stage in ("prepared","touched","caution","approach"))
                     for key,event in list(self.state["pending"].items()):
                         if event["candidate"]["id"]==held["id"] and event["stage"]!="cancelled":del self.state["pending"][key]
                     if was_sent and not self.overlap_only:
@@ -94,6 +96,9 @@ class OverlapLedger:
                 if c["symbol"]==snapshot["symbol"] and c["track"]==name and event["stage"]!="cancelled" and (not candidate or c["id"]!=candidate["id"]):del self.state["pending"][key]
             if candidate:
                 stage=(None if candidate['context_price_breach'] else 'prepared') if self.overlap_only else "caution" if candidate["context_price_breach"] else "touched" if candidate["location"]=="inside" else "prepared"
+                if self.approach_only:
+                    stage='approach' if candidate.get('equilibrium',{}).get('eligible') and not candidate['context_price_breach'] else None
+                    if stage is None:self.state['pending'].pop(self.key(candidate,'approach'),None)
                 # Touch subsumes a pending unannounced formation.
                 if stage!="prepared":self.state["pending"].pop(self.key(candidate,"prepared"),None)
                 if stage=="prepared" and self.key(candidate,"touched") in self.state["delivered"]:stage=None
@@ -112,7 +117,7 @@ class OverlapLedger:
         for collection in ("pending","delivered","images_delivered"):
             for key,event in list(self.state[collection].items()):
                 if collection=="pending":matches=event["candidate"]["id"] in identifiers
-                else:matches=key in {self.key(lock["latest"],stage) for lock in locks for stage in ("prepared","touched","caution","cancelled")}
+                else:matches=key in {self.key(lock["latest"],stage) for lock in locks for stage in ("prepared","touched","caution","cancelled","approach")}
                 if matches:del self.state[collection][key]
         self.save()
 
@@ -150,7 +155,7 @@ class OverlapLedger:
         """A single image/caption per symbol; acknowledge its pending scopes."""
         result={'sent':0,'failed':0,'images_sent':0};grouped={}
         for key,event in self.state['pending'].items():
-            if event['stage']!='prepared':continue
+            if event['stage'] not in ('prepared','approach'):continue
             grouped.setdefault(event['candidate']['symbol'],[]).append((key,event))
         ready=[]
         for symbol,pending in grouped.items():

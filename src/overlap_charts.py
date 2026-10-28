@@ -48,6 +48,11 @@ def draw_scope(ax,event,frames):
     ax.axhline(c['price'],color='#c7cdd7',linestyle=':',linewidth=.6,zorder=2)
     ax.annotate(f"현재가 {c['price']:,.2f}",xy=(.985,c['price']),xycoords=('axes fraction','data'),ha='right',va='bottom',fontsize=8,color='#e1e5eb',bbox={'facecolor':'#18202d','edgecolor':'none','alpha':.8,'pad':2})
     known=[c['low'],c['high'],c['price']]+[v for z in c['sources'] for v in (z['low'],z['high'])]
+    midpoint=c.get('equilibrium',{}).get('midpoint')
+    if midpoint is not None:
+        ax.axhline(midpoint,color='#b5bdca',linestyle='--',linewidth=.6,zorder=2)
+        ax.annotate(f'0.5 {midpoint:,.2f}',xy=(.01,midpoint),xycoords=('axes fraction','data'),va='bottom',color='#b5bdca',fontsize=8)
+        known.append(midpoint)
     bottom=min(lows+known);top=max(highs+known);pad=max((top-bottom)*.09,top*.0005)
     ax.set_ylim(bottom-pad,top+pad);ax.set_xlim(-1,end+.5);ax.yaxis.tick_right()
     indices=list(range(0,n,max(1,n//6)));ax.set_xticks(indices,[kst(bars[i].timestamp).replace(' KST','') for i in indices],fontsize=8)

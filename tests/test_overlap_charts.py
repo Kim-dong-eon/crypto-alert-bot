@@ -5,7 +5,7 @@ from unittest.mock import Mock,patch
 from PIL import Image
 from src.ict_engine import Bar,TF_MS
 from src.overlap_charts import render_chart,render_symbol_chart,TF_COLORS
-from src.ict_overlap import compact_notice
+from src.ict_overlap import compact_notice,equilibrium_gate
 from src.overlap_telegram import TelegramMedia
 from src.overlap_delivery import OverlapLedger
 from tests.test_ict_overlap import snapshot
@@ -18,6 +18,35 @@ def chart_example(direction=1):
 
 
 class ChartTests(unittest.TestCase):
+    def test_eq50_approach_long_and_short_are_mirrored(self):
+        self.assertFalse(equilibrium_gate(110,115,125,1,100,140)['eligible'])
+        self.assertTrue(equilibrium_gate(110,115,119,1,100,140)['eligible'])
+        self.assertTrue(equilibrium_gate(110,115,112,1,100,140)['eligible'])
+        self.assertFalse(equilibrium_gate(110,115,109,1,100,140)['eligible'])
+        self.assertFalse(equilibrium_gate(125,130,115,-1,100,140)['eligible'])
+        self.assertTrue(equilibrium_gate(125,130,121,-1,100,140)['eligible'])
+        self.assertTrue(equilibrium_gate(125,130,128,-1,100,140)['eligible'])
+        self.assertFalse(equilibrium_gate(125,130,131,-1,100,140)['eligible'])
+
+    def test_zone_on_wrong_half_or_invalid_range_cannot_alert(self):
+        self.assertFalse(equilibrium_gate(125,130,127,1,100,140)['eligible'])
+        self.assertFalse(equilibrium_gate(110,115,112,-1,100,140)['eligible'])
+        self.assertFalse(equilibrium_gate(110,115,112,1,140,100)['eligible'])
+
+    def test_eq50_wait_then_approach_once_and_keep_lock_after_retreat(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ledger=OverlapLedger(Path(directory)/'s.json',require_images=True,overlap_only=True,approach_only=True)
+            s=snapshot();s['tracks']['short']['candidate']['equilibrium']={'midpoint':115,'eligible':False};ledger.observe(s);self.assertFalse(ledger.state['pending'])
+            s['tracks']['short']['candidate']['equilibrium']['eligible']=True;ledger.observe(s);self.assertEqual(ledger.dispatch_symbols(lambda _:True,lambda _:Path('x'),{})['images_sent'],1)
+            s['tracks']['short']['candidate']['equilibrium']['eligible']=False;ledger.observe(s);s['tracks']['short']['candidate']['equilibrium']['eligible']=True;ledger.observe(s);self.assertFalse(ledger.state['pending'])
+            ledger.unlock('BTCUSDT','short');ledger.observe(s);self.assertTrue(ledger.state['pending'])
+
+    def test_failed_approach_does_not_deliver_after_price_moves_away(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ledger=OverlapLedger(Path(directory)/'s.json',require_images=True,overlap_only=True,approach_only=True);s=snapshot();s['tracks']['short']['candidate']['equilibrium']={'midpoint':115,'eligible':True};ledger.observe(s)
+            self.assertEqual(ledger.dispatch_symbols(lambda _:False,lambda _:Path('x'),{})['failed'],1)
+            s['tracks']['short']['candidate']['equilibrium']['eligible']=False;ledger.observe(s);self.assertFalse(ledger.state['pending'])
+
     def test_compact_caption_lists_only_overlaps_in_scope_order(self):
         import copy
         short=snapshot()['tracks']['short']['candidate'];medium=copy.deepcopy(short);medium.update(track='medium',pair=['1d','4h'],groups=['1d:OB','4h:FVG'])
