@@ -64,7 +64,7 @@ jobs:
           python -m pip install -r requirements-ict.txt
 
       - name: Verify overlap, lock and chart behavior
-        run: python -m unittest tests.test_ict_overlap tests.test_overlap_charts tests.test_overlap_structure tests.test_common_listings -q
+        run: python -m unittest tests.test_ict_overlap tests.test_overlap_charts tests.test_overlap_structure tests.test_common_listings tests.test_overlap_diversification -q
 
       - name: Restore closed-candle cache
         id: candles

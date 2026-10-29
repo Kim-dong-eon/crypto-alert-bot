@@ -16,7 +16,10 @@ def select_instruments(rows, bases=BASES):
     for base in bases:
         matches = [r for r in rows if r.get("baseCoin") == base and r.get("category") == "USDT-FUTURES" and r.get("quoteCoin") == "USDT" and r.get("status") == "online" and r.get("type") == "perpetual"]
         matches = [r for r in matches if (base == "BTC" and r.get("symbolType") == "crypto") or
-                   (base != "BTC" and r.get("symbolType") == "stock" and r.get("instrumentType") in ("stock", "etf", "index") and r.get("isRwa") == "YES")]
+                   (base != "BTC" and r.get("isRwa") == "YES" and
+                    ((r.get("symbolType") == "stock" and r.get("instrumentType") in ("stock", "etf", "index")) or
+                     (r.get("symbolType") == "commodity" and r.get("instrumentType") == "energy") or
+                     (r.get("symbolType") == "metal" and r.get("instrumentType") == "metal")))]
         if matches:
             chosen.append(matches[0])
     return chosen
@@ -79,6 +82,28 @@ class PublicMarket:
         closed_rows=[[b.timestamp,b.open,b.high,b.low,b.close,b.volume] for b in bars]
         path.write_text(json.dumps({"fetched_at":now_ms,"data":closed_rows}),encoding="utf-8")
         return bars
+
+    def daily_turnovers(self, symbol, now_ms):
+        """Actual USDT quote turnover, kept separately from base-volume bars."""
+        path=self.cache/f'{symbol}_daily_turnover.json'
+        expected=frame_open(now_ms,'1d')
+        if path.exists():
+            try:
+                saved=json.loads(path.read_text(encoding='utf-8'))['data']
+                if (len(saved)>=30 and saved[-1][0]+TF_MS['1d']==expected
+                        and all(b[0]-a[0]==TF_MS['1d'] for a,b in zip(saved,saved[1:]))
+                        and all(math.isfinite(r[1]) and r[1]>=0 for r in saved)):
+                    return saved[-30:]
+            except (ValueError,KeyError,TypeError,IndexError):
+                pass
+        result=self.get('candles',category='USDT-FUTURES',symbol=symbol,interval='1Dutc',limit='31')
+        rows=sorted([[int(r[0]),float(r[6])] for r in result['data'] if int(r[0])+TF_MS['1d']<=now_ms])[-30:]
+        if (len(rows)!=30 or rows[-1][0]+TF_MS['1d']!=expected
+                or any(b[0]-a[0]!=TF_MS['1d'] for a,b in zip(rows,rows[1:]))
+                or any(not math.isfinite(r[1]) or r[1]<0 for r in rows)):
+            raise ValueError('Incomplete daily quote turnover history')
+        path.write_text(json.dumps({'fetched_at':now_ms,'data':rows}),encoding='utf-8')
+        return rows
 
 
 def quote_price(ticker, now_ms):

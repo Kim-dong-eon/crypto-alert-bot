@@ -6,7 +6,7 @@ import os
 import time
 from pathlib import Path
 
-from src.ict_overlap import VERSION, format_notice,compact_notice
+from src.ict_overlap import VERSION, format_notice,compact_notice,alert_eligible
 from src.ict_engine import TF_MS
 
 
@@ -113,7 +113,7 @@ class OverlapLedger:
             if candidate:
                 stage=(None if candidate['context_price_breach'] else 'prepared') if self.overlap_only else "caution" if candidate["context_price_breach"] else "touched" if candidate["location"]=="inside" else "prepared"
                 if self.approach_only:
-                    stage='approach' if candidate.get('equilibrium',{}).get('eligible') and not candidate['context_price_breach'] else None
+                    stage='approach' if alert_eligible(candidate) else None
                     if stage is None:self.state['pending'].pop(self.key(candidate,'approach'),None)
                 # Touch subsumes a pending unannounced formation.
                 if stage!="prepared":self.state["pending"].pop(self.key(candidate,"prepared"),None)

@@ -75,6 +75,12 @@ def equilibrium_gate(low,high,price,direction,bottom,top):
             'distance_to_zone':max(low-price,price-high,0.)}
 
 
+def alert_eligible(candidate):
+    return bool(candidate and not candidate['context_price_breach']
+                and candidate.get('equilibrium',{}).get('eligible')
+                and candidate.get('monitor_eligible',True))
+
+
 def scan(symbol, frames, now_ms, price, tracks=None,equilibrium_filter=False):
     tracks = TRACKS if tracks is None else tracks
     if not math.isfinite(price) or price <= 0:

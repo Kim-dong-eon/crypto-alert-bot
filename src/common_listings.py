@@ -22,7 +22,8 @@ def select_common_instruments(bitget_instruments, binance_rows):
         crypto = instrument.get('baseCoin') == 'BTC' and row.get('underlyingType') == 'COIN'
         equity = instrument.get('instrumentType') in ('stock','etf') and row.get('underlyingType') in ('EQUITY','KR_EQUITY')
         index = instrument.get('instrumentType') == 'index' and row.get('underlyingType') == 'INDEX'
-        if crypto or equity or index:
+        commodity = instrument.get('instrumentType') in ('metal','energy') and row.get('underlyingType') == 'COMMODITY'
+        if crypto or equity or index or commodity:
             common.append(instrument)
     return common
 

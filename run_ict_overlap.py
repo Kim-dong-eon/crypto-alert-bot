@@ -1,4 +1,4 @@
-"""BTC+exchange stock/ETF:4h/1h,1d/4h,1w/1d; preview by default."""
+"""BTC+exchange equities/ETF/oil:4h/1h,1d/4h,1w/1d; preview default."""
 import argparse
 from contextlib import nullcontext
 import json
@@ -7,12 +7,13 @@ from pathlib import Path
 import time
 import traceback
 
-from config.overlap_settings import TRACKS, TRACK_LABELS, BASES, POLL_SECONDS
-from src.ict_overlap import scan,compact_notice
+from config.overlap_settings import TRACKS, TRACK_LABELS, BASES, POLL_SECONDS,DIVERSIFIER_BASES
+from src.ict_overlap import scan,compact_notice,alert_eligible
 from src.overlap_market import PublicMarket,select_instruments,quote_price
 from src.overlap_delivery import OverlapLedger
 from src.ict_notices import single_writer,telegram_sender
 from src.common_listings import binance_listings,select_common_instruments
+from src.overlap_diversification import diversification_gate
 
 ROOT=Path(__file__).resolve().parent
 
@@ -28,6 +29,12 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         for tf in {tf for pair in TRACKS.values() for tf in pair}:
             try:frames[tf]=market.frame(symbol,tf,now)
             except Exception as error:errors[tf]=type(error).__name__
+        diversity_data=None;diversity_error=None
+        if instrument['baseCoin'] in DIVERSIFIER_BASES:
+            try:
+                reference={tf:market.frame('BTCUSDT',tf,now) for tf in ('4h','1d')}
+                diversity_data=(reference,market.daily_turnovers(symbol,now))
+            except Exception as error:diversity_error=type(error).__name__
         # Recheck at the end, so crossing a candle boundary pauses affected
         # tracks until the newly closed candle has actually been retrieved.
         observed=int(time.time()*1000)
@@ -37,7 +44,18 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         except (KeyError,ValueError,TypeError):
             failures.append({"symbol":symbol,"reason":"ticker_became_stale_during_scan"});continue
         result=scan(symbol,frames,observed,price,equilibrium_filter=True)
-        asset_label={'stock':'주식','etf':'ETF','index':'지수'}.get(instrument.get('instrumentType'),'상품')
+        if instrument['baseCoin'] in DIVERSIFIER_BASES:
+            try:
+                eligibility=(diversification_gate(frames,*diversity_data,tickers[symbol],observed) if diversity_data
+                             else {'eligible':False,'reasons':['screening_data_unavailable'],'error':diversity_error})
+            except (ValueError,TypeError,KeyError,OverflowError):eligibility={'eligible':False,'reasons':['screening_data_invalid']}
+            result['diversification']=eligibility
+            for state in result['tracks'].values():
+                if state['candidate']:
+                    state['candidate']['monitor_eligible']=eligibility['eligible']
+                    state['candidate']['diversification']=eligibility
+            print(f"{symbol} BTC 상관·유동성: "+('통과' if eligibility['eligible'] else '대기'))
+        asset_label={'stock':'주식','etf':'ETF','index':'지수','energy':'원유','metal':'금속'}.get(instrument.get('instrumentType'),'상품')
         result.update(display_name=f"Bitget · {instrument.get('fullName',symbol)} ({symbol}) · "+('BTC 무기한' if instrument['baseCoin']=='BTC' else f'거래소 {asset_label} 무기한'),data_errors=errors)
         pending=ledger.observe(result,result["display_name"],persist=persist or sender is not None)
         results.append(result)
@@ -58,7 +76,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
             for name,state in result['tracks'].items():
                 if name=='auxiliary' or state['candidate'] is None:continue
                 c=state['candidate'];event={'candidate':c,'timestamp':result['as_of'],'stage':'prepared','new_formation':False}
-                if not c['context_price_breach'] and c.get('equilibrium',{}).get('eligible'):symbol_events.append(event)
+                if alert_eligible(c):symbol_events.append(event)
             if symbol_events:render_symbol_chart(symbol_events,chart_frames[result['symbol']],ROOT/'runtime/ict_overlap/charts'/f"{result['symbol']}_overlap_preview.png")
     if sender:
         successful={r['symbol'] for r in results}
@@ -71,7 +89,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
                 events=[]
                 for state in result['tracks'].values():
                     c=state['candidate']
-                    if c and not c['context_price_breach'] and c.get('equilibrium',{}).get('eligible'):events.append({'candidate':c,'timestamp':result['as_of'],'stage':'approach','new_formation':False})
+                    if alert_eligible(c):events.append({'candidate':c,'timestamp':result['as_of'],'stage':'approach','new_formation':False})
                 contexts[result['symbol']]=events
             def renderer(events):
                 c=events[0]['candidate'];return render_symbol_chart(events,chart_frames[c['symbol']],ROOT/'runtime/ict_overlap/charts'/f"{c['symbol']}_overlap.png")
@@ -86,7 +104,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
 
 
 def main(argv=None):
-    parser=argparse.ArgumentParser(description="BTC+거래소 주식/ETF: 단기4H/1H·중기1D/4H·장기1W/1D 중첩 관찰")
+    parser=argparse.ArgumentParser(description="BTC+거래소 주식/ETF/원유: 단기4H/1H·중기1D/4H·장기1W/1D 중첩 관찰")
     parser.add_argument('--send',action='store_true');parser.add_argument('--watch',action='store_true')
     parser.add_argument('--resend-current',action='store_true',help='이번 검사만 기존 발송 잠금을 무시하고 현재 조건 충족 구간 재발송')
     parser.add_argument('--render-preview',action='store_true',help='미리보기에서도 현재 중첩 차트 이미지 생성')
