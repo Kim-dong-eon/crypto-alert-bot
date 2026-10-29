@@ -81,6 +81,33 @@ class MarketTests(unittest.TestCase):
 
 
 class LockTests(unittest.TestCase):
+    def test_v9_migration_preserves_acknowledgements_and_identical_external_lock(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'s.json'
+            s=snapshot();c=s['tracks']['short']['candidate']
+            context={'id':'real:4h:500:900:1','direction':1,'formed':900,'sweep_time':500,'swept_level':90,'structure_level':115}
+            c.update(context=copy.deepcopy(context),context_id=context['id'],equilibrium={'eligible':True,'midpoint':115})
+            s['tracks']['short']['context']=copy.deepcopy(context)
+            ledger=OverlapLedger(path,require_images=True,overlap_only=True,approach_only=True)
+            ledger.observe(s);ledger.dispatch_symbols(lambda _:True,lambda _:Path('x'),{})
+            old=json.loads(path.read_text());old['version']='ict-two-frame-ob-fvg-v9'
+            old['pending']['unvalidated-old-rule-event']={'candidate':c,'stage':'approach'}
+            path.write_text(json.dumps(old))
+            migrated=OverlapLedger(path,require_images=True,overlap_only=True,approach_only=True)
+            self.assertEqual(migrated.state['delivered'],old['delivered'])
+            self.assertEqual(migrated.state['images_delivered'],old['images_delivered'])
+            self.assertFalse(migrated.state['pending'])
+            s['tracks']['short']['context']['id']='external:4h:500:900:1'
+            c['context']=copy.deepcopy(s['tracks']['short']['context']);c['context_id']=c['context']['id'];c['id']='new-rule-hash'
+            migrated.observe(s)
+            self.assertFalse(migrated.state['pending'])
+            self.assertEqual(migrated.state['locks']['BTCUSDT|short'][0]['latest']['id'],'one')
+
+    def test_unknown_state_version_remains_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'s.json';path.write_text(json.dumps({'version':'unknown'}))
+            with self.assertRaises(ValueError):OverlapLedger(path)
+
     def test_transient_file_replace_lock_preserves_durable_delivery(self):
         import os
         with tempfile.TemporaryDirectory() as directory:

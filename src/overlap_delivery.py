@@ -14,6 +14,12 @@ class OverlapLedger:
     def __init__(self, path, require_images=False,overlap_only=False,approach_only=False,force_resend=False):
         self.path = Path(path)
         self.state = json.loads(self.path.read_text(encoding="utf-8")) if self.path.exists() else {"version":VERSION,"tracks":{},"delivered":{},"pending":{}}
+        if self.state.get("version") == "ict-two-frame-ob-fvg-v9":
+            # The storage format is unchanged. Delivery acknowledgements and
+            # locks survive; unvalidated old-rule outbox entries must not send.
+            self.state['structure_migration']={"from":self.state['version'],"to":VERSION,"at":int(time.time()*1000)}
+            self.state['version']=VERSION
+            self.state['pending']={}
         if self.state.get("version") != VERSION:
             raise ValueError("Incompatible overlap state")
         self.state.setdefault("locks",{})
@@ -66,6 +72,15 @@ class OverlapLedger:
             remaining=[]
             for lock in locks:
                 held=lock["latest"]
+                context=current['context']
+                anchors=('direction','formed','sweep_time','swept_level','structure_level')
+                legacy=held.get('context',{})
+                if (context and held['context_id'].startswith('real:')
+                        and all(key in legacy and legacy[key]==context.get(key) for key in anchors)):
+                    # An unchanged, genuinely external old setup retains its
+                    # original zone ID and once-only acknowledgement keys.
+                    held['context_id']=context['id']
+                    held['context']=copy.deepcopy(context)
                 context_matches=current["context"] and held["context_id"]==current["context"]["id"]
                 sources_valid=set(held["source_ids"]).issubset(valid)
                 starts=snapshot.get('history_starts',{})
