@@ -36,7 +36,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
             failures.append({"symbol":symbol,"reason":"ticker_became_stale_during_scan"});continue
         result=scan(symbol,frames,observed,price,equilibrium_filter=True)
         asset_label={'stock':'주식','etf':'ETF','index':'지수'}.get(instrument.get('instrumentType'),'상품')
-        result.update(display_name=f"{instrument.get('fullName',symbol)} ({symbol}) · "+('BTC 무기한' if instrument['baseCoin']=='BTC' else f'거래소 {asset_label} 무기한'),data_errors=errors)
+        result.update(display_name=f"Bitget · {instrument.get('fullName',symbol)} ({symbol}) · "+('BTC 무기한' if instrument['baseCoin']=='BTC' else f'거래소 {asset_label} 무기한'),data_errors=errors)
         pending=ledger.observe(result,result["display_name"],persist=persist or sender is not None)
         results.append(result)
         chart_frames[symbol]=frames

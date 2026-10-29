@@ -7,9 +7,9 @@ import math
 from config.overlap_settings import TRACKS, TRACK_LABELS, MIN_HISTORY_BARS
 from src.ict_engine import TF_MS, frame_open
 from src.ict_nested import PDZone
-from src.ict_short import RealSweepMSS
+from src.overlap_structure import ExternalSweepMSS
 
-VERSION = "ict-two-frame-ob-fvg-v9"
+VERSION = "ict-two-frame-ob-fvg-v10-external"
 LABELS = {"15m": "15분", "1h": "1시간", "4h": "4시간", "1d": "1일", "1w": "1주"}
 
 
@@ -80,7 +80,7 @@ def scan(symbol, frames, now_ms, price, tracks=None,equilibrium_filter=False):
     if not math.isfinite(price) or price <= 0:
         raise ValueError("Invalid current price")
     primary = {pair[0] for pair in tracks.values()}
-    flows = {tf: RealSweepMSS(tf,close_ranges=equilibrium_filter) for tf in primary}
+    flows = {tf: ExternalSweepMSS(tf,close_ranges=equilibrium_filter) for tf in primary}
     registry = Registry()
     usable = {}
     unavailable = {}
@@ -104,7 +104,7 @@ def scan(symbol, frames, now_ms, price, tracks=None,equilibrium_filter=False):
             if tf in flows:
                 flows[tf].step(bar)
             registry.step(tf, bar)
-    output = {"version": VERSION, "symbol": symbol, "as_of": now_ms, "price": price,
+    output = {"version": VERSION, "exchange": "bitget", "symbol": symbol, "as_of": now_ms, "price": price,
               "tracks": {}, "valid_source_ids": sorted(registry.zones), "unavailable_frames": unavailable,
               "history_starts":{tf:values[0].timestamp for tf,values in usable.items()}}
     for name, pair in tracks.items():
@@ -115,6 +115,7 @@ def scan(symbol, frames, now_ms, price, tracks=None,equilibrium_filter=False):
             state["status"] = "data_unavailable"
             continue
         flow = flows[top].flow
+        state["liquidity"] = flows[top].diagnostics()
         if flow is None:
             state["pending_sweep"] = flows[top].pending
             state["status"] = "sweep_confirmed_mss_waiting" if flows[top].pending else "sweep_mss_unconfirmed"
@@ -142,6 +143,7 @@ def scan(symbol, frames, now_ms, price, tracks=None,equilibrium_filter=False):
             location = "inside" if best["low"] <= price <= best["high"] else "waiting" if flow.direction*(price-(best["high"] if flow.direction==1 else best["low"])) > 0 else "passed"
             state["candidate"] = {**best, "id": hashlib.sha256(raw.encode()).hexdigest()[:24], "track": name, "symbol": symbol,
                                   "direction": flow.direction, "context_id": flow.id, "context": asdict(flow), "pair": list(pair),
+                                  "exchange": "bitget", "structure_proof": flows[top].flow_proof,
                                   "formed_at": max(flow.formed, best["latest_source"]), "location": location,
                                   "price": price, "context_price_breach": flow.direction*(price-flow.invalidation) < 0,
                                   "resistance_support": state["resistance_support"]}
@@ -183,7 +185,8 @@ def compact_notice(events):
     symbols={e['candidate']['symbol'] for e in ordered}
     if len(symbols)!=1:raise ValueError('One symbol per notice')
     number=lambda x:f'{x:,.2f}'.rstrip('0').rstrip('.')
-    lines=[f"[{ordered[0]['candidate']['symbol']}]",'']
+    venue=ordered[0]['candidate'].get('exchange')
+    lines=[f"[{(venue.title()+' · ') if venue else ''}{ordered[0]['candidate']['symbol']}]",'']
     if ordered[0]['candidate'].get('equilibrium'):
         lines[0]+=f" 현재가 {number(ordered[0]['candidate']['price'])}"
     for event in ordered:

@@ -18,6 +18,22 @@ def chart_example(direction=1):
 
 
 class ChartTests(unittest.TestCase):
+    def test_venue_and_external_evidence_are_visible(self):
+        import matplotlib.pyplot as plt
+        from src.overlap_charts import draw_scope
+        event,frames=chart_example();c=event['candidate']
+        c.update(exchange='bitget',structure_proof={'swept_origin':0,'protected_origin':4*TF_MS['4h']})
+        c['context'].update(sweep_time=8*TF_MS['4h'],formed=10*TF_MS['4h'],invalidation=99)
+        self.assertIn('[Bitget · BTCUSDT]',compact_notice([event]))
+        fig,ax=plt.subplots()
+        try:
+            draw_scope(ax,event,frames,overview=True)
+            labels=[item.get_text() for item in ax.texts]
+            self.assertIn('외곽 유동성 기준',labels)
+            self.assertIn('외곽 스윕',labels)
+            self.assertIn('보호 저점',labels)
+        finally:plt.close(fig)
+
     def test_one_shot_resend_keeps_history_and_next_run_stays_locked(self):
         with tempfile.TemporaryDirectory() as directory:
             path=Path(directory)/'s.json';s=snapshot();s['tracks']['short']['candidate']['equilibrium']={'eligible':True,'midpoint':115}

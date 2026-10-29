@@ -7,3 +7,5 @@ BASES += ("NDX100", "SP500")
 HISTORY_BARS = 400
 POLL_SECONDS = 60
 MIN_HISTORY_BARS = 8
+# A rolling local dealing range, rather than every small pivot or all-time highs.
+EXTERNAL_LIQUIDITY_BARS = 20

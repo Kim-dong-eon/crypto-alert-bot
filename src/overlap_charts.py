@@ -62,6 +62,19 @@ def draw_scope(ax,event,frames,overview=False):
         known.append(midpoint)
     if overview:
         context=c.get('context',{})
+        proof=c.get('structure_proof') or {}
+        swept=context.get('swept_level')
+        if swept is not None and proof.get('swept_origin') is not None:
+            left=start_at(proof['swept_origin'])
+            right=start_at(context['sweep_time']-TF_MS[tf])
+            ax.hlines(swept,left,right,color='#f4c75e',linestyle='--',linewidth=.8,zorder=4)
+            ax.annotate('외곽 유동성 기준',xy=(left,swept),xytext=(0,9),textcoords='offset points',color='#f4c75e',fontsize=7)
+            known.append(swept)
+        if context.get('invalidation') is not None and proof:
+            protected=context['invalidation']
+            ax.hlines(protected,start_at(proof.get('protected_origin',context['sweep_time'])),end,color='#b3a3df',linestyle=':',linewidth=.65,zorder=2)
+            ax.annotate('보호 저점' if c['direction']==1 else '보호 고점',xy=(.985,protected),xycoords=('axes fraction','data'),ha='right',va='top',fontsize=7,color='#b3a3df')
+            known.append(protected)
         if context.get('sweep_time',asof)-TF_MS[tf]<bars[0].timestamp:
             ax.text(.99,.02,'기준 스윕은 표시 범위 이전',transform=ax.transAxes,ha='right',color='#aebbd0',fontsize=7)
         for name,key in [('기준 저점','range_low'),('기준 고점','range_high')]:
@@ -90,7 +103,7 @@ def draw_scope(ax,event,frames,overview=False):
                 if old is not None:label+='↑' if p.price>old else '↓' if p.price<old else '='
                 previous[p.kind]=p.price
                 ax.annotate(label,xy=(x,p.price),xytext=(0,7 if p.kind=='high' else -12),textcoords='offset points',ha='center',color='#d1dbe8',fontsize=7,zorder=5)
-        for field,label,color in [('sweep_time','유동성 스윕','#f4c75e'),('formed','MSS 확정','#d9b3ff')]:
+        for field,label,color in [('sweep_time','외곽 스윕' if proof else '유동성 스윕','#f4c75e'),('formed','종가 MSS','#d9b3ff')]:
             stamp=context.get(field)
             point=next((b for b in bars if b.timestamp+TF_MS[tf]==stamp),None)
             if point:
@@ -113,7 +126,9 @@ def render_symbol_chart(events,frames,path):
     count=len(ordered);fig,axes=plt.subplots(count,2,figsize=(18,7+5*(count-1)),squeeze=False,layout='constrained');fig.patch.set_facecolor('#111722')
     try:
         regimes=' / '.join(f"{TRACK_LABELS[e['candidate']['track']]} {'강세' if e['candidate']['direction']==1 else '약세'}" for e in ordered)
-        fig.suptitle(f"{ordered[0]['candidate']['symbol']} · {regimes}\n{kst(max(e['timestamp'] for e in ordered))}",color='#e3e8f0',fontsize=14)
+        venue=ordered[0]['candidate'].get('exchange')
+        prefix=(venue.title()+' · ') if venue else ''
+        fig.suptitle(f"{prefix}{ordered[0]['candidate']['symbol']} · {regimes}\n{kst(max(e['timestamp'] for e in ordered))}",color='#e3e8f0',fontsize=14)
         for row,event in zip(axes,ordered):
             draw_scope(row[0],event,frames,overview=True);draw_scope(row[1],event,frames)
         path=Path(path);path.parent.mkdir(parents=True,exist_ok=True);fig.savefig(path,dpi=125,facecolor=fig.get_facecolor());return path
