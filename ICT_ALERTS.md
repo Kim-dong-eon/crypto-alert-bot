@@ -25,21 +25,24 @@
 - 0.5 조건에 맞는 구간 중 중첩 점수와 근접 순서로 선택한다. 별도의 0.3%·ATR 거리 문턱이나 OTE·1:3·하위 반응 필터를 추가하지 않는다. 단순 0.5선 통과 여부를 시간상 직접 목격해야 하는 조건이 아니라, 최신 가격이 0.5를 지난 접근 범위 안에 있는지를 검사한다.
 - 해당 시간대 종가가 OB 몸통/FVG 반대 경계를 넘을 때 무효화한다. 꼬리 접촉이나 하위 봉 종가를 상위 확정 종가로 대신하지 않는다. 접촉했던 구간도 유효하면 남는다.
 
-## 대상 — Bitget USDT 무기한 13개
+## 대상 — Binance·Bitget 공통 USDT 무기한 11개
 
-코인은 BTC만 포함하며, 비코인도 실제 현물 주식 대신 코인거래소 상품만 쓴다.
+코인은 BTC만 포함하며, 비코인도 실제 현물 주식 대신 코인거래소 상품만 쓴다. 기존 후보 13개 중 Binance와 Bitget에 함께 상장된 동일 심볼·기초자산의 활성 USDT 무기한만 사용한다. 현재 공통 11개는 아래와 같다.
 
 - BTCUSDT
 - SKHYNIXUSDT — SK하이닉스 연계 상품
 - NVDAUSDT, TSLAUSDT, AAPLUSDT, MSFTUSDT, AMZNUSDT, GOOGLUSDT, METAUSDT
 - QQQUSDT, SPYUSDT — ETF 연계 상품
-- NDX100USDT, SP500USDT — 지수 연계 상품
+
+NDX100USDT·SP500USDT는 현재 Binance 공식 목록에서 일치하는 상품이 없어 제외했다. 유사한 지수 이름이나 다른 결제통화·분기 선물로 대응시키지 않는다. Binance의 PERPETUAL·TRADIFI_PERPETUAL 및 기초자산 종류도 검증한다. 이 교집합 조건은 `--bases`를 직접 지정해도 적용된다.
 
 공식 상장 정보의 상태·symbolType·instrumentType·isRwa를 검증한다. BTC 이외 코인은 요청해도 제외하며 미상장·중단 종목을 비슷한 이름으로 대체하지 않는다. 감시 중 1시간마다 목록을 재검증한다. [공식 공개 API](https://www.bitget.com/docs/catalog/market/market-data), [하이닉스 공식 상품 목록](https://www.bitget.com/support/articles/12560603898404).
 
-시세·박스 가격은 모두 Bitget에서 가져온다. Bitget API를 통해 Binance 시세를 가져오는 것은 아니다. 알림과 차트 제목에 Bitget을 표시한다. 2026-10-29 GitHub Ubuntu 실행 환경에서 공식 Binance 선물 `/fapi/v1/exchangeInfo`는 HTTP 451(지역 제한), Bitget 상품 조회는 HTTP 200/00000으로 확인했다. Binance 상장 상품을 확인하지 못한 상태에서 NDX100을 Binance 상품으로 대응시키지 않는다. 수동 `Check exchange market access` 워크플로로 키 없이 다시 확인할 수 있다. [실제 접근 검사](https://github.com/Kim-dong-eon/crypto-alert-bot/actions/runs/40804497236).
+시세·박스 가격은 모두 Bitget에서 가져온다. Bitget API를 통해 Binance 시세를 가져오는 것은 아니다. 알림과 차트 제목에 Bitget을 표시한다. 2026-10-29 GitHub Ubuntu 실행 환경에서 공식 Binance 선물 `/fapi/v1/exchangeInfo`는 HTTP 451(지역 제한), Bitget 상품 조회는 HTTP 200/00000으로 확인했다. 같은 날 사용자 PC의 정상 접속에서는 Binance 공식 상품 목록·BTC 봉 모두 HTTP 200으로 확인했다. 수동 `Check exchange market access` 워크플로로 키 없이 다시 확인할 수 있다. [GitHub 접근 검사](https://github.com/Kim-dong-eon/crypto-alert-bot/actions/runs/40804497236).
 
-### NDX100 수정 사례
+검사 시작 때 Binance 공식 목록을 한 번 시도한다. 접근이 막히면 정상 접속에서 받은 `config/binance_contracts.json` 또는 더 최근 캐시의 확인된 공식 목록을 사용한다. GitHub 보고서 `binance_listing_check`에 실제 실시간 조회인지 저장 목록인지, 마지막 확인 시각과 451 등 사유를 구분해 남긴다. 저장 목록을 쓸 때 Binance의 현재 상장 상태를 실시간 재확인했다고 주장하지 않는다. Bitget 거래 상태는 매번 실시간 확인한다. 공식 Binance 정상 응답을 받으면 중단·상장 변경이 즉시 교집합에 반영된다. 정상 접속 PC에서 `python scripts/refresh_binance_contracts.py`로 저장 목록을 갱신할 수 있으며, 실패 시 기존 기록을 덮어쓰지 않는다.
+
+### NDX100 구조 검증 사례 — 현재 감시 대상에서는 제외
 
 기존 9월 저점 스윕에 따른 중기 강세는 10월 이후에도 남아 있었다. 새 기준에서는 10월 1일 상단 외곽 30,777의 스윕으로 그 강세를 해제하며, 해당 하락 대기는 스윕 고점의 종가 돌파로 취소된다. 10월 초 최고점 자체는 종가 돌파를 동반했으므로 일괄 상단 스윕으로 붙이지 않는다. 10월 24일 하단 외곽 28,950을 침범·복귀한 뒤에는 29,927의 일봉 종가 MSS를 기다린다. 확인 시점에 이 종가 조건을 충족하지 않았다면 강세 중첩 알림을 보내지 않는다. 이 날짜들은 UTC 봉의 시작일이다.
 

@@ -1,0 +1,182 @@
+{
+  "source": "https://fapi.binance.com/fapi/v1/exchangeInfo",
+  "verified_at": 1793240442382,
+  "server_time": 1793228461869,
+  "symbols": [
+    {
+      "symbol": "BTCUSDT",
+      "baseAsset": "BTC",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "PERPETUAL",
+      "underlyingType": "COIN",
+      "underlyingSubType": [
+        "PoW",
+        "Crypto"
+      ]
+    },
+    {
+      "symbol": "BTCUSDC",
+      "baseAsset": "BTC",
+      "quoteAsset": "USDC",
+      "status": "TRADING",
+      "contractType": "PERPETUAL",
+      "underlyingType": "COIN",
+      "underlyingSubType": [
+        "USDC",
+        "Crypto"
+      ]
+    },
+    {
+      "symbol": "TSLAUSDT",
+      "baseAsset": "TSLA",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY",
+      "underlyingSubType": [
+        "TradFi"
+      ]
+    },
+    {
+      "symbol": "AMZNUSDT",
+      "baseAsset": "AMZN",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY",
+      "underlyingSubType": [
+        "TradFi"
+      ]
+    },
+    {
+      "symbol": "METAUSDT",
+      "baseAsset": "META",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY",
+      "underlyingSubType": [
+        "TradFi"
+      ]
+    },
+    {
+      "symbol": "NVDAUSDT",
+      "baseAsset": "NVDA",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY",
+      "underlyingSubType": [
+        "TradFi"
+      ]
+    },
+    {
+      "symbol": "GOOGLUSDT",
+      "baseAsset": "GOOGL",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY",
+      "underlyingSubType": [
+        "TradFi"
+      ]
+    },
+    {
+      "symbol": "QQQUSDT",
+      "baseAsset": "QQQ",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY",
+      "underlyingSubType": [
+        "TradFi"
+      ]
+    },
+    {
+      "symbol": "SPYUSDT",
+      "baseAsset": "SPY",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY",
+      "underlyingSubType": [
+        "TradFi"
+      ]
+    },
+    {
+      "symbol": "AAPLUSDT",
+      "baseAsset": "AAPL",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY",
+      "underlyingSubType": [
+        "TradFi"
+      ]
+    },
+    {
+      "symbol": "MSFTUSDT",
+      "baseAsset": "MSFT",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY",
+      "underlyingSubType": [
+        "TradFi"
+      ]
+    },
+    {
+      "symbol": "BTCUSD1",
+      "baseAsset": "BTC",
+      "quoteAsset": "USD1",
+      "status": "TRADING",
+      "contractType": "PERPETUAL",
+      "underlyingType": "COIN",
+      "underlyingSubType": [
+        "Crypto"
+      ]
+    },
+    {
+      "symbol": "SKHYNIXUSDT",
+      "baseAsset": "SKHYNIX",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "KR_EQUITY",
+      "underlyingSubType": [
+        "TradFi"
+      ]
+    },
+    {
+      "symbol": "BTCUSDT_261225",
+      "baseAsset": "BTC",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "CURRENT_QUARTER",
+      "underlyingType": "COIN",
+      "underlyingSubType": []
+    },
+    {
+      "symbol": "BTCU",
+      "baseAsset": "BTC",
+      "quoteAsset": "U",
+      "status": "TRADING",
+      "contractType": "PERPETUAL",
+      "underlyingType": "COIN",
+      "underlyingSubType": [
+        "PoW",
+        "Crypto"
+      ]
+    },
+    {
+      "symbol": "BTCUSDT_270326",
+      "baseAsset": "BTC",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "NEXT_QUARTER",
+      "underlyingType": "COIN",
+      "underlyingSubType": []
+    }
+  ]
+}

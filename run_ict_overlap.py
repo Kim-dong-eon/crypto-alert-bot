@@ -5,17 +5,19 @@ import json
 import os
 from pathlib import Path
 import time
+import traceback
 
 from config.overlap_settings import TRACKS, TRACK_LABELS, BASES, POLL_SECONDS
 from src.ict_overlap import scan,compact_notice
 from src.overlap_market import PublicMarket,select_instruments,quote_price
 from src.overlap_delivery import OverlapLedger
 from src.ict_notices import single_writer,telegram_sender
+from src.common_listings import binance_listings,select_common_instruments
 
 ROOT=Path(__file__).resolve().parent
 
 
-def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,image_sender=None,render_previews=False):
+def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,image_sender=None,render_previews=False,listing_check=None):
     results=[];failures=[];chart_frames={}
     tickers,received=market.tickers()
     for instrument in instruments:
@@ -76,7 +78,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
             delivery=ledger.dispatch_symbols(image_sender,renderer,contexts)
         else:delivery=ledger.dispatch(sender,batch=True)
         ledger.state['pending'].update(held);ledger.save()
-    report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery}
+    report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","binance_listing_check":listing_check,"instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery}
     if snapshot:
         path=Path(snapshot);path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     print(f"중첩 알림: 전송 {delivery['sent']}건 / 실패 {delivery['failed']}건")
@@ -101,7 +103,10 @@ def main(argv=None):
             OverlapLedger(args.state).unlock(symbol,track)
         print(f'{symbol} {TRACK_LABELS[track]} 잠금 해제');return 0
     market=PublicMarket(ROOT/'runtime/ict_overlap/cache')
-    catalog=market.instruments();instruments=select_instruments(catalog,tuple(dict.fromkeys(args.bases)))
+    catalog=market.instruments()
+    binance_rows,listing_check=binance_listings(ROOT/'config/binance_contracts.json',market.cache/'binance_contracts.json')
+    instruments=select_common_instruments(select_instruments(catalog,tuple(dict.fromkeys(args.bases))),binance_rows)
+    print('공통 상장 확인: '+listing_check['mode']+' / '+str(listing_check['verified_at']))
     missing=set(args.bases)-{r['baseCoin'] for r in instruments}
     if missing:print('지원 대상에서 제외된 요청 심볼: '+', '.join(sorted(missing)))
     if not instruments:raise ValueError('No supported instruments')
@@ -119,9 +124,10 @@ def main(argv=None):
         while True:
             try:
                 if time.monotonic()-catalog_checked>=3600:
-                    instruments=select_instruments(market.instruments(),tuple(dict.fromkeys(args.bases)))
+                    binance_rows,listing_check=binance_listings(ROOT/'config/binance_contracts.json',market.cache/'binance_contracts.json')
+                    instruments=select_common_instruments(select_instruments(market.instruments(),tuple(dict.fromkeys(args.bases))),binance_rows)
                     catalog_checked=time.monotonic()
-                report=run_once(market,instruments,ledger,sender,persist=args.watch,snapshot=args.snapshot,image_sender=image_sender,render_previews=args.render_preview)
+                report=run_once(market,instruments,ledger,sender,persist=args.watch,snapshot=args.snapshot,image_sender=image_sender,render_previews=args.render_preview,listing_check=listing_check)
             except Exception as error:
                 if not args.watch:raise
                 print(f'시세 확인 보류 ({type(error).__name__}); 다음 주기에 재시도',flush=True)
@@ -134,4 +140,5 @@ if __name__=='__main__':
     try:raise SystemExit(main())
     except KeyboardInterrupt:print('중첩 감시 종료')
     except Exception as error:
+        traceback.print_tb(error.__traceback__)
         print(f'중첩 감시 중단 ({type(error).__name__})');raise SystemExit(1)
