@@ -25,6 +25,19 @@ def unconfirmed_snapshot():
 
 
 class StatusTests(unittest.TestCase):
+    def test_overview_detail_pair_shares_one_caption_and_acknowledgement(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ledger=OverlapLedger(Path(directory)/'s.json',require_images=True,overlap_only=True)
+            ledger.observe(snapshot());sender=Mock(side_effect=[False,True])
+            renderer=lambda _:[Path('full.png'),Path('detail.png')]
+            self.assertEqual(ledger.dispatch_symbols(sender,renderer,{})['failed'],1)
+            self.assertEqual(len(ledger.state['pending']),1)
+            report=ledger.dispatch_symbols(sender,renderer,{})
+            self.assertEqual(report,{'sent':1,'failed':0,'images_sent':2})
+            items=sender.call_args.args[0];self.assertEqual(len(items),2)
+            self.assertIn('2/4',items[0][1]);self.assertEqual(items[1][1],'')
+            self.assertFalse(ledger.state['pending'])
+
     def test_waiting_scopes_are_visible_but_never_become_candidates(self):
         result=unconfirmed_snapshot();before=copy.deepcopy(result);events=overview_events(result)
         self.assertEqual(result,before)

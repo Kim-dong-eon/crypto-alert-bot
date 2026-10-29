@@ -19,7 +19,7 @@ class TelegramMedia:
             if len(items)==1:
                 response=requests.post(f'https://api.telegram.org/bot{self.token}/sendPhoto',data={'chat_id':self.chat_id,'caption':items[0][1]},files={'photo':handles[0]},timeout=45)
             else:
-                media=[{'type':'photo','media':f'attach://image{i}','caption':caption} for i,(_,caption) in enumerate(items)]
+                media=[{'type':'photo','media':f'attach://image{i}',**({'caption':caption} if caption else {})} for i,(_,caption) in enumerate(items)]
                 response=requests.post(f'https://api.telegram.org/bot{self.token}/sendMediaGroup',data={'chat_id':self.chat_id,'media':json.dumps(media,ensure_ascii=False)},files={f'image{i}':h for i,h in enumerate(handles)},timeout=60)
             result=response.json()
             return response.status_code==200 and result.get('ok') is True and (len(items)==1 or len(result.get('result',[]))==len(items))

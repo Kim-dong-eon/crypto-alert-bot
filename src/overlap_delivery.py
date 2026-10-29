@@ -168,7 +168,7 @@ class OverlapLedger:
         return result
 
     def dispatch_symbols(self,image_sender,renderer,contexts):
-        """A single image/caption per symbol; acknowledge its pending scopes."""
+        """A symbol's overview/detail pair; acknowledge its pending scopes."""
         result={'sent':0,'failed':0,'images_sent':0};grouped={}
         for key,event in self.state['pending'].items():
             if event['stage'] not in ('prepared','approach'):continue
@@ -179,12 +179,15 @@ class OverlapLedger:
             try:
                 caption=compact_notice(events)
                 if len(caption)>1024:raise ValueError('Caption too long')
-                path=renderer(events);ready.append((pending,path,caption))
+                rendered=renderer(events)
+                paths=list(rendered) if isinstance(rendered,(tuple,list)) else [rendered]
+                if not 1<=len(paths)<=2:raise ValueError('One image or one overview/detail pair required')
+                ready.append((pending,paths,caption))
             except Exception:result['failed']+=len(pending)
-        # Separate photos keep each symbol's explanation visible in the chat.
-        # A successful photo is acknowledged even if a later symbol fails.
-        for pending,path,caption in ready:
-            try:success=image_sender([(path,caption)]) is True
+        # One symbol per group, one caption on its first photo. A successful
+        # pair is acknowledged even if delivery of a later symbol fails.
+        for pending,paths,caption in ready:
+            try:success=image_sender([(path,caption if i==0 else '') for i,path in enumerate(paths)]) is True
             except Exception:success=False
             if not success:
                 result['failed']+=len(pending);continue
@@ -192,7 +195,7 @@ class OverlapLedger:
                 record={'symbol':event['candidate']['symbol'],'stage':event['stage'],'timestamp':event['timestamp']}
                 self.state['delivered'][key]=record;self.state['images_delivered'][key]=record;del self.state['pending'][key]
                 result['sent']+=1
-            result['images_sent']+=1
+            result['images_sent']+=len(paths)
             self.save()
         return result
 

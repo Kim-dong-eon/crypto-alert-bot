@@ -72,27 +72,28 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
     delivery={"sent":0,"failed":0}
     status_delivery={'sent':0,'failed':0,'symbols':[]}
     if render_previews and sender is None:
-        from src.overlap_charts import render_symbol_chart
+        from src.overlap_charts import render_alert_pair
         for result in results:
-            symbol_events=overview_events(result)
-            render_symbol_chart(symbol_events,chart_frames[result['symbol']],ROOT/'runtime/ict_overlap/charts'/f"{result['symbol']}_overlap_preview.png")
+            symbol_events=[{'candidate':state['candidate'],'timestamp':result['as_of'],'stage':'approach'} for state in result['tracks'].values() if alert_eligible(state['candidate'])]
+            if symbol_events:render_alert_pair(symbol_events,chart_frames[result['symbol']],ROOT/'runtime/ict_overlap/charts'/f"{result['symbol']}_preview")
     if sender:
         successful={r['symbol'] for r in results}
         held={k:e for k,e in ledger.state['pending'].items() if e['candidate']['symbol'] not in successful}
         for key in held:del ledger.state['pending'][key]
         if image_sender:
-            from src.overlap_charts import render_symbol_chart
+            from src.overlap_charts import render_symbol_chart,render_alert_pair
             contexts={}
             for result in results:
-                contexts[result['symbol']]=overview_events(result)
+                contexts[result['symbol']]=[{'candidate':state['candidate'],'timestamp':result['as_of'],'stage':'approach'} for state in result['tracks'].values() if alert_eligible(state['candidate'])]
             def renderer(events):
-                symbol=events[0]['view']['symbol'];return render_symbol_chart(events,chart_frames[symbol],ROOT/'runtime/ict_overlap/charts'/f"{symbol}_overlap.png")
+                symbol=events[0]['candidate']['symbol'];return render_alert_pair(events,chart_frames[symbol],ROOT/'runtime/ict_overlap/charts'/f"{symbol}_overlap")
             before={symbol:{key for key,event in ledger.state['pending'].items() if event['candidate']['symbol']==symbol} for symbol in successful}
             delivery=ledger.dispatch_symbols(image_sender,renderer,contexts)
             completed={symbol for symbol,keys in before.items() if keys and keys.isdisjoint(ledger.state['pending'])}
             for symbol in status_symbols:
                 if symbol in completed:continue
-                events=contexts.get(symbol)
+                item=next((item for item in results if item['symbol']==symbol),None)
+                events=overview_events(item) if item else None
                 if not events:status_delivery['failed']+=1;continue
                 try:
                     caption='요청한 현재 상태\n'+compact_notice(events)

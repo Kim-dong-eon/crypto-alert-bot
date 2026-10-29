@@ -214,12 +214,11 @@ def compact_notice(events):
         side='지지' if c['direction']==1 else '저항'
         location='안' if c['low']<=c['price']<=c['high'] else '접근'
         lines += [f"{TRACK_LABELS[c['track']]} 겹침 · {'강세(LONG)' if c['direction']==1 else '약세(SHORT)'}",
-                  f"상황: {'하단 스윕 후 상승' if c['direction']==1 else '상단 스윕 후 하락'} 전환(MSS) 확인",
-                  f"현재: {side} 박스 {location} · {number(c['low'])} ~ {number(c['high'])}",
                   f"OB/FVG 중첩: {overlap_count(c)}/4"]
         for tf in c['pair']:
             present={kind:matched for frame,kind,matched in checks if frame==tf}
             lines.append(f"{LABELS[tf]} OB {'✓' if present['OB'] else '—'} · FVG {'✓' if present['FVG'] else '—'}")
+        lines.append(f"{number(c['low'])} ~ {number(c['high'])} · {side} 박스 {location}")
         if c.get('equilibrium',{}).get('midpoint') is not None:lines.append(f"0.5 기준 {number(c['equilibrium']['midpoint'])}")
         lines.append('')
     lines.append(kst(max(e['timestamp'] for e in ordered)))

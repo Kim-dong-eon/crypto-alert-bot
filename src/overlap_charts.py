@@ -1,4 +1,4 @@
-"""One image per symbol, containing only matching overlap scopes."""
+"""Matched-scope overview/detail photos, plus explicit diagnostic rendering."""
 from pathlib import Path
 import matplotlib
 matplotlib.use('Agg')
@@ -155,3 +155,24 @@ def render_symbol_chart(events,frames,path):
 
 def render_chart(event,frames,path):
     return render_symbol_chart([event],frames,path)
+
+
+def render_alert_pair(events,frames,prefix):
+    """Only matched scopes: one full-structure photo and one detail photo."""
+    configure_font()
+    ordered=sorted(events,key=lambda e:{'short':0,'medium':1,'long':2}.get(e['candidate']['track'],9))
+    if not 1<=len(ordered)<=3 or len({e['candidate']['symbol'] for e in ordered})!=1:
+        raise ValueError('One symbol and matched scopes required')
+    prefix=Path(prefix);prefix.parent.mkdir(parents=True,exist_ok=True);paths=[]
+    for overview,suffix,label in ((True,'overview','전체 구조'),(False,'detail','중첩 구간 확대')):
+        fig,axes=plt.subplots(len(ordered),1,figsize=(12,6.5*len(ordered)),squeeze=False,layout='constrained')
+        fig.patch.set_facecolor('#111722')
+        try:
+            regimes=' / '.join(f"{TRACK_LABELS[e['candidate']['track']]} {'강세' if e['candidate']['direction']==1 else '약세'} · {overlap_count(e['candidate'])}/4" for e in ordered)
+            first=ordered[0]['candidate'];venue=first.get('exchange','bitget').title()
+            fig.suptitle(f"{venue} · {first['symbol']} · {label}\n{regimes} · {kst(max(e['timestamp'] for e in ordered))}",color='#e3e8f0',fontsize=13)
+            for row,event in zip(axes,ordered):draw_scope(row[0],event,frames,overview=overview)
+            path=prefix.with_name(prefix.stem+'_'+suffix+'.png')
+            fig.savefig(path,dpi=140,facecolor=fig.get_facecolor());paths.append(path)
+        finally:plt.close(fig)
+    return paths

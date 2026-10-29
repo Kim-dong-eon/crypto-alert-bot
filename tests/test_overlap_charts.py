@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import Mock,patch
 from PIL import Image
 from src.ict_engine import Bar,TF_MS
-from src.overlap_charts import render_chart,render_symbol_chart,TF_COLORS
+from src.overlap_charts import render_chart,render_symbol_chart,render_alert_pair,TF_COLORS
 from src.ict_overlap import compact_notice,equilibrium_gate
 from src.overlap_telegram import TelegramMedia
 from src.overlap_delivery import OverlapLedger
@@ -18,6 +18,13 @@ def chart_example(direction=1):
 
 
 class ChartTests(unittest.TestCase):
+    def test_alert_pair_is_two_separate_full_and_detail_files(self):
+        event,frames=chart_example()
+        with tempfile.TemporaryDirectory() as directory:
+            paths=render_alert_pair([event],frames,Path(directory)/'alert')
+            self.assertEqual(len(paths),2);self.assertIn('overview',paths[0].name);self.assertIn('detail',paths[1].name)
+            for path in paths:
+                with Image.open(path) as im:self.assertGreaterEqual(im.width,1400)
     def test_venue_and_external_evidence_are_visible(self):
         import matplotlib.pyplot as plt
         from src.overlap_charts import draw_scope
@@ -83,7 +90,7 @@ class ChartTests(unittest.TestCase):
         short=snapshot()['tracks']['short']['candidate'];medium=copy.deepcopy(short);medium.update(track='medium',pair=['1d','4h'],groups=['1d:OB','4h:FVG'])
         events=[{'candidate':medium,'timestamp':1000},{'candidate':short,'timestamp':1000}]
         text=compact_notice(events);self.assertLess(text.index('단기 겹침'),text.index('중기 겹침'));self.assertIn('강세(LONG)',text);self.assertNotIn('장기',text)
-        self.assertIn('상황: 하단 스윕 후 상승 전환(MSS) 확인',text);self.assertEqual(text.count('중첩: 2/4'),2)
+        self.assertNotIn('MSS',text);self.assertNotIn('대기 이유',text);self.assertEqual(text.count('중첩: 2/4'),2)
         self.assertIn('4시간 OB ✓ · FVG —',text);self.assertLess(len(text),700)
 
     def test_overview_uses_upper_timeframe_and_detail_uses_lower(self):
@@ -159,6 +166,10 @@ class ChartTests(unittest.TestCase):
                 self.assertTrue(post.call_args.args[0].endswith('/sendPhoto'))
                 post.return_value.json.return_value={'ok':True,'result':[{},{}]};self.assertTrue(sender.send_images([(p,'one'),(p,'two')]))
                 self.assertTrue(post.call_args.args[0].endswith('/sendMediaGroup'))
+                self.assertTrue(sender.send_images([(p,'conditions 2/4'),(p,'')]))
+                import json
+                media=json.loads(post.call_args.kwargs['data']['media'])
+                self.assertEqual(media[0]['caption'],'conditions 2/4');self.assertNotIn('caption',media[1])
 
 
 if __name__=='__main__':unittest.main()
