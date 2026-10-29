@@ -63,7 +63,7 @@
           "eligible": false,
           "range_low": 80379.0,
           "range_high": 87222.0,
-          "distance_to_zone": 2453.5999999999913
+          "distance_to_zone": 2543.800000000003
         },
         "id": "39f55a505c7d71ae0ce02d54",
         "track": "medium",
@@ -87,7 +87,7 @@
         ],
         "formed_at": 1792713600000,
         "location": "waiting",
-        "price": 81064.6,
+        "price": 80974.4,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -118,11 +118,11 @@
           }
         ]
       },
-      "checked_at": 1793235658074
+      "checked_at": 1793235942388
     },
     "BTCUSDT|long": {
       "candidate": null,
-      "checked_at": 1793235658074
+      "checked_at": 1793235942388
     },
     "SKHYNIXUSDT|medium": {
       "candidate": {
@@ -171,7 +171,7 @@
           "eligible": false,
           "range_low": 887.05,
           "range_high": 1162.69,
-          "distance_to_zone": 120.81999999999994
+          "distance_to_zone": 127.01999999999998
         },
         "id": "996a3c8e7b8319961b97f765",
         "track": "medium",
@@ -195,22 +195,9 @@
         ],
         "formed_at": 1793232000000,
         "location": "waiting",
-        "price": 1147.7,
+        "price": 1153.9,
         "context_price_breach": false,
         "resistance_support": [
-          {
-            "id": "1d:FVG:1791763200000:1792022400000:-1",
-            "timeframe": "1d",
-            "kind": "FVG",
-            "direction": -1,
-            "low": 1120.49,
-            "high": 1150.87,
-            "created": 1792022400000,
-            "origin": 1791763200000,
-            "stop": 1150.87,
-            "invalidation": 1150.87,
-            "expiry": 9223372036854775807
-          },
           {
             "id": "1d:FVG:1791676800000:1791936000000:-1",
             "timeframe": "1d",
@@ -223,14 +210,27 @@
             "stop": 1221.91,
             "invalidation": 1221.91,
             "expiry": 9223372036854775807
+          },
+          {
+            "id": "1d:FVG:1791331200000:1791590400000:-1",
+            "timeframe": "1d",
+            "kind": "FVG",
+            "direction": -1,
+            "low": 1253.73,
+            "high": 1255.96,
+            "created": 1791590400000,
+            "origin": 1791331200000,
+            "stop": 1255.96,
+            "invalidation": 1255.96,
+            "expiry": 9223372036854775807
           }
         ]
       },
-      "checked_at": 1793235658304
+      "checked_at": 1793235942409
     },
     "SKHYNIXUSDT|long": {
       "candidate": null,
-      "checked_at": 1793235658304
+      "checked_at": 1793235942409
     },
     "NVDAUSDT|medium": {
       "candidate": {
@@ -279,7 +279,7 @@
           "eligible": false,
           "range_low": 213.21,
           "range_high": 243.53,
-          "distance_to_zone": 2.569999999999993
+          "distance_to_zone": 2.4599999999999795
         },
         "id": "db3cef3bbb3feb92e0851c62",
         "track": "medium",
@@ -303,7 +303,7 @@
         ],
         "formed_at": 1793232000000,
         "location": "waiting",
-        "price": 214.5,
+        "price": 214.61,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -334,19 +334,19 @@
           }
         ]
       },
-      "checked_at": 1793235658540
+      "checked_at": 1793235942430
     },
     "NVDAUSDT|long": {
       "candidate": null,
-      "checked_at": 1793235658540
+      "checked_at": 1793235942430
     },
     "TSLAUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793235658800
+      "checked_at": 1793235942451
     },
     "TSLAUSDT|long": {
       "candidate": null,
-      "checked_at": 1793235658800
+      "checked_at": 1793235942451
     },
     "AAPLUSDT|medium": {
       "candidate": {
@@ -410,7 +410,7 @@
           "eligible": false,
           "range_low": 337.44,
           "range_high": 348.73,
-          "distance_to_zone": 1.0699999999999932
+          "distance_to_zone": 1.1299999999999955
         },
         "id": "1628bac4e60111f0ce6e5d5e",
         "track": "medium",
@@ -434,15 +434,15 @@
         ],
         "formed_at": 1793232000000,
         "location": "waiting",
-        "price": 346.75,
+        "price": 346.81,
         "context_price_breach": false,
         "resistance_support": []
       },
-      "checked_at": 1793235659077
+      "checked_at": 1793235942470
     },
     "AAPLUSDT|long": {
       "candidate": null,
-      "checked_at": 1793235659077
+      "checked_at": 1793235942470
     },
     "MSFTUSDT|medium": {
       "candidate": {
@@ -521,7 +521,7 @@
           "eligible": false,
           "range_low": 491.72,
           "range_high": 543.33,
-          "distance_to_zone": 24.470000000000027
+          "distance_to_zone": 25.050000000000068
         },
         "id": "8120355da1a38696a503e66d",
         "track": "medium",
@@ -545,27 +545,27 @@
         ],
         "formed_at": 1793059200000,
         "location": "waiting",
-        "price": 548.28,
+        "price": 548.86,
         "context_price_breach": false,
         "resistance_support": []
       },
-      "checked_at": 1793235659304
+      "checked_at": 1793235942489
     },
     "MSFTUSDT|long": {
       "candidate": null,
-      "checked_at": 1793235659304
+      "checked_at": 1793235942489
     },
     "AMZNUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793235659574
+      "checked_at": 1793235942509
     },
     "AMZNUSDT|long": {
       "candidate": null,
-      "checked_at": 1793235659574
+      "checked_at": 1793235942509
     },
     "GOOGLUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793235659814
+      "checked_at": 1793235942529
     },
     "GOOGLUSDT|long": {
       "candidate": {
@@ -614,7 +614,7 @@
           "eligible": false,
           "range_low": 318.48,
           "range_high": 364.46,
-          "distance_to_zone": 48.85000000000002
+          "distance_to_zone": 49.25
         },
         "id": "b2be9ccbfc66bc774427dfed",
         "track": "long",
@@ -638,11 +638,11 @@
         ],
         "formed_at": 1792972800000,
         "location": "waiting",
-        "price": 295.96,
+        "price": 295.56,
         "context_price_breach": false,
         "resistance_support": []
       },
-      "checked_at": 1793235659814
+      "checked_at": 1793235942529
     },
     "METAUSDT|medium": {
       "candidate": {
@@ -691,7 +691,7 @@
           "eligible": false,
           "range_low": 615.0,
           "range_high": 748.85,
-          "distance_to_zone": 42.76999999999998
+          "distance_to_zone": 43.02999999999997
         },
         "id": "3b5b97980d6a00895844a59c",
         "track": "medium",
@@ -715,7 +715,7 @@
         ],
         "formed_at": 1792800000000,
         "location": "waiting",
-        "price": 618.7,
+        "price": 618.44,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -746,19 +746,19 @@
           }
         ]
       },
-      "checked_at": 1793235660067
+      "checked_at": 1793235942549
     },
     "METAUSDT|long": {
       "candidate": null,
-      "checked_at": 1793235660067
+      "checked_at": 1793235942549
     },
     "QQQUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793235660322
+      "checked_at": 1793235942570
     },
     "QQQUSDT|long": {
       "candidate": null,
-      "checked_at": 1793235660322
+      "checked_at": 1793235942570
     },
     "SPYUSDT|medium": {
       "candidate": {
@@ -819,10 +819,10 @@
         "latest_source": 1792627200000,
         "equilibrium": {
           "midpoint": 771.28,
-          "eligible": false,
+          "eligible": true,
           "range_low": 759.81,
           "range_high": 782.75,
-          "distance_to_zone": 2.8099999999999454
+          "distance_to_zone": 2.480000000000018
         },
         "id": "f741b7cc5a2394ced01455b6",
         "track": "medium",
@@ -846,7 +846,7 @@
         ],
         "formed_at": 1792627200000,
         "location": "waiting",
-        "price": 771.19,
+        "price": 771.52,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -877,11 +877,11 @@
           }
         ]
       },
-      "checked_at": 1793235660604
+      "checked_at": 1793235942591
     },
     "SPYUSDT|long": {
       "candidate": null,
-      "checked_at": 1793235660604
+      "checked_at": 1793235942591
     },
     "NDX100USDT|medium": {
       "candidate": {
@@ -930,7 +930,7 @@
           "eligible": true,
           "range_low": 28807.0,
           "range_high": 31326.0,
-          "distance_to_zone": 464.0
+          "distance_to_zone": 524.0
         },
         "id": "396866a38db02130a349edfc",
         "track": "medium",
@@ -954,7 +954,7 @@
         ],
         "formed_at": 1792972800000,
         "location": "waiting",
-        "price": 29552.0,
+        "price": 29612.0,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -985,27 +985,27 @@
           }
         ]
       },
-      "checked_at": 1793235660868
+      "checked_at": 1793235942611
     },
     "NDX100USDT|long": {
       "candidate": null,
-      "checked_at": 1793235660868
+      "checked_at": 1793235942611
     },
     "SP500USDT|medium": {
       "candidate": null,
-      "checked_at": 1793235661110
+      "checked_at": 1793235942632
     },
     "SP500USDT|long": {
       "candidate": null,
-      "checked_at": 1793235661110
+      "checked_at": 1793235942632
     },
     "BTCUSDT|short": {
       "candidate": null,
-      "checked_at": 1793235658074
+      "checked_at": 1793235942388
     },
     "SKHYNIXUSDT|short": {
       "candidate": null,
-      "checked_at": 1793235658304
+      "checked_at": 1793235942409
     },
     "NVDAUSDT|short": {
       "candidate": {
@@ -1054,7 +1054,7 @@
           "eligible": false,
           "range_low": 213.05,
           "range_high": 220.65,
-          "distance_to_zone": 4.400000000000006
+          "distance_to_zone": 4.289999999999992
         },
         "id": "113dd3aaa7c8d30a0f883992",
         "track": "short",
@@ -1078,7 +1078,7 @@
         ],
         "formed_at": 1793217600000,
         "location": "waiting",
-        "price": 214.5,
+        "price": 214.61,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -1109,7 +1109,7 @@
           }
         ]
       },
-      "checked_at": 1793235658540
+      "checked_at": 1793235942430
     },
     "TSLAUSDT|short": {
       "candidate": {
@@ -1173,7 +1173,7 @@
           "eligible": false,
           "range_low": 370.57,
           "range_high": 413.24,
-          "distance_to_zone": 0.4800000000000182
+          "distance_to_zone": 0.5399999999999636
         },
         "id": "9736eb6b4a1a7a1ff341fc64",
         "track": "short",
@@ -1197,7 +1197,7 @@
         ],
         "formed_at": 1793203200000,
         "location": "waiting",
-        "price": 401.97,
+        "price": 402.03,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -1215,15 +1215,15 @@
           }
         ]
       },
-      "checked_at": 1793235658800
+      "checked_at": 1793235942451
     },
     "AAPLUSDT|short": {
       "candidate": null,
-      "checked_at": 1793235659077
+      "checked_at": 1793235942470
     },
     "MSFTUSDT|short": {
       "candidate": null,
-      "checked_at": 1793235659304
+      "checked_at": 1793235942489
     },
     "AMZNUSDT|short": {
       "candidate": {
@@ -1272,7 +1272,7 @@
           "eligible": false,
           "range_low": 248.29,
           "range_high": 255.12,
-          "distance_to_zone": 0.3499999999999943
+          "distance_to_zone": 0.4099999999999966
         },
         "id": "22ec0bd02cf91a5d95c1620f",
         "track": "short",
@@ -1296,7 +1296,7 @@
         ],
         "formed_at": 1793217600000,
         "location": "waiting",
-        "price": 253.63,
+        "price": 253.69,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -1327,15 +1327,15 @@
           }
         ]
       },
-      "checked_at": 1793235659574
+      "checked_at": 1793235942509
     },
     "GOOGLUSDT|short": {
       "candidate": null,
-      "checked_at": 1793235659814
+      "checked_at": 1793235942529
     },
     "METAUSDT|short": {
       "candidate": null,
-      "checked_at": 1793235660067
+      "checked_at": 1793235942549
     },
     "QQQUSDT|short": {
       "candidate": {
@@ -1399,7 +1399,7 @@
           "eligible": false,
           "range_low": 703.61,
           "range_high": 726.62,
-          "distance_to_zone": 7.289999999999964
+          "distance_to_zone": 7.669999999999959
         },
         "id": "73776d258302fdd1b000bd5e",
         "track": "short",
@@ -1423,7 +1423,7 @@
         ],
         "formed_at": 1793102400000,
         "location": "waiting",
-        "price": 719.8,
+        "price": 720.18,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -1454,7 +1454,7 @@
           }
         ]
       },
-      "checked_at": 1793235660322
+      "checked_at": 1793235942570
     },
     "SPYUSDT|short": {
       "candidate": {
@@ -1503,7 +1503,7 @@
           "eligible": false,
           "range_low": 760.62,
           "range_high": 774.39,
-          "distance_to_zone": 0.7800000000000864
+          "distance_to_zone": 1.1100000000000136
         },
         "id": "dcd4ed9ccfa56ce97abe3a34",
         "track": "short",
@@ -1527,7 +1527,7 @@
         ],
         "formed_at": 1793131200000,
         "location": "waiting",
-        "price": 771.19,
+        "price": 771.52,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -1558,7 +1558,7 @@
           }
         ]
       },
-      "checked_at": 1793235660604
+      "checked_at": 1793235942591
     },
     "NDX100USDT|short": {
       "candidate": {
@@ -1622,7 +1622,7 @@
           "eligible": false,
           "range_low": 28903.0,
           "range_high": 29908.0,
-          "distance_to_zone": 256.0
+          "distance_to_zone": 316.0
         },
         "id": "d8f92e4edf305cdc354b592b",
         "track": "short",
@@ -1646,7 +1646,7 @@
         ],
         "formed_at": 1793102400000,
         "location": "waiting",
-        "price": 29552.0,
+        "price": 29612.0,
         "context_price_breach": false,
         "resistance_support": [
           {
@@ -1677,11 +1677,11 @@
           }
         ]
       },
-      "checked_at": 1793235660868
+      "checked_at": 1793235942611
     },
     "SP500USDT|short": {
       "candidate": null,
-      "checked_at": 1793235661110
+      "checked_at": 1793235942632
     }
   },
   "delivered": {
@@ -1893,7 +1893,7 @@
             "eligible": false,
             "range_low": 80379.0,
             "range_high": 87222.0,
-            "distance_to_zone": 2453.5999999999913
+            "distance_to_zone": 2543.800000000003
           },
           "id": "39f55a505c7d71ae0ce02d54",
           "track": "medium",
@@ -1917,7 +1917,7 @@
           ],
           "formed_at": 1792713600000,
           "location": "waiting",
-          "price": 81064.6,
+          "price": 80974.4,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -2106,7 +2106,7 @@
             "eligible": false,
             "range_low": 887.05,
             "range_high": 1162.69,
-            "distance_to_zone": 120.81999999999994
+            "distance_to_zone": 127.01999999999998
           },
           "id": "996a3c8e7b8319961b97f765",
           "track": "medium",
@@ -2130,22 +2130,9 @@
           ],
           "formed_at": 1793232000000,
           "location": "waiting",
-          "price": 1147.7,
+          "price": 1153.9,
           "context_price_breach": false,
           "resistance_support": [
-            {
-              "id": "1d:FVG:1791763200000:1792022400000:-1",
-              "timeframe": "1d",
-              "kind": "FVG",
-              "direction": -1,
-              "low": 1120.49,
-              "high": 1150.87,
-              "created": 1792022400000,
-              "origin": 1791763200000,
-              "stop": 1150.87,
-              "invalidation": 1150.87,
-              "expiry": 9223372036854775807
-            },
             {
               "id": "1d:FVG:1791676800000:1791936000000:-1",
               "timeframe": "1d",
@@ -2157,6 +2144,19 @@
               "origin": 1791676800000,
               "stop": 1221.91,
               "invalidation": 1221.91,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "1d:FVG:1791331200000:1791590400000:-1",
+              "timeframe": "1d",
+              "kind": "FVG",
+              "direction": -1,
+              "low": 1253.73,
+              "high": 1255.96,
+              "created": 1791590400000,
+              "origin": 1791331200000,
+              "stop": 1255.96,
+              "invalidation": 1255.96,
               "expiry": 9223372036854775807
             }
           ]
@@ -2319,7 +2319,7 @@
             "eligible": false,
             "range_low": 213.21,
             "range_high": 243.53,
-            "distance_to_zone": 2.569999999999993
+            "distance_to_zone": 2.4599999999999795
           },
           "id": "db3cef3bbb3feb92e0851c62",
           "track": "medium",
@@ -2343,7 +2343,7 @@
           ],
           "formed_at": 1793232000000,
           "location": "waiting",
-          "price": 214.5,
+          "price": 214.61,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -2537,7 +2537,7 @@
             "eligible": false,
             "range_low": 337.44,
             "range_high": 348.73,
-            "distance_to_zone": 1.0699999999999932
+            "distance_to_zone": 1.1299999999999955
           },
           "id": "1628bac4e60111f0ce6e5d5e",
           "track": "medium",
@@ -2561,7 +2561,7 @@
           ],
           "formed_at": 1793232000000,
           "location": "waiting",
-          "price": 346.75,
+          "price": 346.81,
           "context_price_breach": false,
           "resistance_support": []
         }
@@ -2648,7 +2648,7 @@
             "eligible": false,
             "range_low": 491.72,
             "range_high": 543.33,
-            "distance_to_zone": 24.470000000000027
+            "distance_to_zone": 25.050000000000068
           },
           "id": "8120355da1a38696a503e66d",
           "track": "medium",
@@ -2672,7 +2672,7 @@
           ],
           "formed_at": 1793059200000,
           "location": "waiting",
-          "price": 548.28,
+          "price": 548.86,
           "context_price_breach": false,
           "resistance_support": []
         }
@@ -2732,7 +2732,7 @@
             "eligible": false,
             "range_low": 318.48,
             "range_high": 364.46,
-            "distance_to_zone": 48.85000000000002
+            "distance_to_zone": 49.25
           },
           "id": "b2be9ccbfc66bc774427dfed",
           "track": "long",
@@ -2756,7 +2756,7 @@
           ],
           "formed_at": 1792972800000,
           "location": "waiting",
-          "price": 295.96,
+          "price": 295.56,
           "context_price_breach": false,
           "resistance_support": []
         }
@@ -2812,7 +2812,7 @@
             "eligible": false,
             "range_low": 615.0,
             "range_high": 748.85,
-            "distance_to_zone": 42.76999999999998
+            "distance_to_zone": 43.02999999999997
           },
           "id": "3b5b97980d6a00895844a59c",
           "track": "medium",
@@ -2836,7 +2836,7 @@
           ],
           "formed_at": 1792800000000,
           "location": "waiting",
-          "price": 618.7,
+          "price": 618.44,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -2934,10 +2934,10 @@
           "latest_source": 1792627200000,
           "equilibrium": {
             "midpoint": 771.28,
-            "eligible": false,
+            "eligible": true,
             "range_low": 759.81,
             "range_high": 782.75,
-            "distance_to_zone": 2.8099999999999454
+            "distance_to_zone": 2.480000000000018
           },
           "id": "f741b7cc5a2394ced01455b6",
           "track": "medium",
@@ -2961,7 +2961,7 @@
           ],
           "formed_at": 1792627200000,
           "location": "waiting",
-          "price": 771.19,
+          "price": 771.52,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -3165,7 +3165,7 @@
             "eligible": true,
             "range_low": 28807.0,
             "range_high": 31326.0,
-            "distance_to_zone": 464.0
+            "distance_to_zone": 524.0
           },
           "id": "396866a38db02130a349edfc",
           "track": "medium",
@@ -3189,7 +3189,7 @@
           ],
           "formed_at": 1792972800000,
           "location": "waiting",
-          "price": 29552.0,
+          "price": 29612.0,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -3382,7 +3382,7 @@
             "eligible": false,
             "range_low": 213.05,
             "range_high": 220.65,
-            "distance_to_zone": 4.400000000000006
+            "distance_to_zone": 4.289999999999992
           },
           "id": "113dd3aaa7c8d30a0f883992",
           "track": "short",
@@ -3406,7 +3406,7 @@
           ],
           "formed_at": 1793217600000,
           "location": "waiting",
-          "price": 214.5,
+          "price": 214.61,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -3504,7 +3504,7 @@
             "eligible": false,
             "range_low": 370.57,
             "range_high": 413.24,
-            "distance_to_zone": 0.4800000000000182
+            "distance_to_zone": 0.5399999999999636
           },
           "id": "9736eb6b4a1a7a1ff341fc64",
           "track": "short",
@@ -3528,7 +3528,7 @@
           ],
           "formed_at": 1793203200000,
           "location": "waiting",
-          "price": 401.97,
+          "price": 402.03,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -3705,7 +3705,7 @@
             "eligible": false,
             "range_low": 248.29,
             "range_high": 255.12,
-            "distance_to_zone": 0.3499999999999943
+            "distance_to_zone": 0.4099999999999966
           },
           "id": "22ec0bd02cf91a5d95c1620f",
           "track": "short",
@@ -3729,7 +3729,7 @@
           ],
           "formed_at": 1793217600000,
           "location": "waiting",
-          "price": 253.63,
+          "price": 253.69,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -3829,7 +3829,7 @@
             "eligible": false,
             "range_low": 703.61,
             "range_high": 726.62,
-            "distance_to_zone": 7.289999999999964
+            "distance_to_zone": 7.669999999999959
           },
           "id": "73776d258302fdd1b000bd5e",
           "track": "short",
@@ -3853,7 +3853,7 @@
           ],
           "formed_at": 1793102400000,
           "location": "waiting",
-          "price": 719.8,
+          "price": 720.18,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -3936,7 +3936,7 @@
             "eligible": false,
             "range_low": 760.62,
             "range_high": 774.39,
-            "distance_to_zone": 0.7800000000000864
+            "distance_to_zone": 1.1100000000000136
           },
           "id": "dcd4ed9ccfa56ce97abe3a34",
           "track": "short",
@@ -3960,7 +3960,7 @@
           ],
           "formed_at": 1793131200000,
           "location": "waiting",
-          "price": 771.19,
+          "price": 771.52,
           "context_price_breach": false,
           "resistance_support": [
             {
@@ -4058,7 +4058,7 @@
             "eligible": false,
             "range_low": 28903.0,
             "range_high": 29908.0,
-            "distance_to_zone": 256.0
+            "distance_to_zone": 316.0
           },
           "id": "d8f92e4edf305cdc354b592b",
           "track": "short",
@@ -4082,7 +4082,7 @@
           ],
           "formed_at": 1793102400000,
           "location": "waiting",
-          "price": 29552.0,
+          "price": 29612.0,
           "context_price_breach": false,
           "resistance_support": [
             {
