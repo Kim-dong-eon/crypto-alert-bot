@@ -39,6 +39,7 @@ class StatusTests(unittest.TestCase):
         self.assertIn('단기 · 방향 미확정 · 참고 중첩 2/4',text)
         self.assertIn('중기 · 상승 전환 대기 · 중첩 0/4',text)
         self.assertIn('장기 · 자료 대기 · 중첩 ?/4',text)
+        self.assertNotIn('대기 취소',text);self.assertNotIn('상회 마감 대기',text)
         self.assertLess(len(text),1024)
 
     def test_duplicate_zones_do_not_inflate_four_checks(self):

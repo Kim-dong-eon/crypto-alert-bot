@@ -90,7 +90,10 @@ def overview_notice(events):
     lines=[f"[{first['exchange'].title()} · {first['symbol']}] 현재가 {number(first['price'])}",'']
     for event in ordered:
         v=event['view'];count='?/4' if v['count'] is None else f"{v['count']}/4"
-        lines += [f"{TRACK_LABELS[v['track']]} · {v['headline']} · {'참고 중첩' if v['reference'] and v['count'] else '중첩'} {count}"+(' · 접근 알림' if v['notify_eligible'] else ''),v['reason']]
+        lines += [f"{TRACK_LABELS[v['track']]} · {v['headline']} · {'참고 중첩' if v['reference'] and v['count'] else '중첩'} {count}"+(' · 접근 알림' if v['notify_eligible'] else '')]
+        if v['notify_eligible']:
+            side='지지' if v['direction']==1 else '저항'
+            lines.append(f"{side} 박스 {'안' if v['low']<=v['price']<=v['high'] else '접근'}")
         if not v['unavailable']:
             for tf in v['pair']:
                 checks={kind:hit for frame,kind,hit in v['checks'] if frame==tf}

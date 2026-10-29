@@ -126,8 +126,6 @@ def draw_scope(ax,event,frames,overview=False):
         value=pending['structure'];known.append(value)
         ax.axhline(value,color='#d9b3ff',linestyle='--',linewidth=.65)
         ax.annotate(f"MSS 대기 {value:,.2f}",xy=(.985,value),xycoords=('axes fraction','data'),ha='right',va='bottom',color='#d9b3ff',fontsize=8)
-    if c.get('reason'):
-        ax.text(.01,.025,c['reason'],transform=ax.transAxes,fontsize=8,color='#e1e5eb',bbox={'facecolor':'#111722','edgecolor':'none','alpha':.85,'pad':3},zorder=8)
     bottom=min(lows+known);top=max(highs+known);pad=max((top-bottom)*.09,top*.0005)
     ax.set_ylim(bottom-pad,top+pad);ax.set_xlim(-1,end+.5);ax.yaxis.tick_right()
     indices=list(range(0,n,max(1,n//6)));ax.set_xticks(indices,[kst(bars[i].timestamp).replace(' KST','') for i in indices],fontsize=8)
