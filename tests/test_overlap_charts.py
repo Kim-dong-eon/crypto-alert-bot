@@ -82,7 +82,9 @@ class ChartTests(unittest.TestCase):
         import copy
         short=snapshot()['tracks']['short']['candidate'];medium=copy.deepcopy(short);medium.update(track='medium',pair=['1d','4h'],groups=['1d:OB','4h:FVG'])
         events=[{'candidate':medium,'timestamp':1000},{'candidate':short,'timestamp':1000}]
-        text=compact_notice(events);self.assertLess(text.index('단기 겹침'),text.index('중기 겹침'));self.assertIn('강세(LONG)',text);self.assertNotIn('장기',text);self.assertNotIn('MSS',text);self.assertNotIn('무효화',text);self.assertLess(len(text),250)
+        text=compact_notice(events);self.assertLess(text.index('단기 겹침'),text.index('중기 겹침'));self.assertIn('강세(LONG)',text);self.assertNotIn('장기',text)
+        self.assertIn('상황: 하단 스윕 후 상승 전환(MSS) 확인',text);self.assertEqual(text.count('중첩: 2/4'),2)
+        self.assertIn('4시간 OB ✓ · FVG —',text);self.assertLess(len(text),700)
 
     def test_overview_uses_upper_timeframe_and_detail_uses_lower(self):
         import matplotlib.pyplot as plt

@@ -15,6 +15,10 @@ on:
         description: 'One run only: resend currently eligible zones without clearing existing locks'
         type: boolean
         default: false
+      inspect_symbol:
+        description: 'One run only: send all three scope states; comma-separated verified symbols, e.g. BTCUSDT,AAPLUSDT'
+        type: string
+        default: ''
       unlock_track:
         description: 'Scope to unlock: short=단기, medium=중기, long=장기'
         type: choice
@@ -64,7 +68,7 @@ jobs:
           python -m pip install -r requirements-ict.txt
 
       - name: Verify overlap, lock and chart behavior
-        run: python -m unittest tests.test_ict_overlap tests.test_overlap_charts tests.test_overlap_structure tests.test_common_listings tests.test_overlap_diversification -q
+        run: python -m unittest tests.test_ict_overlap tests.test_overlap_charts tests.test_overlap_structure tests.test_common_listings tests.test_overlap_diversification tests.test_overlap_status -q
 
       - name: Restore closed-candle cache
         id: candles
@@ -84,6 +88,7 @@ jobs:
           UNLOCK_SYMBOL: ${{ inputs.unlock_symbol }}
           UNLOCK_TRACK: ${{ inputs.unlock_track }}
           BOT_RESEND: ${{ inputs.resend_current }}
+          BOT_INSPECT: ${{ inputs.inspect_symbol }}
         run: |
           if [ "$BOT_SEND" = "true" ]; then
             if [ -n "$UNLOCK_SYMBOL" ]; then
@@ -92,6 +97,9 @@ jobs:
             args=(--send --state alert_state/ict_overlap.json --snapshot runtime/ict_overlap/actions.json)
             if [ "$BOT_RESEND" = "true" ]; then
               args+=(--resend-current)
+            fi
+            if [ -n "$BOT_INSPECT" ]; then
+              args+=(--inspect-symbol "$BOT_INSPECT")
             fi
             python -u run_ict_overlap.py "${args[@]}"
           else

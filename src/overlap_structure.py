@@ -26,8 +26,8 @@ class ExternalSweepMSS:
         self.flow_proof = None
         self.last_transition = None
 
-    def transition(self, reason, stamp):
-        self.last_transition = {"reason": reason, "confirmed_at": stamp}
+    def transition(self, reason, stamp, **details):
+        self.last_transition = {"reason": reason, "confirmed_at": stamp, **details}
 
     def bounds(self):
         if len(self.history) < MIN_HISTORY_BARS:
@@ -45,7 +45,7 @@ class ExternalSweepMSS:
             flow = self.flow
             if flow.direction * (bar.close - flow.invalidation) < 0:
                 self.flow = None
-                self.transition("protected_structure_close_broken", stamp)
+                self.transition("protected_structure_close_broken", stamp, direction=flow.direction,level=flow.invalidation,close=bar.close)
             else:
                 advanced = (bar.close > self.highest_wick if flow.direction == 1
                             else bar.close < self.lowest_wick)
@@ -89,7 +89,8 @@ class ExternalSweepMSS:
             invalid = bar.close < p["raid_low"] if p["direction"] == 1 else bar.close > p["raid_high"]
             if invalid:
                 self.pending = None
-                self.transition("pending_raid_extreme_close_broken", stamp)
+                self.transition("pending_raid_extreme_close_broken", stamp,direction=p['direction'],
+                                level=p['raid_low'] if p['direction']==1 else p['raid_high'],close=bar.close,sweep=p['sweep'])
             else:
                 p["low"], p["high"] = min(p["low"], bar.low), max(p["high"], bar.high)
                 if p["direction"] * (bar.close - p["structure"]) > 0:

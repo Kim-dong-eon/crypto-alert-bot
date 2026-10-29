@@ -14,11 +14,12 @@ from src.overlap_delivery import OverlapLedger
 from src.ict_notices import single_writer,telegram_sender
 from src.common_listings import binance_listings,select_common_instruments
 from src.overlap_diversification import diversification_gate
+from src.overlap_status import overview_events
 
 ROOT=Path(__file__).resolve().parent
 
 
-def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,image_sender=None,render_previews=False,listing_check=None):
+def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,image_sender=None,render_previews=False,listing_check=None,status_symbols=()):
     results=[];failures=[];chart_frames={}
     tickers,received=market.tickers()
     for instrument in instruments:
@@ -69,15 +70,12 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
     # Dispatch only events refreshed by a successful scan in this run. A full
     # symbol fetch failure cannot leak an older pending alert into delivery.
     delivery={"sent":0,"failed":0}
+    status_delivery={'sent':0,'failed':0,'symbols':[]}
     if render_previews and sender is None:
         from src.overlap_charts import render_symbol_chart
         for result in results:
-            symbol_events=[]
-            for name,state in result['tracks'].items():
-                if name=='auxiliary' or state['candidate'] is None:continue
-                c=state['candidate'];event={'candidate':c,'timestamp':result['as_of'],'stage':'prepared','new_formation':False}
-                if alert_eligible(c):symbol_events.append(event)
-            if symbol_events:render_symbol_chart(symbol_events,chart_frames[result['symbol']],ROOT/'runtime/ict_overlap/charts'/f"{result['symbol']}_overlap_preview.png")
+            symbol_events=overview_events(result)
+            render_symbol_chart(symbol_events,chart_frames[result['symbol']],ROOT/'runtime/ict_overlap/charts'/f"{result['symbol']}_overlap_preview.png")
     if sender:
         successful={r['symbol'] for r in results}
         held={k:e for k,e in ledger.state['pending'].items() if e['candidate']['symbol'] not in successful}
@@ -86,17 +84,26 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
             from src.overlap_charts import render_symbol_chart
             contexts={}
             for result in results:
-                events=[]
-                for state in result['tracks'].values():
-                    c=state['candidate']
-                    if alert_eligible(c):events.append({'candidate':c,'timestamp':result['as_of'],'stage':'approach','new_formation':False})
-                contexts[result['symbol']]=events
+                contexts[result['symbol']]=overview_events(result)
             def renderer(events):
-                c=events[0]['candidate'];return render_symbol_chart(events,chart_frames[c['symbol']],ROOT/'runtime/ict_overlap/charts'/f"{c['symbol']}_overlap.png")
+                symbol=events[0]['view']['symbol'];return render_symbol_chart(events,chart_frames[symbol],ROOT/'runtime/ict_overlap/charts'/f"{symbol}_overlap.png")
+            before={symbol:{key for key,event in ledger.state['pending'].items() if event['candidate']['symbol']==symbol} for symbol in successful}
             delivery=ledger.dispatch_symbols(image_sender,renderer,contexts)
+            completed={symbol for symbol,keys in before.items() if keys and keys.isdisjoint(ledger.state['pending'])}
+            for symbol in status_symbols:
+                if symbol in completed:continue
+                events=contexts.get(symbol)
+                if not events:status_delivery['failed']+=1;continue
+                try:
+                    caption='요청한 현재 상태\n'+compact_notice(events)
+                    path=render_symbol_chart(events,chart_frames[symbol],ROOT/'runtime/ict_overlap/charts'/f'{symbol}_status.png')
+                    ok=image_sender([(path,caption)]) is True
+                except Exception:ok=False
+                if ok:status_delivery['sent']+=1;status_delivery['symbols'].append(symbol)
+                else:status_delivery['failed']+=1
         else:delivery=ledger.dispatch(sender,batch=True)
         ledger.state['pending'].update(held);ledger.save()
-    report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","binance_listing_check":listing_check,"instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery}
+    report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","binance_listing_check":listing_check,"instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery,'status_delivery':status_delivery}
     if snapshot:
         path=Path(snapshot);path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     print(f"중첩 알림: 전송 {delivery['sent']}건 / 실패 {delivery['failed']}건")
@@ -107,6 +114,7 @@ def main(argv=None):
     parser=argparse.ArgumentParser(description="BTC+거래소 주식/ETF/원유: 단기4H/1H·중기1D/4H·장기1W/1D 중첩 관찰")
     parser.add_argument('--send',action='store_true');parser.add_argument('--watch',action='store_true')
     parser.add_argument('--resend-current',action='store_true',help='이번 검사만 기존 발송 잠금을 무시하고 현재 조건 충족 구간 재발송')
+    parser.add_argument('--inspect-symbol',help='이번 실행만 이 공통 상장 종목의 전체 상태 발송. 여러 종목은 쉼표로 구분')
     parser.add_argument('--render-preview',action='store_true',help='미리보기에서도 현재 중첩 차트 이미지 생성')
     parser.add_argument('--bases',nargs='+',default=list(BASES),help='거래소 기초 심볼. 코인은BTC만 허용')
     parser.add_argument('--state',type=Path,default=ROOT/'runtime/ict_overlap/state.json')
@@ -114,6 +122,7 @@ def main(argv=None):
     parser.add_argument('--unlock',nargs=2,metavar=('SYMBOL','TRACK'),help='특정 종목·단기/중기/장기 잠금만 수동 해제')
     args=parser.parse_args(argv)
     if args.resend_current and args.watch:parser.error('--resend-current is one-shot only; omit --watch')
+    if args.inspect_symbol and args.watch:parser.error('--inspect-symbol is one-shot only; omit --watch')
     if args.unlock:
         symbol,track=args.unlock
         if track not in ('short','medium','long'):parser.error('TRACK must be short, medium or long')
@@ -128,6 +137,8 @@ def main(argv=None):
     missing=set(args.bases)-{r['baseCoin'] for r in instruments}
     if missing:print('지원 대상에서 제외된 요청 심볼: '+', '.join(sorted(missing)))
     if not instruments:raise ValueError('No supported instruments')
+    inspect_symbols=tuple(dict.fromkeys(x.strip() for x in (args.inspect_symbol or '').split(',') if x.strip()))
+    if any(symbol not in {r['symbol'] for r in instruments} for symbol in inspect_symbols):parser.error('inspect-symbol must be selected and verified on both exchanges')
     sender=None
     if args.send:
         from dotenv import load_dotenv
@@ -145,12 +156,12 @@ def main(argv=None):
                     binance_rows,listing_check=binance_listings(ROOT/'config/binance_contracts.json',market.cache/'binance_contracts.json')
                     instruments=select_common_instruments(select_instruments(market.instruments(),tuple(dict.fromkeys(args.bases))),binance_rows)
                     catalog_checked=time.monotonic()
-                report=run_once(market,instruments,ledger,sender,persist=args.watch,snapshot=args.snapshot,image_sender=image_sender,render_previews=args.render_preview,listing_check=listing_check)
+                report=run_once(market,instruments,ledger,sender,persist=args.watch,snapshot=args.snapshot,image_sender=image_sender,render_previews=args.render_preview,listing_check=listing_check,status_symbols=inspect_symbols)
             except Exception as error:
                 if not args.watch:raise
                 print(f'시세 확인 보류 ({type(error).__name__}); 다음 주기에 재시도',flush=True)
                 time.sleep(POLL_SECONDS);continue
-            if not args.watch:return int(bool(report['failures'] or report['delivery']['failed']))
+            if not args.watch:return int(bool(report['failures'] or report['delivery']['failed'] or report['status_delivery']['failed']))
             time.sleep(POLL_SECONDS)
 
 

@@ -181,18 +181,18 @@ class OverlapLedger:
                 if len(caption)>1024:raise ValueError('Caption too long')
                 path=renderer(events);ready.append((pending,path,caption))
             except Exception:result['failed']+=len(pending)
-        for offset in range(0,len(ready),10):
-            batch=ready[offset:offset+10]
-            try:success=image_sender([(p,c) for _,p,c in batch]) is True
+        # Separate photos keep each symbol's explanation visible in the chat.
+        # A successful photo is acknowledged even if a later symbol fails.
+        for pending,path,caption in ready:
+            try:success=image_sender([(path,caption)]) is True
             except Exception:success=False
             if not success:
-                result['failed']+=sum(len(events) for events,_,_ in batch);continue
-            for pending,_,_ in batch:
-                for key,event in pending:
-                    record={'symbol':event['candidate']['symbol'],'stage':event['stage'],'timestamp':event['timestamp']}
-                    self.state['delivered'][key]=record;self.state['images_delivered'][key]=record;del self.state['pending'][key]
-                    result['sent']+=1
-                result['images_sent']+=1
+                result['failed']+=len(pending);continue
+            for key,event in pending:
+                record={'symbol':event['candidate']['symbol'],'stage':event['stage'],'timestamp':event['timestamp']}
+                self.state['delivered'][key]=record;self.state['images_delivered'][key]=record;del self.state['pending'][key]
+                result['sent']+=1
+            result['images_sent']+=1
             self.save()
         return result
 

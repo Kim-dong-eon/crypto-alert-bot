@@ -111,7 +111,8 @@ def scan(symbol, frames, now_ms, price, tracks=None,equilibrium_filter=False):
                 flows[tf].step(bar)
             registry.step(tf, bar)
     output = {"version": VERSION, "exchange": "bitget", "symbol": symbol, "as_of": now_ms, "price": price,
-              "tracks": {}, "valid_source_ids": sorted(registry.zones), "unavailable_frames": unavailable,
+              "tracks": {}, "valid_source_ids": sorted(registry.zones),
+              "valid_zones": [asdict(z) for z in registry.zones.values()], "unavailable_frames": unavailable,
               "history_starts":{tf:values[0].timestamp for tf,values in usable.items()}}
     for name, pair in tracks.items():
         top, lower = pair
@@ -184,8 +185,21 @@ def format_notice(event):
     return "\n".join(lines)
 
 
+def overlap_checks(candidate):
+    groups={(z['timeframe'],z['kind']) for z in candidate.get('sources',[])}
+    if not groups:groups={tuple(x.split(':',1)) for x in candidate.get('groups',[])}
+    return [(tf,kind,(tf,kind) in groups) for tf in candidate['pair'] for kind in ('OB','FVG')]
+
+
+def overlap_count(candidate):
+    return sum(matched for _,_,matched in overlap_checks(candidate))
+
+
 def compact_notice(events):
     """One symbol, only actual overlap scopes, without lifecycle narration."""
+    if events and 'view' in events[0]:
+        from src.overlap_status import overview_notice
+        return overview_notice(events)
     ordered=sorted(events,key=lambda e:{'short':0,'medium':1,'long':2}.get(e['candidate']['track'],9))
     if not ordered:raise ValueError('No overlap events')
     symbols={e['candidate']['symbol'] for e in ordered}
@@ -196,12 +210,17 @@ def compact_notice(events):
     if ordered[0]['candidate'].get('equilibrium'):
         lines[0]+=f" 현재가 {number(ordered[0]['candidate']['price'])}"
     for event in ordered:
-        c=event['candidate'];tf_order={tf:i for i,tf in enumerate(c['pair'])}
-        groups={(z['timeframe'],z['kind']) for z in c['sources']}
-        if not groups:groups={tuple(x.split(':',1)) for x in c['groups']}
-        evidence=' + '.join(f"{tf.upper()} {kind}" for tf,kind in sorted(groups,key=lambda x:(tf_order.get(x[0],9),x[1]!='OB')))
-        proof=f"근거: {evidence}"
-        if c.get('equilibrium',{}).get('midpoint') is not None:proof+=f" / 0.5 {number(c['equilibrium']['midpoint'])}"
-        lines += [f"{TRACK_LABELS[c['track']]} 겹침 · {'강세(LONG)' if c['direction']==1 else '약세(SHORT)'}",f"{number(c['low'])} ~ {number(c['high'])}",proof,'']
+        c=event['candidate'];checks=overlap_checks(c)
+        side='지지' if c['direction']==1 else '저항'
+        location='안' if c['low']<=c['price']<=c['high'] else '접근'
+        lines += [f"{TRACK_LABELS[c['track']]} 겹침 · {'강세(LONG)' if c['direction']==1 else '약세(SHORT)'}",
+                  f"상황: {'하단 스윕 후 상승' if c['direction']==1 else '상단 스윕 후 하락'} 전환(MSS) 확인",
+                  f"현재: {side} 박스 {location} · {number(c['low'])} ~ {number(c['high'])}",
+                  f"OB/FVG 중첩: {overlap_count(c)}/4"]
+        for tf in c['pair']:
+            present={kind:matched for frame,kind,matched in checks if frame==tf}
+            lines.append(f"{LABELS[tf]} OB {'✓' if present['OB'] else '—'} · FVG {'✓' if present['FVG'] else '—'}")
+        if c.get('equilibrium',{}).get('midpoint') is not None:lines.append(f"0.5 기준 {number(c['equilibrium']['midpoint'])}")
+        lines.append('')
     lines.append(kst(max(e['timestamp'] for e in ordered)))
     return '\n'.join(lines)
