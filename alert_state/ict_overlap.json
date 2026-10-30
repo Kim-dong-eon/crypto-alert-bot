@@ -3,91 +3,91 @@
   "tracks": {
     "BTCUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793390144394
+      "checked_at": 1793390466032
     },
     "BTCUSDT|long": {
       "candidate": null,
-      "checked_at": 1793390144394
+      "checked_at": 1793390466032
     },
     "SKHYNIXUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793390144412
+      "checked_at": 1793390466420
     },
     "SKHYNIXUSDT|long": {
       "candidate": null,
-      "checked_at": 1793390144412
+      "checked_at": 1793390466420
     },
     "NVDAUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793390144431
+      "checked_at": 1793390466816
     },
     "NVDAUSDT|long": {
       "candidate": null,
-      "checked_at": 1793390144431
+      "checked_at": 1793390466816
     },
     "TSLAUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793390144448
+      "checked_at": 1793390467227
     },
     "TSLAUSDT|long": {
       "candidate": null,
-      "checked_at": 1793390144448
+      "checked_at": 1793390467227
     },
     "AAPLUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793390144464
+      "checked_at": 1793390467611
     },
     "AAPLUSDT|long": {
       "candidate": null,
-      "checked_at": 1793390144464
+      "checked_at": 1793390467611
     },
     "MSFTUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793390144481
+      "checked_at": 1793390468014
     },
     "MSFTUSDT|long": {
       "candidate": null,
-      "checked_at": 1793390144481
+      "checked_at": 1793390468014
     },
     "AMZNUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793390144497
+      "checked_at": 1793390468438
     },
     "AMZNUSDT|long": {
       "candidate": null,
-      "checked_at": 1793390144497
+      "checked_at": 1793390468438
     },
     "GOOGLUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793390144514
+      "checked_at": 1793390468817
     },
     "GOOGLUSDT|long": {
       "candidate": null,
-      "checked_at": 1793390144514
+      "checked_at": 1793390468817
     },
     "METAUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793390144532
+      "checked_at": 1793390469215
     },
     "METAUSDT|long": {
       "candidate": null,
-      "checked_at": 1793390144532
+      "checked_at": 1793390469215
     },
     "QQQUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793390144549
+      "checked_at": 1793390469645
     },
     "QQQUSDT|long": {
       "candidate": null,
-      "checked_at": 1793390144549
+      "checked_at": 1793390469645
     },
     "SPYUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793390144567
+      "checked_at": 1793390470035
     },
     "SPYUSDT|long": {
       "candidate": null,
-      "checked_at": 1793390144567
+      "checked_at": 1793390470035
     },
     "NDX100USDT|medium": {
       "candidate": {
@@ -206,177 +206,48 @@
       "checked_at": 1793240146946
     },
     "BTCUSDT|short": {
-      "candidate": {
-        "low": 78505.9,
-        "high": 78604.6,
-        "score": 3,
-        "groups": [
-          "1h:FVG",
-          "1h:OB",
-          "4h:FVG"
-        ],
-        "source_ids": [
-          "1h:FVG:1793311200000:1793322000000:-1",
-          "1h:OB:1793340000000:1793347200000:-1",
-          "4h:FVG:1793289600000:1793332800000:-1"
-        ],
-        "sources": [
-          {
-            "id": "1h:FVG:1793311200000:1793322000000:-1",
-            "timeframe": "1h",
-            "kind": "FVG",
-            "direction": -1,
-            "low": 78255.0,
-            "high": 78616.0,
-            "created": 1793322000000,
-            "origin": 1793311200000,
-            "stop": 78616.0,
-            "invalidation": 78616.0,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "1h:OB:1793340000000:1793347200000:-1",
-            "timeframe": "1h",
-            "kind": "OB",
-            "direction": -1,
-            "low": 78505.9,
-            "high": 78604.6,
-            "created": 1793347200000,
-            "origin": 1793340000000,
-            "stop": 78755.0,
-            "invalidation": 78604.6,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "4h:FVG:1793289600000:1793332800000:-1",
-            "timeframe": "4h",
-            "kind": "FVG",
-            "direction": -1,
-            "low": 78255.0,
-            "high": 80557.1,
-            "created": 1793332800000,
-            "origin": 1793289600000,
-            "stop": 80557.1,
-            "invalidation": 80557.1,
-            "expiry": 9223372036854775807
-          }
-        ],
-        "latest_source": 1793347200000,
-        "equilibrium": {
-          "midpoint": 79911.2,
-          "eligible": false,
-          "range_low": 77888.0,
-          "range_high": 81934.4,
-          "distance_to_zone": 1583.0999999999913
-        },
-        "id": "e323cf16de2d061d53cf9ee8",
-        "track": "short",
-        "symbol": "BTCUSDT",
-        "direction": -1,
-        "context_id": "external:4h:1793289600000:1793318400000:-1",
-        "context": {
-          "id": "external:4h:1793289600000:1793318400000:-1",
-          "direction": -1,
-          "formed": 1793318400000,
-          "sweep_time": 1793289600000,
-          "swept_level": 81788.0,
-          "structure_level": 80365.1,
-          "invalidation": 81934.4,
-          "swing_low": 77888.0,
-          "swing_high": 81934.4
-        },
-        "pair": [
-          "4h",
-          "1h"
-        ],
-        "exchange": "bitget",
-        "structure_proof": {
-          "basis": "confirmed_turn_at_rolling_external_extreme",
-          "swept_origin": 1793174400000,
-          "external_range": {
-            "low": 79424.1,
-            "high": 81788.0,
-            "start": 1792987200000,
-            "end": 1793275200000,
-            "bars": 20
-          },
-          "mss_origin": 1793203200000,
-          "protected_origin": 1793275200000
-        },
-        "formed_at": 1793347200000,
-        "location": "waiting",
-        "price": 76922.8,
-        "context_price_breach": false,
-        "resistance_support": [
-          {
-            "id": "4h:FVG:1789675200000:1789718400000:1",
-            "timeframe": "4h",
-            "kind": "FVG",
-            "direction": 1,
-            "low": 76702.0,
-            "high": 77181.7,
-            "created": 1789718400000,
-            "origin": 1789675200000,
-            "stop": 76702.0,
-            "invalidation": 76702.0,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "4h:OB:1789675200000:1789704000000:1",
-            "timeframe": "4h",
-            "kind": "OB",
-            "direction": 1,
-            "low": 76386.8,
-            "high": 76556.9,
-            "created": 1789704000000,
-            "origin": 1789675200000,
-            "stop": 76201.2,
-            "invalidation": 76386.8,
-            "expiry": 9223372036854775807
-          }
-        ]
-      },
-      "checked_at": 1793390144394
+      "candidate": null,
+      "checked_at": 1793390466032
     },
     "SKHYNIXUSDT|short": {
       "candidate": null,
-      "checked_at": 1793390144412
+      "checked_at": 1793390466420
     },
     "NVDAUSDT|short": {
       "candidate": null,
-      "checked_at": 1793390144431
+      "checked_at": 1793390466816
     },
     "TSLAUSDT|short": {
       "candidate": null,
-      "checked_at": 1793390144448
+      "checked_at": 1793390467227
     },
     "AAPLUSDT|short": {
       "candidate": null,
-      "checked_at": 1793390144464
+      "checked_at": 1793390467611
     },
     "MSFTUSDT|short": {
       "candidate": null,
-      "checked_at": 1793390144481
+      "checked_at": 1793390468014
     },
     "AMZNUSDT|short": {
       "candidate": null,
-      "checked_at": 1793390144497
+      "checked_at": 1793390468438
     },
     "GOOGLUSDT|short": {
       "candidate": null,
-      "checked_at": 1793390144514
+      "checked_at": 1793390468817
     },
     "METAUSDT|short": {
       "candidate": null,
-      "checked_at": 1793390144532
+      "checked_at": 1793390469215
     },
     "QQQUSDT|short": {
       "candidate": null,
-      "checked_at": 1793390144549
+      "checked_at": 1793390469645
     },
     "SPYUSDT|short": {
       "candidate": null,
-      "checked_at": 1793390144567
+      "checked_at": 1793390470035
     },
     "NDX100USDT|short": {
       "candidate": {
@@ -503,27 +374,27 @@
     },
     "CLUSDT|short": {
       "candidate": null,
-      "checked_at": 1793390144586
+      "checked_at": 1793390470531
     },
     "CLUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793390144586
+      "checked_at": 1793390470531
     },
     "CLUSDT|long": {
       "candidate": null,
-      "checked_at": 1793390144586
+      "checked_at": 1793390470531
     },
     "BZUSDT|short": {
       "candidate": null,
-      "checked_at": 1793390144609
+      "checked_at": 1793390470913
     },
     "BZUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793390144609
+      "checked_at": 1793390470913
     },
     "BZUSDT|long": {
       "candidate": null,
-      "checked_at": 1793390144609
+      "checked_at": 1793390470913
     }
   },
   "delivered": {
@@ -822,142 +693,7 @@
     "NDX100USDT|long": [],
     "SP500USDT|medium": [],
     "SP500USDT|long": [],
-    "BTCUSDT|short": [
-      {
-        "anchor_low": 78255.0,
-        "anchor_high": 78616.0,
-        "latest": {
-          "low": 78505.9,
-          "high": 78604.6,
-          "score": 3,
-          "groups": [
-            "1h:FVG",
-            "1h:OB",
-            "4h:FVG"
-          ],
-          "source_ids": [
-            "1h:FVG:1793311200000:1793322000000:-1",
-            "1h:OB:1793340000000:1793347200000:-1",
-            "4h:FVG:1793289600000:1793332800000:-1"
-          ],
-          "sources": [
-            {
-              "id": "1h:FVG:1793311200000:1793322000000:-1",
-              "timeframe": "1h",
-              "kind": "FVG",
-              "direction": -1,
-              "low": 78255.0,
-              "high": 78616.0,
-              "created": 1793322000000,
-              "origin": 1793311200000,
-              "stop": 78616.0,
-              "invalidation": 78616.0,
-              "expiry": 9223372036854775807
-            },
-            {
-              "id": "1h:OB:1793340000000:1793347200000:-1",
-              "timeframe": "1h",
-              "kind": "OB",
-              "direction": -1,
-              "low": 78505.9,
-              "high": 78604.6,
-              "created": 1793347200000,
-              "origin": 1793340000000,
-              "stop": 78755.0,
-              "invalidation": 78604.6,
-              "expiry": 9223372036854775807
-            },
-            {
-              "id": "4h:FVG:1793289600000:1793332800000:-1",
-              "timeframe": "4h",
-              "kind": "FVG",
-              "direction": -1,
-              "low": 78255.0,
-              "high": 80557.1,
-              "created": 1793332800000,
-              "origin": 1793289600000,
-              "stop": 80557.1,
-              "invalidation": 80557.1,
-              "expiry": 9223372036854775807
-            }
-          ],
-          "latest_source": 1793347200000,
-          "equilibrium": {
-            "midpoint": 79911.2,
-            "eligible": false,
-            "range_low": 77888.0,
-            "range_high": 81934.4,
-            "distance_to_zone": 1583.0999999999913
-          },
-          "id": "e323cf16de2d061d53cf9ee8",
-          "track": "short",
-          "symbol": "BTCUSDT",
-          "direction": -1,
-          "context_id": "external:4h:1793289600000:1793318400000:-1",
-          "context": {
-            "id": "external:4h:1793289600000:1793318400000:-1",
-            "direction": -1,
-            "formed": 1793318400000,
-            "sweep_time": 1793289600000,
-            "swept_level": 81788.0,
-            "structure_level": 80365.1,
-            "invalidation": 81934.4,
-            "swing_low": 77888.0,
-            "swing_high": 81934.4
-          },
-          "pair": [
-            "4h",
-            "1h"
-          ],
-          "exchange": "bitget",
-          "structure_proof": {
-            "basis": "confirmed_turn_at_rolling_external_extreme",
-            "swept_origin": 1793174400000,
-            "external_range": {
-              "low": 79424.1,
-              "high": 81788.0,
-              "start": 1792987200000,
-              "end": 1793275200000,
-              "bars": 20
-            },
-            "mss_origin": 1793203200000,
-            "protected_origin": 1793275200000
-          },
-          "formed_at": 1793347200000,
-          "location": "waiting",
-          "price": 76922.8,
-          "context_price_breach": false,
-          "resistance_support": [
-            {
-              "id": "4h:FVG:1789675200000:1789718400000:1",
-              "timeframe": "4h",
-              "kind": "FVG",
-              "direction": 1,
-              "low": 76702.0,
-              "high": 77181.7,
-              "created": 1789718400000,
-              "origin": 1789675200000,
-              "stop": 76702.0,
-              "invalidation": 76702.0,
-              "expiry": 9223372036854775807
-            },
-            {
-              "id": "4h:OB:1789675200000:1789704000000:1",
-              "timeframe": "4h",
-              "kind": "OB",
-              "direction": 1,
-              "low": 76386.8,
-              "high": 76556.9,
-              "created": 1789704000000,
-              "origin": 1789675200000,
-              "stop": 76201.2,
-              "invalidation": 76386.8,
-              "expiry": 9223372036854775807
-            }
-          ]
-        }
-      }
-    ],
+    "BTCUSDT|short": [],
     "SKHYNIXUSDT|short": [],
     "NVDAUSDT|short": [],
     "TSLAUSDT|short": [],
