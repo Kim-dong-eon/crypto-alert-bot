@@ -33,9 +33,11 @@ def unit_text(event):
     proof=' + '.join(f'{LABELS[tf]} {kind}' for tf,kind,hit in checks if hit)
     count=sum(hit for _,_,hit in checks)
     role='지지' if c['direction']==1 else '저항'
-    return (f"[Bitget · {c['symbol']}]\n"
+    text=(f"[Bitget · {c['symbol']}]\n"
             f"{LABELS[c['pair'][0]]} {TRACK_LABELS[c['track']]} {name} · {side} · {count}/4\n"
             f"{role} 근거: {proof}")
+    if c.get('entry_touch',{}).get('hit'):text+='\n도달 확인 '+kst(c['entry_touch']['at'])
+    return text
 
 
 def render_unit(snapshot,event,frames,prefix):

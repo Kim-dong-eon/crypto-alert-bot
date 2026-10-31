@@ -6,6 +6,7 @@ from src.ict_engine import TF_MS,frame_open
 from src.ict_overlap import VERSION,alert_eligible,kst,LABELS
 from src.structure_review import analyze
 from src.overlap_delivery import OverlapLedger
+from src.overlap_entry import ENTRY_POLICY,entry_touch,mixed_evidence
 
 STRATEGY='two-scale-structure-v1'
 
@@ -14,9 +15,9 @@ def candidates(state):
     return state.get('candidates',[state['candidate']] if state.get('candidate') else [])
 
 
-def scan(symbol,frames,now_ms,price,tracks=None,equilibrium_filter=True):
+def scan(symbol,frames,now_ms,price,tracks=None,equilibrium_filter=True,minute_bars=(),touch_since=0):
     tracks=TRACKS if tracks is None else tracks
-    result={'version':VERSION,'strategy':STRATEGY,'symbol':symbol,'exchange':'bitget',
+    result={'version':VERSION,'strategy':STRATEGY,'entry_policy':ENTRY_POLICY,'symbol':symbol,'exchange':'bitget',
             'price':price,'as_of':now_ms,'tracks':{},'valid_source_ids':[],
             'valid_zones':[],'history_starts':{},'unavailable_frames':{}}
     for tf,values in frames.items():
@@ -27,19 +28,25 @@ def scan(symbol,frames,now_ms,price,tracks=None,equilibrium_filter=True):
         result['tracks'][name]=state
         if any(len(frames.get(tf,[]))<16 or frames[tf][-1].timestamp+TF_MS[tf]!=frame_open(now_ms,tf) for tf in pair):
             continue
-        review=analyze(frames,now_ms,price,pair,symbol)
+        review=analyze(frames,now_ms,price,pair,symbol,require_ob_fvg=True)
         state['analysis']=review
         result['valid_zones'].extend(review['source_zones'])
         found=[]
         for lens,view in review['views'].items():
             for d in (1,-1):
-                areas=[a for a in view['selected'] if a['direction']==d]
+                areas=[a for a in view['selected'] if a['direction']==d and a['overlaps']]
                 if not areas:continue
                 area=areas[0]
                 if not area['overlaps']:continue
-                choice=area['overlaps'][0]
+                choices=[]
+                for original in area['overlaps']:
+                    touch=entry_touch(original,area,price,now_ms,minute_bars,touch_since)
+                    eq={**original['equilibrium'],'eligible':touch['hit'],'entry_required':True}
+                    choices.append({**original,'equilibrium':eq,'entry_touch':touch})
+                choices.sort(key=lambda c:(not c['entry_touch']['hit'],-c['score'],max(c['low']-price,price-c['high'],0)))
+                choice=choices[0]
                 context_id=f"area:{pair[0]}:{area['pivot_origin']}:{d}"
-                raw=f"{symbol}|{name}|{context_id}|{choice['low']:.12g}|{choice['high']:.12g}"
+                raw=f"{symbol}|{name}|{context_id}|{choice['low']:.12g}|{choice['high']:.12g}|{'|'.join(choice['source_ids'])}"
                 c={**choice,'id':hashlib.sha256(raw.encode()).hexdigest()[:24],
                    'symbol':symbol,'track':name,'pair':list(pair),'exchange':'bitget',
                    'direction':d,'price':price,'context_id':context_id,'context':{'id':context_id},
@@ -77,6 +84,13 @@ def notice(events):
 
 class StructureLedger(OverlapLedger):
     """Retain v10 acknowledgements; aliases match price bands across lenses."""
+    def __init__(self,path,require_images=False,overlap_only=False,approach_only=False,force_resend=False):
+        super().__init__(path,require_images=require_images,overlap_only=False,approach_only=approach_only,force_resend=force_resend)
+        self.overlap_only=overlap_only
+        if overlap_only:
+            allowed=('entry','approach') if approach_only else ('entry','prepared')
+            self.state['pending']={k:e for k,e in self.state['pending'].items() if e['stage'] in allowed}
+
     def unlock(self,symbol,track):
         for key,event in list(self.state.get('in_flight',{}).items()):
             if event['candidate']['symbol']==symbol and event['candidate']['track']==track:
@@ -89,6 +103,8 @@ class StructureLedger(OverlapLedger):
         if snapshot.get('strategy')!=STRATEGY:
             return super().observe(snapshot,display_name,persist)
         before=copy.deepcopy(self.state);valid=set(snapshot['valid_source_ids'])
+        entry_mode=snapshot.get('entry_policy')==ENTRY_POLICY
+        stage='entry' if entry_mode else 'approach'
         stamp=snapshot['as_of'];audit={'suppressed':0,'queued':0,'retired':0,'legacy_matched':0,'uncertain_held':0}
         self.state['strategy']=STRATEGY
         for name,current in snapshot['tracks'].items():
@@ -124,22 +140,39 @@ class StructureLedger(OverlapLedger):
                 else:
                     match={'anchor_low':c['low'],'anchor_high':c['high'],'latest':copy.deepcopy(c)}
                     remaining.append(match)
-                key=self.key(c,'approach')
-                sent=any(self.key(c,stage) in self.state['delivered'] for stage in ('approach','prepared','touched'))
-                if not alert_eligible(c):continue
-                if key in self.state.get('in_flight',{}) and not self.force_resend:
-                    audit['uncertain_held']+=1;continue
+                key=self.key(c,stage)
+                stages=('entry',) if entry_mode else ('approach','prepared','touched')
+                sent=any(self.key(c,s) in self.state['delivered'] for s in stages)
                 presentation=self.state.get('presentations',{}).get(key)
                 unfinished=presentation is not None and not presentation['complete']
+                if not alert_eligible(c) and not (unfinished and not c['context_price_breach']):continue
+                if key in self.state.get('in_flight',{}) and not self.force_resend:
+                    audit['uncertain_held']+=1;continue
                 if sent and not self.force_resend and not unfinished:audit['suppressed']+=1;continue
                 # Broad/recent aliases in this same run cannot enqueue twice.
                 if key in self.state['pending']:
                     pending=self.state['pending'][key]['candidate']
                     pending['lenses']=list(dict.fromkeys(pending['lenses']+c['lenses']))
                     audit['suppressed']+=1;continue
-                self.state['pending'][key]={'candidate':c,'stage':'approach','timestamp':stamp,
+                if unfinished and presentation.get('candidate'):
+                    c=copy.deepcopy(presentation['candidate'])
+                self.state['pending'][key]={'candidate':c,'stage':stage,'timestamp':stamp,
                                            'new_formation':False,'display_name':display_name or snapshot['symbol']}
                 queued.append(c);audit['queued']+=1
+            # A successful image still needs its text even if a different
+            # price segment becomes the scanner's preferred watch candidate.
+            for key,p in self.state.get('presentations',{}).items():
+                original=p.get('candidate')
+                if (p['complete'] or p['symbol']!=snapshot['symbol'] or p['track']!=name
+                        or key in self.state['pending'] or not original):continue
+                if entry_mode and not (original.get('entry_touch',{}).get('hit') and mixed_evidence(original)):continue
+                if not set(original['source_ids']).issubset(valid):continue
+                if original['context_id'] in invalid_areas and original['context_id'] not in active_areas:continue
+                area=original.get('structure_area',{})
+                if area.get('low') is not None and (snapshot['price']<area['low'] if original['direction']==1 else snapshot['price']>area['high']):continue
+                self.state['pending'][key]={'candidate':copy.deepcopy(original),'stage':p.get('stage',stage),
+                                           'timestamp':p['attempt'],'new_formation':False,
+                                           'display_name':display_name or snapshot['symbol']}
             self.state['locks'][scope]=remaining
             self.state['tracks'][scope]={'candidate':queued[0] if queued else current.get('candidate'),'checked_at':stamp}
         self.state.setdefault('dedup_audits',{})[snapshot['symbol']]={'at':stamp,**audit}
@@ -199,7 +232,7 @@ class StructureLedger(OverlapLedger):
         for key,event in list(self.state['pending'].items()):
             c=event['candidate'];p=presentations.get(key)
             if p is None or (self.force_resend and p['complete']):
-                p={'symbol':c['symbol'],'track':c['track'],'attempt':event['timestamp'],
+                p={'symbol':c['symbol'],'track':c['track'],'stage':event['stage'],'attempt':event['timestamp'],'candidate':copy.deepcopy(c),
                    'complete':False,'units':{}}
                 presentations[key]=p
                 self.save()

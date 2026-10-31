@@ -79,18 +79,20 @@ def departure_areas(bars, points, scale, timeframe='4h'):
         # the previously observed wick extreme.
         end_index=following['index'] if following else p['confirmed_index']
         endpoint=bars[end_index].high if d==1 else bars[end_index].low
+        range_known_at=following['confirmed_at'] if following else p['confirmed_at']
         if not following:
             extreme=endpoint
             for b in bars[end_index+1:]:
                 if (b.close>extreme if d==1 else b.close<extreme):
                     endpoint=b.high if d==1 else b.low
+                    range_known_at=b.timestamp+TF_MS[timeframe]
                 extreme=max(extreme,b.high) if d==1 else min(extreme,b.low)
         bottom,top=sorted((p['price'],endpoint))
         areas.append({'id':f"{scale}:{bars[i].timestamp}:{d}",'scale':scale,
                       'direction':d,'low':low,'high':high,'origin':base[0].timestamp,
                       'pivot_origin':bars[i].timestamp,'created':p['confirmed_at'],
                       'invalidated_at':invalid,'range_low':bottom,'range_high':top,
-                      'range_complete':following is not None,'base_bars':len(base)})
+                      'range_complete':following is not None,'range_known_at':range_known_at,'base_bars':len(base)})
     return areas
 
 
@@ -141,7 +143,7 @@ def liquidity_events(bars, points, timeframe='4h'):
     return events
 
 
-def analyze(frames,now,price,pair=('4h','1h'),symbol='BTCUSDT'):
+def analyze(frames,now,price,pair=('4h','1h'),symbol='BTCUSDT',require_ob_fvg=False):
     top,lower=pair
     for tf in pair:
         bars=frames[tf]
@@ -170,13 +172,14 @@ def analyze(frames,now,price,pair=('4h','1h'),symbol='BTCUSDT'):
                    z.low<area['high'] and z.high>area['low']]
                 common=[]
                 for c in overlaps(z,pair,price):
+                    if require_ob_fvg and not {'OB','FVG'}.issubset({s['kind'] for s in c['sources']}):continue
                     low=max(c['low'],area['low']);high=min(c['high'],area['high'])
                     if low>=high:continue
                     gate=equilibrium_gate(low,high,price,d,area['range_low'],area['range_high'])
                     common.append({**c,'low':low,'high':high,'equilibrium':gate})
                 common.sort(key=lambda c:(not c['equilibrium']['eligible'],-c['score'],
                                           max(c['low']-price,price-c['high'],0)))
-                area={**area,'overlaps':common[:3],
+                area={**area,'overlaps':common if require_ob_fvg else common[:3],
                       'midpoint':(area['range_low']+area['range_high'])/2}
                 selected.append(area)
         highs=[p['price'] for p in points if p['kind']=='high']

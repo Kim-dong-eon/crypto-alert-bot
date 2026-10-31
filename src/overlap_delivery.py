@@ -133,7 +133,7 @@ class OverlapLedger:
         for collection in ("pending","delivered","images_delivered"):
             for key,event in list(self.state[collection].items()):
                 if collection=="pending":matches=event["candidate"]["id"] in identifiers
-                else:matches=key in {self.key(lock["latest"],stage) for lock in locks for stage in ("prepared","touched","caution","cancelled","approach")}
+                else:matches=key in {self.key(lock["latest"],stage) for lock in locks for stage in ("prepared","touched","caution","cancelled","approach","entry")}
                 if matches:del self.state[collection][key]
         self.save()
 

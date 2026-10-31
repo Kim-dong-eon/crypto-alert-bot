@@ -240,5 +240,38 @@ class UnitDeliveryTests(unittest.TestCase):
             self.assertEqual(media.last_receipt['message_ids'],[9])
             self.assertTrue(post.call_args.args[0].endswith('/sendMessage'))
 
+    def test_entry_is_a_new_once_only_stage_after_an_old_approach_notice(self):
+        from src.overlap_entry import ENTRY_POLICY
+        s=multi();self.ledger.observe(s)
+        self.ledger.dispatch_units(lambda _:True,lambda _:True,self.render)
+        s['entry_policy']=ENTRY_POLICY;self.ledger.observe(s)
+        self.assertEqual(next(iter(self.ledger.state['pending'].values()))['stage'],'entry')
+        r=self.ledger.dispatch_units(lambda _:True,lambda _:True,self.render)
+        self.assertEqual(r['sent'],1)
+        self.reload();self.ledger.observe(s);self.assertFalse(self.ledger.state['pending'])
+        self.assertEqual({r['stage'] for r in self.ledger.state['delivered'].values()},{'entry','approach'})
+
+    def test_partial_entry_text_still_finishes_after_price_leaves_the_box(self):
+        from src.overlap_entry import ENTRY_POLICY
+        s=multi();s['entry_policy']=ENTRY_POLICY;self.ledger.observe(s)
+        self.ledger.dispatch_units(lambda _:True,lambda _:False,self.render)
+        self.reload()
+        s['tracks']['short']['candidates'][0]['equilibrium']['eligible']=False
+        self.ledger.observe(s);image=Mock(return_value=True)
+        self.assertEqual(self.ledger.dispatch_units(image,lambda _:True,self.render)['sent'],1)
+        image.assert_not_called()
+
+    def test_partial_entry_is_not_lost_when_another_segment_is_selected(self):
+        from src.overlap_entry import ENTRY_POLICY
+        s=multi();s['entry_policy']=ENTRY_POLICY
+        s['tracks']['short']['candidates'][0]['entry_touch']={'hit':True,'at':1000}
+        self.ledger.observe(s);self.ledger.dispatch_units(lambda _:True,lambda _:False,self.render)
+        self.reload();s=multi(identifier='another');s['entry_policy']=ENTRY_POLICY
+        c=s['tracks']['short']['candidates'][0];c.update(low=80,high=85,context_id='other')
+        c['equilibrium']['eligible']=False
+        self.ledger.observe(s);image=Mock(return_value=True)
+        self.assertEqual(self.ledger.dispatch_units(image,lambda _:True,self.render)['sent'],1)
+        image.assert_not_called()
+
 
 if __name__=='__main__':unittest.main()

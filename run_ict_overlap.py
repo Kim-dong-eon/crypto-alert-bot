@@ -11,6 +11,7 @@ from config.overlap_settings import TRACKS, TRACK_LABELS, BASES, POLL_SECONDS,DI
 from src.ict_overlap import compact_notice,alert_eligible
 from src.structure_alerts import scan,StructureLedger,candidates
 from src.review_history import HistoricalMarket
+from src.overlap_entry import recent_minutes,MINUTE
 from src.overlap_market import PublicMarket,select_instruments,quote_price
 from src.overlap_delivery import OverlapLedger
 from src.ict_notices import single_writer,telegram_sender
@@ -33,6 +34,10 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         for tf in {tf for pair in TRACKS.values() for tf in pair}:
             try:frames[tf]=market.frame(symbol,tf,now)
             except Exception as error:errors[tf]=type(error).__name__
+        touch_since=ledger.state.get('touch_cursors',{}).get(symbol,(now//MINUTE-5)*MINUTE)
+        minute_bars=[];minute_coverage=None;minute_error=None
+        try:minute_bars,minute_coverage=recent_minutes(market,symbol,touch_since,int(time.time()*1000))
+        except Exception as error:minute_error=type(error).__name__
         diversity_data=None;diversity_error=None
         if instrument['baseCoin'] in DIVERSIFIER_BASES:
             try:
@@ -48,7 +53,9 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         try:price=quote_price(tickers[symbol],observed)
         except (KeyError,ValueError,TypeError):
             failures.append({"symbol":symbol,"reason":"ticker_became_stale_during_scan"});continue
-        result=scan(symbol,frames,observed,price,equilibrium_filter=True)
+        result=scan(symbol,frames,observed,price,equilibrium_filter=True,
+                    minute_bars=minute_bars,touch_since=minute_coverage['start'] if minute_coverage else touch_since)
+        result.update(minute_coverage=minute_coverage,minute_error=minute_error)
         if instrument['baseCoin'] in DIVERSIFIER_BASES:
             try:
                 eligibility=(diversification_gate(frames,*diversity_data,tickers[symbol],observed) if diversity_data
@@ -63,6 +70,11 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         asset_label={'stock':'주식','etf':'ETF','index':'지수','energy':'원유','metal':'금속'}.get(instrument.get('instrumentType'),'상품')
         result.update(display_name=f"Bitget · {instrument.get('fullName',symbol)} ({symbol}) · "+('BTC 무기한' if instrument['baseCoin']=='BTC' else f'거래소 {asset_label} 무기한'),data_errors=errors)
         pending=ledger.observe(result,result["display_name"],persist=persist or sender is not None)
+        if persist or sender is not None:
+            cursors=ledger.state.setdefault('touch_cursors',{})
+            cursors.setdefault(symbol,touch_since)
+            if minute_coverage:cursors[symbol]=minute_coverage['end']
+            ledger.save()
         results.append(result)
         chart_frames[symbol]=frames
         if sender is None:
