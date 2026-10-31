@@ -135,23 +135,87 @@ def render_review(result,frames,folder,label_prefix=''):
 
 def render_structure_pair(snapshot,events,frames,prefix):
     """Exactly two photos per symbol, only scopes with undelivered alerts."""
-    from PIL import Image
     from config.overlap_settings import TRACKS,TRACK_LABELS
-    prefix=Path(prefix);rows=[]
-    wanted={e['candidate']['track'] for e in events}
-    for track in TRACKS:
-        if track not in wanted:continue
-        review=snapshot['tracks'][track]['analysis']
-        rows.append(render_review(review,frames,prefix.parent/track,TRACK_LABELS[track]+' · '))
-    if not rows:raise ValueError('No eligible structure scope')
+    configure_font();prefix=Path(prefix);prefix.parent.mkdir(parents=True,exist_ok=True)
+    tracks=[t for t in TRACKS if any(e['candidate']['track']==t for e in events)]
+    if not tracks:raise ValueError('No eligible structure scope')
     paths=[]
-    for column,label in enumerate(('overview','detail')):
-        images=[Image.open(row[column]).convert('RGB') for row in rows]
+    for overview,suffix,heading in ((True,'overview','알림 구간 전체'),(False,'detail','알림 구간 확대')):
+        fig,axes=plt.subplots(len(tracks),1,figsize=(14,5.8*len(tracks)),squeeze=False,layout='constrained')
+        fig.patch.set_facecolor('#111722')
         try:
-            canvas=Image.new('RGB',(max(i.width for i in images),sum(i.height for i in images)),(17,23,34))
-            offset=0
-            for i in images:canvas.paste(i,(0,offset));offset+=i.height
-            path=prefix.with_name(prefix.name+'_'+label+'.png');canvas.save(path);paths.append(path)
-        finally:
-            for i in images:i.close()
+            for track,row in zip(tracks,axes):
+                own=[e['candidate'] for e in events if e['candidate']['track']==track]
+                draw_notified_scope(row[0],own,snapshot['tracks'][track]['analysis'],frames,overview,TRACK_LABELS[track])
+            fig.suptitle(f"Bitget · {snapshot['symbol']} · {heading}\n{kst(snapshot['as_of'])} · 흰 테두리 = 이번 알림 구간",
+                         color='#e3e8f0',fontsize=13)
+            path=prefix.with_name(prefix.name+'_'+suffix+'.png');fig.savefig(path,dpi=140,facecolor=fig.get_facecolor());paths.append(path)
+        finally:plt.close(fig)
     return paths
+
+
+def draw_notified_scope(ax,own,analysis,frames,overview,track_label):
+    """Only delivered candidates and their evidence; no other watch boxes."""
+    top,lower=own[0]['pair'];tf=top if overview else lower
+    all_bars=frames[tf];bars=all_bars if overview else all_bars[-180:]
+    origin=bars[0].timestamp;n=len(bars);end=n+max(8,n*.05)
+    x=lambda stamp:(stamp-origin)/TF_MS[tf]
+    ax.set_facecolor('#18202d');ax.tick_params(colors='#bac6d4');ax.yaxis.tick_right()
+    ax.grid(alpha=.10,color='white');ax.set_axisbelow(True)
+    span=max(b.high for b in bars)-min(b.low for b in bars)
+    for i,b in enumerate(bars):
+        color='#30c59a' if b.close>=b.open else '#ee6677'
+        ax.vlines(i,b.low,b.high,color=color,linewidth=.55,zorder=3)
+        ax.add_patch(Rectangle((i-.28,min(b.open,b.close)),.56,max(abs(b.open-b.close),span*.00002),
+                               facecolor=color,edgecolor='none',zorder=3))
+    handles=[];known=[own[0]['price']];titles=[];seen_sources=set();seen_sweeps=set()
+    for c in own:
+        lens='·'.join('큰 틀' if s=='broad' else '작은 틀' for s in c['lenses'])
+        side='지지 LONG' if c['direction']==1 else '저항 SHORT'
+        titles.append(f"{track_label} · {lens} · {side} · 중첩 {c['score']}/4")
+        for z in c['sources']:
+            if z['id'] in seen_sources:continue
+            seen_sources.add(z['id']);color=box_color(z)
+            # Evidence remains within this notified structural candidate.
+            low=max(z['low'],c['structure_area']['low']);high=min(z['high'],c['structure_area']['high'])
+            left=max(-.5,x(z['origin']));known.extend((low,high))
+            ax.add_patch(Rectangle((left,low),end-left,high-low,facecolor=color,edgecolor='none',alpha=.12,zorder=1))
+            ax.add_patch(Rectangle((left,low),end-left,high-low,facecolor='none',edgecolor=color,linewidth=.6,zorder=2))
+            name=f"{LABELS[z['timeframe']]} {z['kind']}"
+            if name not in [h.get_label() for h in handles]:handles.append(Patch(facecolor=color,edgecolor=color,alpha=.5,label=name))
+        left=max(-.5,x(c['latest_source']));known.extend((c['low'],c['high']))
+        ax.add_patch(Rectangle((left,c['low']),end-left,c['high']-c['low'],facecolor='#ffffff',edgecolor='none',alpha=.10,zorder=2))
+        ax.add_patch(Rectangle((left,c['low']),end-left,c['high']-c['low'],facecolor='none',edgecolor='white',linewidth=.9,zorder=5))
+        ax.annotate(f"알림 {c['low']:,.4f} ~ {c['high']:,.4f}",xy=(end,(c['low']+c['high'])/2),
+                    xytext=(-4,10),textcoords='offset points',ha='right',fontsize=9,color='white',zorder=8,
+                    bbox={'facecolor':'#18202d','edgecolor':'none','alpha':.85,'pad':2})
+        chosen='broad' if overview and 'broad' in c['lenses'] else 'recent' if 'recent' in c['lenses'] else c['lenses'][0]
+        view=analysis['views'][chosen];top_bars=frames[top]
+        points=[p for p in view['turns'] if top_bars[p['index']].timestamp>=origin]
+        if points:
+            ax.plot([x(top_bars[p['index']].timestamp) for p in points],[p['price'] for p in points],
+                    color=COLORS[chosen],linewidth=.85,alpha=.65,zorder=4)
+        area=c['structure_area']
+        related=[s for s in view['sweeps'] if s['direction']==c['direction'] and
+                 area['low']<=s['tip']<=area['high'] and top_bars[s['index']].timestamp>=origin]
+        for s in related[-2:]:
+            sid=(s['timestamp'],s['level'])
+            if sid in seen_sweeps:continue
+            seen_sweeps.add(sid);sx=x(top_bars[s['index']].timestamp)
+            ax.hlines(s['level'],max(-.5,x(s['origin'])),sx,color='#f8cf57',linestyle='--',linewidth=.7)
+            ax.scatter([sx],[s['tip']],marker='D',s=40,color='#f8cf57',zorder=7)
+            ax.annotate('스윕',xy=(sx,s['tip']),xytext=(5,-20),textcoords='offset points',color='#f8cf57',fontsize=8)
+            if s['mss_index'] is not None:
+                b=top_bars[s['mss_index']];mx=x(b.timestamp)
+                ax.scatter([mx],[b.close],marker='s',s=30,color='#fb9ac5',zorder=7)
+                ax.annotate('종가 MSS',xy=(mx,b.close),xytext=(5,12),textcoords='offset points',color='#fb9ac5',fontsize=8)
+    price=own[0]['price'];ax.axhline(price,color='#f0d296',linestyle=':',linewidth=.8)
+    ax.text(end,price,f"현재가 {price:,.2f}",ha='right',va='bottom',color='#f0d296',fontsize=9)
+    limits=[b.low for b in bars]+[b.high for b in bars]+known
+    lo,hi=min(limits),max(limits);pad=max((hi-lo)*.09,price*.0005)
+    ax.set_ylim(lo-pad,hi+pad);ax.set_xlim(-1,end+1)
+    ticks=list(range(0,n,max(1,n//6)))
+    ax.set_xticks(ticks,[kst(bars[i].timestamp).replace(' KST','') for i in ticks],fontsize=8)
+    ax.set_title('\n'.join(dict.fromkeys(titles))+f" · {LABELS[tf]}",loc='left',fontsize=11,color='#e3e8f0')
+    if handles:ax.legend(handles=handles,loc='upper left',ncol=min(4,len(handles)),fontsize=8,
+                         facecolor='#111722',edgecolor='#344154',labelcolor='#dce2eb',framealpha=.9)

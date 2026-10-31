@@ -67,14 +67,10 @@ def notice(events):
     for track in TRACKS:
         own=[e['candidate'] for e in events if e['candidate']['track']==track]
         if not own:continue
-        states=own[0].get('structure_states',{})
-        regimes=' · '.join(('큰 틀' if k=='broad' else '최근 틀')+{'up':'↑','down':'↓','mixed':'↔'}[v] for k,v in states.items())
-        lines.append(f"{TRACK_LABELS[track]} 겹침"+(' · '+regimes if regimes else ''))
         for c in own:
-            lens='·'.join('큰 틀' if x=='broad' else '최근 틀' for x in c['lenses'])
-            proof='/'.join(x.replace('1w','W').replace('1d','D').replace('4h','4H').replace('1h','1H') for x in c['groups'])
-            lines.append(f"{lens} {'지지 LONG' if c['direction']==1 else '저항 SHORT'} {c['score']}/4 · {number(c['low'])}~{number(c['high'])}")
-            lines.append(f"{proof} · 0.5 {number(c['equilibrium']['midpoint'])}")
+            lens='·'.join('큰 틀' if x=='broad' else '작은 틀' for x in c['lenses'])
+            lines.append(f"{TRACK_LABELS[track]} · {lens} · {'지지 LONG' if c['direction']==1 else '저항 SHORT'} · {c['score']}/4")
+            lines.append(f"알림 구간 {number(c['low'])} ~ {number(c['high'])}")
     lines.append(kst(max(e['timestamp'] for e in events)))
     return '\n'.join(lines)
 

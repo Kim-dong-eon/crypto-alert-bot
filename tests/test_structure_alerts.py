@@ -126,6 +126,29 @@ class StructureDeliveryTests(unittest.TestCase):
                              groups=[tf+':'+kind for tf in pair for kind in ('OB','FVG')],score=4)
                     events.append({'candidate':c,'timestamp':1000})
         self.assertLessEqual(len(notice(events)),1024)
+        text=notice(events)
+        self.assertIn('작은 틀',text);self.assertIn('알림 구간',text)
+        self.assertNotIn('0.5',text);self.assertNotIn('↑',text);self.assertNotIn('4H:',text)
+
+    def test_chart_excludes_unnotified_lens_and_watch_boxes(self):
+        import matplotlib.pyplot as plt
+        from src.structure_review_charts import draw_notified_scope
+        from src.overlap_charts import configure_font
+        configure_font()
+        c=multi()['tracks']['short']['candidates'][0]
+        c.update(sources=[],latest_source=0,structure_area={'low':95,'high':115})
+        analysis={'views':{s:{'turns':[],'sweeps':[],
+                              'selected':[{'low':200,'high':210,'direction':-1}]}
+                           for s in ('broad','recent')}}
+        frames={tf:[Bar(i*TF_MS[tf],105,110,100,108,1) for i in range(20)] for tf in ('4h','1h')}
+        fig,ax=plt.subplots()
+        try:
+            draw_notified_scope(ax,[c],analysis,frames,True,'단기')
+            self.assertNotIn('작은 틀',ax.get_title())
+            self.assertNotIn('저항',ax.get_title())
+            self.assertFalse(any(p.get_y()==200 for p in ax.patches))
+            self.assertEqual(len([p for p in ax.patches if p.get_edgecolor()[:3]==(1.,1.,1.)]),1)
+        finally:plt.close(fig)
 
 
 class TimeframeTests(unittest.TestCase):
