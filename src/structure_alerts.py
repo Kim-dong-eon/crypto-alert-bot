@@ -81,6 +81,12 @@ def notice(events):
 
 class StructureLedger(OverlapLedger):
     """Retain v10 acknowledgements; aliases match price bands across lenses."""
+    def unlock(self,symbol,track):
+        for key,event in list(self.state.get('in_flight',{}).items()):
+            if event['candidate']['symbol']==symbol and event['candidate']['track']==track:
+                del self.state['in_flight'][key]
+        super().unlock(symbol,track)
+
     def observe(self,snapshot,display_name=None,persist=True):
         if snapshot.get('strategy')!=STRATEGY:
             return super().observe(snapshot,display_name,persist)

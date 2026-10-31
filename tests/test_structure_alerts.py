@@ -4,6 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import Mock
+from unittest.mock import patch
 from src.structure_alerts import StructureLedger,STRATEGY,scan,notice
 from src.structure_review import turns,departure_areas,liquidity_events
 from src.ict_engine import Bar,TF_MS
@@ -97,6 +98,23 @@ class StructureDeliveryTests(unittest.TestCase):
             def send_images(self,items):return True
         self.ledger.observe(multi());self.send(ConfirmedSender().send_images)
         self.assertEqual(next(iter(self.ledger.state['delivered'].values()))['message_ids'],[101,102])
+
+    def test_explicit_unlock_also_clears_uncertain_delivery(self):
+        class UncertainSender:
+            last_receipt={'outcome':'unknown'}
+            def send_images(self,items):return False
+        self.ledger.observe(multi());self.send(UncertainSender().send_images)
+        self.ledger.unlock('BTCUSDT','short');self.ledger.observe(multi())
+        self.assertEqual(len(self.ledger.state['pending']),1)
+
+    def test_invalid_telegram_response_is_uncertain_not_rejected(self):
+        from src.overlap_telegram import TelegramMedia
+        p=Path(self.temp.name)/'image.png';p.write_bytes(b'picture')
+        with patch('src.overlap_telegram.requests.post') as post:
+            post.return_value.json.side_effect=ValueError('invalid JSON')
+            sender=TelegramMedia('test','test')
+            self.assertFalse(sender.send_images([(p,'')]))
+            self.assertEqual(sender.last_receipt['outcome'],'unknown')
 
     def test_maximum_caption_fits_and_labels_evidence_per_zone(self):
         events=[]

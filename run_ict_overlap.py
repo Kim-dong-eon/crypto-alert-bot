@@ -137,7 +137,7 @@ def main(argv=None):
         symbol,track=args.unlock
         if track not in ('short','medium','long'):parser.error('TRACK must be short, medium or long')
         with single_writer(args.state.with_suffix('.lock')):
-            OverlapLedger(args.state).unlock(symbol,track)
+            StructureLedger(args.state).unlock(symbol,track)
         print(f'{symbol} {TRACK_LABELS[track]} 잠금 해제');return 0
     market=HistoricalMarket(ROOT/'runtime/ict_overlap/cache/structure')
     catalog=market.instruments()
