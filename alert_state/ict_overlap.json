@@ -48,7 +48,7 @@
           "eligible": true,
           "range_low": 74910.0,
           "range_high": 87373.0,
-          "distance_to_zone": 312.1000000000058
+          "distance_to_zone": 331.5
         },
         "id": "eaa2897bf38f8ee54b477635",
         "symbol": "BTCUSDT",
@@ -59,7 +59,7 @@
         ],
         "exchange": "bitget",
         "direction": 1,
-        "price": 77493.8,
+        "price": 77513.2,
         "context_id": "area:1d:1789430400000:1",
         "context": {
           "id": "area:1d:1789430400000:1"
@@ -125,7 +125,7 @@
                 "eligible": true,
                 "range_low": 74910.0,
                 "range_high": 87373.0,
-                "distance_to_zone": 312.1000000000058
+                "distance_to_zone": 331.5
               }
             },
             {
@@ -174,7 +174,7 @@
                 "eligible": true,
                 "range_low": 74910.0,
                 "range_high": 87373.0,
-                "distance_to_zone": 1043.800000000003
+                "distance_to_zone": 1063.199999999997
               }
             },
             {
@@ -223,7 +223,7 @@
                 "eligible": true,
                 "range_low": 74910.0,
                 "range_high": 87373.0,
-                "distance_to_zone": 1698.9000000000087
+                "distance_to_zone": 1718.300000000003
               }
             }
           ],
@@ -240,7 +240,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460943491
+      "checked_at": 1793460981825
     },
     "BTCUSDT|long": {
       "candidate": {
@@ -304,7 +304,7 @@
           "eligible": false,
           "range_low": 57770.0,
           "range_high": 87373.0,
-          "distance_to_zone": 13741.800000000003
+          "distance_to_zone": 13761.199999999997
         },
         "id": "4a8f5228b7f8b11eecfbdd48",
         "symbol": "BTCUSDT",
@@ -315,7 +315,7 @@
         ],
         "exchange": "bitget",
         "direction": 1,
-        "price": 77493.8,
+        "price": 77513.2,
         "context_id": "area:1w:1782691200000:1",
         "context": {
           "id": "area:1w:1782691200000:1"
@@ -396,7 +396,7 @@
                 "eligible": false,
                 "range_low": 57770.0,
                 "range_high": 87373.0,
-                "distance_to_zone": 13741.800000000003
+                "distance_to_zone": 13761.199999999997
               }
             },
             {
@@ -445,7 +445,7 @@
                 "eligible": false,
                 "range_low": 57770.0,
                 "range_high": 87373.0,
-                "distance_to_zone": 11791.5
+                "distance_to_zone": 11810.899999999994
               }
             },
             {
@@ -494,7 +494,7 @@
                 "eligible": false,
                 "range_low": 57770.0,
                 "range_high": 87373.0,
-                "distance_to_zone": 13483.800000000003
+                "distance_to_zone": 13503.199999999997
               }
             }
           ],
@@ -511,7 +511,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460943491
+      "checked_at": 1793460981825
     },
     "SKHYNIXUSDT|medium": {
       "candidate": {
@@ -752,11 +752,11 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460943649
+      "checked_at": 1793460981977
     },
     "SKHYNIXUSDT|long": {
       "candidate": null,
-      "checked_at": 1793460943649
+      "checked_at": 1793460981977
     },
     "NVDAUSDT|medium": {
       "candidate": {
@@ -816,7 +816,7 @@
         ],
         "exchange": "bitget",
         "direction": 1,
-        "price": 203.77,
+        "price": 203.79,
         "context_id": "area:1d:1787702400000:1",
         "context": {
           "id": "area:1d:1787702400000:1"
@@ -899,7 +899,7 @@
         "context_price_breach": false,
         "location": "inside"
       },
-      "checked_at": 1793460943774
+      "checked_at": 1793460982108
     },
     "NVDAUSDT|long": {
       "candidate": {
@@ -959,7 +959,7 @@
         ],
         "exchange": "bitget",
         "direction": 1,
-        "price": 203.77,
+        "price": 203.79,
         "context_id": "area:1w:1785110400000:1",
         "context": {
           "id": "area:1w:1785110400000:1"
@@ -1074,7 +1074,7 @@
                 "eligible": true,
                 "range_low": 188.89,
                 "range_high": 238.0,
-                "distance_to_zone": 9.189999999999998
+                "distance_to_zone": 9.20999999999998
               }
             }
           ],
@@ -1091,7 +1091,7 @@
         "context_price_breach": false,
         "location": "inside"
       },
-      "checked_at": 1793460943774
+      "checked_at": 1793460982108
     },
     "TSLAUSDT|medium": {
       "candidate": {
@@ -1393,7 +1393,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460943908
+      "checked_at": 1793460982246
     },
     "TSLAUSDT|long": {
       "candidate": {
@@ -1694,7 +1694,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460943908
+      "checked_at": 1793460982246
     },
     "AAPLUSDT|medium": {
       "candidate": {
@@ -1995,7 +1995,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944043
+      "checked_at": 1793460982387
     },
     "AAPLUSDT|long": {
       "candidate": {
@@ -2187,7 +2187,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944043
+      "checked_at": 1793460982387
     },
     "MSFTUSDT|medium": {
       "candidate": {
@@ -2518,7 +2518,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944172
+      "checked_at": 1793460982519
     },
     "MSFTUSDT|long": {
       "candidate": {
@@ -2760,7 +2760,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944172
+      "checked_at": 1793460982519
     },
     "AMZNUSDT|medium": {
       "candidate": {
@@ -2809,7 +2809,7 @@
           "eligible": true,
           "range_low": 225.57,
           "range_high": 258.57,
-          "distance_to_zone": 8.240000000000009
+          "distance_to_zone": 8.189999999999998
         },
         "id": "c6527d684df2c375e6931565",
         "symbol": "AMZNUSDT",
@@ -2820,7 +2820,7 @@
         ],
         "exchange": "bitget",
         "direction": 1,
-        "price": 240.87,
+        "price": 240.82,
         "context_id": "area:1d:1782432000000:1",
         "context": {
           "id": "area:1d:1782432000000:1"
@@ -2886,7 +2886,7 @@
                 "eligible": true,
                 "range_low": 225.57,
                 "range_high": 258.57,
-                "distance_to_zone": 8.240000000000009
+                "distance_to_zone": 8.189999999999998
               }
             },
             {
@@ -2935,7 +2935,7 @@
                 "eligible": true,
                 "range_low": 225.57,
                 "range_high": 258.57,
-                "distance_to_zone": 14.259999999999991
+                "distance_to_zone": 14.20999999999998
               }
             }
           ],
@@ -2952,7 +2952,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944305
+      "checked_at": 1793460982660
     },
     "AMZNUSDT|long": {
       "candidate": {
@@ -3001,7 +3001,7 @@
           "eligible": true,
           "range_low": 224.83,
           "range_high": 287.59,
-          "distance_to_zone": 8.240000000000009
+          "distance_to_zone": 8.189999999999998
         },
         "id": "87237be2b08445a3cd76d66b",
         "symbol": "AMZNUSDT",
@@ -3012,7 +3012,7 @@
         ],
         "exchange": "bitget",
         "direction": 1,
-        "price": 240.87,
+        "price": 240.82,
         "context_id": "area:1w:1785110400000:1",
         "context": {
           "id": "area:1w:1785110400000:1"
@@ -3078,7 +3078,7 @@
                 "eligible": true,
                 "range_low": 224.83,
                 "range_high": 287.59,
-                "distance_to_zone": 8.240000000000009
+                "distance_to_zone": 8.189999999999998
               }
             }
           ],
@@ -3095,7 +3095,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944305
+      "checked_at": 1793460982660
     },
     "GOOGLUSDT|medium": {
       "candidate": {
@@ -3159,7 +3159,7 @@
           "eligible": false,
           "range_low": 278.05,
           "range_high": 359.95,
-          "distance_to_zone": 63.02999999999997
+          "distance_to_zone": 63.00999999999999
         },
         "id": "8d5df179747fb890fed87594",
         "symbol": "GOOGLUSDT",
@@ -3170,7 +3170,7 @@
         ],
         "exchange": "bitget",
         "direction": -1,
-        "price": 282.1,
+        "price": 282.12,
         "context_id": "area:1d:1791936000000:-1",
         "context": {
           "id": "area:1d:1791936000000:-1"
@@ -3251,7 +3251,7 @@
                 "eligible": false,
                 "range_low": 278.05,
                 "range_high": 359.95,
-                "distance_to_zone": 63.02999999999997
+                "distance_to_zone": 63.00999999999999
               }
             },
             {
@@ -3300,7 +3300,7 @@
                 "eligible": false,
                 "range_low": 278.05,
                 "range_high": 359.95,
-                "distance_to_zone": 62.85999999999996
+                "distance_to_zone": 62.839999999999975
               }
             },
             {
@@ -3349,7 +3349,7 @@
                 "eligible": false,
                 "range_low": 278.05,
                 "range_high": 359.95,
-                "distance_to_zone": 63.31999999999999
+                "distance_to_zone": 63.30000000000001
               }
             }
           ],
@@ -3366,7 +3366,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944429
+      "checked_at": 1793460982793
     },
     "GOOGLUSDT|long": {
       "candidate": {
@@ -3430,7 +3430,7 @@
           "eligible": true,
           "range_low": 272.0,
           "range_high": 408.75,
-          "distance_to_zone": 9.010000000000048
+          "distance_to_zone": 9.03000000000003
         },
         "id": "7441370e45606a7c551f0df9",
         "symbol": "GOOGLUSDT",
@@ -3441,7 +3441,7 @@
         ],
         "exchange": "bitget",
         "direction": 1,
-        "price": 282.1,
+        "price": 282.12,
         "context_id": "area:1w:1774828800000:1",
         "context": {
           "id": "area:1w:1774828800000:1"
@@ -3522,7 +3522,7 @@
                 "eligible": true,
                 "range_low": 272.0,
                 "range_high": 408.75,
-                "distance_to_zone": 9.010000000000048
+                "distance_to_zone": 9.03000000000003
               }
             },
             {
@@ -3571,7 +3571,7 @@
                 "eligible": true,
                 "range_low": 272.0,
                 "range_high": 408.75,
-                "distance_to_zone": 9.410000000000025
+                "distance_to_zone": 9.430000000000007
               }
             }
           ],
@@ -3588,7 +3588,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944429
+      "checked_at": 1793460982793
     },
     "METAUSDT|medium": {
       "candidate": {
@@ -3890,7 +3890,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944559
+      "checked_at": 1793460982931
     },
     "METAUSDT|long": {
       "candidate": {
@@ -4151,7 +4151,8 @@
           "midpoint": 649.265
         },
         "lenses": [
-          "broad"
+          "broad",
+          "recent"
         ],
         "formed_at": 1790553600000,
         "structure_states": {
@@ -4161,7 +4162,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944559
+      "checked_at": 1793460982931
     },
     "QQQUSDT|medium": {
       "candidate": {
@@ -4403,7 +4404,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944701
+      "checked_at": 1793460983082
     },
     "QQQUSDT|long": {
       "candidate": {
@@ -4595,7 +4596,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944701
+      "checked_at": 1793460983082
     },
     "SPYUSDT|medium": {
       "candidate": {
@@ -4836,11 +4837,11 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944823
+      "checked_at": 1793460983217
     },
     "SPYUSDT|long": {
       "candidate": null,
-      "checked_at": 1793460944823
+      "checked_at": 1793460983217
     },
     "NDX100USDT|medium": {
       "candidate": {
@@ -5005,7 +5006,7 @@
           "eligible": true,
           "range_low": 75538.8,
           "range_high": 81258.0,
-          "distance_to_zone": 606.1999999999971
+          "distance_to_zone": 625.5999999999913
         },
         "id": "e77efd651cb5b096ead3ef2b",
         "symbol": "BTCUSDT",
@@ -5016,7 +5017,7 @@
         ],
         "exchange": "bitget",
         "direction": 1,
-        "price": 77493.8,
+        "price": 77513.2,
         "context_id": "area:4h:1787457600000:1",
         "context": {
           "id": "area:4h:1787457600000:1"
@@ -5082,7 +5083,7 @@
                 "eligible": true,
                 "range_low": 75538.8,
                 "range_high": 81258.0,
-                "distance_to_zone": 606.1999999999971
+                "distance_to_zone": 625.5999999999913
               }
             },
             {
@@ -5131,7 +5132,7 @@
                 "eligible": true,
                 "range_low": 75538.8,
                 "range_high": 81258.0,
-                "distance_to_zone": 1012.6999999999971
+                "distance_to_zone": 1032.0999999999913
               }
             },
             {
@@ -5180,7 +5181,7 @@
                 "eligible": true,
                 "range_low": 75538.8,
                 "range_high": 81258.0,
-                "distance_to_zone": 1101.800000000003
+                "distance_to_zone": 1121.199999999997
               }
             }
           ],
@@ -5197,7 +5198,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460943491
+      "checked_at": 1793460981825
     },
     "SKHYNIXUSDT|short": {
       "candidate": {
@@ -5544,7 +5545,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460943649
+      "checked_at": 1793460981977
     },
     "NVDAUSDT|short": {
       "candidate": {
@@ -5593,7 +5594,7 @@
           "eligible": false,
           "range_low": 201.32,
           "range_high": 220.65,
-          "distance_to_zone": 15.129999999999995
+          "distance_to_zone": 15.110000000000014
         },
         "id": "e86df46267d202975238a7bf",
         "symbol": "NVDAUSDT",
@@ -5604,7 +5605,7 @@
         ],
         "exchange": "bitget",
         "direction": -1,
-        "price": 203.77,
+        "price": 203.79,
         "context_id": "area:4h:1793188800000:-1",
         "context": {
           "id": "area:4h:1793188800000:-1"
@@ -5670,7 +5671,7 @@
                 "eligible": false,
                 "range_low": 201.32,
                 "range_high": 220.65,
-                "distance_to_zone": 15.129999999999995
+                "distance_to_zone": 15.110000000000014
               }
             },
             {
@@ -5719,7 +5720,7 @@
                 "eligible": false,
                 "range_low": 201.32,
                 "range_high": 220.65,
-                "distance_to_zone": 15.799999999999983
+                "distance_to_zone": 15.780000000000001
               }
             }
           ],
@@ -5736,7 +5737,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460943774
+      "checked_at": 1793460982108
     },
     "TSLAUSDT|short": {
       "candidate": {
@@ -6038,7 +6039,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460943908
+      "checked_at": 1793460982246
     },
     "AAPLUSDT|short": {
       "candidate": {
@@ -6339,7 +6340,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944043
+      "checked_at": 1793460982387
     },
     "MSFTUSDT|short": {
       "candidate": {
@@ -6671,7 +6672,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944172
+      "checked_at": 1793460982519
     },
     "AMZNUSDT|short": {
       "candidate": {
@@ -6735,7 +6736,7 @@
           "eligible": true,
           "range_low": 214.67,
           "range_high": 258.0,
-          "distance_to_zone": 13.639999999999986
+          "distance_to_zone": 13.689999999999998
         },
         "id": "118a209098ecb9baceb3cc29",
         "symbol": "AMZNUSDT",
@@ -6746,7 +6747,7 @@
         ],
         "exchange": "bitget",
         "direction": -1,
-        "price": 240.87,
+        "price": 240.82,
         "context_id": "area:4h:1793217600000:-1",
         "context": {
           "id": "area:4h:1793217600000:-1"
@@ -6827,7 +6828,7 @@
                 "eligible": true,
                 "range_low": 214.67,
                 "range_high": 258.0,
-                "distance_to_zone": 13.639999999999986
+                "distance_to_zone": 13.689999999999998
               }
             },
             {
@@ -6876,7 +6877,7 @@
                 "eligible": true,
                 "range_low": 214.67,
                 "range_high": 258.0,
-                "distance_to_zone": 13.590000000000003
+                "distance_to_zone": 13.640000000000015
               }
             },
             {
@@ -6925,7 +6926,7 @@
                 "eligible": true,
                 "range_low": 214.67,
                 "range_high": 258.0,
-                "distance_to_zone": 14.680000000000007
+                "distance_to_zone": 14.730000000000018
               }
             }
           ],
@@ -6942,7 +6943,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944305
+      "checked_at": 1793460982660
     },
     "GOOGLUSDT|short": {
       "candidate": {
@@ -7021,7 +7022,7 @@
           "eligible": false,
           "range_low": 281.4,
           "range_high": 328.22,
-          "distance_to_zone": 43.639999999999986
+          "distance_to_zone": 43.620000000000005
         },
         "id": "b3fd2662568fdf1c52dfee6b",
         "symbol": "GOOGLUSDT",
@@ -7032,7 +7033,7 @@
         ],
         "exchange": "bitget",
         "direction": -1,
-        "price": 282.1,
+        "price": 282.12,
         "context_id": "area:4h:1793217600000:-1",
         "context": {
           "id": "area:4h:1793217600000:-1"
@@ -7128,7 +7129,7 @@
                 "eligible": false,
                 "range_low": 281.4,
                 "range_high": 328.22,
-                "distance_to_zone": 43.639999999999986
+                "distance_to_zone": 43.620000000000005
               }
             },
             {
@@ -7192,7 +7193,7 @@
                 "eligible": false,
                 "range_low": 281.4,
                 "range_high": 328.22,
-                "distance_to_zone": 11.049999999999955
+                "distance_to_zone": 11.029999999999973
               }
             },
             {
@@ -7256,7 +7257,7 @@
                 "eligible": false,
                 "range_low": 281.4,
                 "range_high": 328.22,
-                "distance_to_zone": 43.56
+                "distance_to_zone": 43.54000000000002
               }
             }
           ],
@@ -7273,7 +7274,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944429
+      "checked_at": 1793460982793
     },
     "METAUSDT|short": {
       "candidate": {
@@ -7574,7 +7575,7 @@
         "context_price_breach": false,
         "location": "inside"
       },
-      "checked_at": 1793460944559
+      "checked_at": 1793460982931
     },
     "QQQUSDT|short": {
       "candidate": {
@@ -7845,7 +7846,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944701
+      "checked_at": 1793460983082
     },
     "SPYUSDT|short": {
       "candidate": {
@@ -8037,7 +8038,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793460944823
+      "checked_at": 1793460983217
     },
     "NDX100USDT|short": {
       "candidate": {
@@ -8209,7 +8210,7 @@
           "eligible": true,
           "range_low": 88.676,
           "range_high": 106.898,
-          "distance_to_zone": 0.5309999999999917
+          "distance_to_zone": 0.5609999999999928
         },
         "id": "a2ec7f6aa97c4a67d5592139",
         "symbol": "CLUSDT",
@@ -8220,7 +8221,7 @@
         ],
         "exchange": "bitget",
         "direction": -1,
-        "price": 102.712,
+        "price": 102.682,
         "context_id": "area:4h:1789070400000:-1",
         "context": {
           "id": "area:4h:1789070400000:-1"
@@ -8286,7 +8287,7 @@
                 "eligible": true,
                 "range_low": 88.676,
                 "range_high": 106.898,
-                "distance_to_zone": 0.5309999999999917
+                "distance_to_zone": 0.5609999999999928
               }
             }
           ],
@@ -8306,7 +8307,7 @@
         "monitor_eligible": true,
         "diversification": {
           "eligible": true,
-          "as_of": 1793460944962,
+          "as_of": 1793460983366,
           "exchange": "bitget",
           "reasons": [],
           "method": "simultaneous_closed_log_returns_30d_60d",
@@ -8335,11 +8336,11 @@
           "median_daily_turnover_30d": 61276065.494684994,
           "median_daily_turnover_7d": 58577085.3839,
           "days_above_5m_30d": 30,
-          "turnover_24h_usdt": 41767774.65886,
-          "spread_bps": 0.48684306613718775
+          "turnover_24h_usdt": 41716014.14448,
+          "spread_bps": 0.09738852665813948
         }
       },
-      "checked_at": 1793460944962
+      "checked_at": 1793460983366
     },
     "CLUSDT|medium": {
       "candidate": {
@@ -8403,7 +8404,7 @@
           "eligible": true,
           "range_low": 86.888,
           "range_high": 106.898,
-          "distance_to_zone": 0.5309999999999917
+          "distance_to_zone": 0.5609999999999928
         },
         "id": "05badffc3e41cf5888f123e1",
         "symbol": "CLUSDT",
@@ -8414,7 +8415,7 @@
         ],
         "exchange": "bitget",
         "direction": -1,
-        "price": 102.712,
+        "price": 102.682,
         "context_id": "area:1d:1788998400000:-1",
         "context": {
           "id": "area:1d:1788998400000:-1"
@@ -8495,7 +8496,7 @@
                 "eligible": true,
                 "range_low": 86.888,
                 "range_high": 106.898,
-                "distance_to_zone": 0.5309999999999917
+                "distance_to_zone": 0.5609999999999928
               }
             },
             {
@@ -8559,7 +8560,7 @@
                 "eligible": true,
                 "range_low": 86.888,
                 "range_high": 106.898,
-                "distance_to_zone": 1.5799999999999983
+                "distance_to_zone": 1.6099999999999994
               }
             }
           ],
@@ -8579,7 +8580,7 @@
         "monitor_eligible": true,
         "diversification": {
           "eligible": true,
-          "as_of": 1793460944962,
+          "as_of": 1793460983366,
           "exchange": "bitget",
           "reasons": [],
           "method": "simultaneous_closed_log_returns_30d_60d",
@@ -8608,11 +8609,11 @@
           "median_daily_turnover_30d": 61276065.494684994,
           "median_daily_turnover_7d": 58577085.3839,
           "days_above_5m_30d": 30,
-          "turnover_24h_usdt": 41767774.65886,
-          "spread_bps": 0.48684306613718775
+          "turnover_24h_usdt": 41716014.14448,
+          "spread_bps": 0.09738852665813948
         }
       },
-      "checked_at": 1793460944962
+      "checked_at": 1793460983366
     },
     "CLUSDT|long": {
       "candidate": {
@@ -8676,7 +8677,7 @@
           "eligible": false,
           "range_low": 67.155,
           "range_high": 106.898,
-          "distance_to_zone": 23.072000000000003
+          "distance_to_zone": 23.042
         },
         "id": "9c379f4006494be3e943c378",
         "symbol": "CLUSDT",
@@ -8687,7 +8688,7 @@
         ],
         "exchange": "bitget",
         "direction": 1,
-        "price": 102.712,
+        "price": 102.682,
         "context_id": "area:1w:1782691200000:1",
         "context": {
           "id": "area:1w:1782691200000:1"
@@ -8768,7 +8769,7 @@
                 "eligible": false,
                 "range_low": 67.155,
                 "range_high": 106.898,
-                "distance_to_zone": 23.072000000000003
+                "distance_to_zone": 23.042
               }
             },
             {
@@ -8832,7 +8833,7 @@
                 "eligible": false,
                 "range_low": 67.155,
                 "range_high": 106.898,
-                "distance_to_zone": 30.948000000000008
+                "distance_to_zone": 30.918000000000006
               }
             },
             {
@@ -8881,7 +8882,7 @@
                 "eligible": false,
                 "range_low": 67.155,
                 "range_high": 106.898,
-                "distance_to_zone": 22.899
+                "distance_to_zone": 22.869
               }
             }
           ],
@@ -8900,7 +8901,7 @@
         "monitor_eligible": true,
         "diversification": {
           "eligible": true,
-          "as_of": 1793460944962,
+          "as_of": 1793460983366,
           "exchange": "bitget",
           "reasons": [],
           "method": "simultaneous_closed_log_returns_30d_60d",
@@ -8929,11 +8930,11 @@
           "median_daily_turnover_30d": 61276065.494684994,
           "median_daily_turnover_7d": 58577085.3839,
           "days_above_5m_30d": 30,
-          "turnover_24h_usdt": 41767774.65886,
-          "spread_bps": 0.48684306613718775
+          "turnover_24h_usdt": 41716014.14448,
+          "spread_bps": 0.09738852665813948
         }
       },
-      "checked_at": 1793460944962
+      "checked_at": 1793460983366
     },
     "BZUSDT|short": {
       "candidate": {
@@ -9266,7 +9267,7 @@
         "monitor_eligible": true,
         "diversification": {
           "eligible": true,
-          "as_of": 1793460945113,
+          "as_of": 1793460983530,
           "exchange": "bitget",
           "reasons": [],
           "method": "simultaneous_closed_log_returns_30d_60d",
@@ -9295,11 +9296,11 @@
           "median_daily_turnover_30d": 33461363.33105,
           "median_daily_turnover_7d": 34099600.1415,
           "days_above_5m_30d": 28,
-          "turnover_24h_usdt": 15039912.8121,
+          "turnover_24h_usdt": 14992844.8536,
           "spread_bps": 0.890115269926646
         }
       },
-      "checked_at": 1793460945113
+      "checked_at": 1793460983530
     },
     "BZUSDT|medium": {
       "candidate": {
@@ -9445,7 +9446,7 @@
         "monitor_eligible": true,
         "diversification": {
           "eligible": true,
-          "as_of": 1793460945113,
+          "as_of": 1793460983530,
           "exchange": "bitget",
           "reasons": [],
           "method": "simultaneous_closed_log_returns_30d_60d",
@@ -9474,11 +9475,11 @@
           "median_daily_turnover_30d": 33461363.33105,
           "median_daily_turnover_7d": 34099600.1415,
           "days_above_5m_30d": 28,
-          "turnover_24h_usdt": 15039912.8121,
+          "turnover_24h_usdt": 14992844.8536,
           "spread_bps": 0.890115269926646
         }
       },
-      "checked_at": 1793460945113
+      "checked_at": 1793460983530
     },
     "BZUSDT|long": {
       "candidate": {
@@ -9721,7 +9722,7 @@
         "monitor_eligible": true,
         "diversification": {
           "eligible": true,
-          "as_of": 1793460945113,
+          "as_of": 1793460983530,
           "exchange": "bitget",
           "reasons": [],
           "method": "simultaneous_closed_log_returns_30d_60d",
@@ -9750,11 +9751,11 @@
           "median_daily_turnover_30d": 33461363.33105,
           "median_daily_turnover_7d": 34099600.1415,
           "days_above_5m_30d": 28,
-          "turnover_24h_usdt": 15039912.8121,
+          "turnover_24h_usdt": 14992844.8536,
           "spread_bps": 0.890115269926646
         }
       },
-      "checked_at": 1793460945113
+      "checked_at": 1793460983530
     }
   },
   "delivered": {
@@ -9921,271 +9922,293 @@
     "2f884604d265358170f2ef5c": {
       "symbol": "BTCUSDT",
       "stage": "approach",
-      "timestamp": 1793459276179,
+      "timestamp": 1793460981825,
       "message_ids": [
-        1580,
-        1581
+        1606,
+        1607
       ]
     },
     "d79098f0bb2dd2ae0b764f44": {
       "symbol": "BTCUSDT",
       "stage": "approach",
-      "timestamp": 1793459276179,
+      "timestamp": 1793460981825,
       "message_ids": [
-        1580,
-        1581
+        1608,
+        1609
       ]
     },
     "5cba71dbb3022cf7b076497e": {
       "symbol": "BTCUSDT",
       "stage": "approach",
-      "timestamp": 1793459276179,
+      "timestamp": 1793460981825,
       "message_ids": [
-        1580,
-        1581
+        1610,
+        1611
       ]
     },
     "028c11a16056be9b3676e079": {
       "symbol": "SKHYNIXUSDT",
       "stage": "approach",
-      "timestamp": 1793459276310,
+      "timestamp": 1793460981977,
       "message_ids": [
-        1582,
-        1583
+        1612,
+        1613,
+        1614,
+        1615
       ]
     },
     "ce1aa08cd93e6df63e3ab910": {
       "symbol": "SKHYNIXUSDT",
       "stage": "approach",
-      "timestamp": 1793459276310,
+      "timestamp": 1793460981977,
       "message_ids": [
-        1582,
-        1583
+        1616,
+        1617
       ]
     },
     "a14fc5858d88c478ea756cc7": {
       "symbol": "NVDAUSDT",
       "stage": "approach",
-      "timestamp": 1793459276422,
+      "timestamp": 1793460982108,
       "message_ids": [
-        1584,
-        1585
+        1618,
+        1619
       ]
     },
     "95a7678afc3e789134dbdb4e": {
       "symbol": "NVDAUSDT",
       "stage": "approach",
-      "timestamp": 1793459276422,
+      "timestamp": 1793460982108,
       "message_ids": [
-        1584,
-        1585
+        1620,
+        1621
       ]
     },
     "e70e91e3e3cc21af429251bf": {
       "symbol": "NVDAUSDT",
       "stage": "approach",
-      "timestamp": 1793459276422,
+      "timestamp": 1793460982108,
       "message_ids": [
-        1584,
-        1585
+        1622,
+        1623
       ]
     },
     "34cf802256e5628c2d864723": {
       "symbol": "TSLAUSDT",
       "stage": "approach",
-      "timestamp": 1793459276543,
+      "timestamp": 1793460982246,
       "message_ids": [
-        1586,
-        1587
+        1624,
+        1625,
+        1626,
+        1627
       ]
     },
     "9819724798cd0a0f2698d3d4": {
       "symbol": "TSLAUSDT",
       "stage": "approach",
-      "timestamp": 1793459276543,
+      "timestamp": 1793460982246,
       "message_ids": [
-        1586,
-        1587
+        1628,
+        1629,
+        1630,
+        1631
       ]
     },
     "51b5c84693855ea5dfbf4c0f": {
       "symbol": "TSLAUSDT",
       "stage": "approach",
-      "timestamp": 1793459276543,
+      "timestamp": 1793460982246,
       "message_ids": [
-        1586,
-        1587
+        1632,
+        1633
       ]
     },
     "91f6d7dcd02ff1b49f146106": {
       "symbol": "AAPLUSDT",
       "stage": "approach",
-      "timestamp": 1793459276667,
+      "timestamp": 1793460982387,
       "message_ids": [
-        1588,
-        1589
+        1634,
+        1635
       ]
     },
     "b9d788aba2b828a7c0668013": {
       "symbol": "AAPLUSDT",
       "stage": "approach",
-      "timestamp": 1793459276667,
+      "timestamp": 1793460982387,
       "message_ids": [
-        1588,
-        1589
+        1636,
+        1637
       ]
     },
     "a47aa28f35de6bd6c5980f92": {
       "symbol": "MSFTUSDT",
       "stage": "approach",
-      "timestamp": 1793459276783,
+      "timestamp": 1793460982519,
       "message_ids": [
-        1590,
-        1591
+        1638,
+        1639,
+        1640,
+        1641
       ]
     },
     "8a45f7970b4c9b55d2ab00a3": {
       "symbol": "MSFTUSDT",
       "stage": "approach",
-      "timestamp": 1793459276783,
+      "timestamp": 1793460982519,
       "message_ids": [
-        1590,
-        1591
+        1642,
+        1643
       ]
     },
     "b3dcbb1a00b7de51afc6d6a8": {
       "symbol": "MSFTUSDT",
       "stage": "approach",
-      "timestamp": 1793459276783,
+      "timestamp": 1793460982519,
       "message_ids": [
-        1590,
-        1591
+        1644,
+        1645,
+        1646,
+        1647
       ]
     },
     "107f4bedd3fc128b9ac53239": {
       "symbol": "AMZNUSDT",
       "stage": "approach",
-      "timestamp": 1793459276905,
+      "timestamp": 1793460982660,
       "message_ids": [
-        1592,
-        1593
+        1648,
+        1649
       ]
     },
     "84f6eb22aa006bc4038f0664": {
       "symbol": "AMZNUSDT",
       "stage": "approach",
-      "timestamp": 1793459276905,
+      "timestamp": 1793460982660,
       "message_ids": [
-        1592,
-        1593
+        1650,
+        1651
       ]
     },
     "586c25915d39cf51fd22af30": {
       "symbol": "AMZNUSDT",
       "stage": "approach",
-      "timestamp": 1793459276905,
+      "timestamp": 1793460982660,
       "message_ids": [
-        1592,
-        1593
+        1652,
+        1653
       ]
     },
     "489ab07bb959ac03fd0bf254": {
       "symbol": "AMZNUSDT",
       "stage": "approach",
-      "timestamp": 1793459276905,
+      "timestamp": 1793460982660,
       "message_ids": [
-        1592,
-        1593
+        1654,
+        1655
       ]
     },
     "5c041baf1407347812e507fb": {
       "symbol": "GOOGLUSDT",
       "stage": "approach",
-      "timestamp": 1793459277022,
+      "timestamp": 1793460982793,
       "message_ids": [
-        1594,
-        1595
+        1656,
+        1657
       ]
     },
     "182ffa2c7506d9affc86d6c0": {
       "symbol": "METAUSDT",
       "stage": "approach",
-      "timestamp": 1793459277142,
+      "timestamp": 1793460982931,
       "message_ids": [
-        1596,
-        1597
+        1658,
+        1659
       ]
     },
     "e13010a318c22f983a617e2e": {
       "symbol": "METAUSDT",
       "stage": "approach",
-      "timestamp": 1793459277142,
+      "timestamp": 1793460982931,
       "message_ids": [
-        1596,
-        1597
+        1660,
+        1661,
+        1662,
+        1663
       ]
     },
     "50c0e629209384a43d9efae1": {
       "symbol": "METAUSDT",
       "stage": "approach",
-      "timestamp": 1793459277142,
+      "timestamp": 1793460982931,
       "message_ids": [
-        1596,
-        1597
+        1664,
+        1665,
+        1666,
+        1667
       ]
     },
     "46a5a1c344f361129da326ed": {
       "symbol": "QQQUSDT",
       "stage": "approach",
-      "timestamp": 1793459277274,
+      "timestamp": 1793460983082,
       "message_ids": [
-        1598,
-        1599
+        1668,
+        1669,
+        1670,
+        1671
       ]
     },
     "ddfabda25b1ab47b3af6bf92": {
       "symbol": "SPYUSDT",
       "stage": "approach",
-      "timestamp": 1793459277391,
+      "timestamp": 1793460983217,
       "message_ids": [
-        1600,
-        1601
+        1672,
+        1673
       ]
     },
     "bdaa125327e9a898cebda945": {
       "symbol": "SPYUSDT",
       "stage": "approach",
-      "timestamp": 1793459277391,
+      "timestamp": 1793460983217,
       "message_ids": [
-        1600,
-        1601
+        1674,
+        1675
       ]
     },
     "4db6d6f3f06b22698b84f3ab": {
       "symbol": "CLUSDT",
       "stage": "approach",
-      "timestamp": 1793459277523,
+      "timestamp": 1793460983366,
       "message_ids": [
-        1602,
-        1603
+        1676,
+        1677,
+        1678,
+        1679
       ]
     },
     "99bb11d03d689154a3d1bdea": {
       "symbol": "CLUSDT",
       "stage": "approach",
-      "timestamp": 1793459277523,
+      "timestamp": 1793460983366,
       "message_ids": [
-        1602,
-        1603
+        1680,
+        1681,
+        1682,
+        1683
       ]
     },
     "e24b22aad8ea352133e8b5dc": {
       "symbol": "BZUSDT",
       "stage": "approach",
-      "timestamp": 1793459277667,
+      "timestamp": 1793460983530,
       "message_ids": [
-        1604,
-        1605
+        1684,
+        1685,
+        1686,
+        1687
       ]
     }
   },
@@ -10241,7 +10264,7 @@
             "eligible": true,
             "range_low": 74910.0,
             "range_high": 87373.0,
-            "distance_to_zone": 312.1000000000058
+            "distance_to_zone": 331.5
           },
           "id": "eaa2897bf38f8ee54b477635",
           "symbol": "BTCUSDT",
@@ -10252,7 +10275,7 @@
           ],
           "exchange": "bitget",
           "direction": 1,
-          "price": 77493.8,
+          "price": 77513.2,
           "context_id": "area:1d:1789430400000:1",
           "context": {
             "id": "area:1d:1789430400000:1"
@@ -10318,7 +10341,7 @@
                   "eligible": true,
                   "range_low": 74910.0,
                   "range_high": 87373.0,
-                  "distance_to_zone": 312.1000000000058
+                  "distance_to_zone": 331.5
                 }
               },
               {
@@ -10367,7 +10390,7 @@
                   "eligible": true,
                   "range_low": 74910.0,
                   "range_high": 87373.0,
-                  "distance_to_zone": 1043.800000000003
+                  "distance_to_zone": 1063.199999999997
                 }
               },
               {
@@ -10416,7 +10439,7 @@
                   "eligible": true,
                   "range_low": 74910.0,
                   "range_high": 87373.0,
-                  "distance_to_zone": 1698.9000000000087
+                  "distance_to_zone": 1718.300000000003
                 }
               }
             ],
@@ -10498,7 +10521,7 @@
             "eligible": false,
             "range_low": 76253.0,
             "range_high": 87373.0,
-            "distance_to_zone": 6024.399999999994
+            "distance_to_zone": 6005.0
           },
           "id": "2e7999f95f52a0f5991ad4ed",
           "symbol": "BTCUSDT",
@@ -10509,7 +10532,7 @@
           ],
           "exchange": "bitget",
           "direction": -1,
-          "price": 77493.8,
+          "price": 77513.2,
           "context_id": "area:1d:1789948800000:-1",
           "context": {
             "id": "area:1d:1789948800000:-1"
@@ -10590,7 +10613,7 @@
                   "eligible": false,
                   "range_low": 76253.0,
                   "range_high": 87373.0,
-                  "distance_to_zone": 6024.399999999994
+                  "distance_to_zone": 6005.0
                 }
               },
               {
@@ -10639,7 +10662,7 @@
                   "eligible": false,
                   "range_low": 76253.0,
                   "range_high": 87373.0,
-                  "distance_to_zone": 4561.199999999997
+                  "distance_to_zone": 4541.800000000003
                 }
               },
               {
@@ -10688,7 +10711,7 @@
                   "eligible": false,
                   "range_low": 76253.0,
                   "range_high": 87373.0,
-                  "distance_to_zone": 4752.5
+                  "distance_to_zone": 4733.100000000006
                 }
               }
             ],
@@ -10755,7 +10778,7 @@
             "eligible": false,
             "range_low": 57770.0,
             "range_high": 87373.0,
-            "distance_to_zone": 18404.700000000004
+            "distance_to_zone": 18424.1
           },
           "id": "922b7365e8e985be4bd921e7",
           "symbol": "BTCUSDT",
@@ -10766,7 +10789,7 @@
           ],
           "exchange": "bitget",
           "direction": 1,
-          "price": 77493.8,
+          "price": 77513.2,
           "context_id": "area:1d:1782864000000:1",
           "context": {
             "id": "area:1d:1782864000000:1"
@@ -10832,7 +10855,7 @@
                   "eligible": false,
                   "range_low": 57770.0,
                   "range_high": 87373.0,
-                  "distance_to_zone": 18404.700000000004
+                  "distance_to_zone": 18424.1
                 }
               },
               {
@@ -10881,7 +10904,7 @@
                   "eligible": false,
                   "range_low": 57770.0,
                   "range_high": 87373.0,
-                  "distance_to_zone": 18745.9
+                  "distance_to_zone": 18765.299999999996
                 }
               }
             ],
@@ -10965,7 +10988,7 @@
             "eligible": false,
             "range_low": 57770.0,
             "range_high": 87373.0,
-            "distance_to_zone": 13741.800000000003
+            "distance_to_zone": 13761.199999999997
           },
           "id": "4a8f5228b7f8b11eecfbdd48",
           "symbol": "BTCUSDT",
@@ -10976,7 +10999,7 @@
           ],
           "exchange": "bitget",
           "direction": 1,
-          "price": 77493.8,
+          "price": 77513.2,
           "context_id": "area:1w:1782691200000:1",
           "context": {
             "id": "area:1w:1782691200000:1"
@@ -11057,7 +11080,7 @@
                   "eligible": false,
                   "range_low": 57770.0,
                   "range_high": 87373.0,
-                  "distance_to_zone": 13741.800000000003
+                  "distance_to_zone": 13761.199999999997
                 }
               },
               {
@@ -11106,7 +11129,7 @@
                   "eligible": false,
                   "range_low": 57770.0,
                   "range_high": 87373.0,
-                  "distance_to_zone": 11791.5
+                  "distance_to_zone": 11810.899999999994
                 }
               },
               {
@@ -11155,7 +11178,7 @@
                   "eligible": false,
                   "range_low": 57770.0,
                   "range_high": 87373.0,
-                  "distance_to_zone": 13483.800000000003
+                  "distance_to_zone": 13503.199999999997
                 }
               }
             ],
@@ -12009,7 +12032,7 @@
           ],
           "exchange": "bitget",
           "direction": 1,
-          "price": 203.77,
+          "price": 203.79,
           "context_id": "area:1d:1787702400000:1",
           "context": {
             "id": "area:1d:1787702400000:1"
@@ -12142,7 +12165,7 @@
             "eligible": true,
             "range_low": 188.89,
             "range_high": 243.53,
-            "distance_to_zone": 6.030000000000001
+            "distance_to_zone": 6.049999999999983
           },
           "id": "19b76f1def300e6613cbb6d7",
           "symbol": "NVDAUSDT",
@@ -12153,7 +12176,7 @@
           ],
           "exchange": "bitget",
           "direction": 1,
-          "price": 203.77,
+          "price": 203.79,
           "context_id": "area:1d:1785283200000:1",
           "context": {
             "id": "area:1d:1785283200000:1"
@@ -12219,7 +12242,7 @@
                   "eligible": true,
                   "range_low": 188.89,
                   "range_high": 243.53,
-                  "distance_to_zone": 6.030000000000001
+                  "distance_to_zone": 6.049999999999983
                 }
               },
               {
@@ -12268,7 +12291,7 @@
                   "eligible": true,
                   "range_low": 188.89,
                   "range_high": 243.53,
-                  "distance_to_zone": 10.180000000000007
+                  "distance_to_zone": 10.199999999999989
                 }
               },
               {
@@ -12317,7 +12340,7 @@
                   "eligible": true,
                   "range_low": 188.89,
                   "range_high": 243.53,
-                  "distance_to_zone": 12.200000000000017
+                  "distance_to_zone": 12.219999999999999
                 }
               }
             ],
@@ -12384,7 +12407,7 @@
             "eligible": false,
             "range_low": 188.89,
             "range_high": 240.93,
-            "distance_to_zone": 21.079999999999984
+            "distance_to_zone": 21.060000000000002
           },
           "id": "1bfa32c652b936a5573790cd",
           "symbol": "NVDAUSDT",
@@ -12395,7 +12418,7 @@
           ],
           "exchange": "bitget",
           "direction": -1,
-          "price": 203.77,
+          "price": 203.79,
           "context_id": "area:1d:1778803200000:-1",
           "context": {
             "id": "area:1d:1778803200000:-1"
@@ -12461,7 +12484,7 @@
                   "eligible": false,
                   "range_low": 188.89,
                   "range_high": 240.93,
-                  "distance_to_zone": 21.079999999999984
+                  "distance_to_zone": 21.060000000000002
                 }
               },
               {
@@ -12510,7 +12533,7 @@
                   "eligible": false,
                   "range_low": 188.89,
                   "range_high": 240.93,
-                  "distance_to_zone": 26.579999999999984
+                  "distance_to_zone": 26.560000000000002
                 }
               },
               {
@@ -12559,7 +12582,7 @@
                   "eligible": false,
                   "range_low": 188.89,
                   "range_high": 240.93,
-                  "distance_to_zone": 26.97999999999999
+                  "distance_to_zone": 26.960000000000008
                 }
               }
             ],
@@ -12640,7 +12663,7 @@
           ],
           "exchange": "bitget",
           "direction": 1,
-          "price": 203.77,
+          "price": 203.79,
           "context_id": "area:1w:1785110400000:1",
           "context": {
             "id": "area:1w:1785110400000:1"
@@ -12755,7 +12778,7 @@
                   "eligible": true,
                   "range_low": 188.89,
                   "range_high": 238.0,
-                  "distance_to_zone": 9.189999999999998
+                  "distance_to_zone": 9.20999999999998
                 }
               }
             ],
@@ -12822,7 +12845,7 @@
             "eligible": false,
             "range_low": 188.89,
             "range_high": 240.93,
-            "distance_to_zone": 19.139999999999986
+            "distance_to_zone": 19.120000000000005
           },
           "id": "db86977605927dc713563619",
           "symbol": "NVDAUSDT",
@@ -12833,7 +12856,7 @@
           ],
           "exchange": "bitget",
           "direction": -1,
-          "price": 203.77,
+          "price": 203.79,
           "context_id": "area:1w:1778457600000:-1",
           "context": {
             "id": "area:1w:1778457600000:-1"
@@ -12899,7 +12922,7 @@
                   "eligible": false,
                   "range_low": 188.89,
                   "range_high": 240.93,
-                  "distance_to_zone": 19.139999999999986
+                  "distance_to_zone": 19.120000000000005
                 }
               },
               {
@@ -12948,7 +12971,7 @@
                   "eligible": false,
                   "range_low": 188.89,
                   "range_high": 240.93,
-                  "distance_to_zone": 21.079999999999984
+                  "distance_to_zone": 21.060000000000002
                 }
               }
             ],
@@ -15875,7 +15898,7 @@
             "eligible": false,
             "range_low": 214.67,
             "range_high": 242.06,
-            "distance_to_zone": 8.240000000000009
+            "distance_to_zone": 8.189999999999998
           },
           "id": "c6527d684df2c375e6931565",
           "symbol": "AMZNUSDT",
@@ -15886,7 +15909,7 @@
           ],
           "exchange": "bitget",
           "direction": 1,
-          "price": 240.87,
+          "price": 240.82,
           "context_id": "area:1d:1793232000000:1",
           "context": {
             "id": "area:1d:1793232000000:1"
@@ -15952,7 +15975,7 @@
                   "eligible": false,
                   "range_low": 214.67,
                   "range_high": 242.06,
-                  "distance_to_zone": 8.240000000000009
+                  "distance_to_zone": 8.189999999999998
                 }
               },
               {
@@ -16001,7 +16024,7 @@
                   "eligible": false,
                   "range_low": 214.67,
                   "range_high": 242.06,
-                  "distance_to_zone": 14.259999999999991
+                  "distance_to_zone": 14.20999999999998
                 }
               }
             ],
@@ -16083,7 +16106,7 @@
             "eligible": false,
             "range_low": 215.46,
             "range_high": 280.0,
-            "distance_to_zone": 21.629999999999995
+            "distance_to_zone": 21.680000000000007
           },
           "id": "632bda5cd8e041ffc5d752ca",
           "symbol": "AMZNUSDT",
@@ -16094,7 +16117,7 @@
           ],
           "exchange": "bitget",
           "direction": -1,
-          "price": 240.87,
+          "price": 240.82,
           "context_id": "area:1d:1762128000000:-1",
           "context": {
             "id": "area:1d:1762128000000:-1"
@@ -16175,7 +16198,7 @@
                   "eligible": false,
                   "range_low": 215.46,
                   "range_high": 280.0,
-                  "distance_to_zone": 21.629999999999995
+                  "distance_to_zone": 21.680000000000007
                 }
               },
               {
@@ -16224,7 +16247,7 @@
                   "eligible": false,
                   "range_low": 215.46,
                   "range_high": 280.0,
-                  "distance_to_zone": 6.969999999999999
+                  "distance_to_zone": 7.02000000000001
                 }
               },
               {
@@ -16273,7 +16296,7 @@
                   "eligible": false,
                   "range_low": 215.46,
                   "range_high": 280.0,
-                  "distance_to_zone": 9.740000000000009
+                  "distance_to_zone": 9.79000000000002
                 }
               }
             ],
@@ -16343,7 +16366,7 @@
             "eligible": true,
             "range_low": 224.83,
             "range_high": 287.59,
-            "distance_to_zone": 8.240000000000009
+            "distance_to_zone": 8.189999999999998
           },
           "id": "87237be2b08445a3cd76d66b",
           "symbol": "AMZNUSDT",
@@ -16354,7 +16377,7 @@
           ],
           "exchange": "bitget",
           "direction": 1,
-          "price": 240.87,
+          "price": 240.82,
           "context_id": "area:1w:1785110400000:1",
           "context": {
             "id": "area:1w:1785110400000:1"
@@ -16420,7 +16443,7 @@
                   "eligible": true,
                   "range_low": 224.83,
                   "range_high": 287.59,
-                  "distance_to_zone": 8.240000000000009
+                  "distance_to_zone": 8.189999999999998
                 }
               }
             ],
@@ -16487,7 +16510,7 @@
             "eligible": false,
             "range_low": 224.83,
             "range_high": 278.8,
-            "distance_to_zone": 29.120000000000005
+            "distance_to_zone": 29.170000000000016
           },
           "id": "6eb63559ff73488c1e3d66c6",
           "symbol": "AMZNUSDT",
@@ -16498,7 +16521,7 @@
           ],
           "exchange": "bitget",
           "direction": -1,
-          "price": 240.87,
+          "price": 240.82,
           "context_id": "area:1w:1777852800000:-1",
           "context": {
             "id": "area:1w:1777852800000:-1"
@@ -16564,7 +16587,7 @@
                   "eligible": false,
                   "range_low": 224.83,
                   "range_high": 278.8,
-                  "distance_to_zone": 29.120000000000005
+                  "distance_to_zone": 29.170000000000016
                 }
               }
             ],
@@ -16631,7 +16654,7 @@
             "eligible": false,
             "range_low": 196.36,
             "range_high": 277.28,
-            "distance_to_zone": 34.91
+            "distance_to_zone": 34.859999999999985
           },
           "id": "ef0848f28942c068fc9bca6b",
           "symbol": "AMZNUSDT",
@@ -16642,7 +16665,7 @@
           ],
           "exchange": "bitget",
           "direction": 1,
-          "price": 240.87,
+          "price": 240.82,
           "context_id": "area:1w:1771200000000:1",
           "context": {
             "id": "area:1w:1771200000000:1"
@@ -16708,7 +16731,7 @@
                   "eligible": false,
                   "range_low": 196.36,
                   "range_high": 277.28,
-                  "distance_to_zone": 34.91
+                  "distance_to_zone": 34.859999999999985
                 }
               },
               {
@@ -16757,7 +16780,7 @@
                   "eligible": false,
                   "range_low": 196.36,
                   "range_high": 277.28,
-                  "distance_to_zone": 41.110000000000014
+                  "distance_to_zone": 41.06
                 }
               },
               {
@@ -16806,7 +16829,7 @@
                   "eligible": false,
                   "range_low": 196.36,
                   "range_high": 277.28,
-                  "distance_to_zone": 42.34
+                  "distance_to_zone": 42.28999999999999
                 }
               }
             ],
@@ -16890,7 +16913,7 @@
             "eligible": false,
             "range_low": 278.05,
             "range_high": 359.95,
-            "distance_to_zone": 63.02999999999997
+            "distance_to_zone": 63.00999999999999
           },
           "id": "8d5df179747fb890fed87594",
           "symbol": "GOOGLUSDT",
@@ -16901,7 +16924,7 @@
           ],
           "exchange": "bitget",
           "direction": -1,
-          "price": 282.1,
+          "price": 282.12,
           "context_id": "area:1d:1791936000000:-1",
           "context": {
             "id": "area:1d:1791936000000:-1"
@@ -16982,7 +17005,7 @@
                   "eligible": false,
                   "range_low": 278.05,
                   "range_high": 359.95,
-                  "distance_to_zone": 63.02999999999997
+                  "distance_to_zone": 63.00999999999999
                 }
               },
               {
@@ -17031,7 +17054,7 @@
                   "eligible": false,
                   "range_low": 278.05,
                   "range_high": 359.95,
-                  "distance_to_zone": 62.85999999999996
+                  "distance_to_zone": 62.839999999999975
                 }
               },
               {
@@ -17080,7 +17103,7 @@
                   "eligible": false,
                   "range_low": 278.05,
                   "range_high": 359.95,
-                  "distance_to_zone": 63.31999999999999
+                  "distance_to_zone": 63.30000000000001
                 }
               }
             ],
@@ -17147,7 +17170,7 @@
             "eligible": false,
             "range_low": 278.05,
             "range_high": 364.46,
-            "distance_to_zone": 71.87
+            "distance_to_zone": 71.85000000000002
           },
           "id": "481a13b5804bcbfcb4be4bd6",
           "symbol": "GOOGLUSDT",
@@ -17158,7 +17181,7 @@
           ],
           "exchange": "bitget",
           "direction": -1,
-          "price": 282.1,
+          "price": 282.12,
           "context_id": "area:1d:1790035200000:-1",
           "context": {
             "id": "area:1d:1790035200000:-1"
@@ -17224,7 +17247,7 @@
                   "eligible": false,
                   "range_low": 278.05,
                   "range_high": 364.46,
-                  "distance_to_zone": 71.87
+                  "distance_to_zone": 71.85000000000002
                 }
               }
             ],
@@ -17308,7 +17331,7 @@
             "eligible": true,
             "range_low": 272.0,
             "range_high": 408.75,
-            "distance_to_zone": 9.010000000000048
+            "distance_to_zone": 9.03000000000003
           },
           "id": "7441370e45606a7c551f0df9",
           "symbol": "GOOGLUSDT",
@@ -17319,7 +17342,7 @@
           ],
           "exchange": "bitget",
           "direction": 1,
-          "price": 282.1,
+          "price": 282.12,
           "context_id": "area:1w:1774828800000:1",
           "context": {
             "id": "area:1w:1774828800000:1"
@@ -17400,7 +17423,7 @@
                   "eligible": true,
                   "range_low": 272.0,
                   "range_high": 408.75,
-                  "distance_to_zone": 9.010000000000048
+                  "distance_to_zone": 9.03000000000003
                 }
               },
               {
@@ -17449,7 +17472,7 @@
                   "eligible": true,
                   "range_low": 272.0,
                   "range_high": 408.75,
-                  "distance_to_zone": 9.410000000000025
+                  "distance_to_zone": 9.430000000000007
                 }
               }
             ],
@@ -19920,7 +19943,7 @@
             "eligible": true,
             "range_low": 75538.8,
             "range_high": 81258.0,
-            "distance_to_zone": 606.1999999999971
+            "distance_to_zone": 625.5999999999913
           },
           "id": "e77efd651cb5b096ead3ef2b",
           "symbol": "BTCUSDT",
@@ -19931,7 +19954,7 @@
           ],
           "exchange": "bitget",
           "direction": 1,
-          "price": 77493.8,
+          "price": 77513.2,
           "context_id": "area:4h:1787457600000:1",
           "context": {
             "id": "area:4h:1787457600000:1"
@@ -19997,7 +20020,7 @@
                   "eligible": true,
                   "range_low": 75538.8,
                   "range_high": 81258.0,
-                  "distance_to_zone": 606.1999999999971
+                  "distance_to_zone": 625.5999999999913
                 }
               },
               {
@@ -20046,7 +20069,7 @@
                   "eligible": true,
                   "range_low": 75538.8,
                   "range_high": 81258.0,
-                  "distance_to_zone": 1012.6999999999971
+                  "distance_to_zone": 1032.0999999999913
                 }
               },
               {
@@ -20095,7 +20118,7 @@
                   "eligible": true,
                   "range_low": 75538.8,
                   "range_high": 81258.0,
-                  "distance_to_zone": 1101.800000000003
+                  "distance_to_zone": 1121.199999999997
                 }
               }
             ],
@@ -20162,7 +20185,7 @@
             "eligible": true,
             "range_low": 74910.0,
             "range_high": 87373.0,
-            "distance_to_zone": 1101.800000000003
+            "distance_to_zone": 1121.199999999997
           },
           "id": "e37b6cae82c55edbdb97c1b8",
           "symbol": "BTCUSDT",
@@ -20173,7 +20196,7 @@
           ],
           "exchange": "bitget",
           "direction": 1,
-          "price": 77493.8,
+          "price": 77513.2,
           "context_id": "area:4h:1789488000000:1",
           "context": {
             "id": "area:4h:1789488000000:1"
@@ -20239,7 +20262,7 @@
                   "eligible": true,
                   "range_low": 74910.0,
                   "range_high": 87373.0,
-                  "distance_to_zone": 1101.800000000003
+                  "distance_to_zone": 1121.199999999997
                 }
               },
               {
@@ -20288,7 +20311,7 @@
                   "eligible": true,
                   "range_low": 74910.0,
                   "range_high": 87373.0,
-                  "distance_to_zone": 1698.9000000000087
+                  "distance_to_zone": 1718.300000000003
                 }
               }
             ],
@@ -20355,7 +20378,7 @@
             "eligible": false,
             "range_low": 77888.0,
             "range_high": 87373.0,
-            "distance_to_zone": 8963.199999999997
+            "distance_to_zone": 8943.800000000003
           },
           "id": "094bbb6ce707d286501187c6",
           "symbol": "BTCUSDT",
@@ -20366,7 +20389,7 @@
           ],
           "exchange": "bitget",
           "direction": -1,
-          "price": 77493.8,
+          "price": 77513.2,
           "context_id": "area:4h:1790020800000:-1",
           "context": {
             "id": "area:4h:1790020800000:-1"
@@ -20432,7 +20455,7 @@
                   "eligible": false,
                   "range_low": 77888.0,
                   "range_high": 87373.0,
-                  "distance_to_zone": 8963.199999999997
+                  "distance_to_zone": 8943.800000000003
                 }
               }
             ],
@@ -21094,7 +21117,7 @@
             "eligible": false,
             "range_low": 201.32,
             "range_high": 220.65,
-            "distance_to_zone": 15.129999999999995
+            "distance_to_zone": 15.110000000000014
           },
           "id": "e86df46267d202975238a7bf",
           "symbol": "NVDAUSDT",
@@ -21105,7 +21128,7 @@
           ],
           "exchange": "bitget",
           "direction": -1,
-          "price": 203.77,
+          "price": 203.79,
           "context_id": "area:4h:1793188800000:-1",
           "context": {
             "id": "area:4h:1793188800000:-1"
@@ -21171,7 +21194,7 @@
                   "eligible": false,
                   "range_low": 201.32,
                   "range_high": 220.65,
-                  "distance_to_zone": 15.129999999999995
+                  "distance_to_zone": 15.110000000000014
                 }
               },
               {
@@ -21220,7 +21243,7 @@
                   "eligible": false,
                   "range_low": 201.32,
                   "range_high": 220.65,
-                  "distance_to_zone": 15.799999999999983
+                  "distance_to_zone": 15.780000000000001
                 }
               }
             ],
@@ -23268,7 +23291,7 @@
             "eligible": true,
             "range_low": 214.67,
             "range_high": 258.0,
-            "distance_to_zone": 13.639999999999986
+            "distance_to_zone": 13.689999999999998
           },
           "id": "118a209098ecb9baceb3cc29",
           "symbol": "AMZNUSDT",
@@ -23279,7 +23302,7 @@
           ],
           "exchange": "bitget",
           "direction": -1,
-          "price": 240.87,
+          "price": 240.82,
           "context_id": "area:4h:1793217600000:-1",
           "context": {
             "id": "area:4h:1793217600000:-1"
@@ -23360,7 +23383,7 @@
                   "eligible": true,
                   "range_low": 214.67,
                   "range_high": 258.0,
-                  "distance_to_zone": 13.639999999999986
+                  "distance_to_zone": 13.689999999999998
                 }
               },
               {
@@ -23409,7 +23432,7 @@
                   "eligible": true,
                   "range_low": 214.67,
                   "range_high": 258.0,
-                  "distance_to_zone": 13.590000000000003
+                  "distance_to_zone": 13.640000000000015
                 }
               },
               {
@@ -23458,7 +23481,7 @@
                   "eligible": true,
                   "range_low": 214.67,
                   "range_high": 258.0,
-                  "distance_to_zone": 14.680000000000007
+                  "distance_to_zone": 14.730000000000018
                 }
               }
             ],
@@ -23525,7 +23548,7 @@
             "eligible": true,
             "range_low": 214.67,
             "range_high": 266.39,
-            "distance_to_zone": 22.829999999999984
+            "distance_to_zone": 22.879999999999995
           },
           "id": "105ed375496b9124e51094f7",
           "symbol": "AMZNUSDT",
@@ -23536,7 +23559,7 @@
           ],
           "exchange": "bitget",
           "direction": -1,
-          "price": 240.87,
+          "price": 240.82,
           "context_id": "area:4h:1792454400000:-1",
           "context": {
             "id": "area:4h:1792454400000:-1"
@@ -23602,7 +23625,7 @@
                   "eligible": true,
                   "range_low": 214.67,
                   "range_high": 266.39,
-                  "distance_to_zone": 22.829999999999984
+                  "distance_to_zone": 22.879999999999995
                 }
               }
             ],
@@ -23669,7 +23692,7 @@
             "eligible": false,
             "range_low": 214.67,
             "range_high": 242.06,
-            "distance_to_zone": 4.689999999999998
+            "distance_to_zone": 4.639999999999986
           },
           "id": "6bc401d1c64cad767eb8627e",
           "symbol": "AMZNUSDT",
@@ -23680,7 +23703,7 @@
           ],
           "exchange": "bitget",
           "direction": 1,
-          "price": 240.87,
+          "price": 240.82,
           "context_id": "area:4h:1793304000000:1",
           "context": {
             "id": "area:4h:1793304000000:1"
@@ -23746,7 +23769,7 @@
                   "eligible": false,
                   "range_low": 214.67,
                   "range_high": 242.06,
-                  "distance_to_zone": 4.689999999999998
+                  "distance_to_zone": 4.639999999999986
                 }
               },
               {
@@ -23795,7 +23818,7 @@
                   "eligible": false,
                   "range_low": 214.67,
                   "range_high": 242.06,
-                  "distance_to_zone": 14.259999999999991
+                  "distance_to_zone": 14.20999999999998
                 }
               }
             ],
@@ -23895,7 +23918,7 @@
             "eligible": false,
             "range_low": 281.4,
             "range_high": 328.22,
-            "distance_to_zone": 43.639999999999986
+            "distance_to_zone": 43.620000000000005
           },
           "id": "b3fd2662568fdf1c52dfee6b",
           "symbol": "GOOGLUSDT",
@@ -23906,7 +23929,7 @@
           ],
           "exchange": "bitget",
           "direction": -1,
-          "price": 282.1,
+          "price": 282.12,
           "context_id": "area:4h:1793217600000:-1",
           "context": {
             "id": "area:4h:1793217600000:-1"
@@ -24002,7 +24025,7 @@
                   "eligible": false,
                   "range_low": 281.4,
                   "range_high": 328.22,
-                  "distance_to_zone": 43.639999999999986
+                  "distance_to_zone": 43.620000000000005
                 }
               },
               {
@@ -24066,7 +24089,7 @@
                   "eligible": false,
                   "range_low": 281.4,
                   "range_high": 328.22,
-                  "distance_to_zone": 11.049999999999955
+                  "distance_to_zone": 11.029999999999973
                 }
               },
               {
@@ -24130,7 +24153,7 @@
                   "eligible": false,
                   "range_low": 281.4,
                   "range_high": 328.22,
-                  "distance_to_zone": 43.56
+                  "distance_to_zone": 43.54000000000002
                 }
               }
             ],
@@ -24212,7 +24235,7 @@
             "eligible": false,
             "range_low": 281.4,
             "range_high": 359.95,
-            "distance_to_zone": 75.87
+            "distance_to_zone": 75.85000000000002
           },
           "id": "b97f61e7ba94cafc1acba64f",
           "symbol": "GOOGLUSDT",
@@ -24223,7 +24246,7 @@
           ],
           "exchange": "bitget",
           "direction": -1,
-          "price": 282.1,
+          "price": 282.12,
           "context_id": "area:4h:1791979200000:-1",
           "context": {
             "id": "area:4h:1791979200000:-1"
@@ -24304,7 +24327,7 @@
                   "eligible": false,
                   "range_low": 281.4,
                   "range_high": 359.95,
-                  "distance_to_zone": 75.87
+                  "distance_to_zone": 75.85000000000002
                 }
               },
               {
@@ -24353,7 +24376,7 @@
                   "eligible": false,
                   "range_low": 281.4,
                   "range_high": 359.95,
-                  "distance_to_zone": 73.66999999999996
+                  "distance_to_zone": 73.64999999999998
                 }
               },
               {
@@ -24402,7 +24425,7 @@
                   "eligible": false,
                   "range_low": 281.4,
                   "range_high": 359.95,
-                  "distance_to_zone": 74.82999999999998
+                  "distance_to_zone": 74.81
                 }
               }
             ],
@@ -26233,7 +26256,7 @@
             "eligible": true,
             "range_low": 88.676,
             "range_high": 106.898,
-            "distance_to_zone": 0.5309999999999917
+            "distance_to_zone": 0.5609999999999928
           },
           "id": "a2ec7f6aa97c4a67d5592139",
           "symbol": "CLUSDT",
@@ -26244,7 +26267,7 @@
           ],
           "exchange": "bitget",
           "direction": -1,
-          "price": 102.712,
+          "price": 102.682,
           "context_id": "area:4h:1789070400000:-1",
           "context": {
             "id": "area:4h:1789070400000:-1"
@@ -26310,7 +26333,7 @@
                   "eligible": true,
                   "range_low": 88.676,
                   "range_high": 106.898,
-                  "distance_to_zone": 0.5309999999999917
+                  "distance_to_zone": 0.5609999999999928
                 }
               }
             ],
@@ -26330,7 +26353,7 @@
           "monitor_eligible": true,
           "diversification": {
             "eligible": true,
-            "as_of": 1793460944962,
+            "as_of": 1793460983366,
             "exchange": "bitget",
             "reasons": [],
             "method": "simultaneous_closed_log_returns_30d_60d",
@@ -26359,8 +26382,8 @@
             "median_daily_turnover_30d": 61276065.494684994,
             "median_daily_turnover_7d": 58577085.3839,
             "days_above_5m_30d": 30,
-            "turnover_24h_usdt": 41767774.65886,
-            "spread_bps": 0.48684306613718775
+            "turnover_24h_usdt": 41716014.14448,
+            "spread_bps": 0.09738852665813948
           }
         }
       },
@@ -26428,7 +26451,7 @@
             "eligible": false,
             "range_low": 99.855,
             "range_high": 105.076,
-            "distance_to_zone": 1.4519999999999982
+            "distance_to_zone": 1.421999999999997
           },
           "id": "ef5631ff4e0f39f463466929",
           "symbol": "CLUSDT",
@@ -26439,7 +26462,7 @@
           ],
           "exchange": "bitget",
           "direction": 1,
-          "price": 102.712,
+          "price": 102.682,
           "context_id": "area:4h:1793275200000:1",
           "context": {
             "id": "area:4h:1793275200000:1"
@@ -26520,7 +26543,7 @@
                   "eligible": false,
                   "range_low": 99.855,
                   "range_high": 105.076,
-                  "distance_to_zone": 1.4519999999999982
+                  "distance_to_zone": 1.421999999999997
                 }
               },
               {
@@ -26569,7 +26592,7 @@
                   "eligible": false,
                   "range_low": 99.855,
                   "range_high": 105.076,
-                  "distance_to_zone": 0.9680000000000035
+                  "distance_to_zone": 0.9380000000000024
                 }
               },
               {
@@ -26618,7 +26641,7 @@
                   "eligible": false,
                   "range_low": 99.855,
                   "range_high": 105.076,
-                  "distance_to_zone": 2.118000000000009
+                  "distance_to_zone": 2.088000000000008
                 }
               }
             ],
@@ -26637,7 +26660,7 @@
           "monitor_eligible": true,
           "diversification": {
             "eligible": true,
-            "as_of": 1793460944962,
+            "as_of": 1793460983366,
             "exchange": "bitget",
             "reasons": [],
             "method": "simultaneous_closed_log_returns_30d_60d",
@@ -26666,8 +26689,8 @@
             "median_daily_turnover_30d": 61276065.494684994,
             "median_daily_turnover_7d": 58577085.3839,
             "days_above_5m_30d": 30,
-            "turnover_24h_usdt": 41767774.65886,
-            "spread_bps": 0.48684306613718775
+            "turnover_24h_usdt": 41716014.14448,
+            "spread_bps": 0.09738852665813948
           }
         }
       },
@@ -26720,7 +26743,7 @@
             "eligible": false,
             "range_low": 86.888,
             "range_high": 103.917,
-            "distance_to_zone": 14.144000000000005
+            "distance_to_zone": 14.114000000000004
           },
           "id": "1b47b836b0a91d380279710e",
           "symbol": "CLUSDT",
@@ -26731,7 +26754,7 @@
           ],
           "exchange": "bitget",
           "direction": 1,
-          "price": 102.712,
+          "price": 102.682,
           "context_id": "area:4h:1791288000000:1",
           "context": {
             "id": "area:4h:1791288000000:1"
@@ -26797,7 +26820,7 @@
                   "eligible": false,
                   "range_low": 86.888,
                   "range_high": 103.917,
-                  "distance_to_zone": 14.144000000000005
+                  "distance_to_zone": 14.114000000000004
                 }
               },
               {
@@ -26846,7 +26869,7 @@
                   "eligible": false,
                   "range_low": 86.888,
                   "range_high": 103.917,
-                  "distance_to_zone": 14.805999999999997
+                  "distance_to_zone": 14.775999999999996
                 }
               },
               {
@@ -26895,7 +26918,7 @@
                   "eligible": false,
                   "range_low": 86.888,
                   "range_high": 103.917,
-                  "distance_to_zone": 15.490000000000009
+                  "distance_to_zone": 15.460000000000008
                 }
               }
             ],
@@ -26914,7 +26937,7 @@
           "monitor_eligible": true,
           "diversification": {
             "eligible": true,
-            "as_of": 1793460944962,
+            "as_of": 1793460983366,
             "exchange": "bitget",
             "reasons": [],
             "method": "simultaneous_closed_log_returns_30d_60d",
@@ -26943,8 +26966,8 @@
             "median_daily_turnover_30d": 61276065.494684994,
             "median_daily_turnover_7d": 58577085.3839,
             "days_above_5m_30d": 30,
-            "turnover_24h_usdt": 41767774.65886,
-            "spread_bps": 0.48684306613718775
+            "turnover_24h_usdt": 41716014.14448,
+            "spread_bps": 0.09738852665813948
           }
         }
       }
@@ -27014,7 +27037,7 @@
             "eligible": true,
             "range_low": 86.888,
             "range_high": 106.898,
-            "distance_to_zone": 0.5309999999999917
+            "distance_to_zone": 0.5609999999999928
           },
           "id": "05badffc3e41cf5888f123e1",
           "symbol": "CLUSDT",
@@ -27025,7 +27048,7 @@
           ],
           "exchange": "bitget",
           "direction": -1,
-          "price": 102.712,
+          "price": 102.682,
           "context_id": "area:1d:1788998400000:-1",
           "context": {
             "id": "area:1d:1788998400000:-1"
@@ -27106,7 +27129,7 @@
                   "eligible": true,
                   "range_low": 86.888,
                   "range_high": 106.898,
-                  "distance_to_zone": 0.5309999999999917
+                  "distance_to_zone": 0.5609999999999928
                 }
               },
               {
@@ -27170,7 +27193,7 @@
                   "eligible": true,
                   "range_low": 86.888,
                   "range_high": 106.898,
-                  "distance_to_zone": 1.5799999999999983
+                  "distance_to_zone": 1.6099999999999994
                 }
               }
             ],
@@ -27190,7 +27213,7 @@
           "monitor_eligible": true,
           "diversification": {
             "eligible": true,
-            "as_of": 1793460944962,
+            "as_of": 1793460983366,
             "exchange": "bitget",
             "reasons": [],
             "method": "simultaneous_closed_log_returns_30d_60d",
@@ -27219,8 +27242,8 @@
             "median_daily_turnover_30d": 61276065.494684994,
             "median_daily_turnover_7d": 58577085.3839,
             "days_above_5m_30d": 30,
-            "turnover_24h_usdt": 41767774.65886,
-            "spread_bps": 0.48684306613718775
+            "turnover_24h_usdt": 41716014.14448,
+            "spread_bps": 0.09738852665813948
           }
         }
       },
@@ -27288,7 +27311,7 @@
             "eligible": false,
             "range_low": 86.888,
             "range_high": 104.3,
-            "distance_to_zone": 13.847999999999999
+            "distance_to_zone": 13.817999999999998
           },
           "id": "777c006a217f5250d97edb23",
           "symbol": "CLUSDT",
@@ -27299,7 +27322,7 @@
           ],
           "exchange": "bitget",
           "direction": 1,
-          "price": 102.712,
+          "price": 102.682,
           "context_id": "area:1d:1791244800000:1",
           "context": {
             "id": "area:1d:1791244800000:1"
@@ -27380,7 +27403,7 @@
                   "eligible": false,
                   "range_low": 86.888,
                   "range_high": 104.3,
-                  "distance_to_zone": 13.847999999999999
+                  "distance_to_zone": 13.817999999999998
                 }
               },
               {
@@ -27444,7 +27467,7 @@
                   "eligible": false,
                   "range_low": 86.888,
                   "range_high": 104.3,
-                  "distance_to_zone": 15.462000000000003
+                  "distance_to_zone": 15.432000000000002
                 }
               },
               {
@@ -27493,7 +27516,7 @@
                   "eligible": false,
                   "range_low": 86.888,
                   "range_high": 104.3,
-                  "distance_to_zone": 11.759
+                  "distance_to_zone": 11.729
                 }
               }
             ],
@@ -27513,7 +27536,7 @@
           "monitor_eligible": true,
           "diversification": {
             "eligible": true,
-            "as_of": 1793460944962,
+            "as_of": 1793460983366,
             "exchange": "bitget",
             "reasons": [],
             "method": "simultaneous_closed_log_returns_30d_60d",
@@ -27542,8 +27565,8 @@
             "median_daily_turnover_30d": 61276065.494684994,
             "median_daily_turnover_7d": 58577085.3839,
             "days_above_5m_30d": 30,
-            "turnover_24h_usdt": 41767774.65886,
-            "spread_bps": 0.48684306613718775
+            "turnover_24h_usdt": 41716014.14448,
+            "spread_bps": 0.09738852665813948
           }
         }
       }
@@ -27613,7 +27636,7 @@
             "eligible": false,
             "range_low": 67.155,
             "range_high": 106.898,
-            "distance_to_zone": 23.072000000000003
+            "distance_to_zone": 23.042
           },
           "id": "9c379f4006494be3e943c378",
           "symbol": "CLUSDT",
@@ -27624,7 +27647,7 @@
           ],
           "exchange": "bitget",
           "direction": 1,
-          "price": 102.712,
+          "price": 102.682,
           "context_id": "area:1w:1782691200000:1",
           "context": {
             "id": "area:1w:1782691200000:1"
@@ -27705,7 +27728,7 @@
                   "eligible": false,
                   "range_low": 67.155,
                   "range_high": 106.898,
-                  "distance_to_zone": 23.072000000000003
+                  "distance_to_zone": 23.042
                 }
               },
               {
@@ -27769,7 +27792,7 @@
                   "eligible": false,
                   "range_low": 67.155,
                   "range_high": 106.898,
-                  "distance_to_zone": 30.948000000000008
+                  "distance_to_zone": 30.918000000000006
                 }
               },
               {
@@ -27818,7 +27841,7 @@
                   "eligible": false,
                   "range_low": 67.155,
                   "range_high": 106.898,
-                  "distance_to_zone": 22.899
+                  "distance_to_zone": 22.869
                 }
               }
             ],
@@ -27837,7 +27860,7 @@
           "monitor_eligible": true,
           "diversification": {
             "eligible": true,
-            "as_of": 1793460944962,
+            "as_of": 1793460983366,
             "exchange": "bitget",
             "reasons": [],
             "method": "simultaneous_closed_log_returns_30d_60d",
@@ -27866,8 +27889,8 @@
             "median_daily_turnover_30d": 61276065.494684994,
             "median_daily_turnover_7d": 58577085.3839,
             "days_above_5m_30d": 30,
-            "turnover_24h_usdt": 41767774.65886,
-            "spread_bps": 0.48684306613718775
+            "turnover_24h_usdt": 41716014.14448,
+            "spread_bps": 0.09738852665813948
           }
         }
       }
@@ -28206,7 +28229,7 @@
           "monitor_eligible": true,
           "diversification": {
             "eligible": true,
-            "as_of": 1793460945113,
+            "as_of": 1793460983530,
             "exchange": "bitget",
             "reasons": [],
             "method": "simultaneous_closed_log_returns_30d_60d",
@@ -28235,7 +28258,7 @@
             "median_daily_turnover_30d": 33461363.33105,
             "median_daily_turnover_7d": 34099600.1415,
             "days_above_5m_30d": 28,
-            "turnover_24h_usdt": 15039912.8121,
+            "turnover_24h_usdt": 14992844.8536,
             "spread_bps": 0.890115269926646
           }
         }
@@ -28434,7 +28457,7 @@
           "monitor_eligible": true,
           "diversification": {
             "eligible": true,
-            "as_of": 1793460945113,
+            "as_of": 1793460983530,
             "exchange": "bitget",
             "reasons": [],
             "method": "simultaneous_closed_log_returns_30d_60d",
@@ -28463,7 +28486,7 @@
             "median_daily_turnover_30d": 33461363.33105,
             "median_daily_turnover_7d": 34099600.1415,
             "days_above_5m_30d": 28,
-            "turnover_24h_usdt": 15039912.8121,
+            "turnover_24h_usdt": 14992844.8536,
             "spread_bps": 0.890115269926646
           }
         }
@@ -28616,7 +28639,7 @@
           "monitor_eligible": true,
           "diversification": {
             "eligible": true,
-            "as_of": 1793460945113,
+            "as_of": 1793460983530,
             "exchange": "bitget",
             "reasons": [],
             "method": "simultaneous_closed_log_returns_30d_60d",
@@ -28645,7 +28668,7 @@
             "median_daily_turnover_30d": 33461363.33105,
             "median_daily_turnover_7d": 34099600.1415,
             "days_above_5m_30d": 28,
-            "turnover_24h_usdt": 15039912.8121,
+            "turnover_24h_usdt": 14992844.8536,
             "spread_bps": 0.890115269926646
           }
         }
@@ -28954,7 +28977,7 @@
           "monitor_eligible": true,
           "diversification": {
             "eligible": true,
-            "as_of": 1793460945113,
+            "as_of": 1793460983530,
             "exchange": "bitget",
             "reasons": [],
             "method": "simultaneous_closed_log_returns_30d_60d",
@@ -28983,7 +29006,7 @@
             "median_daily_turnover_30d": 33461363.33105,
             "median_daily_turnover_7d": 34099600.1415,
             "days_above_5m_30d": 28,
-            "turnover_24h_usdt": 15039912.8121,
+            "turnover_24h_usdt": 14992844.8536,
             "spread_bps": 0.890115269926646
           }
         }
@@ -29233,7 +29256,7 @@
           "monitor_eligible": true,
           "diversification": {
             "eligible": true,
-            "as_of": 1793460945113,
+            "as_of": 1793460983530,
             "exchange": "bitget",
             "reasons": [],
             "method": "simultaneous_closed_log_returns_30d_60d",
@@ -29262,7 +29285,7 @@
             "median_daily_turnover_30d": 33461363.33105,
             "median_daily_turnover_7d": 34099600.1415,
             "days_above_5m_30d": 28,
-            "turnover_24h_usdt": 15039912.8121,
+            "turnover_24h_usdt": 14992844.8536,
             "spread_bps": 0.890115269926646
           }
         }
@@ -29409,271 +29432,293 @@
     "2f884604d265358170f2ef5c": {
       "symbol": "BTCUSDT",
       "stage": "approach",
-      "timestamp": 1793459276179,
+      "timestamp": 1793460981825,
       "message_ids": [
-        1580,
-        1581
+        1606,
+        1607
       ]
     },
     "d79098f0bb2dd2ae0b764f44": {
       "symbol": "BTCUSDT",
       "stage": "approach",
-      "timestamp": 1793459276179,
+      "timestamp": 1793460981825,
       "message_ids": [
-        1580,
-        1581
+        1608,
+        1609
       ]
     },
     "5cba71dbb3022cf7b076497e": {
       "symbol": "BTCUSDT",
       "stage": "approach",
-      "timestamp": 1793459276179,
+      "timestamp": 1793460981825,
       "message_ids": [
-        1580,
-        1581
+        1610,
+        1611
       ]
     },
     "028c11a16056be9b3676e079": {
       "symbol": "SKHYNIXUSDT",
       "stage": "approach",
-      "timestamp": 1793459276310,
+      "timestamp": 1793460981977,
       "message_ids": [
-        1582,
-        1583
+        1612,
+        1613,
+        1614,
+        1615
       ]
     },
     "ce1aa08cd93e6df63e3ab910": {
       "symbol": "SKHYNIXUSDT",
       "stage": "approach",
-      "timestamp": 1793459276310,
+      "timestamp": 1793460981977,
       "message_ids": [
-        1582,
-        1583
+        1616,
+        1617
       ]
     },
     "a14fc5858d88c478ea756cc7": {
       "symbol": "NVDAUSDT",
       "stage": "approach",
-      "timestamp": 1793459276422,
+      "timestamp": 1793460982108,
       "message_ids": [
-        1584,
-        1585
+        1618,
+        1619
       ]
     },
     "95a7678afc3e789134dbdb4e": {
       "symbol": "NVDAUSDT",
       "stage": "approach",
-      "timestamp": 1793459276422,
+      "timestamp": 1793460982108,
       "message_ids": [
-        1584,
-        1585
+        1620,
+        1621
       ]
     },
     "e70e91e3e3cc21af429251bf": {
       "symbol": "NVDAUSDT",
       "stage": "approach",
-      "timestamp": 1793459276422,
+      "timestamp": 1793460982108,
       "message_ids": [
-        1584,
-        1585
+        1622,
+        1623
       ]
     },
     "34cf802256e5628c2d864723": {
       "symbol": "TSLAUSDT",
       "stage": "approach",
-      "timestamp": 1793459276543,
+      "timestamp": 1793460982246,
       "message_ids": [
-        1586,
-        1587
+        1624,
+        1625,
+        1626,
+        1627
       ]
     },
     "9819724798cd0a0f2698d3d4": {
       "symbol": "TSLAUSDT",
       "stage": "approach",
-      "timestamp": 1793459276543,
+      "timestamp": 1793460982246,
       "message_ids": [
-        1586,
-        1587
+        1628,
+        1629,
+        1630,
+        1631
       ]
     },
     "51b5c84693855ea5dfbf4c0f": {
       "symbol": "TSLAUSDT",
       "stage": "approach",
-      "timestamp": 1793459276543,
+      "timestamp": 1793460982246,
       "message_ids": [
-        1586,
-        1587
+        1632,
+        1633
       ]
     },
     "91f6d7dcd02ff1b49f146106": {
       "symbol": "AAPLUSDT",
       "stage": "approach",
-      "timestamp": 1793459276667,
+      "timestamp": 1793460982387,
       "message_ids": [
-        1588,
-        1589
+        1634,
+        1635
       ]
     },
     "b9d788aba2b828a7c0668013": {
       "symbol": "AAPLUSDT",
       "stage": "approach",
-      "timestamp": 1793459276667,
+      "timestamp": 1793460982387,
       "message_ids": [
-        1588,
-        1589
+        1636,
+        1637
       ]
     },
     "a47aa28f35de6bd6c5980f92": {
       "symbol": "MSFTUSDT",
       "stage": "approach",
-      "timestamp": 1793459276783,
+      "timestamp": 1793460982519,
       "message_ids": [
-        1590,
-        1591
+        1638,
+        1639,
+        1640,
+        1641
       ]
     },
     "8a45f7970b4c9b55d2ab00a3": {
       "symbol": "MSFTUSDT",
       "stage": "approach",
-      "timestamp": 1793459276783,
+      "timestamp": 1793460982519,
       "message_ids": [
-        1590,
-        1591
+        1642,
+        1643
       ]
     },
     "b3dcbb1a00b7de51afc6d6a8": {
       "symbol": "MSFTUSDT",
       "stage": "approach",
-      "timestamp": 1793459276783,
+      "timestamp": 1793460982519,
       "message_ids": [
-        1590,
-        1591
+        1644,
+        1645,
+        1646,
+        1647
       ]
     },
     "107f4bedd3fc128b9ac53239": {
       "symbol": "AMZNUSDT",
       "stage": "approach",
-      "timestamp": 1793459276905,
+      "timestamp": 1793460982660,
       "message_ids": [
-        1592,
-        1593
+        1648,
+        1649
       ]
     },
     "84f6eb22aa006bc4038f0664": {
       "symbol": "AMZNUSDT",
       "stage": "approach",
-      "timestamp": 1793459276905,
+      "timestamp": 1793460982660,
       "message_ids": [
-        1592,
-        1593
+        1650,
+        1651
       ]
     },
     "586c25915d39cf51fd22af30": {
       "symbol": "AMZNUSDT",
       "stage": "approach",
-      "timestamp": 1793459276905,
+      "timestamp": 1793460982660,
       "message_ids": [
-        1592,
-        1593
+        1652,
+        1653
       ]
     },
     "489ab07bb959ac03fd0bf254": {
       "symbol": "AMZNUSDT",
       "stage": "approach",
-      "timestamp": 1793459276905,
+      "timestamp": 1793460982660,
       "message_ids": [
-        1592,
-        1593
+        1654,
+        1655
       ]
     },
     "5c041baf1407347812e507fb": {
       "symbol": "GOOGLUSDT",
       "stage": "approach",
-      "timestamp": 1793459277022,
+      "timestamp": 1793460982793,
       "message_ids": [
-        1594,
-        1595
+        1656,
+        1657
       ]
     },
     "182ffa2c7506d9affc86d6c0": {
       "symbol": "METAUSDT",
       "stage": "approach",
-      "timestamp": 1793459277142,
+      "timestamp": 1793460982931,
       "message_ids": [
-        1596,
-        1597
+        1658,
+        1659
       ]
     },
     "e13010a318c22f983a617e2e": {
       "symbol": "METAUSDT",
       "stage": "approach",
-      "timestamp": 1793459277142,
+      "timestamp": 1793460982931,
       "message_ids": [
-        1596,
-        1597
+        1660,
+        1661,
+        1662,
+        1663
       ]
     },
     "50c0e629209384a43d9efae1": {
       "symbol": "METAUSDT",
       "stage": "approach",
-      "timestamp": 1793459277142,
+      "timestamp": 1793460982931,
       "message_ids": [
-        1596,
-        1597
+        1664,
+        1665,
+        1666,
+        1667
       ]
     },
     "46a5a1c344f361129da326ed": {
       "symbol": "QQQUSDT",
       "stage": "approach",
-      "timestamp": 1793459277274,
+      "timestamp": 1793460983082,
       "message_ids": [
-        1598,
-        1599
+        1668,
+        1669,
+        1670,
+        1671
       ]
     },
     "ddfabda25b1ab47b3af6bf92": {
       "symbol": "SPYUSDT",
       "stage": "approach",
-      "timestamp": 1793459277391,
+      "timestamp": 1793460983217,
       "message_ids": [
-        1600,
-        1601
+        1672,
+        1673
       ]
     },
     "bdaa125327e9a898cebda945": {
       "symbol": "SPYUSDT",
       "stage": "approach",
-      "timestamp": 1793459277391,
+      "timestamp": 1793460983217,
       "message_ids": [
-        1600,
-        1601
+        1674,
+        1675
       ]
     },
     "4db6d6f3f06b22698b84f3ab": {
       "symbol": "CLUSDT",
       "stage": "approach",
-      "timestamp": 1793459277523,
+      "timestamp": 1793460983366,
       "message_ids": [
-        1602,
-        1603
+        1676,
+        1677,
+        1678,
+        1679
       ]
     },
     "99bb11d03d689154a3d1bdea": {
       "symbol": "CLUSDT",
       "stage": "approach",
-      "timestamp": 1793459277523,
+      "timestamp": 1793460983366,
       "message_ids": [
-        1602,
-        1603
+        1680,
+        1681,
+        1682,
+        1683
       ]
     },
     "e24b22aad8ea352133e8b5dc": {
       "symbol": "BZUSDT",
       "stage": "approach",
-      "timestamp": 1793459277667,
+      "timestamp": 1793460983530,
       "message_ids": [
-        1604,
-        1605
+        1684,
+        1685,
+        1686,
+        1687
       ]
     }
   },
@@ -29685,110 +29730,761 @@
   "strategy": "two-scale-structure-v1",
   "dedup_audits": {
     "BTCUSDT": {
-      "at": 1793460943491,
-      "suppressed": 3,
-      "queued": 0,
+      "at": 1793460981825,
+      "suppressed": 0,
+      "queued": 3,
       "retired": 0,
       "legacy_matched": 0,
       "uncertain_held": 0
     },
     "SKHYNIXUSDT": {
-      "at": 1793460943649,
-      "suppressed": 2,
-      "queued": 0,
+      "at": 1793460981977,
+      "suppressed": 0,
+      "queued": 2,
       "retired": 0,
       "legacy_matched": 0,
       "uncertain_held": 0
     },
     "NVDAUSDT": {
-      "at": 1793460943774,
-      "suppressed": 3,
-      "queued": 0,
+      "at": 1793460982108,
+      "suppressed": 0,
+      "queued": 3,
       "retired": 0,
       "legacy_matched": 0,
       "uncertain_held": 0
     },
     "TSLAUSDT": {
-      "at": 1793460943908,
-      "suppressed": 3,
-      "queued": 0,
+      "at": 1793460982246,
+      "suppressed": 0,
+      "queued": 3,
       "retired": 0,
       "legacy_matched": 0,
       "uncertain_held": 0
     },
     "AAPLUSDT": {
-      "at": 1793460944043,
-      "suppressed": 2,
-      "queued": 0,
+      "at": 1793460982387,
+      "suppressed": 0,
+      "queued": 2,
       "retired": 0,
       "legacy_matched": 0,
       "uncertain_held": 0
     },
     "MSFTUSDT": {
-      "at": 1793460944172,
-      "suppressed": 3,
-      "queued": 0,
+      "at": 1793460982519,
+      "suppressed": 0,
+      "queued": 3,
       "retired": 0,
       "legacy_matched": 0,
       "uncertain_held": 0
     },
     "AMZNUSDT": {
-      "at": 1793460944305,
-      "suppressed": 4,
-      "queued": 0,
+      "at": 1793460982660,
+      "suppressed": 0,
+      "queued": 4,
       "retired": 0,
       "legacy_matched": 0,
       "uncertain_held": 0
     },
     "GOOGLUSDT": {
-      "at": 1793460944429,
-      "suppressed": 1,
-      "queued": 0,
+      "at": 1793460982793,
+      "suppressed": 0,
+      "queued": 1,
       "retired": 0,
       "legacy_matched": 0,
       "uncertain_held": 0
     },
     "METAUSDT": {
-      "at": 1793460944559,
-      "suppressed": 4,
-      "queued": 0,
+      "at": 1793460982931,
+      "suppressed": 1,
+      "queued": 3,
       "retired": 0,
       "legacy_matched": 0,
       "uncertain_held": 0
     },
     "QQQUSDT": {
-      "at": 1793460944701,
-      "suppressed": 1,
-      "queued": 0,
+      "at": 1793460983082,
+      "suppressed": 0,
+      "queued": 1,
       "retired": 0,
       "legacy_matched": 0,
       "uncertain_held": 0
     },
     "SPYUSDT": {
-      "at": 1793460944823,
-      "suppressed": 2,
-      "queued": 0,
+      "at": 1793460983217,
+      "suppressed": 0,
+      "queued": 2,
       "retired": 0,
       "legacy_matched": 0,
       "uncertain_held": 0
     },
     "CLUSDT": {
-      "at": 1793460944962,
-      "suppressed": 2,
-      "queued": 0,
+      "at": 1793460983366,
+      "suppressed": 0,
+      "queued": 2,
       "retired": 0,
       "legacy_matched": 0,
       "uncertain_held": 0
     },
     "BZUSDT": {
-      "at": 1793460945113,
-      "suppressed": 1,
-      "queued": 0,
+      "at": 1793460983530,
+      "suppressed": 0,
+      "queued": 1,
       "retired": 0,
       "legacy_matched": 0,
       "uncertain_held": 0
     }
   },
   "in_flight": {},
-  "presentations": {}
+  "presentations": {
+    "2f884604d265358170f2ef5c": {
+      "symbol": "BTCUSDT",
+      "track": "short",
+      "attempt": 1793460981825,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1606
+          ],
+          "text_message_ids": [
+            1607
+          ]
+        }
+      }
+    },
+    "d79098f0bb2dd2ae0b764f44": {
+      "symbol": "BTCUSDT",
+      "track": "short",
+      "attempt": 1793460981825,
+      "complete": true,
+      "units": {
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1608
+          ],
+          "text_message_ids": [
+            1609
+          ]
+        }
+      }
+    },
+    "5cba71dbb3022cf7b076497e": {
+      "symbol": "BTCUSDT",
+      "track": "medium",
+      "attempt": 1793460981825,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1610
+          ],
+          "text_message_ids": [
+            1611
+          ]
+        }
+      }
+    },
+    "028c11a16056be9b3676e079": {
+      "symbol": "SKHYNIXUSDT",
+      "track": "short",
+      "attempt": 1793460981977,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1612
+          ],
+          "text_message_ids": [
+            1613
+          ]
+        },
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1614
+          ],
+          "text_message_ids": [
+            1615
+          ]
+        }
+      }
+    },
+    "ce1aa08cd93e6df63e3ab910": {
+      "symbol": "SKHYNIXUSDT",
+      "track": "medium",
+      "attempt": 1793460981977,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1616
+          ],
+          "text_message_ids": [
+            1617
+          ]
+        }
+      }
+    },
+    "a14fc5858d88c478ea756cc7": {
+      "symbol": "NVDAUSDT",
+      "track": "medium",
+      "attempt": 1793460982108,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1618
+          ],
+          "text_message_ids": [
+            1619
+          ]
+        }
+      }
+    },
+    "95a7678afc3e789134dbdb4e": {
+      "symbol": "NVDAUSDT",
+      "track": "medium",
+      "attempt": 1793460982108,
+      "complete": true,
+      "units": {
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1620
+          ],
+          "text_message_ids": [
+            1621
+          ]
+        }
+      }
+    },
+    "e70e91e3e3cc21af429251bf": {
+      "symbol": "NVDAUSDT",
+      "track": "long",
+      "attempt": 1793460982108,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1622
+          ],
+          "text_message_ids": [
+            1623
+          ]
+        }
+      }
+    },
+    "34cf802256e5628c2d864723": {
+      "symbol": "TSLAUSDT",
+      "track": "short",
+      "attempt": 1793460982246,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1624
+          ],
+          "text_message_ids": [
+            1625
+          ]
+        },
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1626
+          ],
+          "text_message_ids": [
+            1627
+          ]
+        }
+      }
+    },
+    "9819724798cd0a0f2698d3d4": {
+      "symbol": "TSLAUSDT",
+      "track": "medium",
+      "attempt": 1793460982246,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1628
+          ],
+          "text_message_ids": [
+            1629
+          ]
+        },
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1630
+          ],
+          "text_message_ids": [
+            1631
+          ]
+        }
+      }
+    },
+    "51b5c84693855ea5dfbf4c0f": {
+      "symbol": "TSLAUSDT",
+      "track": "long",
+      "attempt": 1793460982246,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1632
+          ],
+          "text_message_ids": [
+            1633
+          ]
+        }
+      }
+    },
+    "91f6d7dcd02ff1b49f146106": {
+      "symbol": "AAPLUSDT",
+      "track": "short",
+      "attempt": 1793460982387,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1634
+          ],
+          "text_message_ids": [
+            1635
+          ]
+        }
+      }
+    },
+    "b9d788aba2b828a7c0668013": {
+      "symbol": "AAPLUSDT",
+      "track": "medium",
+      "attempt": 1793460982387,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1636
+          ],
+          "text_message_ids": [
+            1637
+          ]
+        }
+      }
+    },
+    "a47aa28f35de6bd6c5980f92": {
+      "symbol": "MSFTUSDT",
+      "track": "short",
+      "attempt": 1793460982519,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1638
+          ],
+          "text_message_ids": [
+            1639
+          ]
+        },
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1640
+          ],
+          "text_message_ids": [
+            1641
+          ]
+        }
+      }
+    },
+    "8a45f7970b4c9b55d2ab00a3": {
+      "symbol": "MSFTUSDT",
+      "track": "medium",
+      "attempt": 1793460982519,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1642
+          ],
+          "text_message_ids": [
+            1643
+          ]
+        }
+      }
+    },
+    "b3dcbb1a00b7de51afc6d6a8": {
+      "symbol": "MSFTUSDT",
+      "track": "medium",
+      "attempt": 1793460982519,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1644
+          ],
+          "text_message_ids": [
+            1645
+          ]
+        },
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1646
+          ],
+          "text_message_ids": [
+            1647
+          ]
+        }
+      }
+    },
+    "107f4bedd3fc128b9ac53239": {
+      "symbol": "AMZNUSDT",
+      "track": "short",
+      "attempt": 1793460982660,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1648
+          ],
+          "text_message_ids": [
+            1649
+          ]
+        }
+      }
+    },
+    "84f6eb22aa006bc4038f0664": {
+      "symbol": "AMZNUSDT",
+      "track": "short",
+      "attempt": 1793460982660,
+      "complete": true,
+      "units": {
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1650
+          ],
+          "text_message_ids": [
+            1651
+          ]
+        }
+      }
+    },
+    "586c25915d39cf51fd22af30": {
+      "symbol": "AMZNUSDT",
+      "track": "medium",
+      "attempt": 1793460982660,
+      "complete": true,
+      "units": {
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1652
+          ],
+          "text_message_ids": [
+            1653
+          ]
+        }
+      }
+    },
+    "489ab07bb959ac03fd0bf254": {
+      "symbol": "AMZNUSDT",
+      "track": "long",
+      "attempt": 1793460982660,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1654
+          ],
+          "text_message_ids": [
+            1655
+          ]
+        }
+      }
+    },
+    "5c041baf1407347812e507fb": {
+      "symbol": "GOOGLUSDT",
+      "track": "long",
+      "attempt": 1793460982793,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1656
+          ],
+          "text_message_ids": [
+            1657
+          ]
+        }
+      }
+    },
+    "182ffa2c7506d9affc86d6c0": {
+      "symbol": "METAUSDT",
+      "track": "short",
+      "attempt": 1793460982931,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1658
+          ],
+          "text_message_ids": [
+            1659
+          ]
+        }
+      }
+    },
+    "e13010a318c22f983a617e2e": {
+      "symbol": "METAUSDT",
+      "track": "medium",
+      "attempt": 1793460982931,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1660
+          ],
+          "text_message_ids": [
+            1661
+          ]
+        },
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1662
+          ],
+          "text_message_ids": [
+            1663
+          ]
+        }
+      }
+    },
+    "50c0e629209384a43d9efae1": {
+      "symbol": "METAUSDT",
+      "track": "long",
+      "attempt": 1793460982931,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1664
+          ],
+          "text_message_ids": [
+            1665
+          ]
+        },
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1666
+          ],
+          "text_message_ids": [
+            1667
+          ]
+        }
+      }
+    },
+    "46a5a1c344f361129da326ed": {
+      "symbol": "QQQUSDT",
+      "track": "medium",
+      "attempt": 1793460983082,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1668
+          ],
+          "text_message_ids": [
+            1669
+          ]
+        },
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1670
+          ],
+          "text_message_ids": [
+            1671
+          ]
+        }
+      }
+    },
+    "ddfabda25b1ab47b3af6bf92": {
+      "symbol": "SPYUSDT",
+      "track": "short",
+      "attempt": 1793460983217,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1672
+          ],
+          "text_message_ids": [
+            1673
+          ]
+        }
+      }
+    },
+    "bdaa125327e9a898cebda945": {
+      "symbol": "SPYUSDT",
+      "track": "medium",
+      "attempt": 1793460983217,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1674
+          ],
+          "text_message_ids": [
+            1675
+          ]
+        }
+      }
+    },
+    "4db6d6f3f06b22698b84f3ab": {
+      "symbol": "CLUSDT",
+      "track": "short",
+      "attempt": 1793460983366,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1676
+          ],
+          "text_message_ids": [
+            1677
+          ]
+        },
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1678
+          ],
+          "text_message_ids": [
+            1679
+          ]
+        }
+      }
+    },
+    "99bb11d03d689154a3d1bdea": {
+      "symbol": "CLUSDT",
+      "track": "medium",
+      "attempt": 1793460983366,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1680
+          ],
+          "text_message_ids": [
+            1681
+          ]
+        },
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1682
+          ],
+          "text_message_ids": [
+            1683
+          ]
+        }
+      }
+    },
+    "e24b22aad8ea352133e8b5dc": {
+      "symbol": "BZUSDT",
+      "track": "medium",
+      "attempt": 1793460983530,
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1684
+          ],
+          "text_message_ids": [
+            1685
+          ]
+        },
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1686
+          ],
+          "text_message_ids": [
+            1687
+          ]
+        }
+      }
+    }
+  }
 }
