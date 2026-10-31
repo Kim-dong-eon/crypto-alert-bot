@@ -18,6 +18,9 @@ class TelegramMedia:
             for path,caption in items:
                 if len(caption)>1024 or not Path(path).is_file():return False
                 handles.append(open(path,'rb'))
+            # Once a request starts, a missing/invalid response is ambiguous;
+            # it must not be treated as proof that Telegram rejected it.
+            self.last_receipt={'outcome':'unknown'}
             if len(items)==1:
                 response=requests.post(f'https://api.telegram.org/bot{self.token}/sendPhoto',data={'chat_id':self.chat_id,'caption':items[0][1]},files={'photo':handles[0]},timeout=45)
             else:
@@ -29,6 +32,7 @@ class TelegramMedia:
                 messages=[result['result']] if len(items)==1 else result['result']
                 self.last_receipt={'outcome':'confirmed','message_ids':[m['message_id'] for m in messages if 'message_id' in m]}
             elif result.get('ok') is True:self.last_receipt={'outcome':'unknown'}
+            else:self.last_receipt={'outcome':'rejected'}
             return ok
         except requests.RequestException:
             self.last_receipt={'outcome':'unknown'};return False
