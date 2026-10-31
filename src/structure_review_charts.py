@@ -154,10 +154,10 @@ def render_structure_pair(snapshot,events,frames,prefix):
     return paths
 
 
-def draw_notified_scope(ax,own,analysis,frames,overview,track_label):
+def draw_notified_scope(ax,own,analysis,frames,overview,track_label,show_zone_text=True,sweep_limit=2,detail_bars=180):
     """Only delivered candidates and their evidence; no other watch boxes."""
     top,lower=own[0]['pair'];tf=top if overview else lower
-    all_bars=frames[tf];bars=all_bars if overview else all_bars[-180:]
+    all_bars=frames[tf];bars=all_bars if overview else all_bars[-detail_bars:]
     origin=bars[0].timestamp;n=len(bars);end=n+max(8,n*.05)
     x=lambda stamp:(stamp-origin)/TF_MS[tf]
     ax.set_facecolor('#18202d');ax.tick_params(colors='#bac6d4');ax.yaxis.tick_right()
@@ -186,9 +186,10 @@ def draw_notified_scope(ax,own,analysis,frames,overview,track_label):
         left=max(-.5,x(c['latest_source']));known.extend((c['low'],c['high']))
         ax.add_patch(Rectangle((left,c['low']),end-left,c['high']-c['low'],facecolor='#ffffff',edgecolor='none',alpha=.10,zorder=2))
         ax.add_patch(Rectangle((left,c['low']),end-left,c['high']-c['low'],facecolor='none',edgecolor='white',linewidth=.9,zorder=5))
-        ax.annotate(f"알림 {c['low']:,.4f} ~ {c['high']:,.4f}",xy=(end,(c['low']+c['high'])/2),
-                    xytext=(-4,10),textcoords='offset points',ha='right',fontsize=9,color='white',zorder=8,
-                    bbox={'facecolor':'#18202d','edgecolor':'none','alpha':.85,'pad':2})
+        if show_zone_text:
+            ax.annotate(f"알림 {c['low']:,.4f} ~ {c['high']:,.4f}",xy=(end,(c['low']+c['high'])/2),
+                        xytext=(-4,10),textcoords='offset points',ha='right',fontsize=9,color='white',zorder=8,
+                        bbox={'facecolor':'#18202d','edgecolor':'none','alpha':.85,'pad':2})
         chosen='broad' if overview and 'broad' in c['lenses'] else 'recent' if 'recent' in c['lenses'] else c['lenses'][0]
         view=analysis['views'][chosen];top_bars=frames[top]
         points=[p for p in view['turns'] if top_bars[p['index']].timestamp>=origin]
@@ -197,8 +198,9 @@ def draw_notified_scope(ax,own,analysis,frames,overview,track_label):
                     color=COLORS[chosen],linewidth=.85,alpha=.65,zorder=4)
         area=c['structure_area']
         related=[s for s in view['sweeps'] if s['direction']==c['direction'] and
+                 s['timestamp']>=area['origin'] and
                  area['low']<=s['tip']<=area['high'] and top_bars[s['index']].timestamp>=origin]
-        for s in related[-2:]:
+        for s in related[-sweep_limit:]:
             sid=(s['timestamp'],s['level'])
             if sid in seen_sweeps:continue
             seen_sweeps.add(sid);sx=x(top_bars[s['index']].timestamp)

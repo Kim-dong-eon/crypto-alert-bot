@@ -21,7 +21,7 @@ from src.overlap_status import overview_events
 ROOT=Path(__file__).resolve().parent
 
 
-def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,image_sender=None,render_previews=False,listing_check=None,status_symbols=()):
+def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,image_sender=None,render_previews=False,listing_check=None,status_symbols=(),unit_text_sender=None):
     results=[];failures=[];chart_frames={}
     tickers,received=market.tickers()
     for instrument in instruments:
@@ -76,10 +76,12 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
     delivery={"sent":0,"failed":0}
     status_delivery={'sent':0,'failed':0,'symbols':[]}
     if render_previews and sender is None:
-        from src.structure_review_charts import render_structure_pair
+        from src.split_alert_preview import split_units,render_side_by_side_unit
         for result in results:
             symbol_events=[{'candidate':c,'timestamp':result['as_of'],'stage':'approach'} for state in result['tracks'].values() for c in candidates(state) if alert_eligible(c)]
-            if symbol_events:render_structure_pair(result,symbol_events,chart_frames[result['symbol']],ROOT/'runtime/ict_overlap/charts'/f"{result['symbol']}_preview")
+            for unit in split_units(symbol_events):
+                c=unit['candidate']
+                render_side_by_side_unit(result,unit,chart_frames[result['symbol']],ROOT/'runtime/ict_overlap/charts'/f"{result['symbol']}_{c['track']}_{c['lenses'][0]}_{c['id']}_preview")
     if sender:
         successful={r['symbol'] for r in results}
         held={k:e for k,e in ledger.state['pending'].items() if e['candidate']['symbol'] not in successful}
@@ -97,7 +99,14 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
                     return render_structure_pair(item,events,chart_frames[symbol],ROOT/'runtime/ict_overlap/charts'/f"{symbol}_overlap")
                 return render_alert_pair(events,chart_frames[symbol],ROOT/'runtime/ict_overlap/charts'/f"{symbol}_overlap")
             before={symbol:{key for key,event in ledger.state['pending'].items() if event['candidate']['symbol']==symbol} for symbol in successful}
-            delivery=ledger.dispatch_symbols(image_sender,renderer,contexts)
+            if isinstance(ledger,StructureLedger):
+                from src.split_alert_preview import render_side_by_side_unit
+                def unit_renderer(unit):
+                    c=unit['candidate'];item=next(r for r in results if r['symbol']==c['symbol'])
+                    prefix=ROOT/'runtime/ict_overlap/charts'/f"{c['symbol']}_{c['track']}_{c['lenses'][0]}_{c['id']}"
+                    return render_side_by_side_unit(item,unit,chart_frames[c['symbol']],prefix)
+                delivery=ledger.dispatch_units(image_sender,unit_text_sender or sender,unit_renderer)
+            else:delivery=ledger.dispatch_symbols(image_sender,renderer,contexts)
             completed={symbol for symbol,keys in before.items() if keys and keys.isdisjoint(ledger.state['pending'])}
             for symbol in status_symbols:
                 if symbol in completed:continue
@@ -156,9 +165,11 @@ def main(argv=None):
     with single_writer(args.state.with_suffix('.lock')) if args.send or args.watch else nullcontext():
         ledger=StructureLedger(args.state,require_images=args.send,overlap_only=True,approach_only=True,force_resend=args.resend_current)
         image_sender=None
+        unit_text_sender=None
         if args.send:
             from src.overlap_telegram import TelegramMedia
-            image_sender=TelegramMedia(os.getenv('TELEGRAM_BOT_TOKEN'),os.getenv('TELEGRAM_CHAT_ID')).send_images
+            media=TelegramMedia(os.getenv('TELEGRAM_BOT_TOKEN'),os.getenv('TELEGRAM_CHAT_ID'),min_interval=3.1)
+            image_sender=media.send_images;unit_text_sender=media.send_text
         catalog_checked=time.monotonic()
         while True:
             try:
@@ -166,7 +177,7 @@ def main(argv=None):
                     binance_rows,listing_check=binance_listings(ROOT/'config/binance_contracts.json',market.cache/'binance_contracts.json')
                     instruments=select_common_instruments(select_instruments(market.instruments(),tuple(dict.fromkeys(args.bases))),binance_rows)
                     catalog_checked=time.monotonic()
-                report=run_once(market,instruments,ledger,sender,persist=args.watch,snapshot=args.snapshot,image_sender=image_sender,render_previews=args.render_preview,listing_check=listing_check,status_symbols=inspect_symbols)
+                report=run_once(market,instruments,ledger,sender,persist=args.watch,snapshot=args.snapshot,image_sender=image_sender,render_previews=args.render_preview,listing_check=listing_check,status_symbols=inspect_symbols,unit_text_sender=unit_text_sender)
             except Exception as error:
                 if not args.watch:raise
                 print(f'시세 확인 보류 ({type(error).__name__}); 다음 주기에 재시도',flush=True)

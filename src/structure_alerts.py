@@ -81,6 +81,8 @@ class StructureLedger(OverlapLedger):
         for key,event in list(self.state.get('in_flight',{}).items()):
             if event['candidate']['symbol']==symbol and event['candidate']['track']==track:
                 del self.state['in_flight'][key]
+        for key,p in list(self.state.get('presentations',{}).items()):
+            if p['symbol']==symbol and p['track']==track:del self.state['presentations'][key]
         super().unlock(symbol,track)
 
     def observe(self,snapshot,display_name=None,persist=True):
@@ -127,7 +129,9 @@ class StructureLedger(OverlapLedger):
                 if not alert_eligible(c):continue
                 if key in self.state.get('in_flight',{}) and not self.force_resend:
                     audit['uncertain_held']+=1;continue
-                if sent and not self.force_resend:audit['suppressed']+=1;continue
+                presentation=self.state.get('presentations',{}).get(key)
+                unfinished=presentation is not None and not presentation['complete']
+                if sent and not self.force_resend and not unfinished:audit['suppressed']+=1;continue
                 # Broad/recent aliases in this same run cannot enqueue twice.
                 if key in self.state['pending']:
                     pending=self.state['pending'][key]['candidate']
@@ -178,4 +182,65 @@ class StructureLedger(OverlapLedger):
                 self.state['delivered'][key]=record;self.state['images_delivered'][key]=record
                 self.state['pending'].pop(key,None);flights.pop(key,None);result['sent']+=1
             result['images_sent']+=2;self.save()
+        return result
+
+    def dispatch_units(self,image_sender,text_sender,renderer):
+        """Per lens: one context/detail image, then a separate short text.
+
+        Acknowledge each phase before continuing. A retry can resume a failed
+        text without posting the already confirmed image again.
+        """
+        from src.split_alert_preview import split_units,unit_text
+        result={'sent':0,'failed':0,'images_sent':0,'texts_sent':0,'units_sent':0,'uncertain':0}
+        presentations=self.state.setdefault('presentations',{})
+        def receipt(sender):
+            owner=getattr(sender,'__self__',None)
+            return getattr(owner,'last_receipt',{}) if owner else {}
+        for key,event in list(self.state['pending'].items()):
+            c=event['candidate'];p=presentations.get(key)
+            if p is None or (self.force_resend and p['complete']):
+                p={'symbol':c['symbol'],'track':c['track'],'attempt':event['timestamp'],
+                   'complete':False,'units':{}}
+                presentations[key]=p
+                self.save()
+            failed=False
+            for unit in split_units([event]):
+                lens=unit['candidate']['lenses'][0]
+                record=p['units'].setdefault(lens,{'image_sent':False,'text_sent':False,
+                                                  'image_message_ids':[],'text_message_ids':[]})
+                if record['image_sent'] and record['text_sent']:continue
+                if record.get('in_flight'):
+                    if self.force_resend:record.pop('in_flight')
+                    else:result['uncertain']+=1;failed=True;continue
+                text=unit_text(unit)
+                if not record['image_sent']:
+                    try:rendered=renderer(unit);path=rendered['images'][0]
+                    except Exception:failed=True;continue
+                    record['in_flight']='image';self.save()
+                    try:ok=image_sender([(path,'')]) is True
+                    except Exception:ok=False
+                    response=receipt(image_sender)
+                    if not ok:
+                        if response.get('outcome')=='unknown':result['uncertain']+=1
+                        else:record.pop('in_flight',None)
+                        failed=True;self.save();continue
+                    record.update(image_sent=True,image_message_ids=response.get('message_ids',[]))
+                    record.pop('in_flight',None);result['images_sent']+=1;self.save()
+                record['in_flight']='text';self.save()
+                try:ok=text_sender(text) is True
+                except Exception:ok=False
+                response=receipt(text_sender)
+                if not ok:
+                    if response.get('outcome')=='unknown':result['uncertain']+=1
+                    else:record.pop('in_flight',None)
+                    failed=True;self.save();continue
+                record.update(text_sent=True,text_message_ids=response.get('message_ids',[]))
+                record.pop('in_flight',None);result['texts_sent']+=1;result['units_sent']+=1;self.save()
+            if failed:result['failed']+=1;continue
+            p['complete']=True
+            message_ids=[i for r in p['units'].values() for kind in ('image_message_ids','text_message_ids') for i in r[kind]]
+            ack={'symbol':c['symbol'],'stage':event['stage'],'timestamp':event['timestamp'],'message_ids':message_ids}
+            self.state['delivered'][key]=ack;self.state['images_delivered'][key]=ack
+            self.state['in_flight'].pop(key,None) if 'in_flight' in self.state else None
+            self.state['pending'].pop(key,None);result['sent']+=1;self.save()
         return result

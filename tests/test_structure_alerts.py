@@ -162,4 +162,83 @@ class TimeframeTests(unittest.TestCase):
             for a in departure_areas(values,found,'broad',tf):self.assertIn(a['created'],[p['confirmed_at'] for p in found])
 
 
+class UnitDeliveryTests(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
+        self.path=Path(self.temp.name)/'state.json'
+        self.ledger=StructureLedger(self.path,require_images=True,overlap_only=True,approach_only=True)
+        self.render=Mock(return_value={'images':[str(Path(self.temp.name)/'one.png')]})
+
+    def reload(self):
+        self.ledger=StructureLedger(self.path,require_images=True,overlap_only=True,approach_only=True)
+
+    def test_one_image_then_text_per_lens_with_exact_support_evidence(self):
+        order=[]
+        def image(items):order.append(('photo',items));return True
+        def text(message):order.append(('text',message));return True
+        s=multi(lenses=('broad','recent'));self.ledger.observe(s)
+        r=self.ledger.dispatch_units(image,text,self.render)
+        self.assertEqual([x[0] for x in order],['photo','text','photo','text'])
+        self.assertEqual(r['images_sent'],2);self.assertEqual(r['texts_sent'],2);self.assertEqual(r['sent'],1)
+        self.assertTrue(all(x[1][0][1]=='' for x in order if x[0]=='photo'))
+        self.assertIn('4시간 단기 작은 틀',order[1][1])
+        self.assertIn('지지 근거: 4시간 OB + 1시간 FVG',order[1][1])
+        self.assertIn('4시간 단기 큰 틀',order[3][1])
+        self.reload();self.ledger.observe(s)
+        self.assertEqual(self.ledger.dispatch_units(image,text,self.render)['sent'],0)
+
+    def test_failed_text_resumes_without_resending_the_confirmed_image(self):
+        s=multi();self.ledger.observe(s)
+        self.assertEqual(self.ledger.dispatch_units(lambda _:True,lambda _:False,self.render)['failed'],1)
+        self.reload();self.ledger.observe(s)
+        image=Mock(return_value=True);text=Mock(return_value=True)
+        r=self.ledger.dispatch_units(image,text,self.render)
+        image.assert_not_called();self.assertEqual(text.call_count,1);self.assertEqual(r['sent'],1)
+
+    def test_partial_forced_resend_can_resume_on_next_normal_run(self):
+        s=multi();self.ledger.observe(s)
+        self.ledger.dispatch_units(lambda _:True,lambda _:True,self.render)
+        self.ledger.force_resend=True;self.ledger.observe(s)
+        self.ledger.dispatch_units(lambda _:True,lambda _:False,self.render)
+        self.reload();self.ledger.observe(s)
+        self.assertTrue(self.ledger.state['pending'])
+        image=Mock(return_value=True)
+        self.assertEqual(self.ledger.dispatch_units(image,lambda _:True,self.render)['sent'],1)
+        image.assert_not_called()
+
+    def test_one_failed_lens_does_not_repeat_the_other_completed_lens(self):
+        s=multi(lenses=('broad','recent'));self.ledger.observe(s)
+        self.ledger.dispatch_units(Mock(side_effect=[True,False]),lambda _:True,self.render)
+        self.reload();self.ledger.observe(s);image=Mock(return_value=True);text=Mock(return_value=True)
+        r=self.ledger.dispatch_units(image,text,self.render)
+        self.assertEqual(image.call_count,1);self.assertEqual(text.call_count,1)
+        self.assertIn('큰 틀',text.call_args.args[0]);self.assertEqual(r['sent'],1)
+
+    def test_unknown_image_response_is_not_automatically_repeated(self):
+        class Uncertain:
+            last_receipt={'outcome':'unknown'}
+            def send(self,items):return False
+        s=multi();self.ledger.observe(s)
+        self.ledger.dispatch_units(Uncertain().send,lambda _:True,self.render)
+        self.reload();self.ledger.observe(s);image=Mock(return_value=True)
+        r=self.ledger.dispatch_units(image,lambda _:True,self.render)
+        image.assert_not_called();self.assertEqual(r['uncertain'],1)
+
+    def test_explicit_unlock_removes_unit_delivery_progress(self):
+        s=multi();self.ledger.observe(s)
+        self.ledger.dispatch_units(lambda _:True,lambda _:True,self.render)
+        self.ledger.unlock('BTCUSDT','short');self.ledger.observe(s)
+        r=self.ledger.dispatch_units(lambda _:True,lambda _:True,self.render)
+        self.assertEqual(r['images_sent'],1)
+
+    def test_telegram_separate_text_receipt_is_confirmed(self):
+        from src.overlap_telegram import TelegramMedia
+        with patch('src.overlap_telegram.requests.post') as post:
+            post.return_value.status_code=200;post.return_value.json.return_value={'ok':True,'result':{'message_id':9}}
+            media=TelegramMedia('test','test')
+            self.assertTrue(media.send_text('4시간 단기 작은 틀'))
+            self.assertEqual(media.last_receipt['message_ids'],[9])
+            self.assertTrue(post.call_args.args[0].endswith('/sendMessage'))
+
+
 if __name__=='__main__':unittest.main()
