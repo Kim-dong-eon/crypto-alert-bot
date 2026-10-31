@@ -200,6 +200,9 @@ def compact_notice(events):
     if events and 'view' in events[0]:
         from src.overlap_status import overview_notice
         return overview_notice(events)
+    if events and events[0]['candidate'].get('structure_area'):
+        from src.structure_alerts import notice
+        return notice(events)
     ordered=sorted(events,key=lambda e:{'short':0,'medium':1,'long':2}.get(e['candidate']['track'],9))
     if not ordered:raise ValueError('No overlap events')
     symbols={e['candidate']['symbol'] for e in ordered}

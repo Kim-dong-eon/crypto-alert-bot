@@ -8,7 +8,9 @@ import time
 import traceback
 
 from config.overlap_settings import TRACKS, TRACK_LABELS, BASES, POLL_SECONDS,DIVERSIFIER_BASES
-from src.ict_overlap import scan,compact_notice,alert_eligible
+from src.ict_overlap import compact_notice,alert_eligible
+from src.structure_alerts import scan,StructureLedger,candidates
+from src.review_history import HistoricalMarket
 from src.overlap_market import PublicMarket,select_instruments,quote_price
 from src.overlap_delivery import OverlapLedger
 from src.ict_notices import single_writer,telegram_sender
@@ -24,6 +26,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
     tickers,received=market.tickers()
     for instrument in instruments:
         symbol=instrument["symbol"];frames={};errors={};now=int(time.time()*1000)
+        if now-received>60000:tickers,received=market.tickers()
         try:price=quote_price(tickers[symbol],now)
         except (KeyError,ValueError,TypeError):
             failures.append({"symbol":symbol,"reason":"ticker_unavailable_or_stale"});continue
@@ -41,6 +44,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         observed=int(time.time()*1000)
         if observed-now>120000:
             failures.append({"symbol":symbol,"reason":"scan_took_too_long"});continue
+        if observed-received>60000:tickers,received=market.tickers()
         try:price=quote_price(tickers[symbol],observed)
         except (KeyError,ValueError,TypeError):
             failures.append({"symbol":symbol,"reason":"ticker_became_stale_during_scan"});continue
@@ -52,9 +56,9 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
             except (ValueError,TypeError,KeyError,OverflowError):eligibility={'eligible':False,'reasons':['screening_data_invalid']}
             result['diversification']=eligibility
             for state in result['tracks'].values():
-                if state['candidate']:
-                    state['candidate']['monitor_eligible']=eligibility['eligible']
-                    state['candidate']['diversification']=eligibility
+                for candidate in candidates(state):
+                    candidate['monitor_eligible']=eligibility['eligible']
+                    candidate['diversification']=eligibility
             print(f"{symbol} BTC 상관·유동성: "+('통과' if eligibility['eligible'] else '대기'))
         asset_label={'stock':'주식','etf':'ETF','index':'지수','energy':'원유','metal':'금속'}.get(instrument.get('instrumentType'),'상품')
         result.update(display_name=f"Bitget · {instrument.get('fullName',symbol)} ({symbol}) · "+('BTC 무기한' if instrument['baseCoin']=='BTC' else f'거래소 {asset_label} 무기한'),data_errors=errors)
@@ -72,10 +76,10 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
     delivery={"sent":0,"failed":0}
     status_delivery={'sent':0,'failed':0,'symbols':[]}
     if render_previews and sender is None:
-        from src.overlap_charts import render_alert_pair
+        from src.structure_review_charts import render_structure_pair
         for result in results:
-            symbol_events=[{'candidate':state['candidate'],'timestamp':result['as_of'],'stage':'approach'} for state in result['tracks'].values() if alert_eligible(state['candidate'])]
-            if symbol_events:render_alert_pair(symbol_events,chart_frames[result['symbol']],ROOT/'runtime/ict_overlap/charts'/f"{result['symbol']}_preview")
+            symbol_events=[{'candidate':c,'timestamp':result['as_of'],'stage':'approach'} for state in result['tracks'].values() for c in candidates(state) if alert_eligible(c)]
+            if symbol_events:render_structure_pair(result,symbol_events,chart_frames[result['symbol']],ROOT/'runtime/ict_overlap/charts'/f"{result['symbol']}_preview")
     if sender:
         successful={r['symbol'] for r in results}
         held={k:e for k,e in ledger.state['pending'].items() if e['candidate']['symbol'] not in successful}
@@ -84,9 +88,14 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
             from src.overlap_charts import render_symbol_chart,render_alert_pair
             contexts={}
             for result in results:
-                contexts[result['symbol']]=[{'candidate':state['candidate'],'timestamp':result['as_of'],'stage':'approach'} for state in result['tracks'].values() if alert_eligible(state['candidate'])]
+                contexts[result['symbol']]=[e for e in ledger.state['pending'].values() if e['candidate']['symbol']==result['symbol']]
             def renderer(events):
-                symbol=events[0]['candidate']['symbol'];return render_alert_pair(events,chart_frames[symbol],ROOT/'runtime/ict_overlap/charts'/f"{symbol}_overlap")
+                symbol=events[0]['candidate']['symbol']
+                if events[0]['candidate'].get('structure_area'):
+                    from src.structure_review_charts import render_structure_pair
+                    item=next(r for r in results if r['symbol']==symbol)
+                    return render_structure_pair(item,events,chart_frames[symbol],ROOT/'runtime/ict_overlap/charts'/f"{symbol}_overlap")
+                return render_alert_pair(events,chart_frames[symbol],ROOT/'runtime/ict_overlap/charts'/f"{symbol}_overlap")
             before={symbol:{key for key,event in ledger.state['pending'].items() if event['candidate']['symbol']==symbol} for symbol in successful}
             delivery=ledger.dispatch_symbols(image_sender,renderer,contexts)
             completed={symbol for symbol,keys in before.items() if keys and keys.isdisjoint(ledger.state['pending'])}
@@ -130,7 +139,7 @@ def main(argv=None):
         with single_writer(args.state.with_suffix('.lock')):
             OverlapLedger(args.state).unlock(symbol,track)
         print(f'{symbol} {TRACK_LABELS[track]} 잠금 해제');return 0
-    market=PublicMarket(ROOT/'runtime/ict_overlap/cache')
+    market=HistoricalMarket(ROOT/'runtime/ict_overlap/cache/structure')
     catalog=market.instruments()
     binance_rows,listing_check=binance_listings(ROOT/'config/binance_contracts.json',market.cache/'binance_contracts.json')
     instruments=select_common_instruments(select_instruments(catalog,tuple(dict.fromkeys(args.bases))),binance_rows)
@@ -145,7 +154,7 @@ def main(argv=None):
         from dotenv import load_dotenv
         load_dotenv(ROOT/'.env');sender=telegram_sender(os.getenv('TELEGRAM_BOT_TOKEN'),os.getenv('TELEGRAM_CHAT_ID'))
     with single_writer(args.state.with_suffix('.lock')) if args.send or args.watch else nullcontext():
-        ledger=OverlapLedger(args.state,require_images=args.send,overlap_only=True,approach_only=True,force_resend=args.resend_current)
+        ledger=StructureLedger(args.state,require_images=args.send,overlap_only=True,approach_only=True,force_resend=args.resend_current)
         image_sender=None
         if args.send:
             from src.overlap_telegram import TelegramMedia
