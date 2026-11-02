@@ -99,6 +99,16 @@ class PullbackOriginTests(unittest.TestCase):
             with Image.open(rendered['images'][0]) as im:self.assertGreater(im.width,2000)
             self.assertNotIn('손절',rendered['text_after_images'])
 
+    def test_chart_keeps_old_origin_even_when_more_than_96_bars_ago(self):
+        from src.pullback_charts import origin_window
+        width=TF_MS['4h'];bars=[Bar(i*width,100,110,90,105,1) for i in range(350)]
+        c={'parent':{'origin':20*width},'structure_area':{'origin':10*width,'pivot_origin':12*width}}
+        shown=origin_window(bars,c)
+        self.assertEqual(shown[0].timestamp,7*width)
+        self.assertEqual(shown[-1].timestamp,349*width)
+        self.assertIn(20*width,[b.timestamp for b in shown])
+        self.assertIn(12*width,[b.timestamp for b in shown])
+
 
 class RepeatDeliveryTests(unittest.TestCase):
     def setUp(self):
