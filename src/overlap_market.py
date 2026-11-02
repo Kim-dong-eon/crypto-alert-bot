@@ -38,8 +38,15 @@ class PublicMarket:
         # <=5 requests/second; no account endpoints or credential headers.
         time.sleep(max(0., .2-(time.monotonic()-self.last_request)))
         self.last_request = time.monotonic()
-        response = self.session.get("https://api.bitget.com/api/v3/market/"+path, params=params, timeout=20)
-        response.raise_for_status()
+        for attempt in range(3):
+            try:
+                response = self.session.get("https://api.bitget.com/api/v3/market/"+path, params=params, timeout=20)
+                if response.status_code in (429,500,502,503,504) and attempt<2:
+                    time.sleep(1+attempt);continue
+                response.raise_for_status();break
+            except (requests.Timeout,requests.ConnectionError):
+                if attempt==2:raise
+                time.sleep(1+attempt)
         data = response.json()
         if data.get("code") != "00000":
             raise ValueError("Public market API returned non-success")

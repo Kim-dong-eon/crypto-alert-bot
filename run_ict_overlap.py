@@ -9,7 +9,11 @@ import traceback
 
 from config.overlap_settings import TRACKS, TRACK_LABELS, BASES, POLL_SECONDS,DIVERSIFIER_BASES
 from src.ict_overlap import compact_notice,alert_eligible
-from src.structure_alerts import scan,StructureLedger,candidates
+from src.structure_alerts import StructureLedger,candidates
+from src.pullback_alerts import scan,short_history_start,POLICY
+from src.repeat_alert_delivery import RepeatAlertLedger
+from src.pullback_data import live_frames
+from src.ict_engine import TF_MS,frame_open
 from src.review_history import HistoricalMarket
 from src.overlap_entry import recent_minutes,MINUTE
 from src.overlap_market import PublicMarket,select_instruments,quote_price
@@ -36,8 +40,16 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
             except Exception as error:errors[tf]=type(error).__name__
         touch_since=ledger.state.get('touch_cursors',{}).get(symbol,(now//MINUTE-5)*MINUTE)
         minute_bars=[];minute_coverage=None;minute_error=None
-        try:minute_bars,minute_coverage=recent_minutes(market,symbol,touch_since,int(time.time()*1000))
+        # The same completed minutes both detect between-scan contacts and
+        # reconstruct the still-open 4H candle for the approved image format.
+        try:minute_bars,minute_coverage=recent_minutes(market,symbol,min(touch_since,frame_open(now,'4h')),int(time.time()*1000))
         except Exception as error:minute_error=type(error).__name__
+        quarter_start=None
+        try:
+            quarter_start=short_history_start(symbol,frames,now,price,minute_bars,
+                                             max(touch_since,minute_coverage['start']) if minute_coverage else touch_since)
+            if quarter_start is not None:frames['15m']=market.quarter_frame(symbol,int(time.time()*1000),quarter_start)
+        except Exception as error:errors['15m']=type(error).__name__
         diversity_data=None;diversity_error=None
         if instrument['baseCoin'] in DIVERSIFIER_BASES:
             try:
@@ -47,14 +59,23 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         # Recheck at the end, so crossing a candle boundary pauses affected
         # tracks until the newly closed candle has actually been retrieved.
         observed=int(time.time()*1000)
-        if observed-now>120000:
+        if observed-now>600000:
             failures.append({"symbol":symbol,"reason":"scan_took_too_long"});continue
+        # A first 15m backfill can cross a boundary. Retrieve the actual newly
+        # completed bar; never promote an old partial cache snapshot.
+        for tf in list(frames):
+            if frames[tf] and frames[tf][-1].timestamp+TF_MS[tf]!=frame_open(observed,tf):
+                try:frames[tf]=(market.quarter_frame(symbol,observed,quarter_start) if tf=='15m' else market.frame(symbol,tf,observed))
+                except Exception as error:errors[tf]=type(error).__name__;frames.pop(tf,None)
+        if minute_coverage and minute_coverage['end']!=observed//MINUTE*MINUTE:
+            try:minute_bars,minute_coverage=recent_minutes(market,symbol,min(touch_since,frame_open(observed,'4h')),observed)
+            except Exception as error:minute_bars=[];minute_coverage=None;minute_error=type(error).__name__
         if observed-received>60000:tickers,received=market.tickers()
         try:price=quote_price(tickers[symbol],observed)
         except (KeyError,ValueError,TypeError):
             failures.append({"symbol":symbol,"reason":"ticker_became_stale_during_scan"});continue
         result=scan(symbol,frames,observed,price,equilibrium_filter=True,
-                    minute_bars=minute_bars,touch_since=minute_coverage['start'] if minute_coverage else touch_since)
+                    minute_bars=minute_bars,touch_since=max(touch_since,minute_coverage['start']) if minute_coverage else touch_since)
         result.update(minute_coverage=minute_coverage,minute_error=minute_error)
         if instrument['baseCoin'] in DIVERSIFIER_BASES:
             try:
@@ -76,7 +97,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
             if minute_coverage:cursors[symbol]=minute_coverage['end']
             ledger.save()
         results.append(result)
-        chart_frames[symbol]=frames
+        chart_frames[symbol]=live_frames(frames,minute_bars,observed,price)
         if sender is None:
             own=[e for e in pending.values() if e['candidate']['symbol']==symbol]
             if own:print(compact_notice(own))
@@ -134,7 +155,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
                 else:status_delivery['failed']+=1
         else:delivery=ledger.dispatch(sender,batch=True)
         ledger.state['pending'].update(held);ledger.save()
-    report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","binance_listing_check":listing_check,"instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery,'status_delivery':status_delivery}
+    report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","strategy":POLICY,'deduplication_enabled':False,"binance_listing_check":listing_check,"instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery,'status_delivery':status_delivery}
     if snapshot:
         path=Path(snapshot);path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     print(f"중첩 알림: 전송 {delivery['sent']}건 / 실패 {delivery['failed']}건")
@@ -158,7 +179,7 @@ def main(argv=None):
         symbol,track=args.unlock
         if track not in ('short','medium','long'):parser.error('TRACK must be short, medium or long')
         with single_writer(args.state.with_suffix('.lock')):
-            StructureLedger(args.state).unlock(symbol,track)
+            RepeatAlertLedger(args.state).unlock(symbol,track)
         print(f'{symbol} {TRACK_LABELS[track]} 잠금 해제');return 0
     market=HistoricalMarket(ROOT/'runtime/ict_overlap/cache/structure')
     catalog=market.instruments()
@@ -175,7 +196,7 @@ def main(argv=None):
         from dotenv import load_dotenv
         load_dotenv(ROOT/'.env');sender=telegram_sender(os.getenv('TELEGRAM_BOT_TOKEN'),os.getenv('TELEGRAM_CHAT_ID'))
     with single_writer(args.state.with_suffix('.lock')) if args.send or args.watch else nullcontext():
-        ledger=StructureLedger(args.state,require_images=args.send,overlap_only=True,approach_only=True,force_resend=args.resend_current)
+        ledger=RepeatAlertLedger(args.state,require_images=args.send,overlap_only=True,approach_only=True,force_resend=args.resend_current)
         image_sender=None
         unit_text_sender=None
         if args.send:

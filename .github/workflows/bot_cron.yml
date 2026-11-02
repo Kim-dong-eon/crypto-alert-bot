@@ -12,7 +12,7 @@ on:
         type: string
         default: ''
       resend_current:
-        description: 'One run only: resend currently eligible zones without clearing existing locks'
+        description: 'Compatibility input: zone deduplication is disabled; eligible scans always send'
         type: boolean
         default: false
       inspect_symbol:
@@ -49,7 +49,7 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.ref_name }}
 
-      - name: Synchronize persisted alert locks
+      - name: Synchronize delivery receipts and minute cursors
         env:
           BOT_BRANCH: ${{ github.ref_name }}
         run: git pull --ff-only origin "$BOT_BRANCH"
@@ -67,16 +67,17 @@ jobs:
           sudo apt-get install -y fonts-nanum
           python -m pip install -r requirements-ict.txt
 
-      - name: Verify overlap, lock and chart behavior
-        run: python -m unittest tests.test_ict_overlap tests.test_overlap_charts tests.test_overlap_structure tests.test_common_listings tests.test_overlap_diversification tests.test_overlap_status tests.test_structure_review tests.test_structure_alerts tests.test_overlap_entry tests.test_anchored_overlap -q
+      - name: Verify pullback alerts, repeated delivery and charts
+        run: python -m unittest tests.test_ict_overlap tests.test_overlap_charts tests.test_overlap_structure tests.test_common_listings tests.test_overlap_diversification tests.test_overlap_status tests.test_structure_review tests.test_structure_alerts tests.test_overlap_entry tests.test_anchored_overlap tests.test_pullback_alerts -q
 
       - name: Restore closed-candle cache
         id: candles
         uses: actions/cache/restore@v6
         with:
           path: runtime/ict_overlap/cache
-          key: ict-candles-v9-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
+          key: ict-candles-v10-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
+            ict-candles-v10-${{ runner.os }}-
             ict-candles-v9-${{ runner.os }}-
 
       - name: Scan and deliver LONG/SHORT chart alerts
@@ -106,7 +107,7 @@ jobs:
             python -u run_ict_overlap.py --render-preview --state alert_state/ict_overlap.json --snapshot runtime/ict_overlap/actions.json
           fi
 
-      - name: Persist lock state even after a delivery failure
+      - name: Persist delivery receipts and minute cursors
         if: always() && steps.scan.outcome != 'skipped' && (github.event_name == 'schedule' || inputs.dry_run == false)
         env:
           BOT_BRANCH: ${{ github.ref_name }}
@@ -118,7 +119,7 @@ jobs:
           if git diff --cached --quiet -- alert_state/ict_overlap.json; then
             exit 0
           fi
-          git commit -m 'auto: persist ICT overlap locks [skip ci]'
+          git commit -m 'auto: persist ICT delivery receipts [skip ci]'
           for attempt in 1 2 3; do
             if git push origin "HEAD:$BOT_BRANCH"; then
               exit 0

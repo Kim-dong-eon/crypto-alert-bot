@@ -26,6 +26,9 @@ def split_units(events):
 
 
 def unit_text(event):
+    if event['candidate'].get('alert_policy')=='root-ob-pullback-v1':
+        from src.pullback_alerts import unit_text as pullback_text
+        return pullback_text(event)
     c=event['candidate'];lens=c['lenses'][0]
     if len(c['lenses'])!=1:raise ValueError('One lens per photo pair')
     name='큰 틀' if lens=='broad' else '작은 틀'
@@ -72,6 +75,9 @@ def message_example(units):
 
 def render_side_by_side_unit(snapshot,event,frames,prefix):
     """One alert/lens in one image: left context, right close-up."""
+    if event['candidate'].get('alert_policy')=='root-ob-pullback-v1':
+        from src.pullback_charts import render_unit
+        return render_unit(snapshot,event,frames,prefix)
     configure_font();c=event['candidate'];text=unit_text(event)
     prefix=Path(prefix);prefix.parent.mkdir(parents=True,exist_ok=True)
     fig,axes=plt.subplots(1,2,figsize=(19,7.2),layout='constrained')

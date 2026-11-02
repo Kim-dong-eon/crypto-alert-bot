@@ -42,7 +42,7 @@ def recent_minutes(market,symbol,since,now_ms):
     requested=since//MINUTE*MINUTE
     start=max(requested,end-720*MINUTE)
     limit=min(1000,(end-start)//MINUTE+2)
-    response=market.get('candles',category='USDT-FUTURES',symbol=symbol,interval='1m',limit=str(limit))
+    response=market.get('candles',category='USDT-FUTURES',symbol=symbol,interval='1m',limit=str(limit),endTime=str(end))
     values={}
     for row in response['data']:
         t=int(row[0]);o,h,l,c,v=[float(x) for x in row[1:6]]

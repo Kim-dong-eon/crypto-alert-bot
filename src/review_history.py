@@ -16,6 +16,9 @@ def history_frame(market, symbol, tf, now_ms, count):
         old = json.loads(path.read_text(encoding='utf-8'))
         for b in closed_bars(old['data'], tf, min(now_ms, old['fetched_at'])):
             rows[b.timestamp] = [b.timestamp,b.open,b.high,b.low,b.close,b.volume]
+        # Exhaustion applies only to the retained oldest timestamp. A smaller
+        # request must not truncate the file and then make a wider request
+        # falsely believe that the exchange has no older history.
         exhausted=old.get('history_exhausted',False)
         if (rows and max(rows)+TF_MS[tf]==expected and
                 (min(rows)<=start or exhausted)):
@@ -29,7 +32,7 @@ def history_frame(market, symbol, tf, now_ms, count):
     pages = 0
     cursor = min(rows) if rows else expected
     def checkpoint():
-        saved=[rows[t] for t in sorted(rows) if start<=t<expected]
+        saved=[rows[t] for t in sorted(rows) if t<expected]
         closed_bars(saved,tf,now_ms)
         temporary=path.with_suffix('.tmp')
         temporary.write_text(json.dumps({'fetched_at':now_ms,'data':saved,'history_exhausted':exhausted}),encoding='utf-8')
@@ -87,3 +90,7 @@ class HistoricalMarket:
         if tf=='1w':
             return weekly_from_daily(self.frame(symbol,'1d',now_ms),now_ms)
         return history_frame(self.public,symbol,tf,now_ms,{'1h':4368,'4h':6624,'1d':1102}[tf])
+
+    def quarter_frame(self,symbol,now_ms,start=None):
+        count=max(1000,(frame_open(now_ms,'15m')-start)//TF_MS['15m']+3) if start is not None else 1000
+        return history_frame(self.public,symbol,'15m',now_ms,count)
