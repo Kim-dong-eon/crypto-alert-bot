@@ -77,7 +77,7 @@ def prepare(symbol,frames,now,price,tracks=None):
             'valid_zones':[asdict(z) for z in registry.zones.values()],
             'valid_source_ids':sorted(registry.zones),
             'history_starts':{tf:bars[0].timestamp for tf,bars in usable.items()},
-            'unavailable_frames':unavailable,'deduplication_enabled':False}
+            'unavailable_frames':unavailable,'deduplication_enabled':True}
     zones=list(registry.zones.values())
     for name,pair in tracks.items():
         top,lower=pair

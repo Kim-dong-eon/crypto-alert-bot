@@ -11,7 +11,7 @@ from config.overlap_settings import TRACKS, TRACK_LABELS, BASES, POLL_SECONDS,DI
 from src.ict_overlap import compact_notice,alert_eligible
 from src.structure_alerts import StructureLedger,candidates
 from src.pullback_alerts import scan,short_history_start,POLICY
-from src.repeat_alert_delivery import RepeatAlertLedger
+from src.pullback_delivery import PullbackAlertLedger
 from src.pullback_data import live_frames
 from src.ict_engine import TF_MS,frame_open
 from src.review_history import HistoricalMarket
@@ -155,7 +155,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
                 else:status_delivery['failed']+=1
         else:delivery=ledger.dispatch(sender,batch=True)
         ledger.state['pending'].update(held);ledger.save()
-    report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","strategy":POLICY,'deduplication_enabled':False,"binance_listing_check":listing_check,"instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery,'status_delivery':status_delivery}
+    report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","strategy":POLICY,'deduplication_enabled':True,"binance_listing_check":listing_check,"instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery,'status_delivery':status_delivery}
     if snapshot:
         path=Path(snapshot);path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     print(f"중첩 알림: 전송 {delivery['sent']}건 / 실패 {delivery['failed']}건")
@@ -179,7 +179,7 @@ def main(argv=None):
         symbol,track=args.unlock
         if track not in ('short','medium','long'):parser.error('TRACK must be short, medium or long')
         with single_writer(args.state.with_suffix('.lock')):
-            RepeatAlertLedger(args.state).unlock(symbol,track)
+            PullbackAlertLedger(args.state).unlock(symbol,track)
         print(f'{symbol} {TRACK_LABELS[track]} 잠금 해제');return 0
     market=HistoricalMarket(ROOT/'runtime/ict_overlap/cache/structure')
     catalog=market.instruments()
@@ -196,7 +196,7 @@ def main(argv=None):
         from dotenv import load_dotenv
         load_dotenv(ROOT/'.env');sender=telegram_sender(os.getenv('TELEGRAM_BOT_TOKEN'),os.getenv('TELEGRAM_CHAT_ID'))
     with single_writer(args.state.with_suffix('.lock')) if args.send or args.watch else nullcontext():
-        ledger=RepeatAlertLedger(args.state,require_images=args.send,overlap_only=True,approach_only=True,force_resend=args.resend_current)
+        ledger=PullbackAlertLedger(args.state,require_images=args.send,overlap_only=True,approach_only=True,force_resend=args.resend_current)
         image_sender=None
         unit_text_sender=None
         if args.send:

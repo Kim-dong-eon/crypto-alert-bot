@@ -6,7 +6,7 @@ import unittest
 from src.ict_engine import Bar,TF_MS
 from src.ict_overlap import alert_eligible
 from src.pullback_alerts import scan,prepare,rooted_context,POLICY,unit_text
-from src.repeat_alert_delivery import RepeatAlertLedger
+from src.pullback_delivery import PullbackAlertLedger
 
 
 def fixture():
@@ -110,7 +110,7 @@ class PullbackOriginTests(unittest.TestCase):
         self.assertIn(12*width,[b.timestamp for b in shown])
 
 
-class RepeatDeliveryTests(unittest.TestCase):
+class LockedDeliveryTests(unittest.TestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
         self.path=Path(self.temp.name)/'state.json'
@@ -119,23 +119,62 @@ class RepeatDeliveryTests(unittest.TestCase):
         s=observation();c=approved_candidate(s)
         s['tracks']['short'].update(candidate=c,candidates=[c]);return s
 
-    def test_previous_zone_receipt_and_lock_never_suppress_next_scan(self):
-        ledger=RepeatAlertLedger(self.path,require_images=True,overlap_only=True,approach_only=True)
+    def test_same_parent_stays_locked_after_restart(self):
+        ledger=PullbackAlertLedger(self.path,require_images=True,overlap_only=True,approach_only=True)
         s=self.sample();ledger.observe(s)
         renderer=lambda _: {'images':['a.png']}
         first=ledger.dispatch_units(lambda _:True,lambda _:True,renderer)
         self.assertEqual(first['units_sent'],1)
         s['as_of']+=300000
-        restarted=RepeatAlertLedger(self.path,require_images=True,overlap_only=True,approach_only=True)
+        restarted=PullbackAlertLedger(self.path,require_images=True,overlap_only=True,approach_only=True)
         restarted.observe(s)
         second=restarted.dispatch_units(lambda _:True,lambda _:True,renderer)
-        self.assertEqual(second['units_sent'],1)
-        self.assertFalse(restarted.state['locks'])
-        self.assertEqual(restarted.state['dedup_audits']['AAPLUSDT']['suppressed'],0)
-        self.assertEqual(len(restarted.state['delivered']),2)
+        self.assertEqual(second['units_sent'],0)
+        self.assertEqual(len(restarted.state['locks']['AAPLUSDT|short']),1)
+        self.assertEqual(restarted.state['dedup_audits']['AAPLUSDT']['suppressed'],1)
+        self.assertEqual(len(restarted.state['delivered']),1)
+
+    def test_explicit_resend_bypasses_once_then_restores_the_lock(self):
+        renderer=lambda _:{'images':['a.png']}
+        ledger=PullbackAlertLedger(self.path,require_images=True,overlap_only=True,approach_only=True)
+        s=self.sample();ledger.observe(s);ledger.dispatch_units(lambda _:True,lambda _:True,renderer)
+        s['as_of']+=300000
+        resend=PullbackAlertLedger(self.path,require_images=True,overlap_only=True,approach_only=True,force_resend=True)
+        resend.observe(s)
+        self.assertEqual(resend.dispatch_units(lambda _:True,lambda _:True,renderer)['units_sent'],1)
+        self.assertFalse(resend.force_resend)
+        s['as_of']+=300000;resend.observe(s)
+        self.assertEqual(resend.dispatch_units(lambda _:True,lambda _:True,renderer)['units_sent'],0)
+
+    def test_receipts_from_unlocked_mode_seed_restored_locks(self):
+        ledger=PullbackAlertLedger(self.path,require_images=True,overlap_only=True,approach_only=True)
+        s=self.sample();ledger.observe(s);ledger.dispatch_units(lambda _:True,lambda _:True,lambda _:{'images':['a.png']})
+        ledger.state['delivery_mode']='every_qualifying_scan';ledger.state['locks']={};ledger.save()
+        restored=PullbackAlertLedger(self.path,require_images=True,overlap_only=True,approach_only=True)
+        s['as_of']+=300000
+        self.assertFalse(restored.observe(s))
+        self.assertTrue(restored.state['locks']['AAPLUSDT|short'][0]['sent'])
+
+    def test_changed_lower_zone_does_not_unlock_the_same_upper_ob(self):
+        ledger=PullbackAlertLedger(self.path,require_images=True,overlap_only=True,approach_only=True)
+        s=self.sample();ledger.observe(s);ledger.dispatch_units(lambda _:True,lambda _:True,lambda _:{'images':['a.png']})
+        s['as_of']+=300000;c=s['tracks']['short']['candidates'][0]
+        c['id']='new-lower-evidence';c['zone_id']='new-lower-evidence'
+        c['sources'][-1]={**c['sources'][-1],'id':'new-15m-zone'}
+        self.assertFalse(ledger.observe(s))
+
+    def test_big_and_small_share_one_parent_lock_and_keep_separate_photos(self):
+        ledger=PullbackAlertLedger(self.path,require_images=True,overlap_only=True,approach_only=True)
+        s=self.sample();other=copy.deepcopy(s['tracks']['short']['candidates'][0]);other['lenses']=['broad']
+        s['tracks']['short']['candidates'].append(other)
+        self.assertEqual(len(ledger.observe(s)),1)
+        result=ledger.dispatch_units(lambda _:True,lambda _:True,lambda _:{'images':['a.png']})
+        self.assertEqual(result['units_sent'],2)
+        self.assertEqual(len(ledger.state['locks']['AAPLUSDT|short']),1)
+        s['as_of']+=300000;self.assertFalse(ledger.observe(s))
 
     def test_same_attempt_resumes_text_without_reposting_confirmed_photo(self):
-        ledger=RepeatAlertLedger(self.path,require_images=True,overlap_only=True,approach_only=True)
+        ledger=PullbackAlertLedger(self.path,require_images=True,overlap_only=True,approach_only=True)
         ledger.observe(self.sample());photos=[]
         sender=lambda items:photos.append(items) or True
         ledger.dispatch_units(sender,lambda _:False,lambda _:{'images':['a.png']})
@@ -143,7 +182,7 @@ class RepeatDeliveryTests(unittest.TestCase):
         self.assertEqual(len(photos),1);self.assertEqual(second['texts_sent'],1)
 
     def test_preview_cannot_persist_or_delete_old_receipts(self):
-        ledger=RepeatAlertLedger(self.path)
+        ledger=PullbackAlertLedger(self.path)
         ledger.observe(self.sample(),persist=False)
         self.assertFalse(self.path.exists())
         self.assertFalse(ledger.state['pending'])
