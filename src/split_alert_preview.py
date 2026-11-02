@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from config.overlap_settings import TRACK_LABELS
 from src.ict_overlap import LABELS,kst,overlap_checks
 from src.overlap_charts import configure_font
-from src.structure_review_charts import draw_notified_scope
+from src.structure_review_charts import draw_notified_scope,source_provenance_text
 
 
 def split_units(events):
@@ -83,7 +83,9 @@ def render_side_by_side_unit(snapshot,event,frames,prefix):
                                 sweep_limit=1,detail_bars=36)
             tf=c['pair'][0 if overview else -1]
             window=c.get('parent_window')
-            label=f"{LABELS[tf]} 전체 흐름" if overview else f"{LABELS[tf]} 구간 확대"
+            display=getattr(ax,'_structure_display',{})
+            label=(f"{LABELS[tf]} {'기준봉 주변' if display.get('historical') else '최근 흐름'} · {display.get('bars','')}봉"
+                   if overview else f"{LABELS[tf]} 구간 확대")
             if window and not overview:
                 label=(f"기준 {LABELS[c['pair'][0]]}봉 내부 · {LABELS[tf]} {window['child_bars']}개\n"
                        f"{kst(window['start'])} ~ {kst(window['end'])}")
@@ -91,6 +93,7 @@ def render_side_by_side_unit(snapshot,event,frames,prefix):
                          fontsize=12,color='#e3e8f0')
         fig.suptitle(f"{text.splitlines()[0]} · {text.splitlines()[1]}\n{kst(snapshot['as_of'])}",
                      color='#e3e8f0',fontsize=14)
+        fig.supxlabel(source_provenance_text(c['sources']),color='#c8d3e1',fontsize=10)
         path=prefix.with_name(prefix.name+'_side_by_side.png')
         fig.savefig(path,dpi=140,facecolor=fig.get_facecolor())
     finally:plt.close(fig)

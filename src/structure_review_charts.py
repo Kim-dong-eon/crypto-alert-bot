@@ -10,6 +10,59 @@ from src.overlap_charts import configure_font, box_color
 
 COLORS={'broad':'#bd9bf7','recent':'#5ac9db'}
 REGIMES={'up':'상승 구조','down':'하락 구조','mixed':'혼합 구조'}
+DISPLAY_BARS={'4h':96,'1d':100,'1w':78}
+
+
+def readable_bars(bars,tf,window=None):
+    """Keep analysis history wide; display enough candles to see bodies."""
+    count=DISPLAY_BARS.get(tf,96);start=max(0,len(bars)-count)
+    if window:
+        index=next((i for i,b in enumerate(bars) if b.timestamp==window['start']),None)
+        if index is not None and index<start:start=max(0,min(index-count//2,len(bars)-count))
+    shown=bars[start:start+count]
+    return shown,start+len(shown)<len(bars)
+
+
+def mark_zone_candles(ax,zone,bars,tf,slot=0):
+    """Identify the actual base candle and separate confirmation close."""
+    if zone['timeframe']!=tf or not bars:return
+    from src.anchored_overlap import anchor_start
+    origin=bars[0].timestamp;step=TF_MS[tf]
+    basis=anchor_start(zone);confirmed=zone['created']-step
+    color=box_color(zone);name=f"{LABELS[tf]} {zone['kind']}"
+    by_time={b.timestamp:b for b in bars}
+    base=by_time.get(basis)
+    if base:
+        x=(basis-origin)/step
+        height=max(abs(base.close-base.open),base.close*.00001)
+        ax.add_patch(Rectangle((x-.36,min(base.open,base.close)),.72,height,
+                               facecolor='none',edgecolor=color,linewidth=1.6,zorder=8))
+        ax.annotate(name+' 기준봉',xy=(x,(base.open+base.close)/2),
+                    xytext=(-45 if len(bars)>10 else -15,46+slot*28),textcoords='offset points',
+                    color=color,fontsize=10,ha='right' if len(bars)>10 else 'center',
+                    bbox={'facecolor':'#111722','edgecolor':'none','alpha':.9,'pad':3},
+                    arrowprops={'arrowstyle':'->','color':color,'linewidth':.9},zorder=10)
+    confirmation=by_time.get(confirmed)
+    if confirmation:
+        x=(confirmed-origin)/step
+        near_right=x>len(bars)*.65
+        ax.scatter([x],[confirmation.close],marker='o',facecolor='none',edgecolor=color,
+                   s=65,linewidth=1.3,zorder=9)
+        ax.annotate(zone['kind']+' 확인봉 마감',xy=(x,confirmation.close),
+                    xytext=(-14 if near_right else 12,-38-slot*23),textcoords='offset points',color=color,fontsize=9,
+                    ha='right' if near_right else 'left',
+                    bbox={'facecolor':'#111722','edgecolor':'none','alpha':.9,'pad':2},
+                    arrowprops={'arrowstyle':'->','color':color,'linewidth':.7},zorder=10)
+
+
+def source_provenance_text(sources):
+    from src.anchored_overlap import anchor_start
+    unique={z['id']:z for z in sources};lines=[]
+    number=lambda x:f'{x:,.4f}'.rstrip('0').rstrip('.')
+    for z in sorted(unique.values(),key=lambda z:(-TF_MS[z['timeframe']],z['kind'])):
+        lines.append(f"{LABELS[z['timeframe']]} {z['kind']}  |  기준 {kst(anchor_start(z))}"
+                     f"  |  확인 {kst(z['created'])}  |  범위 {number(z['low'])} ~ {number(z['high'])}")
+    return '\n'.join(lines)
 
 
 def render_review(result,frames,folder,label_prefix=''):
@@ -162,8 +215,10 @@ def draw_notified_scope(ax,own,analysis,frames,overview,track_label,show_zone_te
     window=own[0].get('parent_window')
     internal=bool(window and not overview)
     all_bars=frames[tf]
-    bars=([b for b in all_bars if window['start']<=b.timestamp and b.timestamp+TF_MS[tf]<=window['end']]
-          if internal else all_bars if overview else all_bars[-detail_bars:])
+    historical=False
+    if internal:bars=[b for b in all_bars if window['start']<=b.timestamp and b.timestamp+TF_MS[tf]<=window['end']]
+    elif overview:bars,historical=readable_bars(all_bars,tf,window)
+    else:bars=all_bars[-detail_bars:]
     if not bars:raise ValueError('Parent candle child data missing')
     if internal and len(bars)!=window['child_bars']:raise ValueError('Incomplete parent candle children')
     origin=bars[0].timestamp;n=len(bars);end=n+.65 if internal else n+max(8,n*.05)
@@ -176,7 +231,7 @@ def draw_notified_scope(ax,own,analysis,frames,overview,track_label,show_zone_te
         ax.vlines(i,b.low,b.high,color=color,linewidth=.55,zorder=3)
         ax.add_patch(Rectangle((i-.28,min(b.open,b.close)),.56,max(abs(b.open-b.close),span*.00002),
                                facecolor=color,edgecolor='none',zorder=3))
-    handles=[];known=[] if internal else [own[0]['price']];titles=[];seen_sources=set();seen_sweeps=set()
+    handles=[];known=[] if internal or historical else [own[0]['price']];titles=[];seen_sources=set();seen_sweeps=set()
     for c in own:
         lens='·'.join('큰 틀' if s=='broad' else '작은 틀' for s in c['lenses'])
         side='지지 LONG' if c['direction']==1 else '저항 SHORT'
@@ -192,6 +247,7 @@ def draw_notified_scope(ax,own,analysis,frames,overview,track_label,show_zone_te
             ax.add_patch(Rectangle((left,low),end-left,high-low,facecolor='none',edgecolor=color,linewidth=.6,zorder=2))
             name=f"{LABELS[z['timeframe']]} {z['kind']}"
             if name not in [h.get_label() for h in handles]:handles.append(Patch(facecolor=color,edgecolor=color,alpha=.5,label=name))
+            mark_zone_candles(ax,z,bars,tf,sum(s['timeframe']==tf for s in c['sources'][:c['sources'].index(z)]))
         common_origin=(max(z['origin'] for z in c['sources'] if z['timeframe']==lower)
                        if internal else c['latest_source'])
         left=max(-.5,x(common_origin));known.extend((c['low'],c['high']))
@@ -223,22 +279,21 @@ def draw_notified_scope(ax,own,analysis,frames,overview,track_label,show_zone_te
                 ax.scatter([mx],[b.close],marker='s',s=30,color='#fb9ac5',zorder=7)
                 ax.annotate('종가 MSS',xy=(mx,b.close),xytext=(5,12),textcoords='offset points',color='#fb9ac5',fontsize=8)
     price=own[0]['price']
-    if not internal:
+    if not internal and not historical:
         ax.axhline(price,color='#f0d296',linestyle=':',linewidth=.8)
         ax.text(end,price,f"현재가 {price:,.2f}",ha='right',va='bottom',color='#f0d296',fontsize=9)
+    elif historical:
+        ax.text(.98,.02,f'과거 기준봉 주변 확대 · 검사 당시 현재가 {price:,.2f}',transform=ax.transAxes,
+                ha='right',color='#f0d296',fontsize=9,bbox={'facecolor':'#111722','edgecolor':'none','alpha':.85,'pad':3})
     if window and overview:
         left=x(window['start']);right=x(window['end'])
         ax.axvspan(left,right,color='#f8cf57',alpha=.15,zorder=1)
-        parent_bar=next((b for b in bars if b.timestamp==window['start']),None)
-        if parent_bar:
-            ax.annotate(f"기준 {LABELS[top]}봉",xy=(left,(parent_bar.high+parent_bar.low)/2),
-                        xytext=(-35,35),textcoords='offset points',color='#f8cf57',fontsize=9,
-                        arrowprops={'arrowstyle':'->','color':'#f8cf57','linewidth':.8},zorder=9)
     limits=[b.low for b in bars]+[b.high for b in bars]+known
     lo,hi=min(limits),max(limits);pad=max((hi-lo)*.09,price*.0005)
     ax.set_ylim(lo-pad,hi+pad);ax.set_xlim(-.7 if internal else -1,end+.2 if internal else end+1)
     ticks=list(range(0,n,max(1,n//6)))
     ax.set_xticks(ticks,[kst(bars[i].timestamp).replace(' KST','') for i in ticks],fontsize=8)
     ax.set_title('\n'.join(dict.fromkeys(titles))+f" · {LABELS[tf]}",loc='left',fontsize=11,color='#e3e8f0')
+    ax._structure_display={'bars':n,'historical':historical,'timeframe':tf}
     if handles:ax.legend(handles=handles,loc='upper left',ncol=min(4,len(handles)),fontsize=8,
                          facecolor='#111722',edgecolor='#344154',labelcolor='#dce2eb',framealpha=.9)
