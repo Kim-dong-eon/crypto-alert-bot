@@ -157,8 +157,16 @@ def render_structure_pair(snapshot,events,frames,prefix):
 def draw_notified_scope(ax,own,analysis,frames,overview,track_label,show_zone_text=True,sweep_limit=2,detail_bars=180):
     """Only delivered candidates and their evidence; no other watch boxes."""
     top,lower=own[0]['pair'];tf=top if overview else lower
-    all_bars=frames[tf];bars=all_bars if overview else all_bars[-detail_bars:]
-    origin=bars[0].timestamp;n=len(bars);end=n+max(8,n*.05)
+    from src.anchored_overlap import analysis_frames
+    frames=analysis_frames(analysis,frames)
+    window=own[0].get('parent_window')
+    internal=bool(window and not overview)
+    all_bars=frames[tf]
+    bars=([b for b in all_bars if window['start']<=b.timestamp and b.timestamp+TF_MS[tf]<=window['end']]
+          if internal else all_bars if overview else all_bars[-detail_bars:])
+    if not bars:raise ValueError('Parent candle child data missing')
+    if internal and len(bars)!=window['child_bars']:raise ValueError('Incomplete parent candle children')
+    origin=bars[0].timestamp;n=len(bars);end=n+.65 if internal else n+max(8,n*.05)
     x=lambda stamp:(stamp-origin)/TF_MS[tf]
     ax.set_facecolor('#18202d');ax.tick_params(colors='#bac6d4');ax.yaxis.tick_right()
     ax.grid(alpha=.10,color='white');ax.set_axisbelow(True)
@@ -168,7 +176,7 @@ def draw_notified_scope(ax,own,analysis,frames,overview,track_label,show_zone_te
         ax.vlines(i,b.low,b.high,color=color,linewidth=.55,zorder=3)
         ax.add_patch(Rectangle((i-.28,min(b.open,b.close)),.56,max(abs(b.open-b.close),span*.00002),
                                facecolor=color,edgecolor='none',zorder=3))
-    handles=[];known=[own[0]['price']];titles=[];seen_sources=set();seen_sweeps=set()
+    handles=[];known=[] if internal else [own[0]['price']];titles=[];seen_sources=set();seen_sweeps=set()
     for c in own:
         lens='·'.join('큰 틀' if s=='broad' else '작은 틀' for s in c['lenses'])
         side='지지 LONG' if c['direction']==1 else '저항 SHORT'
@@ -177,13 +185,16 @@ def draw_notified_scope(ax,own,analysis,frames,overview,track_label,show_zone_te
             if z['id'] in seen_sources:continue
             seen_sources.add(z['id']);color=box_color(z)
             # Evidence remains within this notified structural candidate.
-            low=max(z['low'],c['structure_area']['low']);high=min(z['high'],c['structure_area']['high'])
+            if c.get('parent_window'):low,high=z['low'],z['high']
+            else:low,high=max(z['low'],c['structure_area']['low']),min(z['high'],c['structure_area']['high'])
             left=max(-.5,x(z['origin']));known.extend((low,high))
             ax.add_patch(Rectangle((left,low),end-left,high-low,facecolor=color,edgecolor='none',alpha=.12,zorder=1))
             ax.add_patch(Rectangle((left,low),end-left,high-low,facecolor='none',edgecolor=color,linewidth=.6,zorder=2))
             name=f"{LABELS[z['timeframe']]} {z['kind']}"
             if name not in [h.get_label() for h in handles]:handles.append(Patch(facecolor=color,edgecolor=color,alpha=.5,label=name))
-        left=max(-.5,x(c['latest_source']));known.extend((c['low'],c['high']))
+        common_origin=(max(z['origin'] for z in c['sources'] if z['timeframe']==lower)
+                       if internal else c['latest_source'])
+        left=max(-.5,x(common_origin));known.extend((c['low'],c['high']))
         ax.add_patch(Rectangle((left,c['low']),end-left,c['high']-c['low'],facecolor='#ffffff',edgecolor='none',alpha=.10,zorder=2))
         ax.add_patch(Rectangle((left,c['low']),end-left,c['high']-c['low'],facecolor='none',edgecolor='white',linewidth=.9,zorder=5))
         if show_zone_text:
@@ -192,14 +203,14 @@ def draw_notified_scope(ax,own,analysis,frames,overview,track_label,show_zone_te
                         bbox={'facecolor':'#18202d','edgecolor':'none','alpha':.85,'pad':2})
         chosen='broad' if overview and 'broad' in c['lenses'] else 'recent' if 'recent' in c['lenses'] else c['lenses'][0]
         view=analysis['views'][chosen];top_bars=frames[top]
-        points=[p for p in view['turns'] if top_bars[p['index']].timestamp>=origin]
+        points=[p for p in view['turns'] if origin<=top_bars[p['index']].timestamp<=bars[-1].timestamp]
         if points:
             ax.plot([x(top_bars[p['index']].timestamp) for p in points],[p['price'] for p in points],
                     color=COLORS[chosen],linewidth=.85,alpha=.65,zorder=4)
         area=c['structure_area']
         related=[s for s in view['sweeps'] if s['direction']==c['direction'] and
                  s['timestamp']>=area['origin'] and
-                 area['low']<=s['tip']<=area['high'] and top_bars[s['index']].timestamp>=origin]
+                 area['low']<=s['tip']<=area['high'] and origin<=top_bars[s['index']].timestamp<=bars[-1].timestamp]
         for s in related[-sweep_limit:]:
             sid=(s['timestamp'],s['level'])
             if sid in seen_sweeps:continue
@@ -211,11 +222,21 @@ def draw_notified_scope(ax,own,analysis,frames,overview,track_label,show_zone_te
                 b=top_bars[s['mss_index']];mx=x(b.timestamp)
                 ax.scatter([mx],[b.close],marker='s',s=30,color='#fb9ac5',zorder=7)
                 ax.annotate('종가 MSS',xy=(mx,b.close),xytext=(5,12),textcoords='offset points',color='#fb9ac5',fontsize=8)
-    price=own[0]['price'];ax.axhline(price,color='#f0d296',linestyle=':',linewidth=.8)
-    ax.text(end,price,f"현재가 {price:,.2f}",ha='right',va='bottom',color='#f0d296',fontsize=9)
+    price=own[0]['price']
+    if not internal:
+        ax.axhline(price,color='#f0d296',linestyle=':',linewidth=.8)
+        ax.text(end,price,f"현재가 {price:,.2f}",ha='right',va='bottom',color='#f0d296',fontsize=9)
+    if window and overview:
+        left=x(window['start']);right=x(window['end'])
+        ax.axvspan(left,right,color='#f8cf57',alpha=.15,zorder=1)
+        parent_bar=next((b for b in bars if b.timestamp==window['start']),None)
+        if parent_bar:
+            ax.annotate(f"기준 {LABELS[top]}봉",xy=(left,(parent_bar.high+parent_bar.low)/2),
+                        xytext=(-35,35),textcoords='offset points',color='#f8cf57',fontsize=9,
+                        arrowprops={'arrowstyle':'->','color':'#f8cf57','linewidth':.8},zorder=9)
     limits=[b.low for b in bars]+[b.high for b in bars]+known
     lo,hi=min(limits),max(limits);pad=max((hi-lo)*.09,price*.0005)
-    ax.set_ylim(lo-pad,hi+pad);ax.set_xlim(-1,end+1)
+    ax.set_ylim(lo-pad,hi+pad);ax.set_xlim(-.7 if internal else -1,end+.2 if internal else end+1)
     ticks=list(range(0,n,max(1,n//6)))
     ax.set_xticks(ticks,[kst(bars[i].timestamp).replace(' KST','') for i in ticks],fontsize=8)
     ax.set_title('\n'.join(dict.fromkeys(titles))+f" · {LABELS[tf]}",loc='left',fontsize=11,color='#e3e8f0')

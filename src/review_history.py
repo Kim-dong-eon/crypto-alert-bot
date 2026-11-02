@@ -28,6 +28,12 @@ def history_frame(market, symbol, tf, now_ms, count):
             rows[t] = [t]+[float(v) for v in r[1:6]]
     pages = 0
     cursor = min(rows) if rows else expected
+    def checkpoint():
+        saved=[rows[t] for t in sorted(rows) if start<=t<expected]
+        closed_bars(saved,tf,now_ms)
+        temporary=path.with_suffix('.tmp')
+        temporary.write_text(json.dumps({'fetched_at':now_ms,'data':saved,'history_exhausted':exhausted}),encoding='utf-8')
+        temporary.replace(path)
     while cursor > start and not exhausted and pages < (count // 90 + 8):
         batch = market.get('history-candles', category='USDT-FUTURES',
                            symbol=symbol, interval=INTERVALS[tf],
@@ -41,11 +47,12 @@ def history_frame(market, symbol, tf, now_ms, count):
             rows[t] = [t]+[float(v) for v in r[1:6]]
         cursor = min(int(r[0]) for r in older)
         pages += 1
+        if pages%5==0:checkpoint()
     data = [rows[t] for t in sorted(rows) if start <= t < expected]
     bars = closed_bars(data, tf, now_ms)
     if not bars or bars[-1].timestamp + TF_MS[tf] != expected:
         raise ValueError('Review requires a fresh, continuous completed history')
-    path.write_text(json.dumps({'fetched_at':now_ms,'data':data,'history_exhausted':exhausted}),encoding='utf-8')
+    checkpoint()
     return bars
 
 
@@ -79,4 +86,4 @@ class HistoricalMarket:
     def frame(self,symbol,tf,now_ms):
         if tf=='1w':
             return weekly_from_daily(self.frame(symbol,'1d',now_ms),now_ms)
-        return history_frame(self.public,symbol,tf,now_ms,{'1h':1440,'4h':1080,'1d':1102}[tf])
+        return history_frame(self.public,symbol,tf,now_ms,{'1h':4368,'4h':6624,'1d':1102}[tf])

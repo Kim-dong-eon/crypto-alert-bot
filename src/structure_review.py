@@ -143,8 +143,11 @@ def liquidity_events(bars, points, timeframe='4h'):
     return events
 
 
-def analyze(frames,now,price,pair=('4h','1h'),symbol='BTCUSDT',require_ob_fvg=False):
+def analyze(frames,now,price,pair=('4h','1h'),symbol='BTCUSDT',require_ob_fvg=False,same_candle=False):
     top,lower=pair
+    if same_candle:
+        from src.anchored_overlap import TOP_BARS
+        frames={tf:(values[-TOP_BARS[top]:] if tf==top else values) for tf,values in frames.items()}
     for tf in pair:
         bars=frames[tf]
         if not bars or bars[-1].timestamp+TF_MS[tf]!=frame_open(now,tf):
@@ -157,7 +160,12 @@ def analyze(frames,now,price,pair=('4h','1h'),symbol='BTCUSDT',require_ob_fvg=Fa
         for b in frames[tf]:registry.step(tf,b)
     output={'as_of':now,'price':price,'exchange':'bitget','symbol':symbol,'pair':list(pair),
             'prototype':True,'policy':SCALES,'views':{},
+            'frame_starts':{tf:frames[tf][0].timestamp for tf in pair},
             'source_zones':[asdict(z) for z in registry.zones.values()]}
+    if same_candle:
+        from src.anchored_overlap import anchored_overlaps
+        output['anchor_audit']={}
+        nested=anchored_overlaps(list(registry.zones.values()),pair,price,frames[lower],output['anchor_audit'])
     for scale,policy in SCALES.items():
         points=turns(frames[top],policy['atr_multiple'],policy['min_fraction'],top)
         areas=departure_areas(frames[top],points,scale,top)
@@ -171,7 +179,9 @@ def analyze(frames,now,price,pair=('4h','1h'),symbol='BTCUSDT',require_ob_fvg=Fa
                 z=[z for z in registry.zones.values() if z.direction==d and
                    z.low<area['high'] and z.high>area['low']]
                 common=[]
-                for c in overlaps(z,pair,price):
+                choices=(nested if same_candle else overlaps(z,pair,price))
+                for c in choices:
+                    if same_candle and c['sources'][0]['direction']!=d:continue
                     if require_ob_fvg and not {'OB','FVG'}.issubset({s['kind'] for s in c['sources']}):continue
                     low=max(c['low'],area['low']);high=min(c['high'],area['high'])
                     if low>=high:continue

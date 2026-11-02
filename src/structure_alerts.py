@@ -7,6 +7,7 @@ from src.ict_overlap import VERSION,alert_eligible,kst,LABELS
 from src.structure_review import analyze
 from src.overlap_delivery import OverlapLedger
 from src.overlap_entry import ENTRY_POLICY,entry_touch,mixed_evidence
+from src.anchored_overlap import ANCHOR_POLICY,valid_anchor,anchor_start
 
 STRATEGY='two-scale-structure-v1'
 
@@ -17,7 +18,7 @@ def candidates(state):
 
 def scan(symbol,frames,now_ms,price,tracks=None,equilibrium_filter=True,minute_bars=(),touch_since=0):
     tracks=TRACKS if tracks is None else tracks
-    result={'version':VERSION,'strategy':STRATEGY,'entry_policy':ENTRY_POLICY,'symbol':symbol,'exchange':'bitget',
+    result={'version':VERSION,'strategy':STRATEGY,'entry_policy':ENTRY_POLICY,'anchor_policy':ANCHOR_POLICY,'symbol':symbol,'exchange':'bitget',
             'price':price,'as_of':now_ms,'tracks':{},'valid_source_ids':[],
             'valid_zones':[],'history_starts':{},'unavailable_frames':{}}
     for tf,values in frames.items():
@@ -28,7 +29,7 @@ def scan(symbol,frames,now_ms,price,tracks=None,equilibrium_filter=True,minute_b
         result['tracks'][name]=state
         if any(len(frames.get(tf,[]))<16 or frames[tf][-1].timestamp+TF_MS[tf]!=frame_open(now_ms,tf) for tf in pair):
             continue
-        review=analyze(frames,now_ms,price,pair,symbol,require_ob_fvg=True)
+        review=analyze(frames,now_ms,price,pair,symbol,require_ob_fvg=True,same_candle=True)
         state['analysis']=review
         result['valid_zones'].extend(review['source_zones'])
         found=[]
@@ -45,7 +46,7 @@ def scan(symbol,frames,now_ms,price,tracks=None,equilibrium_filter=True,minute_b
                     choices.append({**original,'equilibrium':eq,'entry_touch':touch})
                 choices.sort(key=lambda c:(not c['entry_touch']['hit'],-c['score'],max(c['low']-price,price-c['high'],0)))
                 choice=choices[0]
-                context_id=f"area:{pair[0]}:{area['pivot_origin']}:{d}"
+                context_id=f"parent:{pair[0]}:{choice['parent_window']['start']}:{d}"
                 raw=f"{symbol}|{name}|{context_id}|{choice['low']:.12g}|{choice['high']:.12g}|{'|'.join(choice['source_ids'])}"
                 c={**choice,'id':hashlib.sha256(raw.encode()).hexdigest()[:24],
                    'symbol':symbol,'track':name,'pair':list(pair),'exchange':'bitget',
@@ -54,11 +55,13 @@ def scan(symbol,frames,now_ms,price,tracks=None,equilibrium_filter=True,minute_b
                    'structure_states':{k:v['structure'] for k,v in review['views'].items()},
                    'context_price_breach':price<area['low'] if d==1 else price>area['high'],
                    'location':'inside' if choice['low']<=price<=choice['high'] else 'waiting'}
+                c['lens_details']={lens:{k:c[k] for k in ('structure_area','entry_touch','equilibrium')}}
                 # One physical overlap can belong to both lenses. Its
                 # original identity, band and four evidence checks stay one.
                 duplicate=next((old for old in found if old['context_id']==context_id and
                                 old['source_ids']==c['source_ids'] and old['low']==c['low'] and old['high']==c['high']),None)
-                if duplicate:duplicate['lenses'].append(lens)
+                if duplicate and duplicate['entry_touch']['hit']==c['entry_touch']['hit']:
+                    duplicate['lenses'].append(lens);duplicate['lens_details'].update(c['lens_details'])
                 else:found.append(c)
         found.sort(key=lambda c:(not alert_eligible(c),-c['score'],max(c['low']-price,price-c['high'],0)))
         state.update(status='watching' if found else 'no_overlap',candidates=found,
@@ -104,6 +107,7 @@ class StructureLedger(OverlapLedger):
             return super().observe(snapshot,display_name,persist)
         before=copy.deepcopy(self.state);valid=set(snapshot['valid_source_ids'])
         entry_mode=snapshot.get('entry_policy')==ENTRY_POLICY
+        anchored=snapshot.get('anchor_policy')==ANCHOR_POLICY
         stage='entry' if entry_mode else 'approach'
         stamp=snapshot['as_of'];audit={'suppressed':0,'queued':0,'retired':0,'legacy_matched':0,'uncertain_held':0}
         self.state['strategy']=STRATEGY
@@ -123,6 +127,7 @@ class StructureLedger(OverlapLedger):
                           if a['invalidated_at'] is None}
             for lock in locks:
                 held=lock['latest'];missing=[z for z in held.get('sources',[]) if z['id'] not in valid]
+                if anchored and not valid_anchor(held):audit['retired']+=1;continue
                 starts=snapshot['history_starts']
                 source_broken=any(z['timeframe'] in starts and z['origin']>=starts[z['timeframe']] for z in missing)
                 area_broken=held['context_id'] in invalid_areas and held['context_id'] not in active_areas
@@ -132,6 +137,7 @@ class StructureLedger(OverlapLedger):
             for current_candidate in candidates(current):
                 c=copy.deepcopy(current_candidate)
                 match=next((lock for lock in remaining if lock['latest']['direction']==c['direction'] and
+                            (not anchored or anchor_start(next(s for s in lock['latest']['sources'] if s['timeframe']==c['pair'][0]))==c['parent_window']['start']) and
                             max(lock['anchor_low'],c['low'])<min(lock['anchor_high'],c['high'])),None)
                 if match:
                     old=match['latest'];c['id']=old['id']
@@ -153,6 +159,7 @@ class StructureLedger(OverlapLedger):
                 if key in self.state['pending']:
                     pending=self.state['pending'][key]['candidate']
                     pending['lenses']=list(dict.fromkeys(pending['lenses']+c['lenses']))
+                    pending.setdefault('lens_details',{}).update(c.get('lens_details',{}))
                     audit['suppressed']+=1;continue
                 if unfinished and presentation.get('candidate'):
                     c=copy.deepcopy(presentation['candidate'])
@@ -166,6 +173,7 @@ class StructureLedger(OverlapLedger):
                 if (p['complete'] or p['symbol']!=snapshot['symbol'] or p['track']!=name
                         or key in self.state['pending'] or not original):continue
                 if entry_mode and not (original.get('entry_touch',{}).get('hit') and mixed_evidence(original)):continue
+                if anchored and not valid_anchor(original):continue
                 if not set(original['source_ids']).issubset(valid):continue
                 if original['context_id'] in invalid_areas and original['context_id'] not in active_areas:continue
                 area=original.get('structure_area',{})

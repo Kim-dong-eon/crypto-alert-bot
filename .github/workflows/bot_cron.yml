@@ -38,7 +38,7 @@ jobs:
   run-bot:
     if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 25
     env:
       PYTHONIOENCODING: utf-8
       MPLBACKEND: Agg
@@ -68,7 +68,7 @@ jobs:
           python -m pip install -r requirements-ict.txt
 
       - name: Verify overlap, lock and chart behavior
-        run: python -m unittest tests.test_ict_overlap tests.test_overlap_charts tests.test_overlap_structure tests.test_common_listings tests.test_overlap_diversification tests.test_overlap_status tests.test_structure_review tests.test_structure_alerts tests.test_overlap_entry -q
+        run: python -m unittest tests.test_ict_overlap tests.test_overlap_charts tests.test_overlap_structure tests.test_common_listings tests.test_overlap_diversification tests.test_overlap_status tests.test_structure_review tests.test_structure_alerts tests.test_overlap_entry tests.test_anchored_overlap -q
 
       - name: Restore closed-candle cache
         id: candles

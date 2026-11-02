@@ -16,6 +16,7 @@ def split_units(events):
     for event in events:
         for lens in event['candidate']['lenses']:
             unit=copy.deepcopy(event)
+            unit['candidate'].update(unit['candidate'].get('lens_details',{}).get(lens,{}))
             unit['candidate']['lenses']=[lens]
             result.append(unit)
     rank={'short':0,'medium':1,'long':2}
@@ -81,7 +82,12 @@ def render_side_by_side_unit(snapshot,event,frames,prefix):
                                 overview,TRACK_LABELS[c['track']],show_zone_text=False,
                                 sweep_limit=1,detail_bars=36)
             tf=c['pair'][0 if overview else -1]
-            ax.set_title(f"{LABELS[tf]} {'전체 흐름' if overview else '구간 확대'}",loc='left',
+            window=c.get('parent_window')
+            label=f"{LABELS[tf]} 전체 흐름" if overview else f"{LABELS[tf]} 구간 확대"
+            if window and not overview:
+                label=(f"기준 {LABELS[c['pair'][0]]}봉 내부 · {LABELS[tf]} {window['child_bars']}개\n"
+                       f"{kst(window['start'])} ~ {kst(window['end'])}")
+            ax.set_title(label,loc='left',
                          fontsize=12,color='#e3e8f0')
         fig.suptitle(f"{text.splitlines()[0]} · {text.splitlines()[1]}\n{kst(snapshot['as_of'])}",
                      color='#e3e8f0',fontsize=14)

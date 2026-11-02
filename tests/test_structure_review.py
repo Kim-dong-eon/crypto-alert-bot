@@ -84,6 +84,19 @@ class ReviewHistoryTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'Missing'):
             history_frame(self.market,'BTCUSDT','4h',4*step,3)
 
+    def test_large_backfill_resumes_after_an_interrupted_page(self):
+        step=TF_MS['4h'];now=1000*step
+        def page(start,end):return {'data':[[i*step,100,102,98,101,2] for i in range(start,end)]}
+        self.market.get.side_effect=([page(900,1000)]+[page(i,i+100) for i in (800,700,600,500,400)]+[RuntimeError('interrupted')])
+        with self.assertRaises(RuntimeError):history_frame(self.market,'BTCUSDT','4h',now,1000)
+        p=self.market.cache/'BTCUSDT_4h_review.json'
+        self.assertEqual(json.loads(p.read_text())['data'][0][0],400*step)
+        self.market.get.reset_mock()
+        self.market.get.side_effect=[page(900,1000)]+[page(i,i+100) for i in (300,200,100,0)]
+        values=history_frame(self.market,'BTCUSDT','4h',now,1000)
+        self.assertEqual(len(values),1000)
+        self.assertEqual(self.market.get.call_args_list[1].kwargs['endTime'],str(400*step))
+
     def test_weekly_only_from_seven_complete_monday_days(self):
         day=TF_MS['1d'];monday=4*day
         values=[Bar(monday+i*day,100+i,103+i,99+i,101+i,2) for i in range(15)]
