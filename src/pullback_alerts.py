@@ -15,6 +15,8 @@ from src.overlap_entry import entry_touch
 
 POLICY='root-ob-pullback-v1'
 TOP_COUNTS={'4h':1080,'1d':1102,'1w':156}
+REFINEMENT={'short':'15m','medium':'1h','long':'4h'}
+TRIPLE_TRACKS={name:(*pair,REFINEMENT[name]) for name,pair in TRACKS.items()}
 
 
 def rooted_context(parent,bars,points,areas,tf,now):
@@ -81,7 +83,7 @@ def prepare(symbol,frames,now,price,tracks=None):
     zones=list(registry.zones.values())
     for name,pair in tracks.items():
         top,lower=pair
-        state={'pair':list(pair),'candidate':None,'candidates':[],'status':'data_unavailable','direction':0,'context':None}
+        state={'pair':list(pair),'path':[*pair,REFINEMENT[name]],'candidate':None,'candidates':[],'status':'data_unavailable','direction':0,'context':None}
         result['tracks'][name]=state
         if any(tf not in usable or len(usable[tf])<16 for tf in pair):continue
         bars=usable[top][-TOP_COUNTS[top]:]
@@ -121,20 +123,42 @@ def prepare(symbol,frames,now,price,tracks=None):
     return result,usable,zones
 
 
+def refinement_history_starts(symbol,frames,now,price,minute_bars=(),touch_since=0):
+    """Backfill the final frame only for rooted boxes touched in this check."""
+    prepared,_,_=prepare(symbol,frames,now,price)
+    starts={}
+    for name,state in prepared['tracks'].items():
+        final=REFINEMENT[name]
+        for view in state.get('analysis',{}).get('views',{}).values():
+            for area in view['selected']:
+                for c in area['overlaps']:
+                    # A missing FVG may be supplied by the third timeframe.
+                    probe={**c,'sources':c['sources']+[{'kind':'FVG'}]}
+                    if entry_touch(probe,area,price,now,minute_bars,touch_since)['hit']:
+                        required=area['origin']-2*TF_MS[final]
+                        starts[final]=min(starts.get(final,required),required)
+    return starts
+
+
 def short_history_start(symbol,frames,now,price,minute_bars=(),touch_since=0):
-    """Fetch old 15m evidence only for rooted 4H/1H boxes touched now."""
-    prepared,_,_=prepare(symbol,frames,now,price,{'short':TRACKS['short']})
-    starts=[]
-    state=prepared['tracks']['short']
-    for view in state.get('analysis',{}).get('views',{}).values():
-        for area in view['selected']:
-            for c in area['overlaps']:
-                # Pre-screen physical touch without imposing mixed evidence:
-                # the missing FVG may be supplied by the 15m refinement.
-                probe={**c,'sources':c['sources']+[{'kind':'FVG'}]}
-                if entry_touch(probe,area,price,now,minute_bars,touch_since)['hit']:
-                    starts.append(area['origin']-2*TF_MS['15m'])
-    return min(starts) if starts else None
+    return refinement_history_starts(symbol,frames,now,price,minute_bars,touch_since).get('15m')
+
+
+def refine_overlap(raw,area,zones,usable,final):
+    """Require a third same-direction OB/FVG in the actual common price band."""
+    bars=usable.get(final,[]);required=area['origin']-2*TF_MS[final]
+    if not bars or bars[0].timestamp>required:return []
+    result=[]
+    for z in zones:
+        if z.timeframe!=final or z.direction!=raw['direction'] or z.origin<required:continue
+        low=max(raw['low'],z.low);high=min(raw['high'],z.high)
+        if low>=high:continue
+        sources=raw['sources']+[asdict(z)]
+        if not {'OB','FVG'}.issubset(s['kind'] for s in sources):continue
+        result.append({**raw,'low':low,'high':high,'sources':sources,
+                       'source_ids':raw['source_ids']+[z.id],
+                       'latest_source':max(raw['latest_source'],z.created),'refinement_tf':final})
+    return result
 
 
 def scan(symbol,frames,now_ms,price,tracks=None,equilibrium_filter=True,minute_bars=(),touch_since=0):
@@ -146,24 +170,7 @@ def scan(symbol,frames,now_ms,price,tracks=None,equilibrium_filter=True,minute_b
             for area in view['selected']:
                 choices=[]
                 for raw in area['overlaps']:
-                    refinements=[]
-                    if name=='short':
-                        # A short alert includes real 15m evidence from this
-                        # root, rather than another arbitrary recent box.
-                        quarter=usable.get('15m',[])
-                        required=area['origin']-2*TF_MS['15m']
-                        if not quarter or quarter[0].timestamp>required:continue
-                        for z in zones:
-                            if z.timeframe!='15m' or z.direction!=raw['direction'] or z.origin<required:continue
-                            low=max(raw['low'],z.low);high=min(raw['high'],z.high)
-                            if low>=high:continue
-                            all_sources=raw['sources']+[asdict(z)]
-                            if not {'OB','FVG'}.issubset(s['kind'] for s in all_sources):continue
-                            refinements.append({**raw,'low':low,'high':high,'sources':all_sources,
-                                                'source_ids':raw['source_ids']+[z.id],
-                                                'latest_source':max(raw['latest_source'],z.created),
-                                                'refinement_tf':'15m'})
-                    elif {'OB','FVG'}.issubset(s['kind'] for s in raw['sources']):refinements=[raw]
+                    refinements=refine_overlap(raw,area,zones,usable,REFINEMENT[name])
                     for choice in refinements:
                         touch=entry_touch(choice,area,price,now_ms,minute_bars,touch_since)
                         eq={'midpoint':touch['midpoint'],'eligible':touch['hit'],'entry_required':True,
@@ -175,7 +182,7 @@ def scan(symbol,frames,now_ms,price,tracks=None,equilibrium_filter=True,minute_b
                 raw_id=f"{POLICY}|{symbol}|{name}|{lens}|{'|'.join(choice['source_ids'])}|{choice['low']:.12g}|{choice['high']:.12g}"
                 identifier=hashlib.sha256(raw_id.encode()).hexdigest()[:24]
                 context_id=f"root:{top}:{choice['parent']['id']}:{lens}"
-                c={**choice,'id':identifier,'zone_id':identifier,'alert_policy':POLICY,
+                c={**choice,'id':identifier,'zone_id':identifier,'alert_policy':POLICY,'path':state['path'],
                    'symbol':symbol,'track':name,'pair':list(state['pair']),'exchange':'bitget',
                    'lenses':[lens],'price':price,'context_id':context_id,'context':{'id':context_id},
                    'formed_at':max(area['created'],choice['latest_source']),
@@ -201,7 +208,9 @@ def unit_text(event):
     for tf in c['pair']:
         kinds=[kind for kind in ('OB','FVG') if (tf,kind) in groups]
         if kinds:proof.append(f"{LABELS[tf]} {'·'.join(kinds)}")
-    if c.get('refinement_tf'):proof.append('15분 '+ '·'.join(kind for kind in ('OB','FVG') if ('15m',kind) in groups))
+    if c.get('refinement_tf'):
+        final=c['refinement_tf']
+        proof.append(LABELS[final]+' '+ '·'.join(kind for kind in ('OB','FVG') if (final,kind) in groups))
     area=c['structure_area']
     direction='상승' if c['direction']==1 else '하락'
     role='지지' if c['direction']==1 else '저항'

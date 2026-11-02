@@ -1,4 +1,4 @@
-"""BTC+exchange equities/ETF/oil:4h/1h,1d/4h,1w/1d; preview default."""
+"""BTC+exchange assets:4h/1h/15m,1d/4h/1h,1w/1d/4h; preview default."""
 import argparse
 from contextlib import nullcontext
 import json
@@ -10,7 +10,7 @@ import traceback
 from config.overlap_settings import TRACKS, TRACK_LABELS, BASES, POLL_SECONDS,DIVERSIFIER_BASES
 from src.ict_overlap import compact_notice,alert_eligible
 from src.structure_alerts import StructureLedger,candidates
-from src.pullback_alerts import scan,short_history_start,POLICY
+from src.pullback_alerts import scan,refinement_history_starts,POLICY,TRIPLE_TRACKS
 from src.pullback_delivery import PullbackAlertLedger
 from src.pullback_data import live_frames
 from src.ict_engine import TF_MS,frame_open
@@ -44,12 +44,15 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         # reconstruct the still-open 4H candle for the approved image format.
         try:minute_bars,minute_coverage=recent_minutes(market,symbol,min(touch_since,frame_open(now,'4h')),int(time.time()*1000))
         except Exception as error:minute_error=type(error).__name__
-        quarter_start=None
+        refinement_starts={}
         try:
-            quarter_start=short_history_start(symbol,frames,now,price,minute_bars,
-                                             max(touch_since,minute_coverage['start']) if minute_coverage else touch_since)
-            if quarter_start is not None:frames['15m']=market.quarter_frame(symbol,int(time.time()*1000),quarter_start)
-        except Exception as error:errors['15m']=type(error).__name__
+            refinement_starts=refinement_history_starts(symbol,frames,now,price,minute_bars,
+                                                        max(touch_since,minute_coverage['start']) if minute_coverage else touch_since)
+        except Exception as error:errors['refinement_context']=type(error).__name__
+        for tf,start in refinement_starts.items():
+            if frames.get(tf) and frames[tf][0].timestamp<=start:continue
+            try:frames[tf]=market.refinement_frame(symbol,tf,int(time.time()*1000),start)
+            except Exception as error:errors[tf]=type(error).__name__
         diversity_data=None;diversity_error=None
         if instrument['baseCoin'] in DIVERSIFIER_BASES:
             try:
@@ -65,7 +68,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         # completed bar; never promote an old partial cache snapshot.
         for tf in list(frames):
             if frames[tf] and frames[tf][-1].timestamp+TF_MS[tf]!=frame_open(observed,tf):
-                try:frames[tf]=(market.quarter_frame(symbol,observed,quarter_start) if tf=='15m' else market.frame(symbol,tf,observed))
+                try:frames[tf]=(market.refinement_frame(symbol,tf,observed,refinement_starts[tf]) if tf in refinement_starts else market.frame(symbol,tf,observed))
                 except Exception as error:errors[tf]=type(error).__name__;frames.pop(tf,None)
         if minute_coverage and minute_coverage['end']!=observed//MINUTE*MINUTE:
             try:minute_bars,minute_coverage=recent_minutes(market,symbol,min(touch_since,frame_open(observed,'4h')),observed)
@@ -155,7 +158,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
                 else:status_delivery['failed']+=1
         else:delivery=ledger.dispatch(sender,batch=True)
         ledger.state['pending'].update(held);ledger.save()
-    report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","strategy":POLICY,'deduplication_enabled':True,"binance_listing_check":listing_check,"instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery,'status_delivery':status_delivery}
+    report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","strategy":POLICY,'paths':TRIPLE_TRACKS,'deduplication_enabled':True,"binance_listing_check":listing_check,"instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery,'status_delivery':status_delivery}
     if snapshot:
         path=Path(snapshot);path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     print(f"중첩 알림: 전송 {delivery['sent']}건 / 실패 {delivery['failed']}건")
@@ -163,7 +166,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
 
 
 def main(argv=None):
-    parser=argparse.ArgumentParser(description="BTC+거래소 주식/ETF/원유: 단기4H/1H·중기1D/4H·장기1W/1D 중첩 관찰")
+    parser=argparse.ArgumentParser(description="BTC+거래소 주식/ETF/원유: 단기4H/1H/15m·중기1D/4H/1H·장기1W/1D/4H 중첩 관찰")
     parser.add_argument('--send',action='store_true');parser.add_argument('--watch',action='store_true')
     parser.add_argument('--resend-current',action='store_true',help='이번 검사만 기존 발송 잠금을 무시하고 현재 조건 충족 구간 재발송')
     parser.add_argument('--inspect-symbol',help='이번 실행만 이 공통 상장 종목의 전체 상태 발송. 여러 종목은 쉼표로 구분')

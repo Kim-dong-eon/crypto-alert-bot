@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from src.ict_engine import Bar,TF_MS
 from src.ict_overlap import alert_eligible
-from src.pullback_alerts import scan,prepare,rooted_context,POLICY,unit_text
+from src.pullback_alerts import scan,prepare,rooted_context,POLICY,unit_text,TRIPLE_TRACKS
 from src.pullback_delivery import PullbackAlertLedger
 
 
@@ -27,6 +27,36 @@ def approved_candidate(state):
 
 
 class PullbackOriginTests(unittest.TestCase):
+    def test_all_horizons_have_the_requested_three_timeframes(self):
+        self.assertEqual(TRIPLE_TRACKS,{'short':('4h','1h','15m'),'medium':('1d','4h','1h'),'long':('1w','1d','4h')})
+
+    def test_medium_and_long_cannot_alert_without_the_third_confluence(self):
+        from dataclasses import asdict
+        from unittest.mock import patch
+        from src.ict_nested import PDZone
+        for name in ('medium','long'):
+            top,middle,final=TRIPLE_TRACKS[name];step=TF_MS[final];now=100*step
+            parent=PDZone('p',top,'OB',1,100,110,20*step,10*step,99,100)
+            child=PDZone('m',middle,'FVG',1,102,108,21*step,10*step,102,102)
+            third=PDZone('t',final,'OB',1,104,106,22*step,12*step,103,104)
+            area={'origin':10*step,'created':20*step,'range_known_at':20*step,'range_low':90,'range_high':130,'direction':1}
+            raw={'low':102,'high':108,'direction':1,'score':2,'source_ids':['p','m'],
+                 'sources':[asdict(parent),asdict(child)],'latest_source':21*step,'parent':asdict(parent),'structure_area':area}
+            selected={**area,'overlaps':[raw]}
+            state={'pair':[top,middle],'path':[top,middle,final],'candidates':[],'candidate':None,
+                   'analysis':{'views':{'recent':{'selected':[selected],'structure':'up'}}}}
+            prepared={'tracks':{name:state},'as_of':now}
+            with patch('src.pullback_alerts.prepare',return_value=(copy.deepcopy(prepared),{},[parent,child])):
+                missing=scan('TEST',{},now,105)
+                self.assertFalse(missing['tracks'][name]['candidates'])
+            with patch('src.pullback_alerts.prepare',return_value=(copy.deepcopy(prepared),{final:[Bar(0,105,110,100,105,1)]},[parent,child,third])):
+                complete=scan('TEST',{},now,105)
+                c=complete['tracks'][name]['candidate']
+                self.assertTrue(alert_eligible(c));self.assertEqual(c['refinement_tf'],final)
+                self.assertEqual((c['low'],c['high']),(104,106))
+                text=unit_text({'candidate':c,'timestamp':now})
+                self.assertIn(('1시간 OB' if final=='1h' else '4시간 OB'),text)
+
     def test_actual_aapl_origin_survives_old_lower_sources_and_needs_no_new_mss(self):
         s=observation();c=approved_candidate(s)
         self.assertEqual((c['low'],c['high']),(343.23,343.33))
@@ -154,6 +184,17 @@ class LockedDeliveryTests(unittest.TestCase):
         s['as_of']+=300000
         self.assertFalse(restored.observe(s))
         self.assertTrue(restored.state['locks']['AAPLUSDT|short'][0]['sent'])
+
+    def test_upgrade_does_not_resume_a_two_frame_middle_photo(self):
+        ledger=PullbackAlertLedger(self.path,require_images=True,overlap_only=True,approach_only=True)
+        s=self.sample();c=copy.deepcopy(s['tracks']['short']['candidate'])
+        c['track']='medium';c['pair']=['1d','4h'];c.pop('refinement_tf')
+        ledger.state['presentations']['old-middle']={'symbol':c['symbol'],'track':'medium','attempt':s['as_of'],
+                                                    'complete':False,'candidate':c,'units':{}}
+        ledger.save()
+        upgraded=PullbackAlertLedger(self.path,require_images=True,overlap_only=True,approach_only=True)
+        self.assertNotIn('old-middle',upgraded.state['presentations'])
+        self.assertTrue(upgraded.state['retired_presentations'])
 
     def test_changed_lower_zone_does_not_unlock_the_same_upper_ob(self):
         ledger=PullbackAlertLedger(self.path,require_images=True,overlap_only=True,approach_only=True)

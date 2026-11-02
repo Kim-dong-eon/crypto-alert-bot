@@ -3,7 +3,7 @@ import copy
 import hashlib
 from src.structure_alerts import StructureLedger,candidates
 from src.ict_overlap import alert_eligible
-from src.pullback_alerts import POLICY
+from src.pullback_alerts import POLICY,REFINEMENT
 
 MODE='once_per_parent_ob'
 
@@ -35,6 +35,16 @@ class PullbackAlertLedger(StructureLedger):
                 locks.append(self.lock(c,sent=True))
         self.state['strategy']=POLICY
         self.state['delivery_mode']=MODE
+        # Do not resume a half-delivered two-frame middle/long alert after
+        # upgrading all horizons to mandatory three-frame confluence. Keep
+        # completed receipts and their parent locks intact.
+        presentations=self.state.setdefault('presentations',{})
+        for key,p in list(presentations.items()):
+            c=p.get('candidate') or {}
+            if (not p.get('complete') and c.get('alert_policy')==POLICY
+                    and c.get('refinement_tf')!=REFINEMENT.get(c.get('track'))):
+                self.state.setdefault('retired_presentations',{})[f"{key}:{p.get('attempt',0)}"]=p
+                presentations.pop(key);self.state['pending'].pop(key,None)
 
     @staticmethod
     def lock(c,sent=False):

@@ -92,5 +92,9 @@ class HistoricalMarket:
         return history_frame(self.public,symbol,tf,now_ms,{'1h':4368,'4h':6624,'1d':1102}[tf])
 
     def quarter_frame(self,symbol,now_ms,start=None):
-        count=max(1000,(frame_open(now_ms,'15m')-start)//TF_MS['15m']+3) if start is not None else 1000
-        return history_frame(self.public,symbol,'15m',now_ms,count)
+        return self.refinement_frame(symbol,'15m',now_ms,start)
+
+    def refinement_frame(self,symbol,tf,now_ms,start=None):
+        minimum={'15m':1000,'1h':4368,'4h':6624}[tf]
+        count=max(minimum,(frame_open(now_ms,tf)-start)//TF_MS[tf]+3) if start is not None else minimum
+        return history_frame(self.public,symbol,tf,now_ms,count)
