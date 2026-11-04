@@ -140,7 +140,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 79420.9,
+        "price": 79171.8,
         "context_id": "root:1d:1d:OB:1783900800000:1784073600000:1:broad",
         "context": {
           "id": "root:1d:1d:OB:1783900800000:1784073600000:1:broad"
@@ -153,7 +153,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793803852416
+      "checked_at": 1793804146527
     },
     "BTCUSDT|long": {
       "candidate": {
@@ -279,7 +279,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 79420.9,
+        "price": 79171.8,
         "context_id": "root:1w:1w:OB:1768176000000:1769385600000:-1:recent",
         "context": {
           "id": "root:1w:1w:OB:1768176000000:1769385600000:-1:recent"
@@ -292,7 +292,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793803852416
+      "checked_at": 1793804146527
     },
     "SKHYNIXUSDT|medium": {
       "candidate": {
@@ -418,7 +418,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 1050.56,
+        "price": 1041.44,
         "context_id": "root:1d:1d:OB:1791072000000:1791244800000:-1:recent",
         "context": {
           "id": "root:1d:1d:OB:1791072000000:1791244800000:-1:recent"
@@ -431,11 +431,11 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793803852946
+      "checked_at": 1793804147181
     },
     "SKHYNIXUSDT|long": {
       "candidate": null,
-      "checked_at": 1793803852946
+      "checked_at": 1793804147181
     },
     "NVDAUSDT|medium": {
       "candidate": {
@@ -561,7 +561,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 205.68,
+        "price": 204.6,
         "context_id": "root:1d:1d:OB:1785542400000:1785715200000:1:recent",
         "context": {
           "id": "root:1d:1d:OB:1785542400000:1785715200000:1:recent"
@@ -574,7 +574,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793803853349
+      "checked_at": 1793804147643
     },
     "NVDAUSDT|long": {
       "candidate": {
@@ -700,7 +700,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 205.68,
+        "price": 204.6,
         "context_id": "root:1w:1w:OB:1774224000000:1775433600000:1:recent",
         "context": {
           "id": "root:1w:1w:OB:1774224000000:1775433600000:1:recent"
@@ -713,7 +713,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793803853349
+      "checked_at": 1793804147643
     },
     "TSLAUSDT|medium": {
       "candidate": {
@@ -854,7 +854,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 382.14,
+        "price": 383.88,
         "context_id": "root:1d:1d:OB:1792886400000:1793059200000:1:broad",
         "context": {
           "id": "root:1d:1d:OB:1792886400000:1793059200000:1:broad"
@@ -867,7 +867,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793803853792
+      "checked_at": 1793804148145
     },
     "TSLAUSDT|long": {
       "candidate": {
@@ -993,7 +993,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 382.14,
+        "price": 383.88,
         "context_id": "root:1w:1w:OB:1783296000000:1784505600000:-1:recent",
         "context": {
           "id": "root:1w:1w:OB:1783296000000:1784505600000:-1:recent"
@@ -1006,12 +1006,12 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793803853792
+      "checked_at": 1793804148145
     },
     "AAPLUSDT|medium": {
       "candidate": {
-        "low": 350.49,
-        "high": 350.97,
+        "low": 350.89,
+        "high": 351.72,
         "score": 2,
         "groups": [
           "1d:OB",
@@ -1020,7 +1020,7 @@
         "source_ids": [
           "1d:OB:1793232000000:1793404800000:-1",
           "4h:OB:1793332800000:1793361600000:-1",
-          "1h:FVG:1793343600000:1793354400000:-1"
+          "1h:FVG:1793318400000:1793329200000:-1"
         ],
         "sources": [
           {
@@ -1050,16 +1050,16 @@
             "expiry": 9223372036854775807
           },
           {
-            "id": "1h:FVG:1793343600000:1793354400000:-1",
+            "id": "1h:FVG:1793318400000:1793329200000:-1",
             "timeframe": "1h",
             "kind": "FVG",
             "direction": -1,
-            "low": 350.49,
-            "high": 350.97,
-            "created": 1793354400000,
-            "origin": 1793343600000,
-            "stop": 350.97,
-            "invalidation": 350.97,
+            "low": 350.89,
+            "high": 352.0,
+            "created": 1793329200000,
+            "origin": 1793318400000,
+            "stop": 352.0,
+            "invalidation": 352.0,
             "expiry": 9223372036854775807
           }
         ],
@@ -1110,17 +1110,17 @@
         "entry_touch": {
           "hit": true,
           "midpoint": 338.84000000000003,
-          "band_low": 350.49,
-          "band_high": 350.97,
+          "band_low": 350.89,
+          "band_high": 351.72,
           "valid_from": 1793664000000,
-          "at": 1793803800000,
-          "bar_open": 1793803740000,
+          "at": 1793804100000,
+          "bar_open": 1793804040000,
           "evidence": "completed_1m_range",
-          "observed_low": 350.25,
-          "observed_high": 351.17
+          "observed_low": 350.58,
+          "observed_high": 351.29
         },
-        "id": "3334942b29ed483b00238089",
-        "zone_id": "3334942b29ed483b00238089",
+        "id": "263f838e7df18c4b77421243",
+        "zone_id": "263f838e7df18c4b77421243",
         "alert_policy": "root-ob-pullback-v1",
         "path": [
           "1d",
@@ -1137,7 +1137,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 350.17,
+        "price": 351.79,
         "context_id": "root:1d:1d:OB:1793232000000:1793404800000:-1:broad",
         "context": {
           "id": "root:1d:1d:OB:1793232000000:1793404800000:-1:broad"
@@ -1150,7 +1150,7 @@
         "context_price_breach": false,
         "location": "outside_after_touch"
       },
-      "checked_at": 1793803854270
+      "checked_at": 1793804148720
     },
     "AAPLUSDT|long": {
       "candidate": {
@@ -1276,7 +1276,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 350.17,
+        "price": 351.79,
         "context_id": "root:1w:1w:OB:1782086400000:1783296000000:1:recent",
         "context": {
           "id": "root:1w:1w:OB:1782086400000:1783296000000:1:recent"
@@ -1289,7 +1289,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793803854270
+      "checked_at": 1793804148720
     },
     "MSFTUSDT|medium": {
       "candidate": {
@@ -1415,7 +1415,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 550.0,
+        "price": 552.49,
         "context_id": "root:1d:1d:OB:1789257600000:1789430400000:1:recent",
         "context": {
           "id": "root:1d:1d:OB:1789257600000:1789430400000:1:recent"
@@ -1428,7 +1428,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793803854695
+      "checked_at": 1793804149258
     },
     "MSFTUSDT|long": {
       "candidate": {
@@ -1554,7 +1554,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 550.0,
+        "price": 552.49,
         "context_id": "root:1w:1w:OB:1783296000000:1784505600000:1:recent",
         "context": {
           "id": "root:1w:1w:OB:1783296000000:1784505600000:1:recent"
@@ -1567,11 +1567,11 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793803854695
+      "checked_at": 1793804149258
     },
     "AMZNUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793803855101
+      "checked_at": 1793804149754
     },
     "AMZNUSDT|long": {
       "candidate": {
@@ -1697,7 +1697,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 269.01,
+        "price": 270.33,
         "context_id": "root:1w:1w:OB:1774224000000:1775433600000:1:broad",
         "context": {
           "id": "root:1w:1w:OB:1774224000000:1775433600000:1:broad"
@@ -1710,7 +1710,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793803855101
+      "checked_at": 1793804149754
     },
     "GOOGLUSDT|medium": {
       "candidate": {
@@ -1836,7 +1836,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 289.68,
+        "price": 291.37,
         "context_id": "root:1d:1d:OB:1792368000000:1792540800000:-1:broad",
         "context": {
           "id": "root:1d:1d:OB:1792368000000:1792540800000:-1:broad"
@@ -1849,11 +1849,11 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793803855535
+      "checked_at": 1793804150255
     },
     "GOOGLUSDT|long": {
       "candidate": null,
-      "checked_at": 1793803855535
+      "checked_at": 1793804150255
     },
     "METAUSDT|medium": {
       "candidate": {
@@ -1994,7 +1994,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 631.85,
+        "price": 632.19,
         "context_id": "root:1d:1d:OB:1788134400000:1788307200000:1:broad",
         "context": {
           "id": "root:1d:1d:OB:1788134400000:1788307200000:1:broad"
@@ -2007,7 +2007,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793803855936
+      "checked_at": 1793804150748
     },
     "METAUSDT|long": {
       "candidate": {
@@ -2133,7 +2133,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 631.85,
+        "price": 632.19,
         "context_id": "root:1w:1w:OB:1782086400000:1783296000000:1:recent",
         "context": {
           "id": "root:1w:1w:OB:1782086400000:1783296000000:1:recent"
@@ -2146,7 +2146,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793803855936
+      "checked_at": 1793804150748
     },
     "QQQUSDT|medium": {
       "candidate": {
@@ -2272,7 +2272,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 697.64,
+        "price": 697.19,
         "context_id": "root:1d:1d:OB:1785283200000:1785456000000:1:broad",
         "context": {
           "id": "root:1d:1d:OB:1785283200000:1785456000000:1:broad"
@@ -2285,11 +2285,11 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793803856316
+      "checked_at": 1793804151210
     },
     "QQQUSDT|long": {
       "candidate": null,
-      "checked_at": 1793803856316
+      "checked_at": 1793804151210
     },
     "SPYUSDT|medium": {
       "candidate": {
@@ -2415,7 +2415,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 767.96,
+        "price": 768.1,
         "context_id": "root:1d:1d:OB:1791676800000:1791849600000:-1:recent",
         "context": {
           "id": "root:1d:1d:OB:1791676800000:1791849600000:-1:recent"
@@ -2428,11 +2428,11 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793803856701
+      "checked_at": 1793804151666
     },
     "SPYUSDT|long": {
       "candidate": null,
-      "checked_at": 1793803856701
+      "checked_at": 1793804151666
     },
     "NDX100USDT|medium": {
       "candidate": {
@@ -2552,19 +2552,19 @@
     },
     "BTCUSDT|short": {
       "candidate": null,
-      "checked_at": 1793803852416
+      "checked_at": 1793804146527
     },
     "SKHYNIXUSDT|short": {
       "candidate": null,
-      "checked_at": 1793803852946
+      "checked_at": 1793804147181
     },
     "NVDAUSDT|short": {
       "candidate": null,
-      "checked_at": 1793803853349
+      "checked_at": 1793804147643
     },
     "TSLAUSDT|short": {
       "candidate": null,
-      "checked_at": 1793803853792
+      "checked_at": 1793804148145
     },
     "AAPLUSDT|short": {
       "candidate": {
@@ -2686,11 +2686,11 @@
           "band_low": 351.07,
           "band_high": 351.72,
           "valid_from": 1793664000000,
-          "at": 1793803800000,
-          "bar_open": 1793803740000,
+          "at": 1793804100000,
+          "bar_open": 1793804040000,
           "evidence": "completed_1m_range",
-          "observed_low": 350.25,
-          "observed_high": 351.17
+          "observed_low": 350.58,
+          "observed_high": 351.29
         },
         "id": "f2b69132b281b16a2bffa00e",
         "zone_id": "f2b69132b281b16a2bffa00e",
@@ -2710,7 +2710,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 350.17,
+        "price": 351.79,
         "context_id": "root:4h:4h:OB:1793332800000:1793361600000:-1:broad",
         "context": {
           "id": "root:4h:4h:OB:1793332800000:1793361600000:-1:broad"
@@ -2723,31 +2723,31 @@
         "context_price_breach": false,
         "location": "outside_after_touch"
       },
-      "checked_at": 1793803854270
+      "checked_at": 1793804148720
     },
     "MSFTUSDT|short": {
       "candidate": null,
-      "checked_at": 1793803854695
+      "checked_at": 1793804149258
     },
     "AMZNUSDT|short": {
       "candidate": null,
-      "checked_at": 1793803855101
+      "checked_at": 1793804149754
     },
     "GOOGLUSDT|short": {
       "candidate": null,
-      "checked_at": 1793803855535
+      "checked_at": 1793804150255
     },
     "METAUSDT|short": {
       "candidate": null,
-      "checked_at": 1793803855936
+      "checked_at": 1793804150748
     },
     "QQQUSDT|short": {
       "candidate": null,
-      "checked_at": 1793803856316
+      "checked_at": 1793804151210
     },
     "SPYUSDT|short": {
       "candidate": null,
-      "checked_at": 1793803856701
+      "checked_at": 1793804151666
     },
     "NDX100USDT|short": {
       "candidate": {
@@ -2874,7 +2874,7 @@
     },
     "CLUSDT|short": {
       "candidate": null,
-      "checked_at": 1793803857156
+      "checked_at": 1793804152267
     },
     "CLUSDT|medium": {
       "candidate": {
@@ -3015,7 +3015,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 93.462,
+        "price": 93.396,
         "context_id": "root:1d:1d:OB:1779148800000:1779321600000:-1:recent",
         "context": {
           "id": "root:1d:1d:OB:1779148800000:1779321600000:-1:recent"
@@ -3030,7 +3030,7 @@
         "monitor_eligible": true,
         "diversification": {
           "eligible": true,
-          "as_of": 1793803857156,
+          "as_of": 1793804152267,
           "exchange": "bitget",
           "reasons": [],
           "method": "simultaneous_closed_log_returns_30d_60d",
@@ -3059,11 +3059,11 @@
           "median_daily_turnover_30d": 61276065.494684994,
           "median_daily_turnover_7d": 64052639.97677,
           "days_above_5m_30d": 30,
-          "turnover_24h_usdt": 57689611.32138,
-          "spread_bps": 0.5349338554282898
+          "turnover_24h_usdt": 57796193.02942,
+          "spread_bps": 0.21416486411189462
         }
       },
-      "checked_at": 1793803857156
+      "checked_at": 1793804152267
     },
     "CLUSDT|long": {
       "candidate": {
@@ -3189,7 +3189,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 93.462,
+        "price": 93.396,
         "context_id": "root:1w:1w:OB:1782691200000:1783900800000:1:recent",
         "context": {
           "id": "root:1w:1w:OB:1782691200000:1783900800000:1:recent"
@@ -3204,7 +3204,7 @@
         "monitor_eligible": true,
         "diversification": {
           "eligible": true,
-          "as_of": 1793803857156,
+          "as_of": 1793804152267,
           "exchange": "bitget",
           "reasons": [],
           "method": "simultaneous_closed_log_returns_30d_60d",
@@ -3233,15 +3233,15 @@
           "median_daily_turnover_30d": 61276065.494684994,
           "median_daily_turnover_7d": 64052639.97677,
           "days_above_5m_30d": 30,
-          "turnover_24h_usdt": 57689611.32138,
-          "spread_bps": 0.5349338554282898
+          "turnover_24h_usdt": 57796193.02942,
+          "spread_bps": 0.21416486411189462
         }
       },
-      "checked_at": 1793803857156
+      "checked_at": 1793804152267
     },
     "BZUSDT|short": {
       "candidate": null,
-      "checked_at": 1793803857612
+      "checked_at": 1793804152788
     },
     "BZUSDT|medium": {
       "candidate": {
@@ -3382,7 +3382,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 100.87,
+        "price": 100.79,
         "context_id": "root:1d:1d:OB:1790035200000:1790208000000:1:broad",
         "context": {
           "id": "root:1d:1d:OB:1790035200000:1790208000000:1:broad"
@@ -3397,7 +3397,7 @@
         "monitor_eligible": true,
         "diversification": {
           "eligible": true,
-          "as_of": 1793803857612,
+          "as_of": 1793804152788,
           "exchange": "bitget",
           "reasons": [],
           "method": "simultaneous_closed_log_returns_30d_60d",
@@ -3426,15 +3426,15 @@
           "median_daily_turnover_30d": 33461363.33105,
           "median_daily_turnover_7d": 40963706.0045,
           "days_above_5m_30d": 28,
-          "turnover_24h_usdt": 32794459.6914,
-          "spread_bps": 1.9827500743527333
+          "turnover_24h_usdt": 32931627.21,
+          "spread_bps": 0.9923096005958933
         }
       },
-      "checked_at": 1793803857612
+      "checked_at": 1793804152788
     },
     "BZUSDT|long": {
       "candidate": null,
-      "checked_at": 1793803857612
+      "checked_at": 1793804152788
     }
   },
   "delivered": {
@@ -4818,11 +4818,11 @@
             "band_low": 351.07,
             "band_high": 351.72,
             "valid_from": 1793664000000,
-            "at": 1793803800000,
-            "bar_open": 1793803740000,
+            "at": 1793804100000,
+            "bar_open": 1793804040000,
             "evidence": "completed_1m_range",
-            "observed_low": 350.25,
-            "observed_high": 351.17
+            "observed_low": 350.58,
+            "observed_high": 351.29
           },
           "id": "db3aae8882e7aad2611f7edf",
           "zone_id": "f2b69132b281b16a2bffa00e",
@@ -4843,7 +4843,7 @@
             "broad",
             "recent"
           ],
-          "price": 350.17,
+          "price": 351.79,
           "context_id": "root:4h:4h:OB:1793332800000:1793361600000:-1:broad",
           "context": {
             "id": "root:4h:4h:OB:1793332800000:1793361600000:-1:broad"
@@ -4975,11 +4975,11 @@
                 "band_low": 351.07,
                 "band_high": 351.72,
                 "valid_from": 1793664000000,
-                "at": 1793803800000,
-                "bar_open": 1793803740000,
+                "at": 1793804100000,
+                "bar_open": 1793804040000,
                 "evidence": "completed_1m_range",
-                "observed_low": 350.25,
-                "observed_high": 351.17
+                "observed_low": 350.58,
+                "observed_high": 351.29
               },
               "zone_id": "f2b69132b281b16a2bffa00e",
               "alert_policy": "root-ob-pullback-v1",
@@ -4995,7 +4995,7 @@
                 "1h"
               ],
               "exchange": "bitget",
-              "price": 350.17,
+              "price": 351.79,
               "context_id": "root:4h:4h:OB:1793332800000:1793361600000:-1:broad",
               "context": {
                 "id": "root:4h:4h:OB:1793332800000:1793361600000:-1:broad"
@@ -5127,11 +5127,11 @@
                 "band_low": 351.07,
                 "band_high": 351.72,
                 "valid_from": 1793736000000,
-                "at": 1793803800000,
-                "bar_open": 1793803740000,
+                "at": 1793804100000,
+                "bar_open": 1793804040000,
                 "evidence": "completed_1m_range",
-                "observed_low": 350.25,
-                "observed_high": 351.17
+                "observed_low": 350.58,
+                "observed_high": 351.29
               },
               "zone_id": "0d731f2161a98deb876767d6",
               "alert_policy": "root-ob-pullback-v1",
@@ -5147,7 +5147,7 @@
                 "1h"
               ],
               "exchange": "bitget",
-              "price": 350.17,
+              "price": 351.79,
               "context_id": "root:4h:4h:OB:1793332800000:1793361600000:-1:recent",
               "context": {
                 "id": "root:4h:4h:OB:1793332800000:1793361600000:-1:recent"
@@ -5174,8 +5174,8 @@
         "anchor_high": 352.71,
         "sent": true,
         "latest": {
-          "low": 350.49,
-          "high": 350.97,
+          "low": 350.89,
+          "high": 351.72,
           "score": 2,
           "groups": [
             "1d:OB",
@@ -5184,7 +5184,7 @@
           "source_ids": [
             "1d:OB:1793232000000:1793404800000:-1",
             "4h:OB:1793332800000:1793361600000:-1",
-            "1h:FVG:1793343600000:1793354400000:-1"
+            "1h:FVG:1793318400000:1793329200000:-1"
           ],
           "sources": [
             {
@@ -5214,16 +5214,16 @@
               "expiry": 9223372036854775807
             },
             {
-              "id": "1h:FVG:1793343600000:1793354400000:-1",
+              "id": "1h:FVG:1793318400000:1793329200000:-1",
               "timeframe": "1h",
               "kind": "FVG",
               "direction": -1,
-              "low": 350.49,
-              "high": 350.97,
-              "created": 1793354400000,
-              "origin": 1793343600000,
-              "stop": 350.97,
-              "invalidation": 350.97,
+              "low": 350.89,
+              "high": 352.0,
+              "created": 1793329200000,
+              "origin": 1793318400000,
+              "stop": 352.0,
+              "invalidation": 352.0,
               "expiry": 9223372036854775807
             }
           ],
@@ -5274,17 +5274,17 @@
           "entry_touch": {
             "hit": true,
             "midpoint": 338.84000000000003,
-            "band_low": 350.49,
-            "band_high": 350.97,
+            "band_low": 350.89,
+            "band_high": 351.72,
             "valid_from": 1793664000000,
-            "at": 1793803800000,
-            "bar_open": 1793803740000,
+            "at": 1793804100000,
+            "bar_open": 1793804040000,
             "evidence": "completed_1m_range",
-            "observed_low": 350.25,
-            "observed_high": 351.17
+            "observed_low": 350.58,
+            "observed_high": 351.29
           },
           "id": "6a4421c4a555d6ce8000e192",
-          "zone_id": "3334942b29ed483b00238089",
+          "zone_id": "263f838e7df18c4b77421243",
           "alert_policy": "root-ob-pullback-v1",
           "path": [
             "1d",
@@ -5302,7 +5302,7 @@
             "broad",
             "recent"
           ],
-          "price": 350.17,
+          "price": 351.79,
           "context_id": "root:1d:1d:OB:1793232000000:1793404800000:-1:broad",
           "context": {
             "id": "root:1d:1d:OB:1793232000000:1793404800000:-1:broad"
@@ -5316,8 +5316,8 @@
           "location": "outside_after_touch",
           "lens_details": {
             "broad": {
-              "low": 350.49,
-              "high": 350.97,
+              "low": 350.89,
+              "high": 351.72,
               "score": 2,
               "groups": [
                 "1d:OB",
@@ -5326,7 +5326,7 @@
               "source_ids": [
                 "1d:OB:1793232000000:1793404800000:-1",
                 "4h:OB:1793332800000:1793361600000:-1",
-                "1h:FVG:1793343600000:1793354400000:-1"
+                "1h:FVG:1793318400000:1793329200000:-1"
               ],
               "sources": [
                 {
@@ -5356,16 +5356,16 @@
                   "expiry": 9223372036854775807
                 },
                 {
-                  "id": "1h:FVG:1793343600000:1793354400000:-1",
+                  "id": "1h:FVG:1793318400000:1793329200000:-1",
                   "timeframe": "1h",
                   "kind": "FVG",
                   "direction": -1,
-                  "low": 350.49,
-                  "high": 350.97,
-                  "created": 1793354400000,
-                  "origin": 1793343600000,
-                  "stop": 350.97,
-                  "invalidation": 350.97,
+                  "low": 350.89,
+                  "high": 352.0,
+                  "created": 1793329200000,
+                  "origin": 1793318400000,
+                  "stop": 352.0,
+                  "invalidation": 352.0,
                   "expiry": 9223372036854775807
                 }
               ],
@@ -5416,16 +5416,16 @@
               "entry_touch": {
                 "hit": true,
                 "midpoint": 338.84000000000003,
-                "band_low": 350.49,
-                "band_high": 350.97,
+                "band_low": 350.89,
+                "band_high": 351.72,
                 "valid_from": 1793664000000,
-                "at": 1793803800000,
-                "bar_open": 1793803740000,
+                "at": 1793804100000,
+                "bar_open": 1793804040000,
                 "evidence": "completed_1m_range",
-                "observed_low": 350.25,
-                "observed_high": 351.17
+                "observed_low": 350.58,
+                "observed_high": 351.29
               },
-              "zone_id": "3334942b29ed483b00238089",
+              "zone_id": "263f838e7df18c4b77421243",
               "alert_policy": "root-ob-pullback-v1",
               "path": [
                 "1d",
@@ -5439,7 +5439,7 @@
                 "4h"
               ],
               "exchange": "bitget",
-              "price": 350.17,
+              "price": 351.79,
               "context_id": "root:1d:1d:OB:1793232000000:1793404800000:-1:broad",
               "context": {
                 "id": "root:1d:1d:OB:1793232000000:1793404800000:-1:broad"
@@ -5453,8 +5453,8 @@
               "location": "outside_after_touch"
             },
             "recent": {
-              "low": 350.49,
-              "high": 350.97,
+              "low": 350.89,
+              "high": 351.72,
               "score": 2,
               "groups": [
                 "1d:OB",
@@ -5463,7 +5463,7 @@
               "source_ids": [
                 "1d:OB:1793232000000:1793404800000:-1",
                 "4h:OB:1793332800000:1793361600000:-1",
-                "1h:FVG:1793343600000:1793354400000:-1"
+                "1h:FVG:1793318400000:1793329200000:-1"
               ],
               "sources": [
                 {
@@ -5493,16 +5493,16 @@
                   "expiry": 9223372036854775807
                 },
                 {
-                  "id": "1h:FVG:1793343600000:1793354400000:-1",
+                  "id": "1h:FVG:1793318400000:1793329200000:-1",
                   "timeframe": "1h",
                   "kind": "FVG",
                   "direction": -1,
-                  "low": 350.49,
-                  "high": 350.97,
-                  "created": 1793354400000,
-                  "origin": 1793343600000,
-                  "stop": 350.97,
-                  "invalidation": 350.97,
+                  "low": 350.89,
+                  "high": 352.0,
+                  "created": 1793329200000,
+                  "origin": 1793318400000,
+                  "stop": 352.0,
+                  "invalidation": 352.0,
                   "expiry": 9223372036854775807
                 }
               ],
@@ -5553,16 +5553,16 @@
               "entry_touch": {
                 "hit": true,
                 "midpoint": 338.84000000000003,
-                "band_low": 350.49,
-                "band_high": 350.97,
+                "band_low": 350.89,
+                "band_high": 351.72,
                 "valid_from": 1793664000000,
-                "at": 1793803800000,
-                "bar_open": 1793803740000,
+                "at": 1793804100000,
+                "bar_open": 1793804040000,
                 "evidence": "completed_1m_range",
-                "observed_low": 350.25,
-                "observed_high": 351.17
+                "observed_low": 350.58,
+                "observed_high": 351.29
               },
-              "zone_id": "0c34dfcdcf636ec9e54377fc",
+              "zone_id": "bd7786bece0e80ea584b3191",
               "alert_policy": "root-ob-pullback-v1",
               "path": [
                 "1d",
@@ -5576,7 +5576,7 @@
                 "4h"
               ],
               "exchange": "bitget",
-              "price": 350.17,
+              "price": 351.79,
               "context_id": "root:1d:1d:OB:1793232000000:1793404800000:-1:recent",
               "context": {
                 "id": "root:1d:1d:OB:1793232000000:1793404800000:-1:recent"
@@ -12166,7 +12166,7 @@
   "strategy": "root-ob-pullback-v1",
   "dedup_audits": {
     "BTCUSDT": {
-      "at": 1793803852416,
+      "at": 1793804146527,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -12174,7 +12174,7 @@
       "one_off_resend": false
     },
     "SKHYNIXUSDT": {
-      "at": 1793803852946,
+      "at": 1793804147181,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -12182,7 +12182,7 @@
       "one_off_resend": false
     },
     "NVDAUSDT": {
-      "at": 1793803853349,
+      "at": 1793804147643,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -12190,7 +12190,7 @@
       "one_off_resend": false
     },
     "TSLAUSDT": {
-      "at": 1793803853792,
+      "at": 1793804148145,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -12198,7 +12198,7 @@
       "one_off_resend": false
     },
     "AAPLUSDT": {
-      "at": 1793803854270,
+      "at": 1793804148720,
       "queued": 0,
       "suppressed": 2,
       "retired": 0,
@@ -12206,7 +12206,7 @@
       "one_off_resend": false
     },
     "MSFTUSDT": {
-      "at": 1793803854695,
+      "at": 1793804149258,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -12214,7 +12214,7 @@
       "one_off_resend": false
     },
     "AMZNUSDT": {
-      "at": 1793803855101,
+      "at": 1793804149754,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -12222,7 +12222,7 @@
       "one_off_resend": false
     },
     "GOOGLUSDT": {
-      "at": 1793803855535,
+      "at": 1793804150255,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -12230,7 +12230,7 @@
       "one_off_resend": false
     },
     "METAUSDT": {
-      "at": 1793803855936,
+      "at": 1793804150748,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -12238,7 +12238,7 @@
       "one_off_resend": false
     },
     "QQQUSDT": {
-      "at": 1793803856316,
+      "at": 1793804151210,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -12246,7 +12246,7 @@
       "one_off_resend": false
     },
     "SPYUSDT": {
-      "at": 1793803856701,
+      "at": 1793804151666,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -12254,7 +12254,7 @@
       "one_off_resend": false
     },
     "CLUSDT": {
-      "at": 1793803857156,
+      "at": 1793804152267,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -12262,7 +12262,7 @@
       "one_off_resend": false
     },
     "BZUSDT": {
-      "at": 1793803857612,
+      "at": 1793804152788,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -44406,19 +44406,19 @@
     }
   },
   "touch_cursors": {
-    "BTCUSDT": 1793803800000,
-    "SKHYNIXUSDT": 1793803800000,
-    "NVDAUSDT": 1793803800000,
-    "TSLAUSDT": 1793803800000,
-    "AAPLUSDT": 1793803800000,
-    "MSFTUSDT": 1793803800000,
-    "AMZNUSDT": 1793803800000,
-    "GOOGLUSDT": 1793803800000,
-    "METAUSDT": 1793803800000,
-    "QQQUSDT": 1793803800000,
-    "SPYUSDT": 1793803800000,
-    "CLUSDT": 1793803800000,
-    "BZUSDT": 1793803800000
+    "BTCUSDT": 1793804100000,
+    "SKHYNIXUSDT": 1793804100000,
+    "NVDAUSDT": 1793804100000,
+    "TSLAUSDT": 1793804100000,
+    "AAPLUSDT": 1793804100000,
+    "MSFTUSDT": 1793804100000,
+    "AMZNUSDT": 1793804100000,
+    "GOOGLUSDT": 1793804100000,
+    "METAUSDT": 1793804100000,
+    "QQQUSDT": 1793804100000,
+    "SPYUSDT": 1793804100000,
+    "CLUSDT": 1793804100000,
+    "BZUSDT": 1793804100000
   },
   "notification_policy": "root-ob-pullback-v1",
   "delivery_mode": "once_per_parent_ob"
