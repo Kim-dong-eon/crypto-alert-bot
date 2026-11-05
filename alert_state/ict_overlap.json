@@ -140,7 +140,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 78463.0,
+        "price": 78003.0,
         "context_id": "root:1d:1d:OB:1783900800000:1784073600000:1:broad",
         "context": {
           "id": "root:1d:1d:OB:1783900800000:1784073600000:1:broad"
@@ -153,7 +153,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793890551890
+      "checked_at": 1793890888266
     },
     "BTCUSDT|long": {
       "candidate": {
@@ -279,7 +279,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 78463.0,
+        "price": 78003.0,
         "context_id": "root:1w:1w:OB:1768176000000:1769385600000:-1:recent",
         "context": {
           "id": "root:1w:1w:OB:1768176000000:1769385600000:-1:recent"
@@ -292,7 +292,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793890551890
+      "checked_at": 1793890888266
     },
     "SKHYNIXUSDT|medium": {
       "candidate": {
@@ -418,7 +418,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 900.19,
+        "price": 896.43,
         "context_id": "root:1d:1d:OB:1791072000000:1791244800000:-1:recent",
         "context": {
           "id": "root:1d:1d:OB:1791072000000:1791244800000:-1:recent"
@@ -431,11 +431,11 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793890552620
+      "checked_at": 1793890888963
     },
     "SKHYNIXUSDT|long": {
       "candidate": null,
-      "checked_at": 1793890552620
+      "checked_at": 1793890888963
     },
     "NVDAUSDT|medium": {
       "candidate": {
@@ -561,7 +561,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 189.82,
+        "price": 189.77,
         "context_id": "root:1d:1d:OB:1791849600000:1792022400000:-1:recent",
         "context": {
           "id": "root:1d:1d:OB:1791849600000:1792022400000:-1:recent"
@@ -574,7 +574,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793890553235
+      "checked_at": 1793890889939
     },
     "NVDAUSDT|long": {
       "candidate": {
@@ -700,7 +700,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 189.82,
+        "price": 189.77,
         "context_id": "root:1w:1w:OB:1774224000000:1775433600000:1:recent",
         "context": {
           "id": "root:1w:1w:OB:1774224000000:1775433600000:1:recent"
@@ -713,131 +713,116 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793890553235
+      "checked_at": 1793890889939
     },
     "TSLAUSDT|medium": {
       "candidate": {
-        "low": 372.21,
-        "high": 372.25,
-        "score": 3,
+        "low": 301.89,
+        "high": 302.06,
+        "score": 2,
         "groups": [
-          "1d:FVG",
           "1d:OB",
-          "4h:OB"
+          "4h:FVG"
         ],
         "source_ids": [
-          "1d:FVG:1792368000000:1792627200000:1",
-          "1d:OB:1792886400000:1793059200000:1",
-          "4h:OB:1792915200000:1792944000000:1",
-          "1h:FVG:1792983600000:1792994400000:1"
+          "1d:OB:1785283200000:1785456000000:1",
+          "4h:FVG:1785384000000:1785427200000:1",
+          "1h:FVG:1785402000000:1785412800000:1"
         ],
         "sources": [
           {
-            "id": "1d:FVG:1792368000000:1792627200000:1",
+            "id": "1d:OB:1785283200000:1785456000000:1",
             "timeframe": "1d",
+            "kind": "OB",
+            "direction": 1,
+            "low": 297.19,
+            "high": 307.38,
+            "created": 1785456000000,
+            "origin": 1785283200000,
+            "stop": 293.81,
+            "invalidation": 297.19,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:FVG:1785384000000:1785427200000:1",
+            "timeframe": "4h",
             "kind": "FVG",
             "direction": 1,
-            "low": 370.01,
-            "high": 372.8,
-            "created": 1792627200000,
-            "origin": 1792368000000,
-            "stop": 370.01,
-            "invalidation": 370.01,
+            "low": 300.28,
+            "high": 302.06,
+            "created": 1785427200000,
+            "origin": 1785384000000,
+            "stop": 300.28,
+            "invalidation": 300.28,
             "expiry": 9223372036854775807
           },
           {
-            "id": "1d:OB:1792886400000:1793059200000:1",
-            "timeframe": "1d",
-            "kind": "OB",
-            "direction": 1,
-            "low": 371.67,
-            "high": 372.42,
-            "created": 1793059200000,
-            "origin": 1792886400000,
-            "stop": 370.57,
-            "invalidation": 371.67,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "4h:OB:1792915200000:1792944000000:1",
-            "timeframe": "4h",
-            "kind": "OB",
-            "direction": 1,
-            "low": 371.67,
-            "high": 372.25,
-            "created": 1792944000000,
-            "origin": 1792915200000,
-            "stop": 370.72,
-            "invalidation": 371.67,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "1h:FVG:1792983600000:1792994400000:1",
+            "id": "1h:FVG:1785402000000:1785412800000:1",
             "timeframe": "1h",
             "kind": "FVG",
             "direction": 1,
-            "low": 372.21,
-            "high": 375.17,
-            "created": 1792994400000,
-            "origin": 1792983600000,
-            "stop": 372.21,
-            "invalidation": 372.21,
+            "low": 301.89,
+            "high": 302.62,
+            "created": 1785412800000,
+            "origin": 1785402000000,
+            "stop": 301.89,
+            "invalidation": 301.89,
             "expiry": 9223372036854775807
           }
         ],
-        "latest_source": 1793059200000,
+        "latest_source": 1785456000000,
         "parent": {
-          "id": "1d:OB:1792886400000:1793059200000:1",
+          "id": "1d:OB:1785283200000:1785456000000:1",
           "timeframe": "1d",
           "kind": "OB",
           "direction": 1,
-          "low": 371.67,
-          "high": 372.42,
-          "created": 1793059200000,
-          "origin": 1792886400000,
-          "stop": 370.57,
-          "invalidation": 371.67,
+          "low": 297.19,
+          "high": 307.38,
+          "created": 1785456000000,
+          "origin": 1785283200000,
+          "stop": 293.81,
+          "invalidation": 297.19,
           "expiry": 9223372036854775807
         },
         "structure_area": {
-          "id": "root:1d:1d:OB:1792886400000:1793059200000:1",
+          "id": "root:1d:1d:OB:1785283200000:1785456000000:1",
           "scale": "broad",
           "direction": 1,
-          "low": 371.67,
-          "high": 372.42,
-          "origin": 1792281600000,
-          "pivot_origin": 1792281600000,
-          "created": 1793059200000,
+          "low": 297.19,
+          "high": 307.38,
+          "origin": 1785196800000,
+          "pivot_origin": 1785283200000,
+          "created": 1787184000000,
           "invalidated_at": null,
-          "range_low": 347.52,
-          "range_high": 409.3,
-          "range_complete": false,
-          "range_known_at": 1793145600000,
-          "base_bars": 1,
-          "parent_id": "1d:OB:1792886400000:1793059200000:1",
-          "bos_at": 1793059200000,
-          "bos_level": 388.89,
-          "basis": "body_break_origin"
+          "range_low": 293.81,
+          "range_high": 388.89,
+          "range_complete": true,
+          "range_known_at": 1792281600000,
+          "base_bars": 2,
+          "parent_id": "1d:OB:1785283200000:1785456000000:1",
+          "bos_at": null,
+          "bos_level": 437.71,
+          "basis": "pivot_base"
         },
         "lens": "broad",
         "direction": 1,
         "refinement_tf": "1h",
         "equilibrium": {
-          "midpoint": 378.40999999999997,
+          "midpoint": 341.35,
           "eligible": false,
           "entry_required": true,
-          "range_low": 347.52,
-          "range_high": 409.3
+          "range_low": 293.81,
+          "range_high": 388.89
         },
         "entry_touch": {
           "hit": false,
-          "midpoint": 378.40999999999997,
-          "band_low": 372.21,
-          "band_high": 372.25,
-          "valid_from": 1793145600000
+          "midpoint": 341.35,
+          "band_low": 301.89,
+          "band_high": 302.06,
+          "valid_from": 1792281600000
         },
-        "id": "73229ee610270107e914e1c1",
-        "zone_id": "73229ee610270107e914e1c1",
+        "id": "e10c320b6ee611b77fca5b8a",
+        "zone_id": "e10c320b6ee611b77fca5b8a",
         "alert_policy": "root-ob-pullback-v1",
         "path": [
           "1d",
@@ -854,12 +839,12 @@
         "lenses": [
           "broad"
         ],
-        "price": 347.2,
-        "context_id": "root:1d:1d:OB:1792886400000:1793059200000:1:broad",
+        "price": 348.24,
+        "context_id": "root:1d:1d:OB:1785283200000:1785456000000:1:broad",
         "context": {
-          "id": "root:1d:1d:OB:1792886400000:1793059200000:1:broad"
+          "id": "root:1d:1d:OB:1785283200000:1785456000000:1:broad"
         },
-        "formed_at": 1793059200000,
+        "formed_at": 1787184000000,
         "structure_states": {
           "broad": "mixed",
           "recent": "up"
@@ -867,7 +852,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793890568234
+      "checked_at": 1793890891173
     },
     "TSLAUSDT|long": {
       "candidate": {
@@ -993,7 +978,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 347.2,
+        "price": 348.24,
         "context_id": "root:1w:1w:OB:1783296000000:1784505600000:-1:recent",
         "context": {
           "id": "root:1w:1w:OB:1783296000000:1784505600000:-1:recent"
@@ -1006,7 +991,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793890568234
+      "checked_at": 1793890891173
     },
     "AAPLUSDT|medium": {
       "candidate": {
@@ -1132,7 +1117,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 351.88,
+        "price": 350.75,
         "context_id": "root:1d:1d:OB:1787616000000:1787788800000:1:broad",
         "context": {
           "id": "root:1d:1d:OB:1787616000000:1787788800000:1:broad"
@@ -1145,7 +1130,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793890569216
+      "checked_at": 1793890891965
     },
     "AAPLUSDT|long": {
       "candidate": {
@@ -1271,7 +1256,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 351.88,
+        "price": 350.75,
         "context_id": "root:1w:1w:OB:1782086400000:1783296000000:1:recent",
         "context": {
           "id": "root:1w:1w:OB:1782086400000:1783296000000:1:recent"
@@ -1284,7 +1269,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793890569216
+      "checked_at": 1793890891965
     },
     "MSFTUSDT|medium": {
       "candidate": {
@@ -1410,7 +1395,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 544.69,
+        "price": 544.5,
         "context_id": "root:1d:1d:OB:1789257600000:1789430400000:1:recent",
         "context": {
           "id": "root:1d:1d:OB:1789257600000:1789430400000:1:recent"
@@ -1423,7 +1408,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793890569904
+      "checked_at": 1793890892677
     },
     "MSFTUSDT|long": {
       "candidate": {
@@ -1549,7 +1534,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 544.69,
+        "price": 544.5,
         "context_id": "root:1w:1w:OB:1783296000000:1784505600000:1:recent",
         "context": {
           "id": "root:1w:1w:OB:1783296000000:1784505600000:1:recent"
@@ -1562,11 +1547,11 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793890569904
+      "checked_at": 1793890892677
     },
     "AMZNUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793890570760
+      "checked_at": 1793890893419
     },
     "AMZNUSDT|long": {
       "candidate": {
@@ -1692,7 +1677,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 264.02,
+        "price": 262.44,
         "context_id": "root:1w:1w:OB:1774224000000:1775433600000:1:broad",
         "context": {
           "id": "root:1w:1w:OB:1774224000000:1775433600000:1:broad"
@@ -1705,7 +1690,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793890570760
+      "checked_at": 1793890893419
     },
     "GOOGLUSDT|medium": {
       "candidate": {
@@ -1831,7 +1816,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 287.36,
+        "price": 287.01,
         "context_id": "root:1d:1d:OB:1792368000000:1792540800000:-1:broad",
         "context": {
           "id": "root:1d:1d:OB:1792368000000:1792540800000:-1:broad"
@@ -1844,11 +1829,11 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793890571389
+      "checked_at": 1793890894065
     },
     "GOOGLUSDT|long": {
       "candidate": null,
-      "checked_at": 1793890571389
+      "checked_at": 1793890894065
     },
     "METAUSDT|medium": {
       "candidate": {
@@ -1989,7 +1974,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 611.91,
+        "price": 606.38,
         "context_id": "root:1d:1d:OB:1788134400000:1788307200000:1:broad",
         "context": {
           "id": "root:1d:1d:OB:1788134400000:1788307200000:1:broad"
@@ -2002,7 +1987,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793890572011
+      "checked_at": 1793890895131
     },
     "METAUSDT|long": {
       "candidate": {
@@ -2128,7 +2113,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 611.91,
+        "price": 606.38,
         "context_id": "root:1w:1w:OB:1782086400000:1783296000000:1:recent",
         "context": {
           "id": "root:1w:1w:OB:1782086400000:1783296000000:1:recent"
@@ -2141,121 +2126,131 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793890572011
+      "checked_at": 1793890895131
     },
     "QQQUSDT|medium": {
       "candidate": {
-        "low": 669.24,
-        "high": 670.1,
-        "score": 2,
+        "low": 724.67,
+        "high": 725.51,
+        "score": 3,
         "groups": [
           "1d:OB",
-          "4h:FVG"
+          "4h:FVG",
+          "4h:OB"
         ],
         "source_ids": [
-          "1d:OB:1785283200000:1785456000000:1",
-          "4h:FVG:1785384000000:1785427200000:1",
-          "1h:FVG:1785402000000:1785412800000:1"
+          "1d:OB:1792022400000:1792195200000:-1",
+          "4h:FVG:1792137600000:1792180800000:-1",
+          "4h:OB:1793203200000:1793232000000:-1",
+          "1h:OB:1793214000000:1793221200000:-1"
         ],
         "sources": [
           {
-            "id": "1d:OB:1785283200000:1785456000000:1",
+            "id": "1d:OB:1792022400000:1792195200000:-1",
             "timeframe": "1d",
             "kind": "OB",
-            "direction": 1,
-            "low": 667.23,
-            "high": 681.03,
-            "created": 1785456000000,
-            "origin": 1785283200000,
-            "stop": 658.61,
-            "invalidation": 667.23,
+            "direction": -1,
+            "low": 723.5,
+            "high": 725.51,
+            "created": 1792195200000,
+            "origin": 1792022400000,
+            "stop": 731.82,
+            "invalidation": 725.51,
             "expiry": 9223372036854775807
           },
           {
-            "id": "4h:FVG:1785384000000:1785427200000:1",
+            "id": "4h:FVG:1792137600000:1792180800000:-1",
             "timeframe": "4h",
             "kind": "FVG",
-            "direction": 1,
-            "low": 668.09,
-            "high": 672.15,
-            "created": 1785427200000,
-            "origin": 1785384000000,
-            "stop": 668.09,
-            "invalidation": 668.09,
+            "direction": -1,
+            "low": 719.1,
+            "high": 727.65,
+            "created": 1792180800000,
+            "origin": 1792137600000,
+            "stop": 727.65,
+            "invalidation": 727.65,
             "expiry": 9223372036854775807
           },
           {
-            "id": "1h:FVG:1785402000000:1785412800000:1",
+            "id": "4h:OB:1793203200000:1793232000000:-1",
+            "timeframe": "4h",
+            "kind": "OB",
+            "direction": -1,
+            "low": 723.57,
+            "high": 726.52,
+            "created": 1793232000000,
+            "origin": 1793203200000,
+            "stop": 730.93,
+            "invalidation": 726.52,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "1h:OB:1793214000000:1793221200000:-1",
             "timeframe": "1h",
-            "kind": "FVG",
-            "direction": 1,
-            "low": 669.24,
-            "high": 670.1,
-            "created": 1785412800000,
-            "origin": 1785402000000,
-            "stop": 669.24,
-            "invalidation": 669.24,
+            "kind": "OB",
+            "direction": -1,
+            "low": 724.67,
+            "high": 726.52,
+            "created": 1793221200000,
+            "origin": 1793214000000,
+            "stop": 730.93,
+            "invalidation": 726.52,
             "expiry": 9223372036854775807
           }
         ],
-        "latest_source": 1785456000000,
+        "latest_source": 1793232000000,
         "parent": {
-          "id": "1d:OB:1785283200000:1785456000000:1",
+          "id": "1d:OB:1792022400000:1792195200000:-1",
           "timeframe": "1d",
           "kind": "OB",
-          "direction": 1,
-          "low": 667.23,
-          "high": 681.03,
-          "created": 1785456000000,
-          "origin": 1785283200000,
-          "stop": 658.61,
-          "invalidation": 667.23,
+          "direction": -1,
+          "low": 723.5,
+          "high": 725.51,
+          "created": 1792195200000,
+          "origin": 1792022400000,
+          "stop": 731.82,
+          "invalidation": 725.51,
           "expiry": 9223372036854775807
         },
         "structure_area": {
-          "id": "root:1d:1d:OB:1785283200000:1785456000000:1",
-          "scale": "broad",
-          "direction": 1,
-          "low": 667.23,
-          "high": 681.03,
-          "origin": 1785283200000,
-          "pivot_origin": 1785283200000,
-          "created": 1790121600000,
+          "id": "root:1d:1d:OB:1792022400000:1792195200000:-1",
+          "scale": "recent",
+          "direction": -1,
+          "low": 723.5,
+          "high": 725.51,
+          "origin": 1791244800000,
+          "pivot_origin": 1791244800000,
+          "created": 1793404800000,
           "invalidated_at": null,
-          "range_low": 658.61,
+          "range_low": 702.09,
           "range_high": 763.22,
           "range_complete": true,
-          "range_known_at": 1792195200000,
+          "range_known_at": 1793145600000,
           "base_bars": 1,
-          "parent_id": "1d:OB:1785283200000:1785456000000:1",
-          "bos_at": 1790121600000,
-          "bos_level": 747.39,
+          "parent_id": "1d:OB:1792022400000:1792195200000:-1",
+          "bos_at": 1793404800000,
+          "bos_level": 701.24,
           "basis": "body_break_origin"
         },
-        "lens": "broad",
-        "direction": 1,
+        "lens": "recent",
+        "direction": -1,
         "refinement_tf": "1h",
         "equilibrium": {
-          "midpoint": 710.915,
-          "eligible": true,
+          "midpoint": 732.655,
+          "eligible": false,
           "entry_required": true,
-          "range_low": 658.61,
+          "range_low": 702.09,
           "range_high": 763.22
         },
         "entry_touch": {
-          "hit": true,
-          "midpoint": 710.915,
-          "band_low": 669.24,
-          "band_high": 670.1,
-          "valid_from": 1792195200000,
-          "at": 1793890500000,
-          "bar_open": 1793890440000,
-          "evidence": "completed_1m_range",
-          "observed_low": 669.15,
-          "observed_high": 670.62
+          "hit": false,
+          "midpoint": 732.655,
+          "band_low": 732.655,
+          "band_high": 725.51,
+          "valid_from": 1793404800000
         },
-        "id": "b18dda92e72c8408de34e24f",
-        "zone_id": "b18dda92e72c8408de34e24f",
+        "id": "a12810752a9ff76791a02b6f",
+        "zone_id": "a12810752a9ff76791a02b6f",
         "alert_policy": "root-ob-pullback-v1",
         "path": [
           "1d",
@@ -2270,26 +2265,26 @@
         ],
         "exchange": "bitget",
         "lenses": [
-          "broad"
+          "recent"
         ],
-        "price": 668.21,
-        "context_id": "root:1d:1d:OB:1785283200000:1785456000000:1:broad",
+        "price": 666.54,
+        "context_id": "root:1d:1d:OB:1792022400000:1792195200000:-1:recent",
         "context": {
-          "id": "root:1d:1d:OB:1785283200000:1785456000000:1:broad"
+          "id": "root:1d:1d:OB:1792022400000:1792195200000:-1:recent"
         },
-        "formed_at": 1790121600000,
+        "formed_at": 1793404800000,
         "structure_states": {
           "broad": "mixed",
           "recent": "down"
         },
         "context_price_breach": false,
-        "location": "outside_after_touch"
+        "location": "waiting"
       },
-      "checked_at": 1793890572590
+      "checked_at": 1793890895865
     },
     "QQQUSDT|long": {
       "candidate": null,
-      "checked_at": 1793890572590
+      "checked_at": 1793890895865
     },
     "SPYUSDT|medium": {
       "candidate": {
@@ -2415,7 +2410,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 755.43,
+        "price": 754.3,
         "context_id": "root:1d:1d:OB:1785542400000:1785715200000:1:recent",
         "context": {
           "id": "root:1d:1d:OB:1785542400000:1785715200000:1:recent"
@@ -2428,11 +2423,11 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793890573166
+      "checked_at": 1793890896549
     },
     "SPYUSDT|long": {
       "candidate": null,
-      "checked_at": 1793890573166
+      "checked_at": 1793890896549
     },
     "NDX100USDT|medium": {
       "candidate": {
@@ -2552,170 +2547,15 @@
     },
     "BTCUSDT|short": {
       "candidate": null,
-      "checked_at": 1793890551890
+      "checked_at": 1793890888266
     },
     "SKHYNIXUSDT|short": {
       "candidate": null,
-      "checked_at": 1793890552620
+      "checked_at": 1793890888963
     },
     "NVDAUSDT|short": {
-      "candidate": {
-        "low": 191.09,
-        "high": 191.13,
-        "score": 3,
-        "groups": [
-          "1h:FVG",
-          "1h:OB",
-          "4h:OB"
-        ],
-        "source_ids": [
-          "1h:FVG:1785358800000:1785369600000:1",
-          "1h:OB:1785394800000:1785402000000:1",
-          "4h:OB:1785384000000:1785412800000:1",
-          "15m:FVG:1785361500000:1785364200000:1"
-        ],
-        "sources": [
-          {
-            "id": "1h:FVG:1785358800000:1785369600000:1",
-            "timeframe": "1h",
-            "kind": "FVG",
-            "direction": 1,
-            "low": 190.31,
-            "high": 191.22,
-            "created": 1785369600000,
-            "origin": 1785358800000,
-            "stop": 190.31,
-            "invalidation": 190.31,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "1h:OB:1785394800000:1785402000000:1",
-            "timeframe": "1h",
-            "kind": "OB",
-            "direction": 1,
-            "low": 191.09,
-            "high": 191.53,
-            "created": 1785402000000,
-            "origin": 1785394800000,
-            "stop": 190.34,
-            "invalidation": 191.09,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "4h:OB:1785384000000:1785412800000:1",
-            "timeframe": "4h",
-            "kind": "OB",
-            "direction": 1,
-            "low": 191.09,
-            "high": 191.57,
-            "created": 1785412800000,
-            "origin": 1785384000000,
-            "stop": 190.34,
-            "invalidation": 191.09,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "15m:FVG:1785361500000:1785364200000:1",
-            "timeframe": "15m",
-            "kind": "FVG",
-            "direction": 1,
-            "low": 189.45,
-            "high": 191.13,
-            "created": 1785364200000,
-            "origin": 1785361500000,
-            "stop": 189.45,
-            "invalidation": 189.45,
-            "expiry": 9223372036854775807
-          }
-        ],
-        "latest_source": 1785412800000,
-        "parent": {
-          "id": "4h:OB:1785384000000:1785412800000:1",
-          "timeframe": "4h",
-          "kind": "OB",
-          "direction": 1,
-          "low": 191.09,
-          "high": 191.57,
-          "created": 1785412800000,
-          "origin": 1785384000000,
-          "stop": 190.34,
-          "invalidation": 191.09,
-          "expiry": 9223372036854775807
-        },
-        "structure_area": {
-          "id": "root:4h:4h:OB:1785384000000:1785412800000:1",
-          "scale": "broad",
-          "direction": 1,
-          "low": 191.09,
-          "high": 191.57,
-          "origin": 1785355200000,
-          "pivot_origin": 1785355200000,
-          "created": 1785888000000,
-          "invalidated_at": null,
-          "range_low": 188.89,
-          "range_high": 228.05,
-          "range_complete": true,
-          "range_known_at": 1787587200000,
-          "base_bars": 1,
-          "parent_id": "4h:OB:1785384000000:1785412800000:1",
-          "bos_at": 1785888000000,
-          "bos_level": 214.54,
-          "basis": "body_break_origin"
-        },
-        "lens": "broad",
-        "direction": 1,
-        "refinement_tf": "15m",
-        "equilibrium": {
-          "midpoint": 208.47,
-          "eligible": true,
-          "entry_required": true,
-          "range_low": 188.89,
-          "range_high": 228.05
-        },
-        "entry_touch": {
-          "hit": true,
-          "midpoint": 208.47,
-          "band_low": 191.09,
-          "band_high": 191.13,
-          "valid_from": 1787587200000,
-          "at": 1793890500000,
-          "bar_open": 1793890440000,
-          "evidence": "completed_1m_range",
-          "observed_low": 190.61,
-          "observed_high": 191.46
-        },
-        "id": "bd990ada9a62979a2ff9cc05",
-        "zone_id": "bd990ada9a62979a2ff9cc05",
-        "alert_policy": "root-ob-pullback-v1",
-        "path": [
-          "4h",
-          "1h",
-          "15m"
-        ],
-        "symbol": "NVDAUSDT",
-        "track": "short",
-        "pair": [
-          "4h",
-          "1h"
-        ],
-        "exchange": "bitget",
-        "lenses": [
-          "broad"
-        ],
-        "price": 189.82,
-        "context_id": "root:4h:4h:OB:1785384000000:1785412800000:1:broad",
-        "context": {
-          "id": "root:4h:4h:OB:1785384000000:1785412800000:1:broad"
-        },
-        "formed_at": 1785888000000,
-        "structure_states": {
-          "broad": "down",
-          "recent": "down"
-        },
-        "context_price_breach": false,
-        "location": "outside_after_touch"
-      },
-      "checked_at": 1793890553235
+      "candidate": null,
+      "checked_at": 1793890889939
     },
     "TSLAUSDT|short": {
       "candidate": {
@@ -2822,9 +2662,11 @@
           "band_low": 346.76,
           "band_high": 347.21,
           "valid_from": 1788537600000,
-          "at": 1793890568234,
-          "evidence": "current_price",
-          "observed_price": 347.2
+          "at": 1793890680000,
+          "bar_open": 1793890620000,
+          "evidence": "completed_1m_range",
+          "observed_low": 346.89,
+          "observed_high": 349.33
         },
         "id": "119203f45196d530a3883b55",
         "zone_id": "119203f45196d530a3883b55",
@@ -2844,7 +2686,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 347.2,
+        "price": 348.24,
         "context_id": "root:4h:4h:OB:1787817600000:1787846400000:1:broad",
         "context": {
           "id": "root:4h:4h:OB:1787817600000:1787846400000:1:broad"
@@ -2855,37 +2697,192 @@
           "recent": "down"
         },
         "context_price_breach": false,
-        "location": "inside"
+        "location": "outside_after_touch"
       },
-      "checked_at": 1793890568234
+      "checked_at": 1793890891173
     },
     "AAPLUSDT|short": {
       "candidate": null,
-      "checked_at": 1793890569216
+      "checked_at": 1793890891965
     },
     "MSFTUSDT|short": {
       "candidate": null,
-      "checked_at": 1793890569904
+      "checked_at": 1793890892677
     },
     "AMZNUSDT|short": {
       "candidate": null,
-      "checked_at": 1793890570760
+      "checked_at": 1793890893419
     },
     "GOOGLUSDT|short": {
       "candidate": null,
-      "checked_at": 1793890571389
+      "checked_at": 1793890894065
     },
     "METAUSDT|short": {
-      "candidate": null,
-      "checked_at": 1793890572011
+      "candidate": {
+        "low": 608.4,
+        "high": 608.79,
+        "score": 3,
+        "groups": [
+          "1h:FVG",
+          "4h:FVG",
+          "4h:OB"
+        ],
+        "source_ids": [
+          "1h:FVG:1793692800000:1793703600000:1",
+          "4h:FVG:1788422400000:1788465600000:1",
+          "4h:OB:1793678400000:1793707200000:1",
+          "15m:FVG:1793695500000:1793698200000:1"
+        ],
+        "sources": [
+          {
+            "id": "1h:FVG:1793692800000:1793703600000:1",
+            "timeframe": "1h",
+            "kind": "FVG",
+            "direction": 1,
+            "low": 608.4,
+            "high": 610.55,
+            "created": 1793703600000,
+            "origin": 1793692800000,
+            "stop": 608.4,
+            "invalidation": 608.4,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:FVG:1788422400000:1788465600000:1",
+            "timeframe": "4h",
+            "kind": "FVG",
+            "direction": 1,
+            "low": 601.18,
+            "high": 610.35,
+            "created": 1788465600000,
+            "origin": 1788422400000,
+            "stop": 601.18,
+            "invalidation": 601.18,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:OB:1793678400000:1793707200000:1",
+            "timeframe": "4h",
+            "kind": "OB",
+            "direction": 1,
+            "low": 608.3,
+            "high": 608.79,
+            "created": 1793707200000,
+            "origin": 1793678400000,
+            "stop": 605.77,
+            "invalidation": 608.3,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "15m:FVG:1793695500000:1793698200000:1",
+            "timeframe": "15m",
+            "kind": "FVG",
+            "direction": 1,
+            "low": 608.07,
+            "high": 610.02,
+            "created": 1793698200000,
+            "origin": 1793695500000,
+            "stop": 608.07,
+            "invalidation": 608.07,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "latest_source": 1793707200000,
+        "parent": {
+          "id": "4h:OB:1793678400000:1793707200000:1",
+          "timeframe": "4h",
+          "kind": "OB",
+          "direction": 1,
+          "low": 608.3,
+          "high": 608.79,
+          "created": 1793707200000,
+          "origin": 1793678400000,
+          "stop": 605.77,
+          "invalidation": 608.3,
+          "expiry": 9223372036854775807
+        },
+        "structure_area": {
+          "id": "root:4h:4h:OB:1793678400000:1793707200000:1",
+          "scale": "recent",
+          "direction": 1,
+          "low": 608.3,
+          "high": 608.79,
+          "origin": 1793664000000,
+          "pivot_origin": 1793678400000,
+          "created": 1793880000000,
+          "invalidated_at": null,
+          "range_low": 605.77,
+          "range_high": 637.53,
+          "range_complete": false,
+          "range_known_at": 1793793600000,
+          "base_bars": 2,
+          "parent_id": "4h:OB:1793678400000:1793707200000:1",
+          "bos_at": 1793880000000,
+          "bos_level": 635.57,
+          "basis": "body_break_origin"
+        },
+        "lens": "recent",
+        "direction": 1,
+        "refinement_tf": "15m",
+        "equilibrium": {
+          "midpoint": 621.65,
+          "eligible": true,
+          "entry_required": true,
+          "range_low": 605.77,
+          "range_high": 637.53
+        },
+        "entry_touch": {
+          "hit": true,
+          "midpoint": 621.65,
+          "band_low": 608.4,
+          "band_high": 608.79,
+          "valid_from": 1793880000000,
+          "at": 1793890860000,
+          "bar_open": 1793890800000,
+          "evidence": "completed_1m_range",
+          "observed_low": 607.55,
+          "observed_high": 609.49
+        },
+        "id": "15836b89bfbd17bc89038dd7",
+        "zone_id": "15836b89bfbd17bc89038dd7",
+        "alert_policy": "root-ob-pullback-v1",
+        "path": [
+          "4h",
+          "1h",
+          "15m"
+        ],
+        "symbol": "METAUSDT",
+        "track": "short",
+        "pair": [
+          "4h",
+          "1h"
+        ],
+        "exchange": "bitget",
+        "lenses": [
+          "recent"
+        ],
+        "price": 606.38,
+        "context_id": "root:4h:4h:OB:1793678400000:1793707200000:1:recent",
+        "context": {
+          "id": "root:4h:4h:OB:1793678400000:1793707200000:1:recent"
+        },
+        "formed_at": 1793880000000,
+        "structure_states": {
+          "broad": "down",
+          "recent": "up"
+        },
+        "context_price_breach": false,
+        "location": "outside_after_touch"
+      },
+      "checked_at": 1793890895131
     },
     "QQQUSDT|short": {
       "candidate": null,
-      "checked_at": 1793890572590
+      "checked_at": 1793890895865
     },
     "SPYUSDT|short": {
       "candidate": null,
-      "checked_at": 1793890573166
+      "checked_at": 1793890896549
     },
     "NDX100USDT|short": {
       "candidate": {
@@ -3012,7 +3009,7 @@
     },
     "CLUSDT|short": {
       "candidate": null,
-      "checked_at": 1793890573866
+      "checked_at": 1793890897284
     },
     "CLUSDT|medium": {
       "candidate": {
@@ -3138,7 +3135,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 89.568,
+        "price": 89.913,
         "context_id": "root:1d:1d:OB:1787961600000:1788134400000:1:broad",
         "context": {
           "id": "root:1d:1d:OB:1787961600000:1788134400000:1:broad"
@@ -3153,7 +3150,7 @@
         "monitor_eligible": true,
         "diversification": {
           "eligible": true,
-          "as_of": 1793890573866,
+          "as_of": 1793890897284,
           "exchange": "bitget",
           "reasons": [],
           "method": "simultaneous_closed_log_returns_30d_60d",
@@ -3182,11 +3179,11 @@
           "median_daily_turnover_30d": 61276065.494684994,
           "median_daily_turnover_7d": 80372006.23462,
           "days_above_5m_30d": 30,
-          "turnover_24h_usdt": 93592484.84303,
-          "spread_bps": 0.22329403358448885
+          "turnover_24h_usdt": 95902880.92073,
+          "spread_bps": 0.3336799897671596
         }
       },
-      "checked_at": 1793890573866
+      "checked_at": 1793890897284
     },
     "CLUSDT|long": {
       "candidate": {
@@ -3312,7 +3309,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 89.568,
+        "price": 89.913,
         "context_id": "root:1w:1w:OB:1782691200000:1783900800000:1:recent",
         "context": {
           "id": "root:1w:1w:OB:1782691200000:1783900800000:1:recent"
@@ -3327,7 +3324,7 @@
         "monitor_eligible": true,
         "diversification": {
           "eligible": true,
-          "as_of": 1793890573866,
+          "as_of": 1793890897284,
           "exchange": "bitget",
           "reasons": [],
           "method": "simultaneous_closed_log_returns_30d_60d",
@@ -3356,15 +3353,15 @@
           "median_daily_turnover_30d": 61276065.494684994,
           "median_daily_turnover_7d": 80372006.23462,
           "days_above_5m_30d": 30,
-          "turnover_24h_usdt": 93592484.84303,
-          "spread_bps": 0.22329403358448885
+          "turnover_24h_usdt": 95902880.92073,
+          "spread_bps": 0.3336799897671596
         }
       },
-      "checked_at": 1793890573866
+      "checked_at": 1793890897284
     },
     "BZUSDT|short": {
       "candidate": null,
-      "checked_at": 1793890574546
+      "checked_at": 1793890898379
     },
     "BZUSDT|medium": {
       "candidate": {
@@ -3490,7 +3487,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 96.86,
+        "price": 96.96,
         "context_id": "root:1d:1d:OB:1790035200000:1790208000000:1:broad",
         "context": {
           "id": "root:1d:1d:OB:1790035200000:1790208000000:1:broad"
@@ -3505,7 +3502,7 @@
         "monitor_eligible": false,
         "diversification": {
           "eligible": false,
-          "as_of": 1793890574546,
+          "as_of": 1793890898379,
           "exchange": "bitget",
           "reasons": [
             "1d_30d_correlation_high"
@@ -3536,15 +3533,15 @@
           "median_daily_turnover_30d": 35174087.42735,
           "median_daily_turnover_7d": 40963706.0045,
           "days_above_5m_30d": 28,
-          "turnover_24h_usdt": 69799775.5031,
-          "spread_bps": 1.0323646311882635
+          "turnover_24h_usdt": 70091315.1138,
+          "spread_bps": 1.0315127133947204
         }
       },
-      "checked_at": 1793890574546
+      "checked_at": 1793890898379
     },
     "BZUSDT|long": {
       "candidate": null,
-      "checked_at": 1793890574546
+      "checked_at": 1793890898379
     }
   },
   "delivered": {
@@ -5006,6 +5003,15 @@
         1965,
         1966,
         1967
+      ]
+    },
+    "6e04d239067c17a0bd47534d": {
+      "symbol": "METAUSDT",
+      "stage": "entry",
+      "timestamp": 1793890895131,
+      "message_ids": [
+        1968,
+        1969
       ]
     }
   },
@@ -10162,9 +10168,11 @@
             "band_low": 346.76,
             "band_high": 347.21,
             "valid_from": 1788537600000,
-            "at": 1793890568234,
-            "evidence": "current_price",
-            "observed_price": 347.2
+            "at": 1793890680000,
+            "bar_open": 1793890620000,
+            "evidence": "completed_1m_range",
+            "observed_low": 346.89,
+            "observed_high": 349.33
           },
           "id": "2743f59e925c7ebe9c5c4027",
           "zone_id": "119203f45196d530a3883b55",
@@ -10185,7 +10193,7 @@
             "broad",
             "recent"
           ],
-          "price": 347.2,
+          "price": 348.24,
           "context_id": "root:4h:4h:OB:1787817600000:1787846400000:1:broad",
           "context": {
             "id": "root:4h:4h:OB:1787817600000:1787846400000:1:broad"
@@ -10196,7 +10204,7 @@
             "recent": "down"
           },
           "context_price_breach": false,
-          "location": "inside",
+          "location": "outside_after_touch",
           "lens_details": {
             "broad": {
               "low": 346.76,
@@ -10302,9 +10310,11 @@
                 "band_low": 346.76,
                 "band_high": 347.21,
                 "valid_from": 1788537600000,
-                "at": 1793890568234,
-                "evidence": "current_price",
-                "observed_price": 347.2
+                "at": 1793890680000,
+                "bar_open": 1793890620000,
+                "evidence": "completed_1m_range",
+                "observed_low": 346.89,
+                "observed_high": 349.33
               },
               "zone_id": "119203f45196d530a3883b55",
               "alert_policy": "root-ob-pullback-v1",
@@ -10320,7 +10330,7 @@
                 "1h"
               ],
               "exchange": "bitget",
-              "price": 347.2,
+              "price": 348.24,
               "context_id": "root:4h:4h:OB:1787817600000:1787846400000:1:broad",
               "context": {
                 "id": "root:4h:4h:OB:1787817600000:1787846400000:1:broad"
@@ -10331,7 +10341,7 @@
                 "recent": "down"
               },
               "context_price_breach": false,
-              "location": "inside"
+              "location": "outside_after_touch"
             },
             "recent": {
               "low": 346.76,
@@ -10437,9 +10447,11 @@
                 "band_low": 346.76,
                 "band_high": 347.21,
                 "valid_from": 1788451200000,
-                "at": 1793890568234,
-                "evidence": "current_price",
-                "observed_price": 347.2
+                "at": 1793890680000,
+                "bar_open": 1793890620000,
+                "evidence": "completed_1m_range",
+                "observed_low": 346.89,
+                "observed_high": 349.33
               },
               "zone_id": "b9d03c1331a9c49efbaa633f",
               "alert_policy": "root-ob-pullback-v1",
@@ -10455,7 +10467,7 @@
                 "1h"
               ],
               "exchange": "bitget",
-              "price": 347.2,
+              "price": 348.24,
               "context_id": "root:4h:4h:OB:1787817600000:1787846400000:1:recent",
               "context": {
                 "id": "root:4h:4h:OB:1787817600000:1787846400000:1:recent"
@@ -10466,7 +10478,7 @@
                 "recent": "down"
               },
               "context_price_breach": false,
-              "location": "inside"
+              "location": "outside_after_touch"
             }
           }
         },
@@ -12574,7 +12586,327 @@
       }
     ],
     "GOOGLUSDT|long": [],
-    "METAUSDT|short": [],
+    "METAUSDT|short": [
+      {
+        "id": "189e8500cba79b6692cea4e9",
+        "parent_id": "4h:OB:1793678400000:1793707200000:1",
+        "direction": 1,
+        "anchor_low": 608.3,
+        "anchor_high": 608.79,
+        "sent": true,
+        "latest": {
+          "low": 608.4,
+          "high": 608.79,
+          "score": 3,
+          "groups": [
+            "1h:FVG",
+            "4h:FVG",
+            "4h:OB"
+          ],
+          "source_ids": [
+            "1h:FVG:1793692800000:1793703600000:1",
+            "4h:FVG:1788422400000:1788465600000:1",
+            "4h:OB:1793678400000:1793707200000:1",
+            "15m:FVG:1793695500000:1793698200000:1"
+          ],
+          "sources": [
+            {
+              "id": "1h:FVG:1793692800000:1793703600000:1",
+              "timeframe": "1h",
+              "kind": "FVG",
+              "direction": 1,
+              "low": 608.4,
+              "high": 610.55,
+              "created": 1793703600000,
+              "origin": 1793692800000,
+              "stop": 608.4,
+              "invalidation": 608.4,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "4h:FVG:1788422400000:1788465600000:1",
+              "timeframe": "4h",
+              "kind": "FVG",
+              "direction": 1,
+              "low": 601.18,
+              "high": 610.35,
+              "created": 1788465600000,
+              "origin": 1788422400000,
+              "stop": 601.18,
+              "invalidation": 601.18,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "4h:OB:1793678400000:1793707200000:1",
+              "timeframe": "4h",
+              "kind": "OB",
+              "direction": 1,
+              "low": 608.3,
+              "high": 608.79,
+              "created": 1793707200000,
+              "origin": 1793678400000,
+              "stop": 605.77,
+              "invalidation": 608.3,
+              "expiry": 9223372036854775807
+            },
+            {
+              "id": "15m:FVG:1793695500000:1793698200000:1",
+              "timeframe": "15m",
+              "kind": "FVG",
+              "direction": 1,
+              "low": 608.07,
+              "high": 610.02,
+              "created": 1793698200000,
+              "origin": 1793695500000,
+              "stop": 608.07,
+              "invalidation": 608.07,
+              "expiry": 9223372036854775807
+            }
+          ],
+          "latest_source": 1793707200000,
+          "parent": {
+            "id": "4h:OB:1793678400000:1793707200000:1",
+            "timeframe": "4h",
+            "kind": "OB",
+            "direction": 1,
+            "low": 608.3,
+            "high": 608.79,
+            "created": 1793707200000,
+            "origin": 1793678400000,
+            "stop": 605.77,
+            "invalidation": 608.3,
+            "expiry": 9223372036854775807
+          },
+          "structure_area": {
+            "id": "root:4h:4h:OB:1793678400000:1793707200000:1",
+            "scale": "recent",
+            "direction": 1,
+            "low": 608.3,
+            "high": 608.79,
+            "origin": 1793664000000,
+            "pivot_origin": 1793678400000,
+            "created": 1793880000000,
+            "invalidated_at": null,
+            "range_low": 605.77,
+            "range_high": 637.53,
+            "range_complete": false,
+            "range_known_at": 1793793600000,
+            "base_bars": 2,
+            "parent_id": "4h:OB:1793678400000:1793707200000:1",
+            "bos_at": 1793880000000,
+            "bos_level": 635.57,
+            "basis": "body_break_origin"
+          },
+          "lens": "recent",
+          "direction": 1,
+          "refinement_tf": "15m",
+          "equilibrium": {
+            "midpoint": 621.65,
+            "eligible": true,
+            "entry_required": true,
+            "range_low": 605.77,
+            "range_high": 637.53
+          },
+          "entry_touch": {
+            "hit": true,
+            "midpoint": 621.65,
+            "band_low": 608.4,
+            "band_high": 608.79,
+            "valid_from": 1793880000000,
+            "at": 1793890860000,
+            "bar_open": 1793890800000,
+            "evidence": "completed_1m_range",
+            "observed_low": 607.55,
+            "observed_high": 609.49
+          },
+          "id": "189e8500cba79b6692cea4e9",
+          "zone_id": "15836b89bfbd17bc89038dd7",
+          "alert_policy": "root-ob-pullback-v1",
+          "path": [
+            "4h",
+            "1h",
+            "15m"
+          ],
+          "symbol": "METAUSDT",
+          "track": "short",
+          "pair": [
+            "4h",
+            "1h"
+          ],
+          "exchange": "bitget",
+          "lenses": [
+            "recent"
+          ],
+          "price": 606.38,
+          "context_id": "root:4h:4h:OB:1793678400000:1793707200000:1:recent",
+          "context": {
+            "id": "root:4h:4h:OB:1793678400000:1793707200000:1:recent"
+          },
+          "formed_at": 1793880000000,
+          "structure_states": {
+            "broad": "down",
+            "recent": "up"
+          },
+          "context_price_breach": false,
+          "location": "outside_after_touch",
+          "lens_details": {
+            "recent": {
+              "low": 608.4,
+              "high": 608.79,
+              "score": 3,
+              "groups": [
+                "1h:FVG",
+                "4h:FVG",
+                "4h:OB"
+              ],
+              "source_ids": [
+                "1h:FVG:1793692800000:1793703600000:1",
+                "4h:FVG:1788422400000:1788465600000:1",
+                "4h:OB:1793678400000:1793707200000:1",
+                "15m:FVG:1793695500000:1793698200000:1"
+              ],
+              "sources": [
+                {
+                  "id": "1h:FVG:1793692800000:1793703600000:1",
+                  "timeframe": "1h",
+                  "kind": "FVG",
+                  "direction": 1,
+                  "low": 608.4,
+                  "high": 610.55,
+                  "created": 1793703600000,
+                  "origin": 1793692800000,
+                  "stop": 608.4,
+                  "invalidation": 608.4,
+                  "expiry": 9223372036854775807
+                },
+                {
+                  "id": "4h:FVG:1788422400000:1788465600000:1",
+                  "timeframe": "4h",
+                  "kind": "FVG",
+                  "direction": 1,
+                  "low": 601.18,
+                  "high": 610.35,
+                  "created": 1788465600000,
+                  "origin": 1788422400000,
+                  "stop": 601.18,
+                  "invalidation": 601.18,
+                  "expiry": 9223372036854775807
+                },
+                {
+                  "id": "4h:OB:1793678400000:1793707200000:1",
+                  "timeframe": "4h",
+                  "kind": "OB",
+                  "direction": 1,
+                  "low": 608.3,
+                  "high": 608.79,
+                  "created": 1793707200000,
+                  "origin": 1793678400000,
+                  "stop": 605.77,
+                  "invalidation": 608.3,
+                  "expiry": 9223372036854775807
+                },
+                {
+                  "id": "15m:FVG:1793695500000:1793698200000:1",
+                  "timeframe": "15m",
+                  "kind": "FVG",
+                  "direction": 1,
+                  "low": 608.07,
+                  "high": 610.02,
+                  "created": 1793698200000,
+                  "origin": 1793695500000,
+                  "stop": 608.07,
+                  "invalidation": 608.07,
+                  "expiry": 9223372036854775807
+                }
+              ],
+              "latest_source": 1793707200000,
+              "parent": {
+                "id": "4h:OB:1793678400000:1793707200000:1",
+                "timeframe": "4h",
+                "kind": "OB",
+                "direction": 1,
+                "low": 608.3,
+                "high": 608.79,
+                "created": 1793707200000,
+                "origin": 1793678400000,
+                "stop": 605.77,
+                "invalidation": 608.3,
+                "expiry": 9223372036854775807
+              },
+              "structure_area": {
+                "id": "root:4h:4h:OB:1793678400000:1793707200000:1",
+                "scale": "recent",
+                "direction": 1,
+                "low": 608.3,
+                "high": 608.79,
+                "origin": 1793664000000,
+                "pivot_origin": 1793678400000,
+                "created": 1793880000000,
+                "invalidated_at": null,
+                "range_low": 605.77,
+                "range_high": 637.53,
+                "range_complete": false,
+                "range_known_at": 1793793600000,
+                "base_bars": 2,
+                "parent_id": "4h:OB:1793678400000:1793707200000:1",
+                "bos_at": 1793880000000,
+                "bos_level": 635.57,
+                "basis": "body_break_origin"
+              },
+              "lens": "recent",
+              "direction": 1,
+              "refinement_tf": "15m",
+              "equilibrium": {
+                "midpoint": 621.65,
+                "eligible": true,
+                "entry_required": true,
+                "range_low": 605.77,
+                "range_high": 637.53
+              },
+              "entry_touch": {
+                "hit": true,
+                "midpoint": 621.65,
+                "band_low": 608.4,
+                "band_high": 608.79,
+                "valid_from": 1793880000000,
+                "at": 1793890860000,
+                "bar_open": 1793890800000,
+                "evidence": "completed_1m_range",
+                "observed_low": 607.55,
+                "observed_high": 609.49
+              },
+              "zone_id": "15836b89bfbd17bc89038dd7",
+              "alert_policy": "root-ob-pullback-v1",
+              "path": [
+                "4h",
+                "1h",
+                "15m"
+              ],
+              "symbol": "METAUSDT",
+              "track": "short",
+              "pair": [
+                "4h",
+                "1h"
+              ],
+              "exchange": "bitget",
+              "price": 606.38,
+              "context_id": "root:4h:4h:OB:1793678400000:1793707200000:1:recent",
+              "context": {
+                "id": "root:4h:4h:OB:1793678400000:1793707200000:1:recent"
+              },
+              "formed_at": 1793880000000,
+              "structure_states": {
+                "broad": "down",
+                "recent": "up"
+              },
+              "context_price_breach": false,
+              "location": "outside_after_touch"
+            }
+          }
+        },
+        "last_sent_at": 1793890895131
+      }
+    ],
     "METAUSDT|medium": [],
     "METAUSDT|long": [],
     "QQQUSDT|short": [],
@@ -14987,6 +15319,15 @@
         1966,
         1967
       ]
+    },
+    "6e04d239067c17a0bd47534d": {
+      "symbol": "METAUSDT",
+      "stage": "entry",
+      "timestamp": 1793890895131,
+      "message_ids": [
+        1968,
+        1969
+      ]
     }
   },
   "structure_migration": {
@@ -14997,7 +15338,7 @@
   "strategy": "root-ob-pullback-v1",
   "dedup_audits": {
     "BTCUSDT": {
-      "at": 1793890551890,
+      "at": 1793890888266,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -15005,7 +15346,7 @@
       "one_off_resend": false
     },
     "SKHYNIXUSDT": {
-      "at": 1793890552620,
+      "at": 1793890888963,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -15013,23 +15354,23 @@
       "one_off_resend": false
     },
     "NVDAUSDT": {
-      "at": 1793890553235,
+      "at": 1793890889939,
+      "queued": 0,
+      "suppressed": 0,
+      "retired": 0,
+      "locking_enabled": true,
+      "one_off_resend": false
+    },
+    "TSLAUSDT": {
+      "at": 1793890891173,
       "queued": 0,
       "suppressed": 1,
       "retired": 0,
       "locking_enabled": true,
       "one_off_resend": false
     },
-    "TSLAUSDT": {
-      "at": 1793890568234,
-      "queued": 3,
-      "suppressed": 0,
-      "retired": 0,
-      "locking_enabled": true,
-      "one_off_resend": false
-    },
     "AAPLUSDT": {
-      "at": 1793890569216,
+      "at": 1793890891965,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -15037,7 +15378,7 @@
       "one_off_resend": false
     },
     "MSFTUSDT": {
-      "at": 1793890569904,
+      "at": 1793890892677,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -15045,7 +15386,7 @@
       "one_off_resend": false
     },
     "AMZNUSDT": {
-      "at": 1793890570760,
+      "at": 1793890893419,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -15053,7 +15394,7 @@
       "one_off_resend": false
     },
     "GOOGLUSDT": {
-      "at": 1793890571389,
+      "at": 1793890894065,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -15061,23 +15402,23 @@
       "one_off_resend": false
     },
     "METAUSDT": {
-      "at": 1793890572011,
-      "queued": 0,
+      "at": 1793890895131,
+      "queued": 1,
       "suppressed": 0,
       "retired": 0,
       "locking_enabled": true,
       "one_off_resend": false
     },
     "QQQUSDT": {
-      "at": 1793890572590,
+      "at": 1793890895865,
       "queued": 0,
-      "suppressed": 1,
+      "suppressed": 0,
       "retired": 0,
       "locking_enabled": true,
       "one_off_resend": false
     },
     "SPYUSDT": {
-      "at": 1793890573166,
+      "at": 1793890896549,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -15085,7 +15426,7 @@
       "one_off_resend": false
     },
     "CLUSDT": {
-      "at": 1793890573866,
+      "at": 1793890897284,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -15093,7 +15434,7 @@
       "one_off_resend": false
     },
     "BZUSDT": {
-      "at": 1793890574546,
+      "at": 1793890898379,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -56108,22 +56449,351 @@
           ]
         }
       }
+    },
+    "6e04d239067c17a0bd47534d": {
+      "symbol": "METAUSDT",
+      "track": "short",
+      "stage": "entry",
+      "attempt": 1793890895131,
+      "candidate": {
+        "low": 608.4,
+        "high": 608.79,
+        "score": 3,
+        "groups": [
+          "1h:FVG",
+          "4h:FVG",
+          "4h:OB"
+        ],
+        "source_ids": [
+          "1h:FVG:1793692800000:1793703600000:1",
+          "4h:FVG:1788422400000:1788465600000:1",
+          "4h:OB:1793678400000:1793707200000:1",
+          "15m:FVG:1793695500000:1793698200000:1"
+        ],
+        "sources": [
+          {
+            "id": "1h:FVG:1793692800000:1793703600000:1",
+            "timeframe": "1h",
+            "kind": "FVG",
+            "direction": 1,
+            "low": 608.4,
+            "high": 610.55,
+            "created": 1793703600000,
+            "origin": 1793692800000,
+            "stop": 608.4,
+            "invalidation": 608.4,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:FVG:1788422400000:1788465600000:1",
+            "timeframe": "4h",
+            "kind": "FVG",
+            "direction": 1,
+            "low": 601.18,
+            "high": 610.35,
+            "created": 1788465600000,
+            "origin": 1788422400000,
+            "stop": 601.18,
+            "invalidation": 601.18,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:OB:1793678400000:1793707200000:1",
+            "timeframe": "4h",
+            "kind": "OB",
+            "direction": 1,
+            "low": 608.3,
+            "high": 608.79,
+            "created": 1793707200000,
+            "origin": 1793678400000,
+            "stop": 605.77,
+            "invalidation": 608.3,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "15m:FVG:1793695500000:1793698200000:1",
+            "timeframe": "15m",
+            "kind": "FVG",
+            "direction": 1,
+            "low": 608.07,
+            "high": 610.02,
+            "created": 1793698200000,
+            "origin": 1793695500000,
+            "stop": 608.07,
+            "invalidation": 608.07,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "latest_source": 1793707200000,
+        "parent": {
+          "id": "4h:OB:1793678400000:1793707200000:1",
+          "timeframe": "4h",
+          "kind": "OB",
+          "direction": 1,
+          "low": 608.3,
+          "high": 608.79,
+          "created": 1793707200000,
+          "origin": 1793678400000,
+          "stop": 605.77,
+          "invalidation": 608.3,
+          "expiry": 9223372036854775807
+        },
+        "structure_area": {
+          "id": "root:4h:4h:OB:1793678400000:1793707200000:1",
+          "scale": "recent",
+          "direction": 1,
+          "low": 608.3,
+          "high": 608.79,
+          "origin": 1793664000000,
+          "pivot_origin": 1793678400000,
+          "created": 1793880000000,
+          "invalidated_at": null,
+          "range_low": 605.77,
+          "range_high": 637.53,
+          "range_complete": false,
+          "range_known_at": 1793793600000,
+          "base_bars": 2,
+          "parent_id": "4h:OB:1793678400000:1793707200000:1",
+          "bos_at": 1793880000000,
+          "bos_level": 635.57,
+          "basis": "body_break_origin"
+        },
+        "lens": "recent",
+        "direction": 1,
+        "refinement_tf": "15m",
+        "equilibrium": {
+          "midpoint": 621.65,
+          "eligible": true,
+          "entry_required": true,
+          "range_low": 605.77,
+          "range_high": 637.53
+        },
+        "entry_touch": {
+          "hit": true,
+          "midpoint": 621.65,
+          "band_low": 608.4,
+          "band_high": 608.79,
+          "valid_from": 1793880000000,
+          "at": 1793890860000,
+          "bar_open": 1793890800000,
+          "evidence": "completed_1m_range",
+          "observed_low": 607.55,
+          "observed_high": 609.49
+        },
+        "id": "189e8500cba79b6692cea4e9",
+        "zone_id": "15836b89bfbd17bc89038dd7",
+        "alert_policy": "root-ob-pullback-v1",
+        "path": [
+          "4h",
+          "1h",
+          "15m"
+        ],
+        "symbol": "METAUSDT",
+        "track": "short",
+        "pair": [
+          "4h",
+          "1h"
+        ],
+        "exchange": "bitget",
+        "lenses": [
+          "recent"
+        ],
+        "price": 606.38,
+        "context_id": "root:4h:4h:OB:1793678400000:1793707200000:1:recent",
+        "context": {
+          "id": "root:4h:4h:OB:1793678400000:1793707200000:1:recent"
+        },
+        "formed_at": 1793880000000,
+        "structure_states": {
+          "broad": "down",
+          "recent": "up"
+        },
+        "context_price_breach": false,
+        "location": "outside_after_touch",
+        "lens_details": {
+          "recent": {
+            "low": 608.4,
+            "high": 608.79,
+            "score": 3,
+            "groups": [
+              "1h:FVG",
+              "4h:FVG",
+              "4h:OB"
+            ],
+            "source_ids": [
+              "1h:FVG:1793692800000:1793703600000:1",
+              "4h:FVG:1788422400000:1788465600000:1",
+              "4h:OB:1793678400000:1793707200000:1",
+              "15m:FVG:1793695500000:1793698200000:1"
+            ],
+            "sources": [
+              {
+                "id": "1h:FVG:1793692800000:1793703600000:1",
+                "timeframe": "1h",
+                "kind": "FVG",
+                "direction": 1,
+                "low": 608.4,
+                "high": 610.55,
+                "created": 1793703600000,
+                "origin": 1793692800000,
+                "stop": 608.4,
+                "invalidation": 608.4,
+                "expiry": 9223372036854775807
+              },
+              {
+                "id": "4h:FVG:1788422400000:1788465600000:1",
+                "timeframe": "4h",
+                "kind": "FVG",
+                "direction": 1,
+                "low": 601.18,
+                "high": 610.35,
+                "created": 1788465600000,
+                "origin": 1788422400000,
+                "stop": 601.18,
+                "invalidation": 601.18,
+                "expiry": 9223372036854775807
+              },
+              {
+                "id": "4h:OB:1793678400000:1793707200000:1",
+                "timeframe": "4h",
+                "kind": "OB",
+                "direction": 1,
+                "low": 608.3,
+                "high": 608.79,
+                "created": 1793707200000,
+                "origin": 1793678400000,
+                "stop": 605.77,
+                "invalidation": 608.3,
+                "expiry": 9223372036854775807
+              },
+              {
+                "id": "15m:FVG:1793695500000:1793698200000:1",
+                "timeframe": "15m",
+                "kind": "FVG",
+                "direction": 1,
+                "low": 608.07,
+                "high": 610.02,
+                "created": 1793698200000,
+                "origin": 1793695500000,
+                "stop": 608.07,
+                "invalidation": 608.07,
+                "expiry": 9223372036854775807
+              }
+            ],
+            "latest_source": 1793707200000,
+            "parent": {
+              "id": "4h:OB:1793678400000:1793707200000:1",
+              "timeframe": "4h",
+              "kind": "OB",
+              "direction": 1,
+              "low": 608.3,
+              "high": 608.79,
+              "created": 1793707200000,
+              "origin": 1793678400000,
+              "stop": 605.77,
+              "invalidation": 608.3,
+              "expiry": 9223372036854775807
+            },
+            "structure_area": {
+              "id": "root:4h:4h:OB:1793678400000:1793707200000:1",
+              "scale": "recent",
+              "direction": 1,
+              "low": 608.3,
+              "high": 608.79,
+              "origin": 1793664000000,
+              "pivot_origin": 1793678400000,
+              "created": 1793880000000,
+              "invalidated_at": null,
+              "range_low": 605.77,
+              "range_high": 637.53,
+              "range_complete": false,
+              "range_known_at": 1793793600000,
+              "base_bars": 2,
+              "parent_id": "4h:OB:1793678400000:1793707200000:1",
+              "bos_at": 1793880000000,
+              "bos_level": 635.57,
+              "basis": "body_break_origin"
+            },
+            "lens": "recent",
+            "direction": 1,
+            "refinement_tf": "15m",
+            "equilibrium": {
+              "midpoint": 621.65,
+              "eligible": true,
+              "entry_required": true,
+              "range_low": 605.77,
+              "range_high": 637.53
+            },
+            "entry_touch": {
+              "hit": true,
+              "midpoint": 621.65,
+              "band_low": 608.4,
+              "band_high": 608.79,
+              "valid_from": 1793880000000,
+              "at": 1793890860000,
+              "bar_open": 1793890800000,
+              "evidence": "completed_1m_range",
+              "observed_low": 607.55,
+              "observed_high": 609.49
+            },
+            "zone_id": "15836b89bfbd17bc89038dd7",
+            "alert_policy": "root-ob-pullback-v1",
+            "path": [
+              "4h",
+              "1h",
+              "15m"
+            ],
+            "symbol": "METAUSDT",
+            "track": "short",
+            "pair": [
+              "4h",
+              "1h"
+            ],
+            "exchange": "bitget",
+            "price": 606.38,
+            "context_id": "root:4h:4h:OB:1793678400000:1793707200000:1:recent",
+            "context": {
+              "id": "root:4h:4h:OB:1793678400000:1793707200000:1:recent"
+            },
+            "formed_at": 1793880000000,
+            "structure_states": {
+              "broad": "down",
+              "recent": "up"
+            },
+            "context_price_breach": false,
+            "location": "outside_after_touch"
+          }
+        }
+      },
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            1968
+          ],
+          "text_message_ids": [
+            1969
+          ]
+        }
+      }
     }
   },
   "touch_cursors": {
-    "BTCUSDT": 1793890500000,
-    "SKHYNIXUSDT": 1793890500000,
-    "NVDAUSDT": 1793890500000,
-    "TSLAUSDT": 1793890560000,
-    "AAPLUSDT": 1793890560000,
-    "MSFTUSDT": 1793890560000,
-    "AMZNUSDT": 1793890560000,
-    "GOOGLUSDT": 1793890560000,
-    "METAUSDT": 1793890560000,
-    "QQQUSDT": 1793890560000,
-    "SPYUSDT": 1793890560000,
-    "CLUSDT": 1793890560000,
-    "BZUSDT": 1793890560000
+    "BTCUSDT": 1793890860000,
+    "SKHYNIXUSDT": 1793890860000,
+    "NVDAUSDT": 1793890860000,
+    "TSLAUSDT": 1793890860000,
+    "AAPLUSDT": 1793890860000,
+    "MSFTUSDT": 1793890860000,
+    "AMZNUSDT": 1793890860000,
+    "GOOGLUSDT": 1793890860000,
+    "METAUSDT": 1793890860000,
+    "QQQUSDT": 1793890860000,
+    "SPYUSDT": 1793890860000,
+    "CLUSDT": 1793890860000,
+    "BZUSDT": 1793890860000
   },
   "notification_policy": "root-ob-pullback-v1",
   "delivery_mode": "once_per_parent_ob"
