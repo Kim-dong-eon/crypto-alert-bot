@@ -140,7 +140,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 80508.3,
+        "price": 80533.0,
         "context_id": "root:1d:1d:OB:1783900800000:1784073600000:1:broad",
         "context": {
           "id": "root:1d:1d:OB:1783900800000:1784073600000:1:broad"
@@ -153,7 +153,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793836550952
+      "checked_at": 1793836890047
     },
     "BTCUSDT|long": {
       "candidate": {
@@ -279,7 +279,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 80508.3,
+        "price": 80533.0,
         "context_id": "root:1w:1w:OB:1768176000000:1769385600000:-1:recent",
         "context": {
           "id": "root:1w:1w:OB:1768176000000:1769385600000:-1:recent"
@@ -292,7 +292,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793836550952
+      "checked_at": 1793836890047
     },
     "SKHYNIXUSDT|medium": {
       "candidate": {
@@ -418,7 +418,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 989.25,
+        "price": 982.09,
         "context_id": "root:1d:1d:OB:1791072000000:1791244800000:-1:recent",
         "context": {
           "id": "root:1d:1d:OB:1791072000000:1791244800000:-1:recent"
@@ -431,11 +431,11 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793836551677
+      "checked_at": 1793836891512
     },
     "SKHYNIXUSDT|long": {
       "candidate": null,
-      "checked_at": 1793836551677
+      "checked_at": 1793836891512
     },
     "NVDAUSDT|medium": {
       "candidate": {
@@ -561,7 +561,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 201.5,
+        "price": 201.44,
         "context_id": "root:1d:1d:OB:1785542400000:1785715200000:1:recent",
         "context": {
           "id": "root:1d:1d:OB:1785542400000:1785715200000:1:recent"
@@ -574,7 +574,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793836552325
+      "checked_at": 1793836892971
     },
     "NVDAUSDT|long": {
       "candidate": {
@@ -700,7 +700,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 201.5,
+        "price": 201.44,
         "context_id": "root:1w:1w:OB:1774224000000:1775433600000:1:recent",
         "context": {
           "id": "root:1w:1w:OB:1774224000000:1775433600000:1:recent"
@@ -713,7 +713,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793836552325
+      "checked_at": 1793836892971
     },
     "TSLAUSDT|medium": {
       "candidate": {
@@ -854,20 +854,20 @@
         "lenses": [
           "broad"
         ],
-        "price": 382.97,
+        "price": 382.82,
         "context_id": "root:1d:1d:OB:1792886400000:1793059200000:1:broad",
         "context": {
           "id": "root:1d:1d:OB:1792886400000:1793059200000:1:broad"
         },
         "formed_at": 1793059200000,
         "structure_states": {
-          "broad": "up",
+          "broad": "mixed",
           "recent": "up"
         },
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793836553119
+      "checked_at": 1793836894544
     },
     "TSLAUSDT|long": {
       "candidate": {
@@ -993,7 +993,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 382.97,
+        "price": 382.82,
         "context_id": "root:1w:1w:OB:1783296000000:1784505600000:-1:recent",
         "context": {
           "id": "root:1w:1w:OB:1783296000000:1784505600000:-1:recent"
@@ -1006,7 +1006,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793836553119
+      "checked_at": 1793836894544
     },
     "AAPLUSDT|medium": {
       "candidate": {
@@ -1132,7 +1132,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 350.25,
+        "price": 350.29,
         "context_id": "root:1d:1d:OB:1787616000000:1787788800000:1:broad",
         "context": {
           "id": "root:1d:1d:OB:1787616000000:1787788800000:1:broad"
@@ -1140,12 +1140,12 @@
         "formed_at": 1792022400000,
         "structure_states": {
           "broad": "up",
-          "recent": "down"
+          "recent": "mixed"
         },
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793836553724
+      "checked_at": 1793836895757
     },
     "AAPLUSDT|long": {
       "candidate": {
@@ -1271,7 +1271,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 350.25,
+        "price": 350.29,
         "context_id": "root:1w:1w:OB:1782086400000:1783296000000:1:recent",
         "context": {
           "id": "root:1w:1w:OB:1782086400000:1783296000000:1:recent"
@@ -1284,7 +1284,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793836553724
+      "checked_at": 1793836895757
     },
     "MSFTUSDT|medium": {
       "candidate": {
@@ -1410,7 +1410,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 555.09,
+        "price": 554.49,
         "context_id": "root:1d:1d:OB:1789257600000:1789430400000:1:recent",
         "context": {
           "id": "root:1d:1d:OB:1789257600000:1789430400000:1:recent"
@@ -1418,12 +1418,12 @@
         "formed_at": 1790380800000,
         "structure_states": {
           "broad": "mixed",
-          "recent": "up"
+          "recent": "mixed"
         },
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793836554324
+      "checked_at": 1793836896982
     },
     "MSFTUSDT|long": {
       "candidate": {
@@ -1549,7 +1549,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 555.09,
+        "price": 554.49,
         "context_id": "root:1w:1w:OB:1783296000000:1784505600000:1:recent",
         "context": {
           "id": "root:1w:1w:OB:1783296000000:1784505600000:1:recent"
@@ -1562,11 +1562,11 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793836554324
+      "checked_at": 1793836896982
     },
     "AMZNUSDT|medium": {
       "candidate": null,
-      "checked_at": 1793836554895
+      "checked_at": 1793836898195
     },
     "AMZNUSDT|long": {
       "candidate": {
@@ -1692,7 +1692,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 265.88,
+        "price": 265.96,
         "context_id": "root:1w:1w:OB:1774224000000:1775433600000:1:broad",
         "context": {
           "id": "root:1w:1w:OB:1774224000000:1775433600000:1:broad"
@@ -1705,7 +1705,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793836554895
+      "checked_at": 1793836898195
     },
     "GOOGLUSDT|medium": {
       "candidate": {
@@ -1831,7 +1831,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 291.4,
+        "price": 291.29,
         "context_id": "root:1d:1d:OB:1792368000000:1792540800000:-1:broad",
         "context": {
           "id": "root:1d:1d:OB:1792368000000:1792540800000:-1:broad"
@@ -1844,11 +1844,11 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793836555483
+      "checked_at": 1793836899389
     },
     "GOOGLUSDT|long": {
       "candidate": null,
-      "checked_at": 1793836555483
+      "checked_at": 1793836899389
     },
     "METAUSDT|medium": {
       "candidate": {
@@ -1989,7 +1989,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 632.24,
+        "price": 632.06,
         "context_id": "root:1d:1d:OB:1788134400000:1788307200000:1:broad",
         "context": {
           "id": "root:1d:1d:OB:1788134400000:1788307200000:1:broad"
@@ -2002,7 +2002,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793836556053
+      "checked_at": 1793836900582
     },
     "METAUSDT|long": {
       "candidate": {
@@ -2128,7 +2128,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 632.24,
+        "price": 632.06,
         "context_id": "root:1w:1w:OB:1782086400000:1783296000000:1:recent",
         "context": {
           "id": "root:1w:1w:OB:1782086400000:1783296000000:1:recent"
@@ -2141,7 +2141,7 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793836556053
+      "checked_at": 1793836900582
     },
     "QQQUSDT|medium": {
       "candidate": {
@@ -2267,7 +2267,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 692.03,
+        "price": 691.79,
         "context_id": "root:1d:1d:OB:1785283200000:1785456000000:1:broad",
         "context": {
           "id": "root:1d:1d:OB:1785283200000:1785456000000:1:broad"
@@ -2280,11 +2280,11 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793836556612
+      "checked_at": 1793836901672
     },
     "QQQUSDT|long": {
       "candidate": null,
-      "checked_at": 1793836556612
+      "checked_at": 1793836901672
     },
     "SPYUSDT|medium": {
       "candidate": {
@@ -2410,7 +2410,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 768.16,
+        "price": 767.98,
         "context_id": "root:1d:1d:OB:1791676800000:1791849600000:-1:recent",
         "context": {
           "id": "root:1d:1d:OB:1791676800000:1791849600000:-1:recent"
@@ -2423,11 +2423,11 @@
         "context_price_breach": false,
         "location": "waiting"
       },
-      "checked_at": 1793836557157
+      "checked_at": 1793836902803
     },
     "SPYUSDT|long": {
       "candidate": null,
-      "checked_at": 1793836557157
+      "checked_at": 1793836902803
     },
     "NDX100USDT|medium": {
       "candidate": {
@@ -2547,11 +2547,11 @@
     },
     "BTCUSDT|short": {
       "candidate": null,
-      "checked_at": 1793836550952
+      "checked_at": 1793836890047
     },
     "SKHYNIXUSDT|short": {
       "candidate": null,
-      "checked_at": 1793836551677
+      "checked_at": 1793836891512
     },
     "NVDAUSDT|short": {
       "candidate": {
@@ -2658,9 +2658,9 @@
           "band_low": 200.09,
           "band_high": 201.64,
           "valid_from": 1787587200000,
-          "at": 1793836552325,
+          "at": 1793836892971,
           "evidence": "current_price",
-          "observed_price": 201.5
+          "observed_price": 201.44
         },
         "id": "fb3664afa1088a71552a9e8a",
         "zone_id": "fb3664afa1088a71552a9e8a",
@@ -2680,7 +2680,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 201.5,
+        "price": 201.44,
         "context_id": "root:4h:4h:OB:1785744000000:1785772800000:1:broad",
         "context": {
           "id": "root:4h:4h:OB:1785744000000:1785772800000:1:broad"
@@ -2688,44 +2688,44 @@
         "formed_at": 1785888000000,
         "structure_states": {
           "broad": "down",
-          "recent": "mixed"
+          "recent": "down"
         },
         "context_price_breach": false,
         "location": "inside"
       },
-      "checked_at": 1793836552325
+      "checked_at": 1793836892971
     },
     "TSLAUSDT|short": {
       "candidate": null,
-      "checked_at": 1793836553119
+      "checked_at": 1793836894544
     },
     "AAPLUSDT|short": {
       "candidate": null,
-      "checked_at": 1793836553724
+      "checked_at": 1793836895757
     },
     "MSFTUSDT|short": {
       "candidate": null,
-      "checked_at": 1793836554324
+      "checked_at": 1793836896982
     },
     "AMZNUSDT|short": {
       "candidate": null,
-      "checked_at": 1793836554895
+      "checked_at": 1793836898195
     },
     "GOOGLUSDT|short": {
       "candidate": null,
-      "checked_at": 1793836555483
+      "checked_at": 1793836899389
     },
     "METAUSDT|short": {
       "candidate": null,
-      "checked_at": 1793836556053
+      "checked_at": 1793836900582
     },
     "QQQUSDT|short": {
       "candidate": null,
-      "checked_at": 1793836556612
+      "checked_at": 1793836901672
     },
     "SPYUSDT|short": {
       "candidate": null,
-      "checked_at": 1793836557157
+      "checked_at": 1793836902803
     },
     "NDX100USDT|short": {
       "candidate": {
@@ -2852,7 +2852,7 @@
     },
     "CLUSDT|short": {
       "candidate": null,
-      "checked_at": 1793836557796
+      "checked_at": 1793836904194
     },
     "CLUSDT|medium": {
       "candidate": {
@@ -2978,14 +2978,14 @@
         "lenses": [
           "broad"
         ],
-        "price": 88.372,
+        "price": 88.441,
         "context_id": "root:1d:1d:OB:1787961600000:1788134400000:1:broad",
         "context": {
           "id": "root:1d:1d:OB:1787961600000:1788134400000:1:broad"
         },
         "formed_at": 1788912000000,
         "structure_states": {
-          "broad": "up",
+          "broad": "mixed",
           "recent": "mixed"
         },
         "context_price_breach": false,
@@ -2993,40 +2993,40 @@
         "monitor_eligible": true,
         "diversification": {
           "eligible": true,
-          "as_of": 1793836557796,
+          "as_of": 1793836904194,
           "exchange": "bitget",
           "reasons": [],
           "method": "simultaneous_closed_log_returns_30d_60d",
           "correlations": {
             "4h_30d": {
-              "rho": -0.24091019667706168,
+              "rho": -0.24191272012330028,
               "samples": 180,
               "max_abs_rho": 0.3
             },
             "4h_60d": {
-              "rho": -0.2539599650908254,
+              "rho": -0.2543087143509058,
               "samples": 360,
               "max_abs_rho": 0.3
             },
             "1d_30d": {
-              "rho": -0.013216540776148525,
+              "rho": -0.33740530296981464,
               "samples": 30,
               "max_abs_rho": 0.4
             },
             "1d_60d": {
-              "rho": -0.29179656625942046,
+              "rho": -0.38015477417688714,
               "samples": 60,
               "max_abs_rho": 0.4
             }
           },
           "median_daily_turnover_30d": 61276065.494684994,
-          "median_daily_turnover_7d": 64052639.97677,
+          "median_daily_turnover_7d": 80372006.23462,
           "days_above_5m_30d": 30,
-          "turnover_24h_usdt": 89945808.53561,
-          "spread_bps": 0.22631858867675353
+          "turnover_24h_usdt": 90029465.09827,
+          "spread_bps": 0.7913583666368967
         }
       },
-      "checked_at": 1793836557796
+      "checked_at": 1793836904194
     },
     "CLUSDT|long": {
       "candidate": {
@@ -3152,7 +3152,7 @@
         "lenses": [
           "recent"
         ],
-        "price": 88.372,
+        "price": 88.441,
         "context_id": "root:1w:1w:OB:1782691200000:1783900800000:1:recent",
         "context": {
           "id": "root:1w:1w:OB:1782691200000:1783900800000:1:recent"
@@ -3167,44 +3167,44 @@
         "monitor_eligible": true,
         "diversification": {
           "eligible": true,
-          "as_of": 1793836557796,
+          "as_of": 1793836904194,
           "exchange": "bitget",
           "reasons": [],
           "method": "simultaneous_closed_log_returns_30d_60d",
           "correlations": {
             "4h_30d": {
-              "rho": -0.24091019667706168,
+              "rho": -0.24191272012330028,
               "samples": 180,
               "max_abs_rho": 0.3
             },
             "4h_60d": {
-              "rho": -0.2539599650908254,
+              "rho": -0.2543087143509058,
               "samples": 360,
               "max_abs_rho": 0.3
             },
             "1d_30d": {
-              "rho": -0.013216540776148525,
+              "rho": -0.33740530296981464,
               "samples": 30,
               "max_abs_rho": 0.4
             },
             "1d_60d": {
-              "rho": -0.29179656625942046,
+              "rho": -0.38015477417688714,
               "samples": 60,
               "max_abs_rho": 0.4
             }
           },
           "median_daily_turnover_30d": 61276065.494684994,
-          "median_daily_turnover_7d": 64052639.97677,
+          "median_daily_turnover_7d": 80372006.23462,
           "days_above_5m_30d": 30,
-          "turnover_24h_usdt": 89945808.53561,
-          "spread_bps": 0.22631858867675353
+          "turnover_24h_usdt": 90029465.09827,
+          "spread_bps": 0.7913583666368967
         }
       },
-      "checked_at": 1793836557796
+      "checked_at": 1793836904194
     },
     "BZUSDT|short": {
       "candidate": null,
-      "checked_at": 1793836558429
+      "checked_at": 1793836905613
     },
     "BZUSDT|medium": {
       "candidate": {
@@ -3345,7 +3345,7 @@
         "lenses": [
           "broad"
         ],
-        "price": 94.9,
+        "price": 94.99,
         "context_id": "root:1d:1d:OB:1786579200000:1786752000000:1:broad",
         "context": {
           "id": "root:1d:1d:OB:1786579200000:1786752000000:1:broad"
@@ -3357,47 +3357,49 @@
         },
         "context_price_breach": false,
         "location": "waiting",
-        "monitor_eligible": true,
+        "monitor_eligible": false,
         "diversification": {
-          "eligible": true,
-          "as_of": 1793836558429,
+          "eligible": false,
+          "as_of": 1793836905613,
           "exchange": "bitget",
-          "reasons": [],
+          "reasons": [
+            "1d_30d_correlation_high"
+          ],
           "method": "simultaneous_closed_log_returns_30d_60d",
           "correlations": {
             "4h_30d": {
-              "rho": -0.25425099234916876,
+              "rho": -0.2550628708319176,
               "samples": 180,
               "max_abs_rho": 0.3
             },
             "4h_60d": {
-              "rho": -0.2353442687267982,
+              "rho": -0.2357516544602257,
               "samples": 360,
               "max_abs_rho": 0.3
             },
             "1d_30d": {
-              "rho": -0.12790482577592924,
+              "rho": -0.42478417680532227,
               "samples": 30,
               "max_abs_rho": 0.4
             },
             "1d_60d": {
-              "rho": -0.2763513606350745,
+              "rho": -0.3713296737957076,
               "samples": 60,
               "max_abs_rho": 0.4
             }
           },
-          "median_daily_turnover_30d": 33461363.33105,
+          "median_daily_turnover_30d": 35174087.42735,
           "median_daily_turnover_7d": 40963706.0045,
           "days_above_5m_30d": 28,
-          "turnover_24h_usdt": 63303325.7217,
-          "spread_bps": 1.0537963011755218
+          "turnover_24h_usdt": 63335200.9264,
+          "spread_bps": 1.0527978101795974
         }
       },
-      "checked_at": 1793836558429
+      "checked_at": 1793836905613
     },
     "BZUSDT|long": {
       "candidate": null,
-      "checked_at": 1793836558429
+      "checked_at": 1793836905613
     }
   },
   "delivered": {
@@ -6102,9 +6104,9 @@
             "band_low": 200.09,
             "band_high": 201.64,
             "valid_from": 1787587200000,
-            "at": 1793836552325,
+            "at": 1793836892971,
             "evidence": "current_price",
-            "observed_price": 201.5
+            "observed_price": 201.44
           },
           "id": "2346ea03c2ac3c07c156c42d",
           "zone_id": "fb3664afa1088a71552a9e8a",
@@ -6125,7 +6127,7 @@
             "broad",
             "recent"
           ],
-          "price": 201.5,
+          "price": 201.44,
           "context_id": "root:4h:4h:OB:1785744000000:1785772800000:1:broad",
           "context": {
             "id": "root:4h:4h:OB:1785744000000:1785772800000:1:broad"
@@ -6133,7 +6135,7 @@
           "formed_at": 1785888000000,
           "structure_states": {
             "broad": "down",
-            "recent": "mixed"
+            "recent": "down"
           },
           "context_price_breach": false,
           "location": "inside",
@@ -6242,9 +6244,9 @@
                 "band_low": 200.09,
                 "band_high": 201.64,
                 "valid_from": 1787587200000,
-                "at": 1793836552325,
+                "at": 1793836892971,
                 "evidence": "current_price",
-                "observed_price": 201.5
+                "observed_price": 201.44
               },
               "zone_id": "fb3664afa1088a71552a9e8a",
               "alert_policy": "root-ob-pullback-v1",
@@ -6260,7 +6262,7 @@
                 "1h"
               ],
               "exchange": "bitget",
-              "price": 201.5,
+              "price": 201.44,
               "context_id": "root:4h:4h:OB:1785744000000:1785772800000:1:broad",
               "context": {
                 "id": "root:4h:4h:OB:1785744000000:1785772800000:1:broad"
@@ -6268,7 +6270,7 @@
               "formed_at": 1785888000000,
               "structure_states": {
                 "broad": "down",
-                "recent": "mixed"
+                "recent": "down"
               },
               "context_price_breach": false,
               "location": "inside"
@@ -6377,9 +6379,9 @@
                 "band_low": 200.09,
                 "band_high": 201.64,
                 "valid_from": 1786377600000,
-                "at": 1793836552325,
+                "at": 1793836892971,
                 "evidence": "current_price",
-                "observed_price": 201.5
+                "observed_price": 201.44
               },
               "zone_id": "d0fcf896a9787e6841e8be45",
               "alert_policy": "root-ob-pullback-v1",
@@ -6395,7 +6397,7 @@
                 "1h"
               ],
               "exchange": "bitget",
-              "price": 201.5,
+              "price": 201.44,
               "context_id": "root:4h:4h:OB:1785744000000:1785772800000:1:recent",
               "context": {
                 "id": "root:4h:4h:OB:1785744000000:1785772800000:1:recent"
@@ -6403,7 +6405,7 @@
               "formed_at": 1785888000000,
               "structure_states": {
                 "broad": "down",
-                "recent": "mixed"
+                "recent": "down"
               },
               "context_price_breach": false,
               "location": "inside"
@@ -7342,1070 +7344,6 @@
     "CLUSDT|long": [],
     "BZUSDT|short": [],
     "BZUSDT|medium": [
-      {
-        "id": "0e99e1e26d9fdb74e78b5d73",
-        "parent_id": "1d:OB:1791676800000:1791849600000:1",
-        "direction": 1,
-        "anchor_low": 101.52,
-        "anchor_high": 102.37,
-        "sent": true,
-        "latest": {
-          "low": 101.52,
-          "high": 101.67,
-          "score": 2,
-          "groups": [
-            "1d:OB",
-            "4h:OB"
-          ],
-          "source_ids": [
-            "1d:OB:1791676800000:1791849600000:1",
-            "4h:OB:1791532800000:1791561600000:1",
-            "1h:FVG:1791777600000:1791788400000:1"
-          ],
-          "sources": [
-            {
-              "id": "1d:OB:1791676800000:1791849600000:1",
-              "timeframe": "1d",
-              "kind": "OB",
-              "direction": 1,
-              "low": 101.52,
-              "high": 102.37,
-              "created": 1791849600000,
-              "origin": 1791676800000,
-              "stop": 100.25,
-              "invalidation": 101.52,
-              "expiry": 9223372036854775807
-            },
-            {
-              "id": "4h:OB:1791532800000:1791561600000:1",
-              "timeframe": "4h",
-              "kind": "OB",
-              "direction": 1,
-              "low": 101.15,
-              "high": 101.67,
-              "created": 1791561600000,
-              "origin": 1791532800000,
-              "stop": 100.95,
-              "invalidation": 101.15,
-              "expiry": 9223372036854775807
-            },
-            {
-              "id": "1h:FVG:1791777600000:1791788400000:1",
-              "timeframe": "1h",
-              "kind": "FVG",
-              "direction": 1,
-              "low": 101.41,
-              "high": 101.69,
-              "created": 1791788400000,
-              "origin": 1791777600000,
-              "stop": 101.41,
-              "invalidation": 101.41,
-              "expiry": 9223372036854775807
-            }
-          ],
-          "latest_source": 1791849600000,
-          "parent": {
-            "id": "1d:OB:1791676800000:1791849600000:1",
-            "timeframe": "1d",
-            "kind": "OB",
-            "direction": 1,
-            "low": 101.52,
-            "high": 102.37,
-            "created": 1791849600000,
-            "origin": 1791676800000,
-            "stop": 100.25,
-            "invalidation": 101.52,
-            "expiry": 9223372036854775807
-          },
-          "structure_area": {
-            "id": "root:1d:1d:OB:1791676800000:1791849600000:1",
-            "scale": "broad",
-            "direction": 1,
-            "low": 101.52,
-            "high": 102.37,
-            "origin": 1790035200000,
-            "pivot_origin": 1790035200000,
-            "created": 1793404800000,
-            "invalidated_at": null,
-            "range_low": 93.62,
-            "range_high": 113.64,
-            "range_complete": false,
-            "range_known_at": 1792800000000,
-            "base_bars": 1,
-            "parent_id": "1d:OB:1791676800000:1791849600000:1",
-            "bos_at": 1793404800000,
-            "bos_level": 112.71,
-            "basis": "body_break_origin"
-          },
-          "lens": "broad",
-          "direction": 1,
-          "refinement_tf": "1h",
-          "equilibrium": {
-            "midpoint": 103.63,
-            "eligible": true,
-            "entry_required": true,
-            "range_low": 93.62,
-            "range_high": 113.64
-          },
-          "entry_touch": {
-            "hit": true,
-            "midpoint": 103.63,
-            "band_low": 101.52,
-            "band_high": 101.67,
-            "valid_from": 1793404800000,
-            "at": 1793799360000,
-            "bar_open": 1793799300000,
-            "evidence": "completed_1m_range",
-            "observed_low": 101.47,
-            "observed_high": 101.67
-          },
-          "id": "0e99e1e26d9fdb74e78b5d73",
-          "zone_id": "4230ff9a552adcbfde330e1b",
-          "alert_policy": "root-ob-pullback-v1",
-          "path": [
-            "1d",
-            "4h",
-            "1h"
-          ],
-          "symbol": "BZUSDT",
-          "track": "medium",
-          "pair": [
-            "1d",
-            "4h"
-          ],
-          "exchange": "bitget",
-          "lenses": [
-            "broad",
-            "recent"
-          ],
-          "price": 101.32,
-          "context_id": "root:1d:1d:OB:1791676800000:1791849600000:1:broad",
-          "context": {
-            "id": "root:1d:1d:OB:1791676800000:1791849600000:1:broad"
-          },
-          "formed_at": 1793404800000,
-          "structure_states": {
-            "broad": "up",
-            "recent": "up"
-          },
-          "context_price_breach": false,
-          "location": "outside_after_touch",
-          "monitor_eligible": true,
-          "diversification": {
-            "eligible": true,
-            "as_of": 1793799654403,
-            "exchange": "bitget",
-            "reasons": [],
-            "method": "simultaneous_closed_log_returns_30d_60d",
-            "correlations": {
-              "4h_30d": {
-                "rho": -0.2249196744364479,
-                "samples": 180,
-                "max_abs_rho": 0.3
-              },
-              "4h_60d": {
-                "rho": -0.22558758666608814,
-                "samples": 360,
-                "max_abs_rho": 0.3
-              },
-              "1d_30d": {
-                "rho": -0.12790482577592924,
-                "samples": 30,
-                "max_abs_rho": 0.4
-              },
-              "1d_60d": {
-                "rho": -0.2763513606350745,
-                "samples": 60,
-                "max_abs_rho": 0.4
-              }
-            },
-            "median_daily_turnover_30d": 33461363.33105,
-            "median_daily_turnover_7d": 40963706.0045,
-            "days_above_5m_30d": 28,
-            "turnover_24h_usdt": 31116892.2602,
-            "spread_bps": 0.9870206780823082
-          },
-          "lens_details": {
-            "broad": {
-              "low": 101.52,
-              "high": 101.67,
-              "score": 2,
-              "groups": [
-                "1d:OB",
-                "4h:OB"
-              ],
-              "source_ids": [
-                "1d:OB:1791676800000:1791849600000:1",
-                "4h:OB:1791532800000:1791561600000:1",
-                "1h:FVG:1791777600000:1791788400000:1"
-              ],
-              "sources": [
-                {
-                  "id": "1d:OB:1791676800000:1791849600000:1",
-                  "timeframe": "1d",
-                  "kind": "OB",
-                  "direction": 1,
-                  "low": 101.52,
-                  "high": 102.37,
-                  "created": 1791849600000,
-                  "origin": 1791676800000,
-                  "stop": 100.25,
-                  "invalidation": 101.52,
-                  "expiry": 9223372036854775807
-                },
-                {
-                  "id": "4h:OB:1791532800000:1791561600000:1",
-                  "timeframe": "4h",
-                  "kind": "OB",
-                  "direction": 1,
-                  "low": 101.15,
-                  "high": 101.67,
-                  "created": 1791561600000,
-                  "origin": 1791532800000,
-                  "stop": 100.95,
-                  "invalidation": 101.15,
-                  "expiry": 9223372036854775807
-                },
-                {
-                  "id": "1h:FVG:1791777600000:1791788400000:1",
-                  "timeframe": "1h",
-                  "kind": "FVG",
-                  "direction": 1,
-                  "low": 101.41,
-                  "high": 101.69,
-                  "created": 1791788400000,
-                  "origin": 1791777600000,
-                  "stop": 101.41,
-                  "invalidation": 101.41,
-                  "expiry": 9223372036854775807
-                }
-              ],
-              "latest_source": 1791849600000,
-              "parent": {
-                "id": "1d:OB:1791676800000:1791849600000:1",
-                "timeframe": "1d",
-                "kind": "OB",
-                "direction": 1,
-                "low": 101.52,
-                "high": 102.37,
-                "created": 1791849600000,
-                "origin": 1791676800000,
-                "stop": 100.25,
-                "invalidation": 101.52,
-                "expiry": 9223372036854775807
-              },
-              "structure_area": {
-                "id": "root:1d:1d:OB:1791676800000:1791849600000:1",
-                "scale": "broad",
-                "direction": 1,
-                "low": 101.52,
-                "high": 102.37,
-                "origin": 1790035200000,
-                "pivot_origin": 1790035200000,
-                "created": 1793404800000,
-                "invalidated_at": null,
-                "range_low": 93.62,
-                "range_high": 113.64,
-                "range_complete": false,
-                "range_known_at": 1792800000000,
-                "base_bars": 1,
-                "parent_id": "1d:OB:1791676800000:1791849600000:1",
-                "bos_at": 1793404800000,
-                "bos_level": 112.71,
-                "basis": "body_break_origin"
-              },
-              "lens": "broad",
-              "direction": 1,
-              "refinement_tf": "1h",
-              "equilibrium": {
-                "midpoint": 103.63,
-                "eligible": true,
-                "entry_required": true,
-                "range_low": 93.62,
-                "range_high": 113.64
-              },
-              "entry_touch": {
-                "hit": true,
-                "midpoint": 103.63,
-                "band_low": 101.52,
-                "band_high": 101.67,
-                "valid_from": 1793404800000,
-                "at": 1793799360000,
-                "bar_open": 1793799300000,
-                "evidence": "completed_1m_range",
-                "observed_low": 101.47,
-                "observed_high": 101.67
-              },
-              "zone_id": "4230ff9a552adcbfde330e1b",
-              "alert_policy": "root-ob-pullback-v1",
-              "path": [
-                "1d",
-                "4h",
-                "1h"
-              ],
-              "symbol": "BZUSDT",
-              "track": "medium",
-              "pair": [
-                "1d",
-                "4h"
-              ],
-              "exchange": "bitget",
-              "price": 101.32,
-              "context_id": "root:1d:1d:OB:1791676800000:1791849600000:1:broad",
-              "context": {
-                "id": "root:1d:1d:OB:1791676800000:1791849600000:1:broad"
-              },
-              "formed_at": 1793404800000,
-              "structure_states": {
-                "broad": "up",
-                "recent": "up"
-              },
-              "context_price_breach": false,
-              "location": "outside_after_touch",
-              "monitor_eligible": true,
-              "diversification": {
-                "eligible": true,
-                "as_of": 1793799654403,
-                "exchange": "bitget",
-                "reasons": [],
-                "method": "simultaneous_closed_log_returns_30d_60d",
-                "correlations": {
-                  "4h_30d": {
-                    "rho": -0.2249196744364479,
-                    "samples": 180,
-                    "max_abs_rho": 0.3
-                  },
-                  "4h_60d": {
-                    "rho": -0.22558758666608814,
-                    "samples": 360,
-                    "max_abs_rho": 0.3
-                  },
-                  "1d_30d": {
-                    "rho": -0.12790482577592924,
-                    "samples": 30,
-                    "max_abs_rho": 0.4
-                  },
-                  "1d_60d": {
-                    "rho": -0.2763513606350745,
-                    "samples": 60,
-                    "max_abs_rho": 0.4
-                  }
-                },
-                "median_daily_turnover_30d": 33461363.33105,
-                "median_daily_turnover_7d": 40963706.0045,
-                "days_above_5m_30d": 28,
-                "turnover_24h_usdt": 31116892.2602,
-                "spread_bps": 0.9870206780823082
-              }
-            },
-            "recent": {
-              "low": 101.52,
-              "high": 101.67,
-              "score": 2,
-              "groups": [
-                "1d:OB",
-                "4h:OB"
-              ],
-              "source_ids": [
-                "1d:OB:1791676800000:1791849600000:1",
-                "4h:OB:1791532800000:1791561600000:1",
-                "1h:FVG:1791777600000:1791788400000:1"
-              ],
-              "sources": [
-                {
-                  "id": "1d:OB:1791676800000:1791849600000:1",
-                  "timeframe": "1d",
-                  "kind": "OB",
-                  "direction": 1,
-                  "low": 101.52,
-                  "high": 102.37,
-                  "created": 1791849600000,
-                  "origin": 1791676800000,
-                  "stop": 100.25,
-                  "invalidation": 101.52,
-                  "expiry": 9223372036854775807
-                },
-                {
-                  "id": "4h:OB:1791532800000:1791561600000:1",
-                  "timeframe": "4h",
-                  "kind": "OB",
-                  "direction": 1,
-                  "low": 101.15,
-                  "high": 101.67,
-                  "created": 1791561600000,
-                  "origin": 1791532800000,
-                  "stop": 100.95,
-                  "invalidation": 101.15,
-                  "expiry": 9223372036854775807
-                },
-                {
-                  "id": "1h:FVG:1791777600000:1791788400000:1",
-                  "timeframe": "1h",
-                  "kind": "FVG",
-                  "direction": 1,
-                  "low": 101.41,
-                  "high": 101.69,
-                  "created": 1791788400000,
-                  "origin": 1791777600000,
-                  "stop": 101.41,
-                  "invalidation": 101.41,
-                  "expiry": 9223372036854775807
-                }
-              ],
-              "latest_source": 1791849600000,
-              "parent": {
-                "id": "1d:OB:1791676800000:1791849600000:1",
-                "timeframe": "1d",
-                "kind": "OB",
-                "direction": 1,
-                "low": 101.52,
-                "high": 102.37,
-                "created": 1791849600000,
-                "origin": 1791676800000,
-                "stop": 100.25,
-                "invalidation": 101.52,
-                "expiry": 9223372036854775807
-              },
-              "structure_area": {
-                "id": "root:1d:1d:OB:1791676800000:1791849600000:1",
-                "scale": "recent",
-                "direction": 1,
-                "low": 101.52,
-                "high": 102.37,
-                "origin": 1790035200000,
-                "pivot_origin": 1790035200000,
-                "created": 1793404800000,
-                "invalidated_at": null,
-                "range_low": 93.62,
-                "range_high": 114.31,
-                "range_complete": true,
-                "range_known_at": 1793664000000,
-                "base_bars": 1,
-                "parent_id": "1d:OB:1791676800000:1791849600000:1",
-                "bos_at": 1793404800000,
-                "bos_level": 112.71,
-                "basis": "body_break_origin"
-              },
-              "lens": "recent",
-              "direction": 1,
-              "refinement_tf": "1h",
-              "equilibrium": {
-                "midpoint": 103.965,
-                "eligible": true,
-                "entry_required": true,
-                "range_low": 93.62,
-                "range_high": 114.31
-              },
-              "entry_touch": {
-                "hit": true,
-                "midpoint": 103.965,
-                "band_low": 101.52,
-                "band_high": 101.67,
-                "valid_from": 1793664000000,
-                "at": 1793799360000,
-                "bar_open": 1793799300000,
-                "evidence": "completed_1m_range",
-                "observed_low": 101.47,
-                "observed_high": 101.67
-              },
-              "zone_id": "38963fa76b0fcc5363916d45",
-              "alert_policy": "root-ob-pullback-v1",
-              "path": [
-                "1d",
-                "4h",
-                "1h"
-              ],
-              "symbol": "BZUSDT",
-              "track": "medium",
-              "pair": [
-                "1d",
-                "4h"
-              ],
-              "exchange": "bitget",
-              "price": 101.32,
-              "context_id": "root:1d:1d:OB:1791676800000:1791849600000:1:recent",
-              "context": {
-                "id": "root:1d:1d:OB:1791676800000:1791849600000:1:recent"
-              },
-              "formed_at": 1793404800000,
-              "structure_states": {
-                "broad": "up",
-                "recent": "up"
-              },
-              "context_price_breach": false,
-              "location": "outside_after_touch",
-              "monitor_eligible": true,
-              "diversification": {
-                "eligible": true,
-                "as_of": 1793799654403,
-                "exchange": "bitget",
-                "reasons": [],
-                "method": "simultaneous_closed_log_returns_30d_60d",
-                "correlations": {
-                  "4h_30d": {
-                    "rho": -0.2249196744364479,
-                    "samples": 180,
-                    "max_abs_rho": 0.3
-                  },
-                  "4h_60d": {
-                    "rho": -0.22558758666608814,
-                    "samples": 360,
-                    "max_abs_rho": 0.3
-                  },
-                  "1d_30d": {
-                    "rho": -0.12790482577592924,
-                    "samples": 30,
-                    "max_abs_rho": 0.4
-                  },
-                  "1d_60d": {
-                    "rho": -0.2763513606350745,
-                    "samples": 60,
-                    "max_abs_rho": 0.4
-                  }
-                },
-                "median_daily_turnover_30d": 33461363.33105,
-                "median_daily_turnover_7d": 40963706.0045,
-                "days_above_5m_30d": 28,
-                "turnover_24h_usdt": 31116892.2602,
-                "spread_bps": 0.9870206780823082
-              }
-            }
-          }
-        },
-        "last_sent_at": 1793712963315
-      },
-      {
-        "id": "d2ed05a525f8a84189dafd17",
-        "parent_id": "1d:OB:1791331200000:1791504000000:1",
-        "direction": 1,
-        "anchor_low": 100.54,
-        "anchor_high": 100.99,
-        "sent": true,
-        "latest": {
-          "low": 100.86,
-          "high": 100.99,
-          "score": 2,
-          "groups": [
-            "1d:OB",
-            "4h:FVG"
-          ],
-          "source_ids": [
-            "1d:OB:1791331200000:1791504000000:1",
-            "4h:FVG:1791403200000:1791446400000:1",
-            "1h:FVG:1791417600000:1791428400000:1"
-          ],
-          "sources": [
-            {
-              "id": "1d:OB:1791331200000:1791504000000:1",
-              "timeframe": "1d",
-              "kind": "OB",
-              "direction": 1,
-              "low": 100.54,
-              "high": 100.99,
-              "created": 1791504000000,
-              "origin": 1791331200000,
-              "stop": 99.27,
-              "invalidation": 100.54,
-              "expiry": 9223372036854775807
-            },
-            {
-              "id": "4h:FVG:1791403200000:1791446400000:1",
-              "timeframe": "4h",
-              "kind": "FVG",
-              "direction": 1,
-              "low": 100.67,
-              "high": 101.52,
-              "created": 1791446400000,
-              "origin": 1791403200000,
-              "stop": 100.67,
-              "invalidation": 100.67,
-              "expiry": 9223372036854775807
-            },
-            {
-              "id": "1h:FVG:1791417600000:1791428400000:1",
-              "timeframe": "1h",
-              "kind": "FVG",
-              "direction": 1,
-              "low": 100.86,
-              "high": 101.04,
-              "created": 1791428400000,
-              "origin": 1791417600000,
-              "stop": 100.86,
-              "invalidation": 100.86,
-              "expiry": 9223372036854775807
-            }
-          ],
-          "latest_source": 1791504000000,
-          "parent": {
-            "id": "1d:OB:1791331200000:1791504000000:1",
-            "timeframe": "1d",
-            "kind": "OB",
-            "direction": 1,
-            "low": 100.54,
-            "high": 100.99,
-            "created": 1791504000000,
-            "origin": 1791331200000,
-            "stop": 99.27,
-            "invalidation": 100.54,
-            "expiry": 9223372036854775807
-          },
-          "structure_area": {
-            "id": "root:1d:1d:OB:1791331200000:1791504000000:1",
-            "scale": "broad",
-            "direction": 1,
-            "low": 100.54,
-            "high": 100.99,
-            "origin": 1790035200000,
-            "pivot_origin": 1790035200000,
-            "created": 1793404800000,
-            "invalidated_at": null,
-            "range_low": 93.62,
-            "range_high": 113.64,
-            "range_complete": false,
-            "range_known_at": 1792800000000,
-            "base_bars": 1,
-            "parent_id": "1d:OB:1791331200000:1791504000000:1",
-            "bos_at": 1793404800000,
-            "bos_level": 112.71,
-            "basis": "body_break_origin"
-          },
-          "lens": "broad",
-          "direction": 1,
-          "refinement_tf": "1h",
-          "equilibrium": {
-            "midpoint": 103.63,
-            "eligible": true,
-            "entry_required": true,
-            "range_low": 93.62,
-            "range_high": 113.64
-          },
-          "entry_touch": {
-            "hit": true,
-            "midpoint": 103.63,
-            "band_low": 100.86,
-            "band_high": 100.99,
-            "valid_from": 1793404800000,
-            "at": 1793800380000,
-            "bar_open": 1793800320000,
-            "evidence": "completed_1m_range",
-            "observed_low": 100.99,
-            "observed_high": 101.13
-          },
-          "id": "d2ed05a525f8a84189dafd17",
-          "zone_id": "daefcb7d34cf270196f4060a",
-          "alert_policy": "root-ob-pullback-v1",
-          "path": [
-            "1d",
-            "4h",
-            "1h"
-          ],
-          "symbol": "BZUSDT",
-          "track": "medium",
-          "pair": [
-            "1d",
-            "4h"
-          ],
-          "exchange": "bitget",
-          "lenses": [
-            "broad",
-            "recent"
-          ],
-          "price": 101.08,
-          "context_id": "root:1d:1d:OB:1791331200000:1791504000000:1:broad",
-          "context": {
-            "id": "root:1d:1d:OB:1791331200000:1791504000000:1:broad"
-          },
-          "formed_at": 1793404800000,
-          "structure_states": {
-            "broad": "up",
-            "recent": "up"
-          },
-          "context_price_breach": false,
-          "location": "outside_after_touch",
-          "monitor_eligible": true,
-          "diversification": {
-            "eligible": true,
-            "as_of": 1793800547193,
-            "exchange": "bitget",
-            "reasons": [],
-            "method": "simultaneous_closed_log_returns_30d_60d",
-            "correlations": {
-              "4h_30d": {
-                "rho": -0.2249196744364479,
-                "samples": 180,
-                "max_abs_rho": 0.3
-              },
-              "4h_60d": {
-                "rho": -0.22558758666608814,
-                "samples": 360,
-                "max_abs_rho": 0.3
-              },
-              "1d_30d": {
-                "rho": -0.12790482577592924,
-                "samples": 30,
-                "max_abs_rho": 0.4
-              },
-              "1d_60d": {
-                "rho": -0.2763513606350745,
-                "samples": 60,
-                "max_abs_rho": 0.4
-              }
-            },
-            "median_daily_turnover_30d": 33461363.33105,
-            "median_daily_turnover_7d": 40963706.0045,
-            "days_above_5m_30d": 28,
-            "turnover_24h_usdt": 31384873.5297,
-            "spread_bps": 0.9891686037876162
-          },
-          "lens_details": {
-            "broad": {
-              "low": 100.86,
-              "high": 100.99,
-              "score": 2,
-              "groups": [
-                "1d:OB",
-                "4h:FVG"
-              ],
-              "source_ids": [
-                "1d:OB:1791331200000:1791504000000:1",
-                "4h:FVG:1791403200000:1791446400000:1",
-                "1h:FVG:1791417600000:1791428400000:1"
-              ],
-              "sources": [
-                {
-                  "id": "1d:OB:1791331200000:1791504000000:1",
-                  "timeframe": "1d",
-                  "kind": "OB",
-                  "direction": 1,
-                  "low": 100.54,
-                  "high": 100.99,
-                  "created": 1791504000000,
-                  "origin": 1791331200000,
-                  "stop": 99.27,
-                  "invalidation": 100.54,
-                  "expiry": 9223372036854775807
-                },
-                {
-                  "id": "4h:FVG:1791403200000:1791446400000:1",
-                  "timeframe": "4h",
-                  "kind": "FVG",
-                  "direction": 1,
-                  "low": 100.67,
-                  "high": 101.52,
-                  "created": 1791446400000,
-                  "origin": 1791403200000,
-                  "stop": 100.67,
-                  "invalidation": 100.67,
-                  "expiry": 9223372036854775807
-                },
-                {
-                  "id": "1h:FVG:1791417600000:1791428400000:1",
-                  "timeframe": "1h",
-                  "kind": "FVG",
-                  "direction": 1,
-                  "low": 100.86,
-                  "high": 101.04,
-                  "created": 1791428400000,
-                  "origin": 1791417600000,
-                  "stop": 100.86,
-                  "invalidation": 100.86,
-                  "expiry": 9223372036854775807
-                }
-              ],
-              "latest_source": 1791504000000,
-              "parent": {
-                "id": "1d:OB:1791331200000:1791504000000:1",
-                "timeframe": "1d",
-                "kind": "OB",
-                "direction": 1,
-                "low": 100.54,
-                "high": 100.99,
-                "created": 1791504000000,
-                "origin": 1791331200000,
-                "stop": 99.27,
-                "invalidation": 100.54,
-                "expiry": 9223372036854775807
-              },
-              "structure_area": {
-                "id": "root:1d:1d:OB:1791331200000:1791504000000:1",
-                "scale": "broad",
-                "direction": 1,
-                "low": 100.54,
-                "high": 100.99,
-                "origin": 1790035200000,
-                "pivot_origin": 1790035200000,
-                "created": 1793404800000,
-                "invalidated_at": null,
-                "range_low": 93.62,
-                "range_high": 113.64,
-                "range_complete": false,
-                "range_known_at": 1792800000000,
-                "base_bars": 1,
-                "parent_id": "1d:OB:1791331200000:1791504000000:1",
-                "bos_at": 1793404800000,
-                "bos_level": 112.71,
-                "basis": "body_break_origin"
-              },
-              "lens": "broad",
-              "direction": 1,
-              "refinement_tf": "1h",
-              "equilibrium": {
-                "midpoint": 103.63,
-                "eligible": true,
-                "entry_required": true,
-                "range_low": 93.62,
-                "range_high": 113.64
-              },
-              "entry_touch": {
-                "hit": true,
-                "midpoint": 103.63,
-                "band_low": 100.86,
-                "band_high": 100.99,
-                "valid_from": 1793404800000,
-                "at": 1793800380000,
-                "bar_open": 1793800320000,
-                "evidence": "completed_1m_range",
-                "observed_low": 100.99,
-                "observed_high": 101.13
-              },
-              "zone_id": "daefcb7d34cf270196f4060a",
-              "alert_policy": "root-ob-pullback-v1",
-              "path": [
-                "1d",
-                "4h",
-                "1h"
-              ],
-              "symbol": "BZUSDT",
-              "track": "medium",
-              "pair": [
-                "1d",
-                "4h"
-              ],
-              "exchange": "bitget",
-              "price": 101.08,
-              "context_id": "root:1d:1d:OB:1791331200000:1791504000000:1:broad",
-              "context": {
-                "id": "root:1d:1d:OB:1791331200000:1791504000000:1:broad"
-              },
-              "formed_at": 1793404800000,
-              "structure_states": {
-                "broad": "up",
-                "recent": "up"
-              },
-              "context_price_breach": false,
-              "location": "outside_after_touch",
-              "monitor_eligible": true,
-              "diversification": {
-                "eligible": true,
-                "as_of": 1793800547193,
-                "exchange": "bitget",
-                "reasons": [],
-                "method": "simultaneous_closed_log_returns_30d_60d",
-                "correlations": {
-                  "4h_30d": {
-                    "rho": -0.2249196744364479,
-                    "samples": 180,
-                    "max_abs_rho": 0.3
-                  },
-                  "4h_60d": {
-                    "rho": -0.22558758666608814,
-                    "samples": 360,
-                    "max_abs_rho": 0.3
-                  },
-                  "1d_30d": {
-                    "rho": -0.12790482577592924,
-                    "samples": 30,
-                    "max_abs_rho": 0.4
-                  },
-                  "1d_60d": {
-                    "rho": -0.2763513606350745,
-                    "samples": 60,
-                    "max_abs_rho": 0.4
-                  }
-                },
-                "median_daily_turnover_30d": 33461363.33105,
-                "median_daily_turnover_7d": 40963706.0045,
-                "days_above_5m_30d": 28,
-                "turnover_24h_usdt": 31384873.5297,
-                "spread_bps": 0.9891686037876162
-              }
-            },
-            "recent": {
-              "low": 100.86,
-              "high": 100.99,
-              "score": 2,
-              "groups": [
-                "1d:OB",
-                "4h:FVG"
-              ],
-              "source_ids": [
-                "1d:OB:1791331200000:1791504000000:1",
-                "4h:FVG:1791403200000:1791446400000:1",
-                "1h:FVG:1791417600000:1791428400000:1"
-              ],
-              "sources": [
-                {
-                  "id": "1d:OB:1791331200000:1791504000000:1",
-                  "timeframe": "1d",
-                  "kind": "OB",
-                  "direction": 1,
-                  "low": 100.54,
-                  "high": 100.99,
-                  "created": 1791504000000,
-                  "origin": 1791331200000,
-                  "stop": 99.27,
-                  "invalidation": 100.54,
-                  "expiry": 9223372036854775807
-                },
-                {
-                  "id": "4h:FVG:1791403200000:1791446400000:1",
-                  "timeframe": "4h",
-                  "kind": "FVG",
-                  "direction": 1,
-                  "low": 100.67,
-                  "high": 101.52,
-                  "created": 1791446400000,
-                  "origin": 1791403200000,
-                  "stop": 100.67,
-                  "invalidation": 100.67,
-                  "expiry": 9223372036854775807
-                },
-                {
-                  "id": "1h:FVG:1791417600000:1791428400000:1",
-                  "timeframe": "1h",
-                  "kind": "FVG",
-                  "direction": 1,
-                  "low": 100.86,
-                  "high": 101.04,
-                  "created": 1791428400000,
-                  "origin": 1791417600000,
-                  "stop": 100.86,
-                  "invalidation": 100.86,
-                  "expiry": 9223372036854775807
-                }
-              ],
-              "latest_source": 1791504000000,
-              "parent": {
-                "id": "1d:OB:1791331200000:1791504000000:1",
-                "timeframe": "1d",
-                "kind": "OB",
-                "direction": 1,
-                "low": 100.54,
-                "high": 100.99,
-                "created": 1791504000000,
-                "origin": 1791331200000,
-                "stop": 99.27,
-                "invalidation": 100.54,
-                "expiry": 9223372036854775807
-              },
-              "structure_area": {
-                "id": "root:1d:1d:OB:1791331200000:1791504000000:1",
-                "scale": "recent",
-                "direction": 1,
-                "low": 100.54,
-                "high": 100.99,
-                "origin": 1790035200000,
-                "pivot_origin": 1790035200000,
-                "created": 1793404800000,
-                "invalidated_at": null,
-                "range_low": 93.62,
-                "range_high": 114.31,
-                "range_complete": true,
-                "range_known_at": 1793664000000,
-                "base_bars": 1,
-                "parent_id": "1d:OB:1791331200000:1791504000000:1",
-                "bos_at": 1793404800000,
-                "bos_level": 112.71,
-                "basis": "body_break_origin"
-              },
-              "lens": "recent",
-              "direction": 1,
-              "refinement_tf": "1h",
-              "equilibrium": {
-                "midpoint": 103.965,
-                "eligible": true,
-                "entry_required": true,
-                "range_low": 93.62,
-                "range_high": 114.31
-              },
-              "entry_touch": {
-                "hit": true,
-                "midpoint": 103.965,
-                "band_low": 100.86,
-                "band_high": 100.99,
-                "valid_from": 1793664000000,
-                "at": 1793800380000,
-                "bar_open": 1793800320000,
-                "evidence": "completed_1m_range",
-                "observed_low": 100.99,
-                "observed_high": 101.13
-              },
-              "zone_id": "8d7454e36ee969c986486670",
-              "alert_policy": "root-ob-pullback-v1",
-              "path": [
-                "1d",
-                "4h",
-                "1h"
-              ],
-              "symbol": "BZUSDT",
-              "track": "medium",
-              "pair": [
-                "1d",
-                "4h"
-              ],
-              "exchange": "bitget",
-              "price": 101.08,
-              "context_id": "root:1d:1d:OB:1791331200000:1791504000000:1:recent",
-              "context": {
-                "id": "root:1d:1d:OB:1791331200000:1791504000000:1:recent"
-              },
-              "formed_at": 1793404800000,
-              "structure_states": {
-                "broad": "up",
-                "recent": "up"
-              },
-              "context_price_breach": false,
-              "location": "outside_after_touch",
-              "monitor_eligible": true,
-              "diversification": {
-                "eligible": true,
-                "as_of": 1793800547193,
-                "exchange": "bitget",
-                "reasons": [],
-                "method": "simultaneous_closed_log_returns_30d_60d",
-                "correlations": {
-                  "4h_30d": {
-                    "rho": -0.2249196744364479,
-                    "samples": 180,
-                    "max_abs_rho": 0.3
-                  },
-                  "4h_60d": {
-                    "rho": -0.22558758666608814,
-                    "samples": 360,
-                    "max_abs_rho": 0.3
-                  },
-                  "1d_30d": {
-                    "rho": -0.12790482577592924,
-                    "samples": 30,
-                    "max_abs_rho": 0.4
-                  },
-                  "1d_60d": {
-                    "rho": -0.2763513606350745,
-                    "samples": 60,
-                    "max_abs_rho": 0.4
-                  }
-                },
-                "median_daily_turnover_30d": 33461363.33105,
-                "median_daily_turnover_7d": 40963706.0045,
-                "days_above_5m_30d": 28,
-                "turnover_24h_usdt": 31384873.5297,
-                "spread_bps": 0.9891686037876162
-              }
-            }
-          }
-        },
-        "last_sent_at": 1793713564840
-      },
       {
         "id": "a8cb52b72a5aa38e43cd79bf",
         "parent_id": "1d:OB:1790035200000:1790208000000:1",
@@ -10221,7 +9159,7 @@
   "strategy": "root-ob-pullback-v1",
   "dedup_audits": {
     "BTCUSDT": {
-      "at": 1793836550952,
+      "at": 1793836890047,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -10229,7 +9167,7 @@
       "one_off_resend": false
     },
     "SKHYNIXUSDT": {
-      "at": 1793836551677,
+      "at": 1793836891512,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -10237,7 +9175,7 @@
       "one_off_resend": false
     },
     "NVDAUSDT": {
-      "at": 1793836552325,
+      "at": 1793836892971,
       "queued": 0,
       "suppressed": 1,
       "retired": 0,
@@ -10245,7 +9183,7 @@
       "one_off_resend": false
     },
     "TSLAUSDT": {
-      "at": 1793836553119,
+      "at": 1793836894544,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -10253,7 +9191,7 @@
       "one_off_resend": false
     },
     "AAPLUSDT": {
-      "at": 1793836553724,
+      "at": 1793836895757,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -10261,7 +9199,7 @@
       "one_off_resend": false
     },
     "MSFTUSDT": {
-      "at": 1793836554324,
+      "at": 1793836896982,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -10269,7 +9207,7 @@
       "one_off_resend": false
     },
     "AMZNUSDT": {
-      "at": 1793836554895,
+      "at": 1793836898195,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -10277,7 +9215,7 @@
       "one_off_resend": false
     },
     "GOOGLUSDT": {
-      "at": 1793836555483,
+      "at": 1793836899389,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -10285,7 +9223,7 @@
       "one_off_resend": false
     },
     "METAUSDT": {
-      "at": 1793836556053,
+      "at": 1793836900582,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -10293,7 +9231,7 @@
       "one_off_resend": false
     },
     "QQQUSDT": {
-      "at": 1793836556612,
+      "at": 1793836901672,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -10301,7 +9239,7 @@
       "one_off_resend": false
     },
     "SPYUSDT": {
-      "at": 1793836557157,
+      "at": 1793836902803,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -10309,7 +9247,7 @@
       "one_off_resend": false
     },
     "CLUSDT": {
-      "at": 1793836557796,
+      "at": 1793836904194,
       "queued": 0,
       "suppressed": 0,
       "retired": 0,
@@ -10317,10 +9255,10 @@
       "one_off_resend": false
     },
     "BZUSDT": {
-      "at": 1793836558429,
+      "at": 1793836905613,
       "queued": 0,
       "suppressed": 0,
-      "retired": 0,
+      "retired": 2,
       "locking_enabled": true,
       "one_off_resend": false
     }
@@ -44804,19 +43742,19 @@
     }
   },
   "touch_cursors": {
-    "BTCUSDT": 1793836500000,
-    "SKHYNIXUSDT": 1793836500000,
-    "NVDAUSDT": 1793836500000,
-    "TSLAUSDT": 1793836500000,
-    "AAPLUSDT": 1793836500000,
-    "MSFTUSDT": 1793836500000,
-    "AMZNUSDT": 1793836500000,
-    "GOOGLUSDT": 1793836500000,
-    "METAUSDT": 1793836500000,
-    "QQQUSDT": 1793836500000,
-    "SPYUSDT": 1793836500000,
-    "CLUSDT": 1793836500000,
-    "BZUSDT": 1793836500000
+    "BTCUSDT": 1793836860000,
+    "SKHYNIXUSDT": 1793836860000,
+    "NVDAUSDT": 1793836860000,
+    "TSLAUSDT": 1793836860000,
+    "AAPLUSDT": 1793836860000,
+    "MSFTUSDT": 1793836860000,
+    "AMZNUSDT": 1793836860000,
+    "GOOGLUSDT": 1793836860000,
+    "METAUSDT": 1793836860000,
+    "QQQUSDT": 1793836860000,
+    "SPYUSDT": 1793836860000,
+    "CLUSDT": 1793836860000,
+    "BZUSDT": 1793836860000
   },
   "notification_policy": "root-ob-pullback-v1",
   "delivery_mode": "once_per_parent_ob"
