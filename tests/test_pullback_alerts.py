@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from src.ict_engine import Bar,TF_MS
 from src.ict_overlap import alert_eligible
-from src.pullback_alerts import scan,prepare,rooted_context,POLICY,unit_text,TRIPLE_TRACKS
+from src.pullback_alerts import scan_overlaps as scan,prepare,rooted_context,POLICY,unit_text,TRIPLE_TRACKS
 from src.pullback_delivery import PullbackAlertLedger
 
 
@@ -28,7 +28,7 @@ def approved_candidate(state):
 
 class PullbackOriginTests(unittest.TestCase):
     def test_all_horizons_have_the_requested_three_timeframes(self):
-        self.assertEqual(TRIPLE_TRACKS,{'short':('4h','1h','15m'),'medium':('1d','4h','1h'),'long':('1w','1d','4h')})
+        self.assertEqual(TRIPLE_TRACKS,{'fast':('1h','15m','5m'),'short':('4h','1h','15m'),'medium':('1d','4h','1h'),'long':('1w','1d','4h')})
 
     def test_medium_and_long_cannot_alert_without_the_third_confluence(self):
         from dataclasses import asdict
@@ -147,6 +147,8 @@ class LockedDeliveryTests(unittest.TestCase):
 
     def sample(self):
         s=observation();c=approved_candidate(s)
+        from src.staircase_rules import RULESET
+        c['ruleset']=RULESET
         s['tracks']['short'].update(candidate=c,candidates=[c]);return s
 
     def test_same_parent_stays_locked_after_restart(self):

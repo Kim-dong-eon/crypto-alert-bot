@@ -10,7 +10,7 @@ from src.ict_nested import PDZone
 from src.overlap_structure import ExternalSweepMSS
 
 VERSION = "ict-two-frame-ob-fvg-v10-external"
-LABELS = {"15m": "15분", "1h": "1시간", "4h": "4시간", "1d": "1일", "1w": "1주"}
+LABELS = {"5m": "5분", "15m": "15분", "1h": "1시간", "4h": "4시간", "1d": "1일", "1w": "1주"}
 
 
 class Registry:

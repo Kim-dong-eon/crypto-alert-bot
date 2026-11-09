@@ -10,8 +10,8 @@ from src.ict_overlap import LABELS,kst,overlap_count
 from config.overlap_settings import TRACK_LABELS
 from src.ict_swings import ConfirmedSwings
 
-TF_COLORS={'1w':'#b59aff','1d':'#fa81b0','4h':'#4d9dff','1h':'#22d3d3','15m':'#f7ce56'}
-FVG_COLORS={'1w':'#d6c5ff','1d':'#ffc0d9','4h':'#94c5ff','1h':'#93e9e5','15m':'#f6a96c'}
+TF_COLORS={'1w':'#b59aff','1d':'#fa81b0','4h':'#4d9dff','1h':'#22d3d3','15m':'#f7ce56','5m':'#a3db71'}
+FVG_COLORS={'1w':'#d6c5ff','1d':'#ffc0d9','4h':'#94c5ff','1h':'#93e9e5','15m':'#f6a96c','5m':'#c6e5aa'}
 
 
 def configure_font():

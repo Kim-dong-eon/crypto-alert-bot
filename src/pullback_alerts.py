@@ -7,15 +7,16 @@ retained. A new sweep/MSS at the retest is descriptive, never a required gate.
 from dataclasses import asdict
 import hashlib
 import math
-from config.overlap_settings import TRACKS
+from config.overlap_settings import TRACKS as CORE_TRACKS
 from src.ict_engine import TF_MS,frame_open
 from src.ict_overlap import Registry,VERSION,overlaps,alert_eligible
 from src.structure_review import turns,departure_areas,liquidity_events,SCALES
 from src.overlap_entry import entry_touch
 
 POLICY='root-ob-pullback-v1'
-TOP_COUNTS={'4h':1080,'1d':1102,'1w':156}
-REFINEMENT={'short':'15m','medium':'1h','long':'4h'}
+TRACKS={'fast':('1h','15m'),**CORE_TRACKS}
+TOP_COUNTS={'1h':1080,'4h':1080,'1d':1102,'1w':156}
+REFINEMENT={'fast':'5m','short':'15m','medium':'1h','long':'4h'}
 TRIPLE_TRACKS={name:(*pair,REFINEMENT[name]) for name,pair in TRACKS.items()}
 
 
@@ -125,16 +126,21 @@ def prepare(symbol,frames,now,price,tracks=None):
 
 def refinement_history_starts(symbol,frames,now,price,minute_bars=(),touch_since=0):
     """Backfill the final frame only for rooted boxes touched in this check."""
-    prepared,_,_=prepare(symbol,frames,now,price)
+    from src.staircase_rules import staircases,ote_band,band_touch
+    prepared,usable,_=prepare(symbol,frames,now,price)
     starts={}
     for name,state in prepared['tracks'].items():
         final=REFINEMENT[name]
         for view in state.get('analysis',{}).get('views',{}).values():
+            top=state['pair'][0];bars=usable[top][-TOP_COUNTS[top]:]
+            stairs={d:staircases(bars,view['turns'],top,d) for d in (1,-1)}
             for area in view['selected']:
+                upper=next((s for s in stairs[area['direction']] if s['origin']==area['pivot_origin'] and not s['invalidated_at']),None)
+                if upper is None:continue
+                ote_low,ote_high=ote_band(upper)
                 for c in area['overlaps']:
-                    # A missing FVG may be supplied by the third timeframe.
-                    probe={**c,'sources':c['sources']+[{'kind':'FVG'}]}
-                    if entry_touch(probe,area,price,now,minute_bars,touch_since)['hit']:
+                    if band_touch(max(c['low'],ote_low),min(c['high'],ote_high),
+                                  max(upper['known_at'],c['latest_source']),price,now,minute_bars,touch_since)['hit']:
                         required=area['origin']-2*TF_MS[final]
                         starts[final]=min(starts.get(final,required),required)
     return starts
@@ -161,7 +167,7 @@ def refine_overlap(raw,area,zones,usable,final):
     return result
 
 
-def scan(symbol,frames,now_ms,price,tracks=None,equilibrium_filter=True,minute_bars=(),touch_since=0):
+def scan_overlaps(symbol,frames,now_ms,price,tracks=None,equilibrium_filter=True,minute_bars=(),touch_since=0):
     result,usable,zones=prepare(symbol,frames,now_ms,price,tracks)
     for name,state in result['tracks'].items():
         if 'analysis' not in state:continue
@@ -197,6 +203,51 @@ def scan(symbol,frames,now_ms,price,tracks=None,equilibrium_filter=True,minute_b
     return result
 
 
+def scan(symbol,frames,now_ms,price,tracks=None,equilibrium_filter=True,minute_bars=(),touch_since=0):
+    """Production: all segments must pass both stairs, OTE and net 3R."""
+    from src.staircase_rules import RULESET,evaluate,opposing_upper_contact
+    result,usable,zones=prepare(symbol,frames,now_ms,price,tracks)
+    result['ruleset']=RULESET
+    for name,state in result['tracks'].items():
+        if 'analysis' not in state:continue
+        top,middle=state['pair'];final=REFINEMENT[name];found=[];rejected={}
+        upper=usable[top][-TOP_COUNTS[top]:]
+        lower_points=turns(usable.get(final,[]),1.5,0.,final)
+        for lens,view in state['analysis']['views'].items():
+            for area in view['selected']:
+                choices=[]
+                for raw in area['overlaps']:
+                    for c in refine_overlap(raw,area,zones,usable,final):
+                        c={**c,'pair':list(state['pair']),'formed_at':max(area['created'],c['latest_source'])}
+                        setup=evaluate(c,upper,view['turns'],usable[final],now_ms,price,minute_bars,touch_since,lower_points)
+                        reason=setup['reason']
+                        if 'upper' not in setup:
+                            rejected[reason]=rejected.get(reason,0)+1;continue
+                        c.update(trade_setup=setup,ruleset=RULESET)
+                        obstacle=opposing_upper_contact(c,usable,zones,now_ms,price,minute_bars)
+                        if obstacle:setup.update(eligible=False,reason='higher_opposing_ob_contact',blocking_ob=obstacle)
+                        identity=f"{POLICY}|{RULESET}|{symbol}|{name}|{lens}|{'|'.join(c['source_ids'])}|{setup['lower']['origin']}"
+                        identifier=hashlib.sha256(identity.encode()).hexdigest()[:24]
+                        c.update(id=identifier,zone_id=identifier,alert_policy=POLICY,path=state['path'],
+                                 symbol=symbol,track=name,exchange='bitget',lenses=[lens],price=price,
+                                 context_id=f"root:{top}:{c['parent']['id']}:{lens}",
+                                 context={'id':f"root:{top}:{c['parent']['id']}:{lens}"},
+                                 structure_states={key:v['structure'] for key,v in state['analysis']['views'].items()},
+                                 low=setup['low'],high=setup['high'],formed_at=setup['known_at'],
+                                 entry_touch=setup['touch'],context_price_breach=False,
+                                 equilibrium={'eligible':setup['eligible'],'midpoint':(setup['ote_low']+setup['ote_high'])/2,
+                                              'range_low':area['range_low'],'range_high':area['range_high'],'mode':'OTE'},
+                                 location='inside' if setup['low']<=price<=setup['high'] else 'outside_after_touch' if setup['touch']['hit'] else 'waiting')
+                        rejected[setup['reason']]=rejected.get(setup['reason'],0)+1
+                        choices.append(c)
+                choices.sort(key=lambda c:(not alert_eligible(c),-c['score'],-c['trade_setup']['rr']))
+                if choices:found.append(choices[0])
+        found.sort(key=lambda c:(not alert_eligible(c),-c['score'],-c['trade_setup']['rr']))
+        state.update(candidates=found,candidate=found[0] if found else None,
+                     status='watching' if found else 'no_staircase_setup',filter_counts=rejected)
+    return result
+
+
 def unit_text(event):
     from src.ict_overlap import LABELS,kst
     from config.overlap_settings import TRACK_LABELS
@@ -212,6 +263,11 @@ def unit_text(event):
         final=c['refinement_tf']
         proof.append(LABELS[final]+' '+ '·'.join(kind for kind in ('OB','FVG') if (final,kind) in groups))
     area=c['structure_area']
+    if c.get('trade_setup'):
+        s=c['trade_setup'];trend='상승' if c['direction']==1 else '하락'
+        return (f"[Bitget · {c['symbol']}]\n{LABELS[c['pair'][0]]} {TRACK_LABELS[c['track']]} {name} · {side}\n"
+                f"상위·하위 {trend} 계단 · OTE · 예상 순손익비 1:{s['rr']:.2f}\n"
+                f"{' + '.join(proof)}\n구간 접촉 확인 · {kst(c['entry_touch']['at'])}")
     direction='상승' if c['direction']==1 else '하락'
     role='지지' if c['direction']==1 else '저항'
     structure=c.get('structure_states',{}).get(c['lenses'][0])

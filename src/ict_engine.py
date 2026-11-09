@@ -9,7 +9,7 @@ import math
 from config.ict_settings import DEFAULTS
 
 
-TF_MS = {"15m": 900_000, "1h": 3_600_000, "4h": 14_400_000,
+TF_MS = {"5m": 300_000, "15m": 900_000, "1h": 3_600_000, "4h": 14_400_000,
          "1d": 86_400_000, "1w": 604_800_000}
 TERMINAL = {"cancelled", "target_reached"}
 RULE_VERSION = "ict-ote-v2"

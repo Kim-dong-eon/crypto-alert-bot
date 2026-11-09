@@ -1,4 +1,4 @@
-"""BTC+exchange assets:4h/1h/15m,1d/4h/1h,1w/1d/4h; preview default."""
+"""Four nested staircase/OTE/3R horizons; preview by default."""
 import argparse
 from contextlib import nullcontext
 import json
@@ -7,12 +7,13 @@ from pathlib import Path
 import time
 import traceback
 
-from config.overlap_settings import TRACKS, TRACK_LABELS, BASES, POLL_SECONDS,DIVERSIFIER_BASES
+from config.overlap_settings import TRACK_LABELS, BASES, POLL_SECONDS,DIVERSIFIER_BASES
 from src.ict_overlap import compact_notice,alert_eligible
 from src.structure_alerts import StructureLedger,candidates
-from src.pullback_alerts import scan,refinement_history_starts,POLICY,TRIPLE_TRACKS
+from src.pullback_alerts import scan,refinement_history_starts,POLICY,TRIPLE_TRACKS,TRACKS
 from src.pullback_delivery import PullbackAlertLedger
 from src.pullback_data import live_frames
+from src.staircase_rules import RULESET
 from src.ict_engine import TF_MS,frame_open
 from src.review_history import HistoricalMarket
 from src.overlap_entry import recent_minutes,MINUTE
@@ -159,6 +160,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         else:delivery=ledger.dispatch(sender,batch=True)
         ledger.state['pending'].update(held);ledger.save()
     report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","strategy":POLICY,'paths':TRIPLE_TRACKS,'deduplication_enabled':True,"binance_listing_check":listing_check,"instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery,'status_delivery':status_delivery}
+    report['ruleset']=RULESET
     if snapshot:
         path=Path(snapshot);path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     print(f"중첩 알림: 전송 {delivery['sent']}건 / 실패 {delivery['failed']}건")
@@ -166,7 +168,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
 
 
 def main(argv=None):
-    parser=argparse.ArgumentParser(description="BTC+거래소 주식/ETF/원유: 단기4H/1H/15m·중기1D/4H/1H·장기1W/1D/4H 중첩 관찰")
+    parser=argparse.ArgumentParser(description="계단·OTE·3R: 초단기1H/15m/5m·단기4H/1H/15m·중기1D/4H/1H·장기1W/1D/4H")
     parser.add_argument('--send',action='store_true');parser.add_argument('--watch',action='store_true')
     parser.add_argument('--resend-current',action='store_true',help='이번 검사만 기존 발송 잠금을 무시하고 현재 조건 충족 구간 재발송')
     parser.add_argument('--inspect-symbol',help='이번 실행만 이 공통 상장 종목의 전체 상태 발송. 여러 종목은 쉼표로 구분')
@@ -180,7 +182,7 @@ def main(argv=None):
     if args.inspect_symbol and args.watch:parser.error('--inspect-symbol is one-shot only; omit --watch')
     if args.unlock:
         symbol,track=args.unlock
-        if track not in ('short','medium','long'):parser.error('TRACK must be short, medium or long')
+        if track not in TRACKS:parser.error('TRACK must be fast, short, medium or long')
         with single_writer(args.state.with_suffix('.lock')):
             PullbackAlertLedger(args.state).unlock(symbol,track)
         print(f'{symbol} {TRACK_LABELS[track]} 잠금 해제');return 0

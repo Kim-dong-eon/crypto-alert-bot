@@ -4,6 +4,7 @@ import hashlib
 from src.structure_alerts import StructureLedger,candidates
 from src.ict_overlap import alert_eligible
 from src.pullback_alerts import POLICY,REFINEMENT
+from src.staircase_rules import RULESET
 
 MODE='once_per_parent_ob'
 
@@ -42,7 +43,7 @@ class PullbackAlertLedger(StructureLedger):
         for key,p in list(presentations.items()):
             c=p.get('candidate') or {}
             if (not p.get('complete') and c.get('alert_policy')==POLICY
-                    and c.get('refinement_tf')!=REFINEMENT.get(c.get('track'))):
+                    and (c.get('refinement_tf')!=REFINEMENT.get(c.get('track')) or c.get('ruleset')!=RULESET)):
                 self.state.setdefault('retired_presentations',{})[f"{key}:{p.get('attempt',0)}"]=p
                 presentations.pop(key);self.state['pending'].pop(key,None)
 
@@ -87,6 +88,13 @@ class PullbackAlertLedger(StructureLedger):
                 lock['latest']=copy.deepcopy(c)
                 key=self.key(c,'entry');p=presentations.get(key)
                 unfinished=bool(p and not p['complete'] and not p.get('retired_by_lock_migration'))
+                if unfinished and p.get('candidate',{}).get('trade_setup'):
+                    old=p['candidate']
+                    same_step=(old['trade_setup']['lower']['origin']==c.get('trade_setup',{}).get('lower',{}).get('origin')
+                               and set(old['source_ids'])==set(c['source_ids']))
+                    if not same_step:
+                        self.state.setdefault('retired_presentations',{})[f"{key}:{p['attempt']}"]=p
+                        presentations.pop(key,None);p=None;unfinished=False
                 if lock['sent'] and not self.force_resend and not unfinished:
                     audit['suppressed']+=1;continue
                 if unfinished and p.get('candidate'):
@@ -99,7 +107,12 @@ class PullbackAlertLedger(StructureLedger):
             for key,p in presentations.items():
                 c=p.get('candidate')
                 if (p['complete'] or p.get('retired_by_lock_migration') or p['symbol']!=symbol or p['track']!=name or key in self.state['pending'] or not c):continue
-                if c.get('alert_policy')!=POLICY or not set(c['source_ids']).issubset(valid):continue
+                if c.get('alert_policy')!=POLICY or c.get('ruleset')!=RULESET or not set(c['source_ids']).issubset(valid):continue
+                refreshed=[x for x in candidates(state) if physical_id(x)==physical_id(c) and alert_eligible(x)]
+                if c.get('trade_setup'):
+                    refreshed=[x for x in refreshed if x.get('trade_setup',{}).get('lower',{}).get('origin')==c['trade_setup']['lower']['origin']
+                               and set(x['source_ids'])==set(c['source_ids'])]
+                if not refreshed:continue
                 self.state['pending'][key]={'candidate':copy.deepcopy(c),'stage':'entry','timestamp':p['attempt'],
                                            'new_formation':False,'display_name':display_name or symbol}
             self.state['locks'][scope]=remaining

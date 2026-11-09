@@ -19,7 +19,7 @@ def split_units(events):
             unit['candidate'].update(unit['candidate'].get('lens_details',{}).get(lens,{}))
             unit['candidate']['lenses']=[lens]
             result.append(unit)
-    rank={'short':0,'medium':1,'long':2}
+    rank={'fast':-1,'short':0,'medium':1,'long':2}
     return sorted(result,key=lambda e:(rank[e['candidate']['track']],
                                       0 if e['candidate']['lenses'][0]=='recent' else 1,
                                       e['candidate']['low']))

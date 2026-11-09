@@ -9,7 +9,7 @@ def aggregate(stamp,bars):
 def live_frames(frames,minutes,now,price):
     result={tf:list(bars) for tf,bars in frames.items()}
     end=now//60000*60000
-    for tf in ('15m','1h','4h'):
+    for tf in ('5m','15m','1h','4h'):
         if tf not in result:continue
         start=frame_open(now,tf);values=[b for b in minutes if start<=b.timestamp and b.timestamp+60000<=end]
         if not values or values[0].timestamp!=start or values[-1].timestamp+60000!=end:continue

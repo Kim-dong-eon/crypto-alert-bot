@@ -22,7 +22,7 @@ on:
       unlock_track:
         description: 'Scope to unlock: short=단기, medium=중기, long=장기'
         type: choice
-        options: [short, medium, long]
+        options: [fast, short, medium, long]
         default: short
   schedule:
     - cron: '*/5 * * * *'
@@ -68,7 +68,7 @@ jobs:
           python -m pip install -r requirements-ict.txt
 
       - name: Verify pullback alerts, delivery locks and charts
-        run: python -m unittest tests.test_ict_overlap tests.test_overlap_charts tests.test_overlap_structure tests.test_common_listings tests.test_overlap_diversification tests.test_overlap_status tests.test_structure_review tests.test_structure_alerts tests.test_overlap_entry tests.test_anchored_overlap tests.test_pullback_alerts -q
+        run: python -m unittest tests.test_ict_overlap tests.test_overlap_charts tests.test_overlap_structure tests.test_common_listings tests.test_overlap_diversification tests.test_overlap_status tests.test_structure_review tests.test_structure_alerts tests.test_overlap_entry tests.test_anchored_overlap tests.test_pullback_alerts tests.test_staircase_rules -q
 
       - name: Restore closed-candle cache
         id: candles

@@ -22,6 +22,9 @@ def origin_window(bars,candidate,leading=3):
 
 
 def render_unit(snapshot,event,frames,prefix):
+    if event['candidate'].get('trade_setup'):
+        from src.staircase_charts import render
+        return render(snapshot,event,frames,prefix)
     configure_font();c=event['candidate'];lens=c['lenses'][0]
     if len(c['lenses'])!=1:raise ValueError('One lens per notification image')
     top=c['pair'][0];detail=c.get('refinement_tf',c['pair'][1]);now=snapshot['as_of'];price=c['price']

@@ -136,7 +136,7 @@ class ChartTests(unittest.TestCase):
             for d in (1,-1):
                 event,frames=chart_example(d);p=render_chart(event,frames,Path(directory)/f'{d}.png')
                 with Image.open(p) as im:self.assertGreaterEqual(im.width,1400);self.assertGreaterEqual(im.height,750)
-        self.assertEqual(len(set(TF_COLORS.values())),5)
+        self.assertEqual(len(set(TF_COLORS.values())),6)
 
     def test_unclosed_bar_cannot_extend_chart_price_range(self):
         with tempfile.TemporaryDirectory() as directory:

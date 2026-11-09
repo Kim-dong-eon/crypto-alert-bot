@@ -89,12 +89,12 @@ class HistoricalMarket:
     def frame(self,symbol,tf,now_ms):
         if tf=='1w':
             return weekly_from_daily(self.frame(symbol,'1d',now_ms),now_ms)
-        return history_frame(self.public,symbol,tf,now_ms,{'1h':4368,'4h':6624,'1d':1102}[tf])
+        return history_frame(self.public,symbol,tf,now_ms,{'5m':1000,'15m':4368,'1h':4368,'4h':6624,'1d':1102}[tf])
 
     def quarter_frame(self,symbol,now_ms,start=None):
         return self.refinement_frame(symbol,'15m',now_ms,start)
 
     def refinement_frame(self,symbol,tf,now_ms,start=None):
-        minimum={'15m':1000,'1h':4368,'4h':6624}[tf]
+        minimum={'5m':1000,'15m':1000,'1h':4368,'4h':6624}[tf]
         count=max(minimum,(frame_open(now_ms,tf)-start)//TF_MS[tf]+3) if start is not None else minimum
         return history_frame(self.public,symbol,tf,now_ms,count)

@@ -8,7 +8,7 @@ import requests
 from config.overlap_settings import BASES, HISTORY_BARS
 from src.ict_engine import TF_MS, frame_open, closed_bars
 
-INTERVALS = {"15m": "15m", "1h": "1H", "4h": "4H", "1d": "1Dutc", "1w": "1Wutc"}
+INTERVALS = {"5m": "5m", "15m": "15m", "1h": "1H", "4h": "4H", "1d": "1Dutc", "1w": "1Wutc"}
 
 
 def select_instruments(rows, bases=BASES):
