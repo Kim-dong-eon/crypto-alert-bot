@@ -9,6 +9,11 @@ from src.staircase_rules import RULESET
 MODE='once_per_parent_ob'
 
 
+def delivery_started(presentation):
+    return any(r.get('image_sent') or r.get('text_sent') or r.get('in_flight')
+               for r in presentation.get('units',{}).values())
+
+
 def physical_id(candidate):
     parent=candidate['parent']
     raw=f"{POLICY}|{candidate['symbol']}|{candidate['track']}|{parent['id']}|{candidate['direction']}"
@@ -44,6 +49,13 @@ class PullbackAlertLedger(StructureLedger):
             c=p.get('candidate') or {}
             if (not p.get('complete') and c.get('alert_policy')==POLICY
                     and (c.get('refinement_tf')!=REFINEMENT.get(c.get('track')) or c.get('ruleset')!=RULESET)):
+                # Do not turn an acknowledged/ambiguous old photo into a new
+                # automatic send merely because the filter version changed.
+                if delivery_started(p) and c.get('parent'):
+                    scope=f"{c['symbol']}|{c['track']}";locks=self.state['locks'].setdefault(scope,[])
+                    lock=next((item for item in locks if item['id']==physical_id(c)),None)
+                    if lock is None:lock=self.lock(c);locks.append(lock)
+                    lock.update(sent=True,held_after_policy_change=True)
                 self.state.setdefault('retired_presentations',{})[f"{key}:{p.get('attempt',0)}"]=p
                 presentations.pop(key);self.state['pending'].pop(key,None)
 
@@ -93,6 +105,7 @@ class PullbackAlertLedger(StructureLedger):
                     same_step=(old['trade_setup']['lower']['origin']==c.get('trade_setup',{}).get('lower',{}).get('origin')
                                and set(old['source_ids'])==set(c['source_ids']))
                     if not same_step:
+                        if delivery_started(p):lock.update(sent=True,held_after_step_change=True)
                         self.state.setdefault('retired_presentations',{})[f"{key}:{p['attempt']}"]=p
                         presentations.pop(key,None);p=None;unfinished=False
                 if lock['sent'] and not self.force_resend and not unfinished:

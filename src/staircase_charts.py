@@ -107,7 +107,8 @@ def render(snapshot,event,frames,prefix):
             ax.set_title(f"{LABELS[tf]} {'상위 계단 · OTE와 목표' if panel==0 else '하위 계단 · 진입과 기준 저점'} · 이전 한 파동 포함",loc='left',color='#e0e7f0',fontsize=13,pad=40)
         text=unit_text(event);lines=text.splitlines()
         heading='교육용 가상 차트 · 실제 시세/알림 아님' if snapshot.get('illustrative') else lines[0]
-        fig.suptitle(heading+' · '+lines[1]+'\n'+lines[2],color='#edf2f8',fontsize=15)
+        extra=' · 함께 중첩: '+', '.join(LABELS[n['timeframe']] for n in c.get('also_overlaps',[])) if c.get('also_overlaps') else ''
+        fig.suptitle(heading+' · '+lines[1]+'\n'+lines[2]+extra,color='#edf2f8',fontsize=15)
         demo='교육용 가상 예시 · 실제 알림 아님 | ' if snapshot.get('illustrative') else ''
         fig.supxlabel(demo+kst(now)+'\n청록: 확인된 계단 / 노란 점선: 진행 중 · 미확정 / 흰 박스: OTE·중첩·3R 공통 구간\n'
                       '비용 가정: 편도 수수료 0.06% + 슬리피지 0.02% · 손절 여유: 하위 ATR의 10% · 주문 실행 없음',color='#bdc9d9',fontsize=10)

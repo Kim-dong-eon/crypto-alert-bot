@@ -124,6 +124,21 @@ class StaircaseTests(unittest.TestCase):
             self.assertEqual(len(upgraded.state['locks']['AAPLUSDT|short']),count)
             self.assertTrue(upgraded.state['locks']['AAPLUSDT|short'][0]['sent'])
 
+    def test_unknown_old_photo_does_not_retry_after_policy_change(self):
+        from src.pullback_delivery import PullbackAlertLedger
+        from tests.test_pullback_alerts import observation,approved_candidate
+        with tempfile.TemporaryDirectory() as temp:
+            path=Path(temp)/'state.json';ledger=PullbackAlertLedger(path,require_images=True,overlap_only=True,approach_only=True)
+            snapshot=observation();c=approved_candidate(snapshot);snapshot['tracks']['short'].update(candidate=c,candidates=[c])
+            ledger.observe(snapshot)
+            key=next(iter(ledger.state['pending']))
+            ledger.state.setdefault('presentations',{})[key]={'complete':False,'candidate':c,'attempt':snapshot['as_of'],
+                'units':{'recent':{'image_sent':False,'text_sent':False,'in_flight':'image'}}}
+            ledger.save();upgraded=PullbackAlertLedger(path,require_images=True,overlap_only=True,approach_only=True)
+            c['ruleset']=RULESET
+            self.assertFalse(upgraded.observe(snapshot))
+            self.assertTrue(upgraded.state['locks']['AAPLUSDT|short'][0]['sent'])
+
     def test_opposing_higher_contact_holds_but_not_before_zone_exists(self):
         c,u,up,l,lp,now=sample();c['trade_setup']=self.checked()
         z=PDZone('obstacle','1d','OB',-1,105,106,now-60000,now-TF_MS['1d'],107,106)
@@ -159,6 +174,43 @@ class StaircaseTests(unittest.TestCase):
         prepared['tracks']['short']['analysis']['views']['recent']['selected']=[area]
         with patch('src.pullback_alerts.prepare',return_value=(prepared,{'4h':u,'15m':l},[])),patch('src.pullback_alerts.refine_overlap',return_value=[c]),patch('src.pullback_alerts.turns',return_value=[]):
             self.assertIsNone(scan('TEST',{},now,105.5)['tracks']['short']['candidate'])
+
+
+class HorizonConsolidationTests(unittest.TestCase):
+    def setup_candidates(self):
+        high={'id':'high','symbol':'BTCUSDT','track':'short','pair':['4h','1h'],'direction':1,
+              'low':100,'high':105,'equilibrium':{'eligible':True},'context_price_breach':False}
+        low={**copy.deepcopy(high),'id':'low','track':'fast','pair':['1h','15m'],'low':103,'high':106}
+        return high,low
+
+    def run_merge(self,high,low):
+        from src.pullback_alerts import consolidate_horizons
+        snapshot={'tracks':{'short':{'candidates':[high]},'fast':{'candidates':[low]}}}
+        consolidate_horizons(snapshot);return high,low
+
+    def test_intersection_sends_higher_only_without_changing_its_risk_band(self):
+        high,low=self.run_merge(*self.setup_candidates())
+        self.assertTrue(alert_eligible(high));self.assertFalse(alert_eligible(low))
+        self.assertEqual((high['low'],high['high']),(100,105))
+        self.assertEqual(high['also_overlaps'][0]['timeframe'],'1h')
+        self.assertEqual(low['suppressed_by_higher'],['high'])
+
+    def test_other_side_or_symbol_or_separate_band_is_not_merged(self):
+        for changes in ({'direction':-1},{'symbol':'AAPLUSDT'},{'low':105,'high':108}):
+            high,low=self.setup_candidates();low.update(changes);self.run_merge(high,low)
+            self.assertTrue(alert_eligible(low));self.assertNotIn('also_overlaps',high)
+
+    def test_ineligible_higher_does_not_suppress_valid_lower(self):
+        high,low=self.setup_candidates();high['equilibrium']['eligible']=False
+        self.run_merge(high,low);self.assertTrue(alert_eligible(low))
+
+    def test_three_overlapping_horizons_keep_only_highest(self):
+        from src.pullback_alerts import consolidate_horizons
+        high,low=self.setup_candidates();daily={**copy.deepcopy(high),'id':'daily','track':'medium','pair':['1d','4h']}
+        snapshot={'tracks':{c['track']:{'candidates':[c]} for c in (daily,high,low)}}
+        consolidate_horizons(snapshot)
+        self.assertTrue(alert_eligible(daily));self.assertFalse(alert_eligible(high));self.assertFalse(alert_eligible(low))
+        self.assertEqual({n['timeframe'] for n in daily['also_overlaps']},{'4h','1h'})
 
 
 if __name__=='__main__':unittest.main()

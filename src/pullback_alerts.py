@@ -245,7 +245,36 @@ def scan(symbol,frames,now_ms,price,tracks=None,equilibrium_filter=True,minute_b
         found.sort(key=lambda c:(not alert_eligible(c),-c['score'],-c['trade_setup']['rr']))
         state.update(candidates=found,candidate=found[0] if found else None,
                      status='watching' if found else 'no_staircase_setup',filter_counts=rejected)
+    consolidate_horizons(result)
     return result
+
+
+def consolidate_horizons(snapshot):
+    """A qualifying higher alert owns an intersecting same-side lower alert.
+
+    Never fabricate an ineligible higher setup, combine disjoint boxes, or
+    mix opposing directions/risk calculations. Preserve suppression evidence.
+    """
+    all_candidates=[c for state in snapshot['tracks'].values() for c in state.get('candidates',[])]
+    eligible=sorted((c for c in all_candidates if alert_eligible(c)),
+                    key=lambda c:-TF_MS[c['pair'][0]])
+    kept=[]
+    for c in eligible:
+        owners=[h for h in kept if h['symbol']==c['symbol'] and h['direction']==c['direction']
+                and TF_MS[h['pair'][0]]>TF_MS[c['pair'][0]]
+                and max(h['low'],c['low'])<min(h['high'],c['high'])]
+        if not owners:kept.append(c);continue
+        c.update(monitor_eligible=False,suppressed_by_higher=[h['id'] for h in owners])
+        for h in owners:
+            notes=h.setdefault('also_overlaps',[])
+            if not any(note['track']==c['track'] for note in notes):
+                notes.append({'track':c['track'],'timeframe':c['pair'][0],
+                              'low':max(h['low'],c['low']),'high':min(h['high'],c['high'])})
+    for state in snapshot['tracks'].values():
+        found=state.get('candidates',[])
+        found.sort(key=lambda c:not alert_eligible(c))
+        if found:state['candidate']=found[0]
+    return snapshot
 
 
 def unit_text(event):
@@ -265,9 +294,12 @@ def unit_text(event):
     area=c['structure_area']
     if c.get('trade_setup'):
         s=c['trade_setup'];trend='상승' if c['direction']==1 else '하락'
+        extra=''
+        if c.get('also_overlaps'):
+            extra='\n함께 중첩: '+', '.join(f"{LABELS[n['timeframe']]} {TRACK_LABELS[n['track']]}" for n in c['also_overlaps'])
         return (f"[Bitget · {c['symbol']}]\n{LABELS[c['pair'][0]]} {TRACK_LABELS[c['track']]} {name} · {side}\n"
                 f"상위·하위 {trend} 계단 · OTE · 예상 순손익비 1:{s['rr']:.2f}\n"
-                f"{' + '.join(proof)}\n구간 접촉 확인 · {kst(c['entry_touch']['at'])}")
+                f"{' + '.join(proof)}{extra}\n구간 접촉 확인 · {kst(c['entry_touch']['at'])}")
     direction='상승' if c['direction']==1 else '하락'
     role='지지' if c['direction']==1 else '저항'
     structure=c.get('structure_states',{}).get(c['lenses'][0])

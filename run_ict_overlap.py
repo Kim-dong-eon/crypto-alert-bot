@@ -89,7 +89,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
             result['diversification']=eligibility
             for state in result['tracks'].values():
                 for candidate in candidates(state):
-                    candidate['monitor_eligible']=eligibility['eligible']
+                    candidate['monitor_eligible']=candidate.get('monitor_eligible',True) and eligibility['eligible']
                     candidate['diversification']=eligibility
             print(f"{symbol} BTC 상관·유동성: "+('통과' if eligibility['eligible'] else '대기'))
         asset_label={'stock':'주식','etf':'ETF','index':'지수','energy':'원유','metal':'금속'}.get(instrument.get('instrumentType'),'상품')
