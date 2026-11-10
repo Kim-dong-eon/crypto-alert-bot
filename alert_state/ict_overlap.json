@@ -3587,79 +3587,79 @@
   "strategy": "root-ob-pullback-v1",
   "dedup_audits": {
     "BTCUSDT": {
-      "at": 1794279678908,
+      "at": 1794280017698,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "SKHYNIXUSDT": {
-      "at": 1794279680323,
+      "at": 1794280018778,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "NVDAUSDT": {
-      "at": 1794279681654,
+      "at": 1794280019685,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "TSLAUSDT": {
-      "at": 1794279683325,
+      "at": 1794280020723,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "AAPLUSDT": {
-      "at": 1794279684744,
-      "suppressed": 0,
+      "at": 1794280021665,
+      "suppressed": 1,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "MSFTUSDT": {
-      "at": 1794279685954,
+      "at": 1794280022502,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "AMZNUSDT": {
-      "at": 1794279687309,
+      "at": 1794280023432,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "GOOGLUSDT": {
-      "at": 1794279688602,
+      "at": 1794280024290,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "METAUSDT": {
-      "at": 1794279689927,
+      "at": 1794280025248,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "QQQUSDT": {
-      "at": 1794279691452,
+      "at": 1794280026325,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "SPYUSDT": {
-      "at": 1794279692824,
+      "at": 1794280027460,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "CLUSDT": {
-      "at": 1794279694416,
+      "at": 1794280028528,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "BZUSDT": {
-      "at": 1794279695735,
+      "at": 1794280029491,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
@@ -48760,19 +48760,19 @@
     }
   },
   "touch_cursors": {
-    "BTCUSDT": 1794279660000,
-    "SKHYNIXUSDT": 1794279660000,
-    "NVDAUSDT": 1794279660000,
-    "TSLAUSDT": 1794279660000,
-    "AAPLUSDT": 1794279660000,
-    "MSFTUSDT": 1794279660000,
-    "AMZNUSDT": 1794279660000,
-    "GOOGLUSDT": 1794279660000,
-    "METAUSDT": 1794279660000,
-    "QQQUSDT": 1794279660000,
-    "SPYUSDT": 1794279660000,
-    "CLUSDT": 1794279660000,
-    "BZUSDT": 1794279660000
+    "BTCUSDT": 1794279960000,
+    "SKHYNIXUSDT": 1794279960000,
+    "NVDAUSDT": 1794279960000,
+    "TSLAUSDT": 1794280020000,
+    "AAPLUSDT": 1794280020000,
+    "MSFTUSDT": 1794280020000,
+    "AMZNUSDT": 1794280020000,
+    "GOOGLUSDT": 1794280020000,
+    "METAUSDT": 1794280020000,
+    "QQQUSDT": 1794280020000,
+    "SPYUSDT": 1794280020000,
+    "CLUSDT": 1794280020000,
+    "BZUSDT": 1794280020000
   },
   "notification_policy": "star-ob-reaction-v1",
   "delivery_mode": "star-ob-reaction-v1",
