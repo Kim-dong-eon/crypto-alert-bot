@@ -40,12 +40,14 @@ def depth_quote(book, now, notional):
             'fee_per_side': FEE_PER_SIDE, 'slippage_per_side': slippage}
 
 
-def entry_plan(low, high, stop, target, direction, quote, tick_size, *, prior_band=None):
+def entry_plan(low, high, stop, target, direction, quote, tick_size, *, prior_band=None, require_touch=True):
     if not quote or not 0 <= quote['slippage_per_side'] < 1:
         return None
     mid = quote['mid']
     vwap = quote['buy_vwap'] if direction == 1 else quote['sell_vwap']
-    if not (low <= vwap <= high and direction * (mid - stop) > 0):
+    if direction * (mid - stop) <= 0 or direction * (target - mid) <= 0:
+        return None
+    if require_touch and not low <= vwap <= high:
         return None
     slip = quote['slippage_per_side']
     lo, hi = risk_band(low, high, stop, target, direction, slippage=slip)
@@ -64,7 +66,7 @@ def entry_plan(low, high, stop, target, direction, quote, tick_size, *, prior_ba
         return None
     lo = float((Decimal(str(lo)) / tick).to_integral_value(rounding=ROUND_CEILING) * tick)
     hi = float((Decimal(str(hi)) / tick).to_integral_value(rounding=ROUND_FLOOR) * tick)
-    if lo > hi or not lo <= mid <= hi:
+    if lo > hi or (require_touch and not lo <= mid <= hi):
         return None
     entry = hi if direction == 1 else lo
     rr = net_rr(entry, stop, target, direction, slippage=slip)

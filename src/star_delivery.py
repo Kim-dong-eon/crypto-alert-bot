@@ -28,17 +28,18 @@ def shadowed_by_higher(candidate, blockers):
     return any(other['level'] > candidate['level'] and intersects(candidate, other) for other in blockers)
 
 
-def eligible_contacts(tracks, entry_only=False):
+def eligible_contacts(tracks, entry_only=False, require_execution=False):
     return [c for row in tracks.values() for c in candidates(row)
-            if alert_eligible(c) and (not entry_only or executable(c))]
+            if alert_eligible(c) and (not entry_only or executable(c))
+            and (not require_execution or c['level'] < 3 or executable(c))]
 
 
 def executable(candidate):
     return candidate.get('level') == 3 and candidate.get('execution') and candidate['rr'] >= MIN_RR - 1e-9
 
 
-def unique_contacts(tracks, entry_only=False):
-    ranked = sorted(eligible_contacts(tracks, entry_only),
+def unique_contacts(tracks, entry_only=False, require_execution=False):
+    ranked = sorted(eligible_contacts(tracks, entry_only, require_execution),
                     key=lambda c: (-c['level'], -TF_MS[c['pair'][0]], -c['score'], c['id']))
     accepted = []
     seen = set()
@@ -54,9 +55,10 @@ def unique_contacts(tracks, entry_only=False):
 
 
 class StarAlertLedger(StructureLedger):
-    def __init__(self, path, *, entry_only=False, **kwargs):
+    def __init__(self, path, *, entry_only=False, require_execution=False, **kwargs):
         super().__init__(path, **kwargs)
         self.entry_only = entry_only
+        self.require_execution = require_execution or entry_only
         self.state.setdefault('star_contexts', {})
         self.state.setdefault('star_locks', {})
         if self.state.get('delivery_mode') == RULESET:
@@ -123,8 +125,8 @@ class StarAlertLedger(StructureLedger):
             if start is not None and parent['origin'] >= start and parent['id'] not in active_ids:
                 del locks[key]
 
-        contacts = eligible_contacts(snapshot['tracks'], self.entry_only)
-        selected = unique_contacts(snapshot['tracks'], self.entry_only)
+        contacts = eligible_contacts(snapshot['tracks'], self.entry_only, self.require_execution)
+        selected = unique_contacts(snapshot['tracks'], self.entry_only, self.require_execution)
         active_locks = [lock for lock in locks.values() if lock['parent']['id'] in active_ids]
         # Keep the scan, image previews and delivery on the same selections.
         for track, row in snapshot['tracks'].items():
@@ -145,7 +147,7 @@ class StarAlertLedger(StructureLedger):
             if not self.force_resend and duplicates and not unfinished:
                 suppressed += 1
                 continue
-            if self.entry_only and unfinished and not executable(p['candidate']):
+            if self.require_execution and c['level'] == 3 and unfinished and not executable(p['candidate']):
                 if delivery_started(p):
                     continue
                 del presentations[key]
@@ -158,6 +160,8 @@ class StarAlertLedger(StructureLedger):
         for key, p in (() if self.entry_only else presentations.items()):
             c = p.get('candidate') or {}
             if key in pending or p.get('complete') or c.get('symbol') != symbol or c.get('ruleset') != RULESET:
+                continue
+            if self.require_execution and c['level'] == 3:
                 continue
             if c['context_id'] not in episodes or not set(c['source_ids']).issubset(active_ids):
                 continue
@@ -186,10 +190,10 @@ class StarAlertLedger(StructureLedger):
     def dispatch_units(self, image_sender, text_sender, renderer, *, refresh=None):
         for key, event in list(self.state['pending'].items()):
             c = event['candidate']
-            if self.entry_only and not executable(c):
+            if (self.entry_only or (self.require_execution and c['level'] == 3)) and not executable(c):
                 del self.state['pending'][key]
                 continue
-            if refresh is not None:
+            if refresh is not None and c['level'] == 3:
                 checked = refresh(c)
                 if checked is None:
                     del self.state['pending'][key]

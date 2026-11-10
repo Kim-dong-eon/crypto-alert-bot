@@ -37,7 +37,7 @@ ENTRY_NOTIONAL_USDT = 1000.
 def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,image_sender=None,render_previews=False,listing_check=None,status_symbols=(),unit_text_sender=None,entry_notional=ENTRY_NOTIONAL_USDT):
     results=[];failures=[];chart_frames={}
     graded = isinstance(ledger, StarAlertLedger)
-    entry_only = graded and ledger.entry_only
+    require_execution = graded and ledger.require_execution
     paths = TRIPLE_TRACKS if graded else TRACKS
     tick_sizes = {item['symbol']:item.get('priceMultiplier') for item in instruments}
     execution_checks = {}
@@ -115,7 +115,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         if graded:
             result = scan_stars(symbol, frames, observed, price, minute_bars=minute_bars, touch_since=since,
                                 contexts=ledger.state['star_contexts'].get(symbol),
-                                execution_quote=lru_cache(maxsize=1)(lambda: get_execution_quote(symbol)) if entry_only else None,
+                                execution_quote=lru_cache(maxsize=1)(lambda: get_execution_quote(symbol)) if require_execution else None,
                                 tick_size=tick_sizes[symbol])
         else:
             result=scan(symbol,frames,observed,price,equilibrium_filter=True,minute_bars=minute_bars,touch_since=since)
@@ -182,7 +182,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
                     c=unit['candidate'];item=next(r for r in results if r['symbol']==c['symbol'])
                     prefix=ROOT/'runtime/ict_overlap/charts'/f"{c['symbol']}_{c['track']}_{c['lenses'][0]}_{c['id']}"
                     return render_side_by_side_unit(item,unit,chart_frames[c['symbol']],prefix)
-                if entry_only:
+                if require_execution:
                     delivery=ledger.dispatch_units(image_sender,unit_text_sender or sender,unit_renderer,refresh=refresh_entry)
                 else:
                     delivery=ledger.dispatch_units(image_sender,unit_text_sender or sender,unit_renderer)
@@ -204,8 +204,9 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         ledger.state['pending'].update(held);ledger.save()
     report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","strategy":POLICY,'paths':TRIPLE_TRACKS,'deduplication_enabled':True,"binance_listing_check":listing_check,"instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery,'status_delivery':status_delivery}
     report['ruleset']=STAR_RULESET if graded else RULESET
-    if entry_only:
-        report.update(entry_only=True, entry_notional_usdt=entry_notional, execution_checks=execution_checks)
+    if require_execution:
+        report.update(entry_only=ledger.entry_only, execution_required_for_grade=3,
+                      entry_notional_usdt=entry_notional, execution_checks=execution_checks)
     if snapshot:
         path=Path(snapshot);path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     print(f"중첩 알림: 전송 {delivery['sent']}건 / 실패 {delivery['failed']}건")
@@ -248,7 +249,7 @@ def main(argv=None):
         from dotenv import load_dotenv
         load_dotenv(ROOT/'.env');sender=telegram_sender(os.getenv('TELEGRAM_BOT_TOKEN'),os.getenv('TELEGRAM_CHAT_ID'))
     with single_writer(args.state.with_suffix('.lock')) if args.send or args.watch else nullcontext():
-        ledger=StarAlertLedger(args.state,require_images=args.send,force_resend=args.resend_current,entry_only=True)
+        ledger=StarAlertLedger(args.state,require_images=args.send,force_resend=args.resend_current,require_execution=True)
         image_sender=None
         unit_text_sender=None
         if args.send:

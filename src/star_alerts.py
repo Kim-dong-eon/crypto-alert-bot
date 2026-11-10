@@ -73,6 +73,17 @@ def overview_wave(bars, points, area, staircase):
     return {'points': display, 'chart_start': display[0]['timestamp'], 'target': None}
 
 
+def observation_reference(choice, lower_bars, points, direction):
+    source = choice['sources'][-1]
+    origin = next((bar for bar in lower_bars if bar.timestamp == source['origin']), None)
+    kind = 'high' if direction == 1 else 'low'
+    target = next((p for p in reversed(points) if p['kind'] == kind
+                   and p['confirmed_at'] <= choice['touch']['at']), None)
+    if origin is None or target is None:
+        return None
+    return {'stop': origin.low if direction == 1 else origin.high, 'target': target['price']}
+
+
 def overlap_contacts(parent, area, lower_obs, zones, pair, arm, price, now, minutes, since):
     top, middle = pair
     evidence = [parent]
@@ -213,6 +224,12 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                 if choices:
                     best = max(choices, key=lambda c: (c['level'], c['score'], c.get('rr', 0)))
                     sources = best['sources']
+                    if execution_quote is not None and best['level'] < 3:
+                        reference = observation_reference(best, lower_bars, points, direction)
+                        if reference and (quote := execution_quote()):
+                            plan = entry_plan(*best['band'], reference['stop'], reference['target'], direction,
+                                              quote, tick_size, require_touch=False)
+                            best['observation_risk'] = {**reference, 'plan': plan}
                     found.append({**best, 'symbol': symbol, 'exchange': 'bitget', 'track': track, 'path': state['path'],
                                   'pair': state['pair'], 'refinement_tf': final, 'direction': direction, 'price': price,
                                   'now': now, 'id': hashlib.sha256(identity.encode()).hexdigest()[:24],
@@ -247,6 +264,12 @@ def unit_text(candidate):
             lines.append(f"{x['notional']:,.0f} USDT 기준 · 편도 수수료 {x['fee_per_side']:.3%} · 예상 슬리피지 {x['slippage_per_side']:.3%}")
             lines.append(f"호가 기준 예상 체결가 {price_text(x['vwap'])} · {kst(x['at'])}")
             return '\n'.join(lines)
+    elif (risk := c.get('observation_risk')) and (plan := risk['plan']):
+        lo, hi = plan['band']
+        lines.append(f"참고 1:3 구간 {price_text(lo)} ~ {price_text(hi)} · 순손익비 1:{plan['rr']:.2f}")
+        lines.append(f"OB 손절 {price_text(risk['stop'])} · 상위 직전 목표 {price_text(risk['target'])}")
+        x = plan['execution']
+        lines.append(f"{x['notional']:,.0f} USDT 기준 · 편도 수수료 {x['fee_per_side']:.3%} · 예상 슬리피지 {x['slippage_per_side']:.3%}")
     lines.append(f"접촉 확인 · {kst(c['touch']['at'])}")
     return '\n'.join(lines)
 

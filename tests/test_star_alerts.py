@@ -8,7 +8,8 @@ from src.ict_engine import Bar, TF_MS
 from src.entry_execution import depth_quote, entry_plan
 from src.ict_overlap import VERSION
 from src.split_alert_preview import render_side_by_side_unit
-from src.star_alerts import scan, unit_text
+from src.star_alerts import observation_reference, scan, unit_text
+from src.star_charts import overlap_cells
 from src.star_delivery import StarAlertLedger, unique_contacts
 
 
@@ -123,6 +124,38 @@ class StarAlertsTests(unittest.TestCase):
             self.assertGreaterEqual(plan['rr'], 3.)
             self.assertEqual(plan['entry'], plan['band'][1 if direction == 1 else 0])
             self.assertIsNone(entry_plan(99., 101., stop, target, direction, quote, None))
+
+    def test_observation_uses_ob_wick_and_only_prior_confirmed_target(self):
+        bar = Bar(100, 102, 103, 98, 101, 1)
+        choice = {'sources': [{'origin': 100}], 'touch': {'at': 500}}
+        points = [{'kind': 'high', 'price': 112, 'confirmed_at': 400},
+                  {'kind': 'low', 'price': 88, 'confirmed_at': 490},
+                  {'kind': 'high', 'price': 120, 'confirmed_at': 501}]
+        self.assertEqual(observation_reference(choice, [bar], points, 1), {'stop': 98, 'target': 112})
+        self.assertEqual(observation_reference(choice, [bar], points, -1), {'stop': 103, 'target': 88})
+        book = {'ts': 1000, 'a': [[105.1, 20]], 'b': [[104.9, 20]]}
+        quote = depth_quote(book, 1000, 1000)
+        self.assertIsNone(entry_plan(99, 101, 98, 112, 1, quote, '.01'))
+        self.assertGreaterEqual(entry_plan(99, 101, 98, 112, 1, quote, '.01', require_touch=False)['rr'], 3.)
+
+    def test_mixed_delivery_sends_observations_without_entry_recheck(self):
+        timeline = list(replay(-1))
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = StarAlertLedger(Path(tmp) / 'state.json', require_execution=True)
+            for snapshot, _ in timeline[1:3]:
+                self.assertEqual(len(ledger.observe(snapshot)), 1)
+                result = ledger.dispatch_units(lambda _: True, lambda _: True, lambda _: {'images': ['mock.png']},
+                                               refresh=lambda _: self.fail('observation must not require an entry recheck'))
+                self.assertEqual(result['sent'], 1)
+            self.assertFalse(ledger.observe(timeline[-1][0]))
+
+    def test_overlap_color_counts_only_boxes_sharing_time_and_price(self):
+        boxes = [(0, 90, 110), (2, 95, 105), (4, 100, 103), (5, 103, 104)]
+        cells = list(overlap_cells(boxes, 8))
+        self.assertIn((2, 4, 100, 103, 2), cells)
+        self.assertIn((4, 8, 100, 103, 3), cells)
+        self.assertIn((5, 8, 103, 104, 3), cells)
+        self.assertTrue(all(c[4] < 4 for c in cells))
 
     def test_higher_grade_shadows_its_original_overlap_in_later_scans(self):
         timeline = list(replay(-1))
