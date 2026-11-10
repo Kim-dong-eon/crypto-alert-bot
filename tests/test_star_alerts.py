@@ -9,7 +9,7 @@ from src.entry_execution import depth_quote, entry_plan
 from src.ict_overlap import VERSION
 from src.split_alert_preview import render_side_by_side_unit
 from src.star_alerts import observation_reference, scan, unit_text
-from src.star_charts import overlap_cells
+from src.star_charts import overlap_cells, primary_overlap
 from src.star_delivery import StarAlertLedger, unique_contacts
 
 
@@ -156,6 +156,15 @@ class StarAlertsTests(unittest.TestCase):
         self.assertIn((4, 8, 100, 103, 3), cells)
         self.assertIn((5, 8, 103, 104, 3), cells)
         self.assertTrue(all(c[4] < 4 for c in cells))
+
+    def test_primary_chart_band_prefers_middle_fvg_over_wider_ob(self):
+        zones = [dict(id='parent', timeframe='4h', kind='OB', low=90, high=110, created=1),
+                 dict(id='middle-ob', timeframe='1h', kind='OB', low=91, high=109, created=2),
+                 dict(id='middle-fvg', timeframe='1h', kind='FVG', low=100, high=104, created=3),
+                 dict(id='lower-ob', timeframe='15m', kind='OB', low=102, high=107, created=4)]
+        event = {'level': 2, 'path': ['4h', '1h', '15m'], 'parent': {'id': 'parent'}}
+        self.assertEqual(primary_overlap(event, zones), (102, 104, 4, 'FVG'))
+        self.assertEqual(primary_overlap(event, [z for z in zones if z['kind'] != 'FVG']), (102, 107, 4, 'OB'))
 
     def test_higher_grade_shadows_its_original_overlap_in_later_scans(self):
         timeline = list(replay(-1))

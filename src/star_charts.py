@@ -12,7 +12,7 @@ from config.overlap_settings import TRACK_LABELS
 WHITE = '#edf3fb'
 MUTED = '#abb9ca'
 GOLD = '#ffd270'
-DENSITY = ('#4b8ab1', '#315fba', '#243d94')
+DENSITY = ('#3b68bc', '#274393', '#1c2e72')
 REFERENCE = '#dfb9fb'
 
 
@@ -24,6 +24,24 @@ def overlap_cells(boxes, edge):
         for count, (left, right) in enumerate(zip(starts[1:], [*starts[2:], edge]), 2):
             if left < right:
                 yield left, right, low, high, count
+
+
+def primary_overlap(event, zones):
+    """Prefer the middle FVG when showing the actual three-frame intersection."""
+    if event['level'] < 2:
+        return None
+    _, middle, final = event['path']
+    parent = next((z for z in zones if z['id'] == event['parent']['id']), None)
+    middle_sources = [z for z in zones if z['timeframe'] == middle]
+    child = next((z for z in zones if z['timeframe'] == final and z['kind'] == 'OB'), None)
+    if not parent or not middle_sources or not child:
+        return None
+    middle_source = next((z for z in middle_sources if z['kind'] == 'FVG'), middle_sources[0])
+    sources = (parent, middle_source, child)
+    low, high = max(z['low'] for z in sources), min(z['high'] for z in sources)
+    if low < high:
+        return low, high, max(z['created'] for z in sources), middle_source['kind']
+    return None
 
 
 def window(frames, tf, event, current_at):
@@ -54,6 +72,7 @@ def draw_panel(ax, tf, candles, event):
     ax.tick_params(colors=MUTED, labelsize=9)
     ax.yaxis.tick_right()
     zones = event['overlap']['sources'] if level == 3 else event['sources']
+    core = primary_overlap(event, zones)
     legend = {}
     prices = [value for b in candles for value in (b.low, b.high)]
     prices.extend(event['band'])
@@ -61,7 +80,7 @@ def draw_panel(ax, tf, candles, event):
     for z in zones:
         color = '#8bece6' if z['timeframe'] == middle and z['kind'] == 'FVG' else colors[z['timeframe']]
         left = max(-.6, position(z['created']))
-        ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], color=color, alpha=.11, zorder=1))
+        ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], color=color, alpha=.07, zorder=1))
         ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], fill=False, edgecolor=color, linewidth=.75, zorder=2))
         boxes.append((left, z['low'], z['high']))
         name = f"{LABELS[z['timeframe']]} {z['kind']}"
@@ -69,20 +88,25 @@ def draw_panel(ax, tf, candles, event):
         if is_top:
             prices.extend([z['low'], z['high']])
 
-    for left, right, low, high, count in overlap_cells(boxes, edge):
-        color = DENSITY[min(count - 2, len(DENSITY) - 1)]
-        ax.add_patch(Rectangle((left, low), right - left, high - low, facecolor=color,
-                               alpha=.94, edgecolor='none', zorder=1.5))
+    if core:
+        lo, hi, known, _ = core
+        start_core = max(-.6, position(known))
+        clipped = [(max(left, start_core), max(low, lo), min(high, hi))
+                   for left, low, high in boxes if max(low, lo) < min(high, hi)]
+        for left, right, low, high, count in overlap_cells(clipped, edge):
+            if count >= 3:
+                color = DENSITY[min(count - 3, len(DENSITY) - 1)]
+                ax.add_patch(Rectangle((left, low), right - left, high - low, facecolor=color,
+                                       alpha=.94, edgecolor='none', zorder=1.5))
+        ax.add_patch(Rectangle((start_core, lo), edge - start_core, hi - lo, fill=False,
+                               edgecolor=WHITE, linewidth=1.2, zorder=3))
+        prices.extend((lo, hi))
+        legend['핵심'] = Patch(facecolor='none', edgecolor=WHITE, label='핵심 3중 겹침')
 
     if level >= 2:
         overlap = event['overlap'] if level == 3 else event
         lo, hi = overlap['band']
-        common_count = sum(z['low'] <= lo and hi <= z['high'] for z in zones)
-        left = max(-.6, position(overlap['touch']['valid_from']))
-        ax.add_patch(Rectangle((left, lo), edge - left, hi - lo, fill=False,
-                               edgecolor=WHITE, linewidth=1.2, zorder=3))
         prices.extend((lo, hi))
-        legend['공통 구간'] = Patch(facecolor='none', edgecolor=WHITE, label=f'{common_count}개 공통 경계')
     if level == 3 and not is_top:
         ob = event['sources'][-1]
         ob_left = max(-.6, position(ob['created']))
@@ -116,11 +140,12 @@ def draw_panel(ax, tf, candles, event):
         xs = [position(p['timestamp']) for p in points]
         ys = [p['price'] for p in points]
         ax.plot(xs, ys, color='#69e1e8', linewidth=1.65, marker='o', markersize=3, zorder=7)
-        if is_top and stair['target'] is not None:
-            ax.axhline(stair['target'], color='#88dfa4', linestyle='--', linewidth=1.1, zorder=3)
-            ax.text(.98, stair['target'], f"{LABELS[top]} 목표 {fmt(stair['target'])}",
+        goal = risk['target'] if level < 3 and risk.get('plan') else stair['target']
+        if is_top and goal is not None:
+            ax.axhline(goal, color='#88dfa4', linestyle='--', linewidth=1.1, zorder=3)
+            ax.text(.98, goal, f"{LABELS[top]} 목표 {fmt(goal)}",
                     transform=ax.get_yaxis_transform(), ha='right', va='top', color='#9eecad', fontsize=10)
-            prices.append(stair['target'])
+            prices.append(goal)
         elif not is_top and level == 3:
             ax.axhline(event['stop'], color='#ff9da9', linestyle='--', linewidth=1, zorder=3)
             extreme = '저점' if event['direction'] == 1 else '고점'
@@ -181,7 +206,7 @@ def render(snapshot, alert, frames, prefix):
     exchange = event.get('exchange', 'bitget').title()
     fig.text(.036, .868, f"{exchange} {event['symbol']}  ·  {TRACK_LABELS[event['track']]} {side}  ·  {kst(now)}",
              color=MUTED, size=12)
-    fig.legend(handles=[Patch(facecolor=color, label=label) for color, label in zip(DENSITY, ('2개 겹침', '3개 겹침', '4개 이상'))],
+    fig.legend(handles=[Patch(facecolor=color, label=label) for color, label in zip(DENSITY, ('3개 겹침', '4개 겹침', '5개 이상'))],
                loc='center right', bbox_to_anchor=(.94, .876), ncol=3, fontsize=10,
                frameon=False, labelcolor=WHITE, handlelength=1.3, columnspacing=1.2)
     if snapshot.get('illustrative'):
@@ -197,7 +222,9 @@ def render(snapshot, alert, frames, prefix):
         if level == 1:
             message = f'{LABELS[top]} OB 반응 안에서 같은 방향의 {LABELS[final]} OB 접촉'
         elif level == 2:
-            message = f'{LABELS[top]} OB · {LABELS[middle]} OB/FVG · {LABELS[final]} OB 공통 가격대 첫 접촉'
+            core = primary_overlap(event, event['sources'])
+            kind = core[3] if core else 'OB/FVG'
+            message = f'{LABELS[top]} OB × {LABELS[middle]} {kind} × {LABELS[final]} OB · 핵심 3중 겹침'
         else:
             message = f"{LABELS[top]} 계단 · 3중 겹침 · {LABELS[final]} 계단과 재접촉    |    비용 반영 1:{event['rr']:.2f}"
         fig.text(.035, .112, message, color=WHITE, size=13, weight='bold')
