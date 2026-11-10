@@ -77,6 +77,30 @@ class StarAlertsTests(unittest.TestCase):
         base['level'] = 3
         self.assertEqual(unique_contacts(tracks), [base])
 
+    def test_higher_grade_shadows_its_original_overlap_in_later_scans(self):
+        timeline = list(replay(-1))
+        high_snapshot = timeline[-1][0]
+        high = high_snapshot['tracks']['short']['candidates'][0]
+        low, top = high['overlap']['band']
+        # A later retest can have a band entirely separate from its confluence.
+        high = {**high, 'low': top + 10, 'high': top + 20}
+        high_snapshot['tracks']['short']['candidates'] = [high]
+        weaker = {**high, 'track': 'medium', 'pair': ['1d', '4h'], 'level': 2,
+                  'low': low, 'high': top}
+        other_side = {**weaker, 'direction': -weaker['direction']}
+        self.assertEqual(unique_contacts({'short': {'candidates': [high]},
+                                         'medium': {'candidates': [weaker, other_side]}}), [high, other_side])
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / 'state.json'
+            ledger = StarAlertLedger(path)
+            self.assertEqual(len(ledger.observe(high_snapshot)), 1)
+            ledger.dispatch_units(lambda _: True, lambda _: True, lambda _: {'images': ['mock.png']})
+            later = {**high_snapshot, 'as_of': high_snapshot['as_of'] + 300000,
+                     'tracks': {'medium': {'candidates': [weaker], 'status': 'watching'}}}
+            ledger = StarAlertLedger(path, force_resend=True)
+            self.assertFalse(ledger.observe(later))
+            self.assertEqual(ledger.state['dedup_audits']['BTCUSDT']['suppressed'], 1)
+
     def test_migration_merges_duplicate_old_locks_without_replaying_receipt(self):
         snapshot = list(replay(-1))[-1][0]
         c = copy.deepcopy(snapshot['tracks']['short']['candidates'][0])

@@ -9,18 +9,38 @@ from src.star_alerts import RULESET
 from src.structure_alerts import StructureLedger, candidates
 
 
+def alert_bands(candidate):
+    yield candidate['low'], candidate['high']
+    # A ★★★ setup also owns the original confluence shown on its chart.
+    if candidate['level'] == 3 and candidate.get('overlap'):
+        yield tuple(candidate['overlap']['band'])
+
+
 def intersects(a, b):
-    return a['direction'] == b['direction'] and max(a['low'], b['low']) < min(a['high'], b['high'])
+    return a['direction'] == b['direction'] and any(
+        max(a_low, b_low) < min(a_high, b_high)
+        for a_low, a_high in alert_bands(a) for b_low, b_high in alert_bands(b)
+    )
+
+
+def shadowed_by_higher(candidate, blockers):
+    return any(other['level'] > candidate['level'] and intersects(candidate, other) for other in blockers)
+
+
+def eligible_contacts(tracks):
+    return [c for row in tracks.values() for c in candidates(row) if alert_eligible(c)]
 
 
 def unique_contacts(tracks):
-    ranked = sorted((c for row in tracks.values() for c in candidates(row) if alert_eligible(c)),
+    ranked = sorted(eligible_contacts(tracks),
                     key=lambda c: (-c['level'], -TF_MS[c['pair'][0]], -c['score'], c['id']))
     accepted = []
     seen = set()
-    for candidate in ranked:
+    for index, candidate in enumerate(ranked):
         identity = physical_id(candidate)
         if identity in seen or any(intersects(candidate, other) for other in accepted):
+            continue
+        if shadowed_by_higher(candidate, ranked[:index]):
             continue
         accepted.append(candidate)
         seen.add(identity)
@@ -59,6 +79,8 @@ class StarAlertLedger(StructureLedger):
         if old is None or level > old['level']:
             locks[key] = {'track': c['track'], 'level': level, 'parent': c['parent'],
                           'direction': c['direction'], 'low': c['low'], 'high': c['high']}
+        if locks[key]['level'] == level == 3 and c.get('overlap'):
+            locks[key].setdefault('overlap', {'band': c['overlap']['band']})
 
     def unlock(self, symbol, track):
         locks = self.state['star_locks'].get(symbol, {})
@@ -94,7 +116,9 @@ class StarAlertLedger(StructureLedger):
             if start is not None and parent['origin'] >= start and parent['id'] not in active_ids:
                 del locks[key]
 
+        contacts = eligible_contacts(snapshot['tracks'])
         selected = unique_contacts(snapshot['tracks'])
+        active_locks = [lock for lock in locks.values() if lock['parent']['id'] in active_ids]
         # Keep the scan, image previews and delivery on the same selections.
         for track, row in snapshot['tracks'].items():
             row['candidates'] = [c for c in selected if c['track'] == track]
@@ -106,6 +130,9 @@ class StarAlertLedger(StructureLedger):
             key = self.key(c, stage)
             p = presentations.get(key)
             unfinished = bool(p and not p['complete'])
+            if shadowed_by_higher(c, active_locks):
+                suppressed += 1
+                continue
             duplicates = [lock for identity, lock in locks.items() if lock['level'] >= c['level']
                           and (identity == c['id'] or (lock['parent']['id'] in active_ids and intersects(lock, c)))]
             if not self.force_resend and duplicates and not unfinished:
@@ -125,6 +152,8 @@ class StarAlertLedger(StructureLedger):
             if snapshot['tracks'][c['track']]['status'] == 'data_unavailable':
                 continue
             if max(locks.get(c['id'], {}).get('level', 0), selected_grades.get(c['id'], 0)) > c['level']:
+                continue
+            if shadowed_by_higher(c, active_locks) or shadowed_by_higher(c, contacts):
                 continue
             if any(physical_id(other) != c['id'] and other['level'] >= c['level'] and intersects(other, c)
                    for other in selected):
