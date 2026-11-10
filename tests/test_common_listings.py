@@ -19,9 +19,12 @@ def binance(base,kind='EQUITY',**extra):
 
 class CommonListingTests(unittest.TestCase):
     def test_exact_active_usdt_perpetual_and_asset_kind_required(self):
-        rows=[binance('BTC','COIN'),binance('AAPL'),binance('SKHYNIX','KR_EQUITY')]
-        chosen=select_common_instruments([bitget('BTC','crypto'),bitget('AAPL'),bitget('SKHYNIX'),bitget('NDX100','index')],rows)
-        self.assertEqual([r['baseCoin'] for r in chosen],['BTC','AAPL','SKHYNIX'])
+        rows=[binance('BTC','COIN'),binance('AAPL'),binance('SKHYNIX','KR_EQUITY'),
+              binance('POPMART','HK_EQUITY'),binance('UNITREE','CN_EQUITY')]
+        instruments=[bitget('BTC','crypto'),bitget('AAPL'),bitget('SKHYNIX'),
+                     bitget('POPMART'),bitget('UNITREE'),bitget('NDX100','index')]
+        chosen=select_common_instruments(instruments,rows)
+        self.assertEqual([r['baseCoin'] for r in chosen],['BTC','AAPL','SKHYNIX','POPMART','UNITREE'])
         for field,value in [('quoteAsset','USDC'),('contractType','CURRENT_QUARTER'),('status','SETTLING'),('baseAsset','1000AAPL'),('underlyingType','COIN')]:
             row=binance('AAPL');row[field]=value
             self.assertEqual(select_common_instruments([bitget('AAPL')],[row]),[])

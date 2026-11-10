@@ -6,6 +6,7 @@ import requests
 
 SOURCE = 'https://fapi.binance.com/fapi/v1/exchangeInfo'
 FIELDS = ('symbol','baseAsset','quoteAsset','status','contractType','underlyingType')
+EQUITY_TYPES = ('EQUITY', 'KR_EQUITY', 'HK_EQUITY', 'CN_EQUITY')
 
 
 def select_common_instruments(bitget_instruments, binance_rows):
@@ -20,7 +21,7 @@ def select_common_instruments(bitget_instruments, binance_rows):
         if not row or row.get('baseAsset') != instrument.get('baseCoin'):
             continue
         crypto = instrument.get('baseCoin') == 'BTC' and row.get('underlyingType') == 'COIN'
-        equity = instrument.get('instrumentType') in ('stock','etf') and row.get('underlyingType') in ('EQUITY','KR_EQUITY')
+        equity = instrument.get('instrumentType') in ('stock','etf') and row.get('underlyingType') in EQUITY_TYPES
         index = instrument.get('instrumentType') == 'index' and row.get('underlyingType') == 'INDEX'
         commodity = instrument.get('instrumentType') in ('metal','energy') and row.get('underlyingType') == 'COMMODITY'
         if crypto or equity or index or commodity:

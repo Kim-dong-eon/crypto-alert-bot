@@ -1,7 +1,6 @@
 {
   "source": "https://fapi.binance.com/fapi/v1/exchangeInfo",
-  "verified_at": 1793248120114,
-  "server_time": 1793228461868,
+  "verified_at": 1794278409924,
   "symbols": [
     {
       "symbol": "BTCUSDT",
@@ -146,6 +145,110 @@
       "status": "TRADING",
       "contractType": "NEXT_QUARTER",
       "underlyingType": "COIN"
+    },
+    {
+      "symbol": "BSPUSDT",
+      "baseAsset": "BSP",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY"
+    },
+    {
+      "symbol": "VUSDT",
+      "baseAsset": "V",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY"
+    },
+    {
+      "symbol": "LLYUSDT",
+      "baseAsset": "LLY",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY"
+    },
+    {
+      "symbol": "NAVERUSDT",
+      "baseAsset": "NAVER",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "KR_EQUITY"
+    },
+    {
+      "symbol": "WENUSDT",
+      "baseAsset": "WEN",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY"
+    },
+    {
+      "symbol": "MCDUSDT",
+      "baseAsset": "MCD",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY"
+    },
+    {
+      "symbol": "POPMARTUSDT",
+      "baseAsset": "POPMART",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "HK_EQUITY"
+    },
+    {
+      "symbol": "UNITREEUSDT",
+      "baseAsset": "UNITREE",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "CN_EQUITY"
+    },
+    {
+      "symbol": "TMFUSDT",
+      "baseAsset": "TMF",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY"
+    },
+    {
+      "symbol": "ADBEUSDT",
+      "baseAsset": "ADBE",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY"
+    },
+    {
+      "symbol": "MEITUANUSDT",
+      "baseAsset": "MEITUAN",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "HK_EQUITY"
+    },
+    {
+      "symbol": "EWZUSDT",
+      "baseAsset": "EWZ",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY"
+    },
+    {
+      "symbol": "MRKUSDT",
+      "baseAsset": "MRK",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY"
     }
   ]
 }

@@ -1,4 +1,4 @@
-"""BTC only among crypto; verified common equities, ETFs and screened oil."""
+"""BTC and common TradFi contracts, including low-BTC-correlation picks."""
 TRACKS = {"short": ("4h", "1h"), "medium": ("1d", "4h"),
           "long": ("1w", "1d")}
 TRACK_LABELS = {"fast":"초단기", "short": "단기", "medium": "중기", "long": "장기", "auxiliary": "4H·1H 보조"}
@@ -6,6 +6,8 @@ BASES = ("BTC", "SKHYNIX", "NVDA", "TSLA", "AAPL", "MSFT", "AMZN", "GOOGL", "MET
 BASES += ("NDX100", "SP500")
 DIVERSIFIER_BASES = ("CL", "BZ")
 BASES += DIVERSIFIER_BASES
+# Fixed additions from the 2026-11-10 BTC correlation screen (max |r| <= 0.20).
+BASES += ("BSP", "V", "LLY", "NAVER", "WEN", "MCD", "POPMART", "UNITREE", "TMF", "ADBE", "MEITUAN", "EWZ", "MRK")
 HISTORY_BARS = 400
 POLL_SECONDS = 60
 MIN_HISTORY_BARS = 8
