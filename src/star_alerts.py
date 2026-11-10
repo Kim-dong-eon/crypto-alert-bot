@@ -3,6 +3,7 @@
 from collections import defaultdict
 from dataclasses import asdict
 import hashlib
+from itertools import product
 
 from src.ict_engine import TF_MS, frame_open
 from src.entry_execution import entry_plan
@@ -63,14 +64,13 @@ def choose_stair(bars, points, tf, direction):
     return None
 
 
-def overview_wave(bars, points, area, staircase):
+def overview_wave(bars, points, origin, staircase):
     if staircase:
         return staircase
-    root = area['pivot_origin']
-    index = next(i for i, p in enumerate(points) if bars[p['index']].timestamp == root)
+    index = next((i for i, p in enumerate(points) if bars[p['index']].timestamp >= origin), len(points))
     relevant = points[max(0, index - 2):index + 2]
     display = [{**p, 'timestamp': bars[p['index']].timestamp} for p in relevant]
-    return {'points': display, 'chart_start': display[0]['timestamp'], 'target': None}
+    return {'points': display, 'chart_start': display[0]['timestamp'] if display else origin, 'target': None}
 
 
 def observation_reference(choice, lower_bars, points, direction):
@@ -107,8 +107,33 @@ def overlap_contacts(parent, area, lower_obs, zones, pair, arm, price, now, minu
     return contacts
 
 
+def formation_contacts(parent, zones, path, direction_at, price, now, minutes, since):
+    """Both child OBs must have formed fully inside this parent OB's original candles."""
+    _, middle, final = path
+    children = defaultdict(list)
+    for ob in zones:
+        if (ob.timeframe in (middle, final) and ob.kind == 'OB' and ob.direction == parent.direction
+                and parent.origin <= ob.origin < ob.created <= parent.created
+                and max(parent.low, ob.low) < min(parent.high, ob.high)):
+            children[ob.timeframe].append(ob)
+    known = max(parent.created, direction_at)
+    contacts = []
+    for middle_ob, final_ob in product(children[middle], children[final]):
+        sources = (parent, middle_ob, final_ob)
+        lo = max(ob.low for ob in sources)
+        hi = min(ob.high for ob in sources)
+        if lo >= hi:
+            continue
+        hit = first_contact(lo, hi, known, price, now, minutes, since)
+        if hit['hit']:
+            contacts.append({'level': 2, 'touch': hit, 'sources': [asdict(ob) for ob in sources],
+                             'band': [lo, hi], 'score': 3,
+                             'formation': {'start': parent.origin, 'end': parent.created}})
+    return contacts
+
+
 def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=None, tracks=None,
-         execution_quote=None, tick_size=None):
+         formation_tracks=(), execution_quote=None, tick_size=None):
     recent_minutes = tuple(b for b in minute_bars if b.timestamp >= touch_since)
     result, usable, zones = prepare(symbol, frames, now, price, tracks, build_overlaps=False)
     result['ruleset'] = RULESET
@@ -117,6 +142,7 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
     for track, state in result['tracks'].items():
         top, middle = state['pair']
         final = REFINEMENT[track]
+        anchored = track in formation_tracks
         if 'analysis' not in state or len(usable.get(final, ())) < 16:
             updated.update((key, episode) for key, episode in previous.items() if episode['track'] == track)
             state['status'] = 'data_unavailable'
@@ -138,56 +164,77 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
             for parent in zones:
                 if parent.timeframe != top or parent.kind != 'OB' or parent.direction != direction:
                     continue
+                if anchored and parent.origin < max(usable[middle][0].timestamp, lower_bars[0].timestamp):
+                    continue
                 arm_probe = first_contact(parent.low, parent.high, parent.created, price, now, recent_minutes, touch_since)
                 if not arm_probe['hit'] and not any(e['parent_id'] == parent.id and e['track'] == track
                                                    and e['lens'] == lens for e in previous.values()):
                     continue
                 area = rooted_context(parent, upper_bars, points, view['areas'], top, now)
-                if area is None:
+                if area is None and not anchored:
                     continue
-                root = area['pivot_origin']
-                identity = f'{track}|{lens}|{parent.id}|{root}'
-                upper = upper_stairs.get(root)
-                root_bar = next(b for b in upper_bars if b.timestamp == root)
-                protected = root_bar.low if direction == 1 else root_bar.high
-                if any(b.timestamp >= area['created'] and direction * (b.close - protected) < 0 for b in upper_bars):
+                root = area['pivot_origin'] if area else parent.origin
+                scope = 'formation-ob' if anchored else root
+                identity = f'{track}|{lens}|{parent.id}|{scope}'
+                upper = upper_stairs.get(root) if area else None
+                protected = parent.stop
+                if area:
+                    root_bar = next(b for b in upper_bars if b.timestamp == root)
+                    protected = root_bar.low if direction == 1 else root_bar.high
+                if area and any(b.timestamp >= area['created'] and direction * (b.close - protected) < 0
+                                for b in upper_bars):
                     continue
                 if direction * (price - protected) < 0 or direction * (price - parent.stop) < 0:
                     if identity in previous and previous[identity]['arm']['at'] >= direction_at:
                         updated[identity] = previous[identity]
                     continue
-                if upper and (any(s['invalidated_at'] for s in upper_stairs.values() if s['origin'] >= root)
-                              or any(b.timestamp >= upper['known_at'] and direction * ((b.high if direction == 1 else b.low) - upper['target']) >= 0
-                                     for b in upper_bars)):
+                upper_ready = upper and not (
+                    any(s['invalidated_at'] for s in upper_stairs.values() if s['origin'] >= root)
+                    or any(b.timestamp >= upper['known_at']
+                           and direction * ((b.high if direction == 1 else b.low) - upper['target']) >= 0
+                           for b in upper_bars))
+                if not anchored and upper and not upper_ready:
                     continue
                 episode = previous.get(identity)
                 if episode is None or episode['arm']['at'] < direction_at:
-                    arm = first_contact(parent.low, parent.high, max(area['created'], parent.created, direction_at),
+                    ready_at = parent.created if anchored else area['created']
+                    arm = first_contact(parent.low, parent.high, max(ready_at, parent.created, direction_at),
                                         price, now, recent_minutes, touch_since)
                     if not arm['hit']:
                         continue
                     episode = {'track': track, 'lens': lens, 'parent_id': parent.id, 'arm': arm, 'overlap': None}
                 arm = episode['arm']
-                floor = upper['end'] if upper else area['origin']
+                floor = upper['end'] if upper else area['origin'] if area else parent.origin
                 lower_obs = [z for z in zones if z.timeframe == final and z.kind == 'OB'
                              and z.direction == direction and z.origin >= floor]
-                choices = overlap_contacts(parent, area, lower_obs, zones, (top, middle), arm,
-                                           price, now, recent_minutes, touch_since)
-                if episode['overlap'] is None and choices:
+                prior_overlap = episode['overlap']
+                if anchored:
+                    choices = formation_contacts(parent, zones, state['path'], direction_at,
+                                                 price, now, recent_minutes, touch_since)
+                else:
+                    choices = overlap_contacts(parent, area, lower_obs, zones, (top, middle), arm,
+                                               price, now, recent_minutes, touch_since)
+                if prior_overlap is None and choices:
                     first_overlap = min(choices, key=lambda c: (c['touch']['at'], -c['score']))
                     episode = {**episode, 'overlap': first_overlap}
+                    if anchored:
+                        choices = [first_overlap]
+                elif anchored:
+                    choices = [c for c in choices if c['sources'] == prior_overlap['sources']]
                 updated[identity] = episode
-                for ob in lower_obs:
+                for ob in (() if anchored else lower_obs):
                     hit = first_contact(ob.low, ob.high, max(ob.created, arm['at']), price, now, recent_minutes, touch_since)
                     if hit['hit']:
                         choices.append({'level': 1, 'touch': hit, 'sources': [asdict(parent), asdict(ob)],
                                         'band': [ob.low, ob.high], 'score': 2})
                 step = lower_stairs[direction]
                 latest_upper = next(reversed(upper_stairs.values()), None)
-                if (upper and episode['overlap'] and step and not step['invalidated_at']
+                followup = prior_overlap if anchored else episode['overlap']
+                reaction_at = followup['touch']['at'] if anchored and followup else arm['at']
+                if (upper_ready and followup and step and not step['invalidated_at']
                         and direction * (price - latest_upper['protected']) >= 0
-                        and step['origin'] >= max(upper['end'], frame_open(arm['at'] - 1, final))
-                        and step['known_at'] > arm['at'] and direction * (price - step['protected']) > 0
+                        and step['origin'] >= max(upper['end'], frame_open(reaction_at - 1, final))
+                        and step['known_at'] > reaction_at and direction * (price - step['protected']) > 0
                         and not opposing_upper_contact({'direction': direction, 'pair': state['pair'], 'trade_setup': {'upper': upper}},
                                                        usable, zones, now, price, minute_bars)):
                     stop, target = step['protected'], upper['target']
@@ -235,7 +282,7 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                                   'now': now, 'id': hashlib.sha256(identity.encode()).hexdigest()[:24],
                                   'context_id': identity, 'lenses': [lens],
                                   'parent': asdict(parent), 'arm': arm['at'], 'arm_price': contact_price(arm, parent.low, parent.high),
-                                  'upper': overview_wave(upper_bars, points, area, upper), 'source_ids': [z['id'] for z in sources],
+                                  'upper': overview_wave(upper_bars, points, root, upper if upper_ready else None), 'source_ids': [z['id'] for z in sources],
                                   'low': best['band'][0], 'high': best['band'][1], 'alert_policy': POLICY, 'ruleset': RULESET,
                                   'context_price_breach': False, 'equilibrium': {'eligible': True}})
         state.update(candidates=found, candidate=None, status='watching' if found else 'no_star_contact')
@@ -248,12 +295,17 @@ def unit_text(candidate):
     level, side = c['level'], 'LONG' if c['direction'] == 1 else 'SHORT'
     label = f"{LABELS[c['pair'][0]]} {TRACK_LABELS[c['track']]}"
     title = f"{LABELS[c['refinement_tf']]} OB 관찰" if level == 1 else TITLES[level]
+    if level == 2 and c.get('formation'):
+        title = '3중 OB 첫 접촉'
     exchange = c.get('exchange', 'bitget').title()
     lines = [f"[{exchange} · {c['symbol']}] {side}", f"{'★' * level} {title} · {label}"]
     if level >= 2:
         evidence = c['overlap']['sources'] if level == 3 else c['sources']
         names = sorted({(z['timeframe'], z['kind']) for z in evidence}, key=lambda key: (-TF_MS[key[0]], key[1]))
         lines.append(' + '.join(f'{LABELS[tf]} {kind}' for tf, kind in names))
+        if level == 2 and c.get('formation'):
+            lo, hi = c['band']
+            lines.append(f'공통 구간 {price_text(lo)} ~ {price_text(hi)} · 계단은 이후 확인')
     if level == 3:
         edge = '상한' if c['direction'] == 1 else '하한'
         lo, hi = c['band']

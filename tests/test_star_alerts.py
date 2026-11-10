@@ -6,9 +6,9 @@ import unittest
 
 from src.ict_engine import Bar, TF_MS
 from src.entry_execution import depth_quote, entry_plan
-from src.ict_overlap import VERSION
+from src.ict_overlap import PDZone, VERSION
 from src.split_alert_preview import render_side_by_side_unit
-from src.star_alerts import observation_reference, scan, unit_text
+from src.star_alerts import formation_contacts, observation_reference, scan, unit_text
 from src.star_charts import overlap_cells, primary_overlap
 from src.star_delivery import StarAlertLedger, unique_contacts
 
@@ -35,6 +35,64 @@ def replay(direction):
 
 
 class StarAlertsTests(unittest.TestCase):
+    def test_formation_contact_requires_three_obs_from_the_original_parent_window(self):
+        start, end = 0, 2 * TF_MS['4h']
+        parent = PDZone('parent', '4h', 'OB', 1, 100, 110, end, start, 99, 100)
+        middle = PDZone('middle', '1h', 'OB', 1, 98, 106, 3 * TF_MS['1h'], TF_MS['1h'], 97, 98)
+        final = PDZone('final', '15m', 'OB', 1, 104, 108, end, end - 2 * TF_MS['15m'], 103, 104)
+        path = ('4h', '1h', '15m')
+        during_formation = Bar(end - 60000, 105, 105, 105, 105, 1)
+        touch = Bar(end, 107, 107, 105, 107, 1)
+        now = end + 120000
+        self.assertFalse(formation_contacts(parent, [middle, final], path, 0, 107, now,
+                                            [during_formation], 0))
+        for changes in ({'kind': 'FVG'}, {'direction': -1}, {'origin': -TF_MS['15m']},
+                        {'created': end + TF_MS['15m']}, {'low': 106}):
+            other = PDZone(**{**vars(final), **changes})
+            self.assertFalse(formation_contacts(parent, [middle, other], path, 0, 107, now, [touch], 0))
+        choice, = formation_contacts(parent, [middle, final], path, 0, 107, now, [touch], 0)
+        self.assertEqual(choice['band'], [104, 106])
+        self.assertEqual(choice['formation'], {'start': start, 'end': end})
+        self.assertEqual(choice['touch']['bar_open'], end)
+
+    def test_formation_first_touch_and_later_staircase_on_both_sides(self):
+        raw = json.loads(FIXTURE.read_text(encoding='utf-8'))
+        tracks = {'short': ('4h', '1h')}
+        for direction, touch_price in ((-1, 64935.), (1, 65065.)):
+            with self.subTest(direction=direction), tempfile.TemporaryDirectory() as tmp:
+                timeline = list(replay(direction))
+                snapshot, frames = timeline[2]
+                now = snapshot['as_of']
+                options = {'tracks': tracks, 'formation_tracks': ('short',)}
+                outside = scan('BTCUSDT', frames, now, snapshot['price'], **options)
+                self.assertFalse(outside['tracks']['short']['candidates'])
+                minute = Bar(now - 60000, touch_price, touch_price, touch_price, touch_price, 1)
+                first = scan('BTCUSDT', frames, now, snapshot['price'], minute_bars=[minute], **options)
+                ledger = StarAlertLedger(Path(tmp) / 'state.json')
+                event, = ledger.observe(first).values()
+                c = event['candidate']
+                self.assertEqual((c['level'], c['direction']), (2, direction))
+                self.assertEqual([s['kind'] for s in c['sources']], ['OB'] * 3)
+                self.assertIn('계단은 이후 확인', unit_text(c))
+                self.assertEqual(primary_overlap(c, c['sources'])[:2], tuple(c['band']))
+                result = ledger.dispatch_units(
+                    lambda _: True, lambda _: True,
+                    lambda unit: render_side_by_side_unit(first, unit, frames, Path(tmp) / 'formation'))
+                self.assertEqual(result['sent'], 1)
+                self.assertFalse(ledger.observe(first))
+
+                snapshot, frames = timeline[-1]
+                now = snapshot['as_of']
+                minutes = [Bar(*r) if direction == -1 else Bar(r[0], 130000-r[1], 130000-r[3],
+                           130000-r[2], 130000-r[4], r[5]) for r in raw['ticks'][-1]['minutes']]
+                followup = scan('BTCUSDT', frames, now, snapshot['price'], minute_bars=minutes,
+                                touch_since=now - 300000, contexts=first['star_contexts'], **options)
+                entry, = ledger.observe(followup).values()
+                c = entry['candidate']
+                self.assertEqual(c['level'], 3)
+                self.assertGreaterEqual(c['rr'], 3)
+                self.assertLess(c['overlap']['touch']['at'], c['lower']['known_at'])
+
     def test_both_sides_upgrade_once_and_render_the_highest_grade(self):
         for direction in (-1, 1):
             with self.subTest(direction=direction), tempfile.TemporaryDirectory() as tmp:

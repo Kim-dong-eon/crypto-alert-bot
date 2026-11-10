@@ -127,7 +127,9 @@ class StarAlertLedger(StructureLedger):
 
         contacts = eligible_contacts(snapshot['tracks'], self.entry_only, self.require_execution)
         selected = unique_contacts(snapshot['tracks'], self.entry_only, self.require_execution)
-        active_locks = [lock for lock in locks.values() if lock['parent']['id'] in active_ids]
+        disabled = set(snapshot.get('disabled_tracks', ()))
+        active_locks = [lock for lock in locks.values()
+                        if lock['track'] not in disabled and lock['parent']['id'] in active_ids]
         # Keep the scan, image previews and delivery on the same selections.
         for track, row in snapshot['tracks'].items():
             row['candidates'] = [c for c in selected if c['track'] == track]
@@ -142,9 +144,15 @@ class StarAlertLedger(StructureLedger):
             if shadowed_by_higher(c, active_locks):
                 suppressed += 1
                 continue
-            duplicates = [lock for identity, lock in locks.items() if lock['level'] >= c['level']
-                          and (identity == c['id'] or (lock['parent']['id'] in active_ids and intersects(lock, c)))]
-            if not self.force_resend and duplicates and not unfinished:
+            same_parent = locks.get(c['id'], {}).get('level', 0) >= c['level']
+            duplicate_band = any(lock['level'] >= c['level'] and intersects(lock, c) for lock in active_locks)
+            formation = c.get('formation') or c.get('overlap', {}).get('formation')
+            if unfinished and formation and p['candidate']['context_id'] != c['context_id']:
+                if delivery_started(p):
+                    continue
+                del presentations[key]
+                unfinished = False
+            if not self.force_resend and (same_parent or duplicate_band) and not unfinished:
                 suppressed += 1
                 continue
             if self.require_execution and c['level'] == 3 and unfinished and not executable(p['candidate']):
@@ -165,7 +173,7 @@ class StarAlertLedger(StructureLedger):
                 continue
             if c['context_id'] not in episodes or not set(c['source_ids']).issubset(active_ids):
                 continue
-            if snapshot['tracks'][c['track']]['status'] == 'data_unavailable':
+            if snapshot['tracks'].get(c['track'], {}).get('status', 'data_unavailable') == 'data_unavailable':
                 continue
             if max(locks.get(c['id'], {}).get('level', 0), selected_grades.get(c['id'], 0)) > c['level']:
                 continue

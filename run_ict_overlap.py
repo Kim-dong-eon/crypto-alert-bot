@@ -1,4 +1,4 @@
-"""Four timeframe paths with graded OB reaction alerts; preview by default."""
+"""Graded OB reaction alerts; preview by default."""
 import argparse
 from contextlib import nullcontext
 import json
@@ -32,13 +32,15 @@ from src.overlap_status import overview_events
 
 ROOT=Path(__file__).resolve().parent
 ENTRY_NOTIONAL_USDT = 1000.
+STAR_TRACKS = {name: pair for name, pair in TRACKS.items() if name != 'fast'}
+FORMATION_TRACKS = ('short',)
 
 
 def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,image_sender=None,render_previews=False,listing_check=None,status_symbols=(),unit_text_sender=None,entry_notional=ENTRY_NOTIONAL_USDT):
     results=[];failures=[];chart_frames={}
     graded = isinstance(ledger, StarAlertLedger)
     require_execution = graded and ledger.require_execution
-    paths = TRIPLE_TRACKS if graded else TRACKS
+    paths = {name: TRIPLE_TRACKS[name] for name in STAR_TRACKS} if graded else TRACKS
     tick_sizes = {item['symbol']:item.get('priceMultiplier') for item in instruments}
     execution_checks = {}
 
@@ -114,9 +116,11 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         since = max(touch_since, minute_coverage['start']) if minute_coverage else touch_since
         if graded:
             result = scan_stars(symbol, frames, observed, price, minute_bars=minute_bars, touch_since=since,
-                                contexts=ledger.state['star_contexts'].get(symbol),
+                                contexts=ledger.state['star_contexts'].get(symbol), tracks=STAR_TRACKS,
+                                formation_tracks=FORMATION_TRACKS,
                                 execution_quote=lru_cache(maxsize=1)(lambda: get_execution_quote(symbol)) if require_execution else None,
                                 tick_size=tick_sizes[symbol])
+            result['disabled_tracks'] = ['fast']
         else:
             result=scan(symbol,frames,observed,price,equilibrium_filter=True,minute_bars=minute_bars,touch_since=since)
         result.update(minute_coverage=minute_coverage,minute_error=minute_error)
@@ -202,8 +206,10 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
                 else:status_delivery['failed']+=1
         else:delivery=ledger.dispatch(sender,batch=True)
         ledger.state['pending'].update(held);ledger.save()
-    report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","strategy":POLICY,'paths':TRIPLE_TRACKS,'deduplication_enabled':True,"binance_listing_check":listing_check,"instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery,'status_delivery':status_delivery}
+    report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","strategy":POLICY,'paths':paths,'deduplication_enabled':True,"binance_listing_check":listing_check,"instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery,'status_delivery':status_delivery}
     report['ruleset']=STAR_RULESET if graded else RULESET
+    if graded:
+        report['formation_tracks'] = FORMATION_TRACKS
     if require_execution:
         report.update(entry_only=ledger.entry_only, execution_required_for_grade=3,
                       entry_notional_usdt=entry_notional, execution_checks=execution_checks)
@@ -214,7 +220,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
 
 
 def main(argv=None):
-    parser=argparse.ArgumentParser(description="별점 알림: 초단기1H/15m/5m·단기4H/1H/15m·중기1D/4H/1H·장기1W/1D/4H")
+    parser=argparse.ArgumentParser(description="별점 알림: 단기4H/1H/15m·중기1D/4H/1H·장기1W/1D/4H")
     parser.add_argument('--send',action='store_true');parser.add_argument('--watch',action='store_true')
     parser.add_argument('--resend-current',action='store_true',help='이번 검사만 기존 발송 잠금을 무시하고 현재 조건 충족 구간 재발송')
     parser.add_argument('--inspect-symbol',help='이번 실행만 이 공통 상장 종목의 전체 상태 발송. 여러 종목은 쉼표로 구분')

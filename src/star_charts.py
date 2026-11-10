@@ -30,6 +30,9 @@ def primary_overlap(event, zones):
     """Prefer the middle FVG when showing the actual three-frame intersection."""
     if event['level'] < 2:
         return None
+    overlap = event['overlap'] if event['level'] == 3 else event
+    if formation := overlap.get('formation'):
+        return *overlap['band'], formation['end'], 'OB'
     _, middle, final = event['path']
     parent = next((z for z in zones if z['id'] == event['parent']['id']), None)
     middle_sources = [z for z in zones if z['timeframe'] == middle]
@@ -74,6 +77,12 @@ def draw_panel(ax, tf, candles, event):
     zones = event['overlap']['sources'] if level == 3 else event['sources']
     core = primary_overlap(event, zones)
     legend = {}
+    overlap = event.get('overlap', event)
+    if is_top and (formation := overlap.get('formation')):
+        left = position(formation['start']) - .5
+        right = position(formation['end']) - .5
+        ax.axvspan(left, right, facecolor=GOLD, alpha=.12, zorder=1)
+        legend['형성'] = Patch(facecolor=GOLD, alpha=.3, label=f'{LABELS[top]} OB 형성 봉')
     prices = [value for b in candles for value in (b.low, b.high)]
     prices.extend(event['band'])
     boxes = []
@@ -202,6 +211,8 @@ def render(snapshot, alert, frames, prefix):
     fig.subplots_adjust(left=.035, right=.94, top=.71, bottom=.19, wspace=.17)
     fig.text(.035, .938, '★' * level, color=GOLD, size=23, weight='bold', va='center')
     title = f'{LABELS[final]} OB 관찰' if level == 1 else TITLES[level]
+    if level == 2 and event.get('formation'):
+        title = '3중 OB 첫 접촉'
     fig.text(.155, .938, title, color=WHITE, size=23, weight='bold', va='center')
     exchange = event.get('exchange', 'bitget').title()
     fig.text(.036, .868, f"{exchange} {event['symbol']}  ·  {TRACK_LABELS[event['track']]} {side}  ·  {kst(now)}",
@@ -225,6 +236,8 @@ def render(snapshot, alert, frames, prefix):
             core = primary_overlap(event, event['sources'])
             kind = core[3] if core else 'OB/FVG'
             message = f'{LABELS[top]} OB × {LABELS[middle]} {kind} × {LABELS[final]} OB · 핵심 3중 겹침'
+            if event.get('formation'):
+                message += ' · 계단은 이후 확인'
         else:
             message = f"{LABELS[top]} 계단 · 3중 겹침 · {LABELS[final]} 계단과 재접촉    |    비용 반영 1:{event['rr']:.2f}"
         fig.text(.035, .112, message, color=WHITE, size=13, weight='bold')
