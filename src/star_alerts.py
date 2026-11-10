@@ -342,13 +342,15 @@ def unit_text(candidate):
         if plan := risk['plan']:
             lo, hi = plan['band']
             lines.append(f"참고 진입 {price_text(lo)} ~ {price_text(hi)} · 비용 반영 1:{plan['rr']:.2f}")
-            x = plan['execution']
-            lines.append(f"{x['notional']:,.0f} USDT 기준 · 편도 수수료 {x['fee_per_side']:.3%} · 예상 슬리피지 {x['slippage_per_side']:.3%}")
+            if level == 1:
+                x = plan['execution']
+                lines.append(f"{x['notional']:,.0f} USDT 기준 · 편도 수수료 {x['fee_per_side']:.3%} · 예상 슬리피지 {x['slippage_per_side']:.3%}")
         elif level == 2:
             lines.append('공통 구간 내 비용 반영 1:3 미충족' if risk.get('costs_checked') else '비용 확인 대기 · 1:3 미확정')
     elif level == 2:
         lines.append('상위 직전 고저점 또는 OB 손절 미확정')
-    lines.append(f"접촉 확인 · {kst(c['touch']['at'])}")
+    if level != 2:
+        lines.append(f"접촉 확인 · {kst(c['touch']['at'])}")
     return '\n'.join(lines)
 
 

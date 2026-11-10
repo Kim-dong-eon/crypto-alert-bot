@@ -85,7 +85,11 @@ class StarAlertsTests(unittest.TestCase):
                 self.assertGreaterEqual(plan['rr'], 3)
                 self.assertLessEqual(c['low'], plan['band'][0])
                 self.assertLessEqual(plan['band'][1], c['high'])
-                self.assertIn('직전 고점' if direction == 1 else '직전 저점', unit_text(c))
+                notice = unit_text(c)
+                self.assertIn('직전 고점' if direction == 1 else '직전 저점', notice)
+                self.assertIn('비용 반영 1:', notice)
+                self.assertNotIn('예상 슬리피지', notice)
+                self.assertNotIn('접촉 확인 ·', notice)
                 expensive = scan('BTCUSDT', frames, now, snapshot['price'], minute_bars=[minute],
                                  execution_quote=lambda: {**quote, 'slippage_per_side': .05},
                                  tick_size='0.1', **options)
