@@ -73,12 +73,24 @@ def overview_wave(bars, points, origin, staircase):
     return {'points': display, 'chart_start': display[0]['timestamp'] if display else origin, 'target': None}
 
 
+def observation_wave(bars, points, at, origin=None):
+    known = [p for p in points if p['confirmed_at'] <= at]
+    if origin is None:
+        known = known[-4:]
+    else:
+        before = sum(bars[p['index']].timestamp < origin for p in known)
+        known = known[max(0, before - 3):]
+    display = [{**p, 'timestamp': bars[p['index']].timestamp} for p in known]
+    return {'points': display, 'chart_start': display[0]['timestamp'] if display else at, 'target': None}
+
+
 def observation_reference(choice, lower_bars, points, direction):
     source = choice['sources'][-1]
     origin = next((bar for bar in lower_bars if bar.timestamp == source['origin']), None)
     kind = 'high' if direction == 1 else 'low'
+    touch = choice['touch']
     target = next((p for p in reversed(points) if p['kind'] == kind
-                   and p['confirmed_at'] <= choice['touch']['at']), None)
+                   and p['confirmed_at'] <= touch.get('bar_open', touch['at'])), None)
     if origin is None or target is None:
         return None
     return {'stop': origin.low if direction == 1 else origin.high, 'target': target['price']}
@@ -151,6 +163,7 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
         lower_bars = usable[final]
         lower_points = turns(lower_bars, 1.5, 0., final)
         lower_stairs = {d: choose_stair(lower_bars, lower_points, final, d) for d in (1, -1)}
+        recent_upper_points = state['analysis']['views']['recent']['turns']
         found = []
         for lens, view in state['analysis']['views'].items():
             points = view['turns']
@@ -271,18 +284,25 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                 if choices:
                     best = max(choices, key=lambda c: (c['level'], c['score'], c.get('rr', 0)))
                     sources = best['sources']
-                    if execution_quote is not None and best['level'] < 3:
-                        reference = observation_reference(best, lower_bars, points, direction)
-                        if reference and (quote := execution_quote()):
+                    upper_wave = overview_wave(upper_bars, points, root, upper if upper_ready else None)
+                    if best['level'] == 2:
+                        at = best['touch']['at']
+                        upper_wave = observation_wave(upper_bars, recent_upper_points, at, parent.origin)
+                        best['lower_wave'] = observation_wave(lower_bars, lower_points, at)
+                    if best['level'] < 3:
+                        target_points = recent_upper_points if best['level'] == 2 else points
+                        reference = observation_reference(best, lower_bars, target_points, direction)
+                        if reference:
+                            quote = execution_quote() if execution_quote else None
                             plan = entry_plan(*best['band'], reference['stop'], reference['target'], direction,
                                               quote, tick_size, require_touch=False)
-                            best['observation_risk'] = {**reference, 'plan': plan}
+                            best['observation_risk'] = {**reference, 'plan': plan, 'costs_checked': bool(quote and tick_size)}
                     found.append({**best, 'symbol': symbol, 'exchange': 'bitget', 'track': track, 'path': state['path'],
                                   'pair': state['pair'], 'refinement_tf': final, 'direction': direction, 'price': price,
                                   'now': now, 'id': hashlib.sha256(identity.encode()).hexdigest()[:24],
                                   'context_id': identity, 'lenses': [lens],
                                   'parent': asdict(parent), 'arm': arm['at'], 'arm_price': contact_price(arm, parent.low, parent.high),
-                                  'upper': overview_wave(upper_bars, points, root, upper if upper_ready else None), 'source_ids': [z['id'] for z in sources],
+                                  'upper': upper_wave, 'source_ids': [z['id'] for z in sources],
                                   'low': best['band'][0], 'high': best['band'][1], 'alert_policy': POLICY, 'ruleset': RULESET,
                                   'context_price_breach': False, 'equilibrium': {'eligible': True}})
         state.update(candidates=found, candidate=None, status='watching' if found else 'no_star_contact')
@@ -316,12 +336,18 @@ def unit_text(candidate):
             lines.append(f"{x['notional']:,.0f} USDT 기준 · 편도 수수료 {x['fee_per_side']:.3%} · 예상 슬리피지 {x['slippage_per_side']:.3%}")
             lines.append(f"호가 기준 예상 체결가 {price_text(x['vwap'])} · {kst(x['at'])}")
             return '\n'.join(lines)
-    elif (risk := c.get('observation_risk')) and (plan := risk['plan']):
-        lo, hi = plan['band']
-        lines.append(f"참고 1:3 구간 {price_text(lo)} ~ {price_text(hi)} · 순손익비 1:{plan['rr']:.2f}")
-        lines.append(f"OB 손절 {price_text(risk['stop'])} · 상위 직전 목표 {price_text(risk['target'])}")
-        x = plan['execution']
-        lines.append(f"{x['notional']:,.0f} USDT 기준 · 편도 수수료 {x['fee_per_side']:.3%} · 예상 슬리피지 {x['slippage_per_side']:.3%}")
+    elif risk := c.get('observation_risk'):
+        target_kind = '고점' if c['direction'] == 1 else '저점'
+        lines.append(f"{LABELS[c['refinement_tf']]} OB 손절 {price_text(risk['stop'])} · {LABELS[c['pair'][0]]} 직전 {target_kind} {price_text(risk['target'])}")
+        if plan := risk['plan']:
+            lo, hi = plan['band']
+            lines.append(f"참고 진입 {price_text(lo)} ~ {price_text(hi)} · 비용 반영 1:{plan['rr']:.2f}")
+            x = plan['execution']
+            lines.append(f"{x['notional']:,.0f} USDT 기준 · 편도 수수료 {x['fee_per_side']:.3%} · 예상 슬리피지 {x['slippage_per_side']:.3%}")
+        elif level == 2:
+            lines.append('공통 구간 내 비용 반영 1:3 미충족' if risk.get('costs_checked') else '비용 확인 대기 · 1:3 미확정')
+    elif level == 2:
+        lines.append('상위 직전 고저점 또는 OB 손절 미확정')
     lines.append(f"접촉 확인 · {kst(c['touch']['at'])}")
     return '\n'.join(lines)
 

@@ -67,7 +67,10 @@ class StarAlertsTests(unittest.TestCase):
                 outside = scan('BTCUSDT', frames, now, snapshot['price'], **options)
                 self.assertFalse(outside['tracks']['short']['candidates'])
                 minute = Bar(now - 60000, touch_price, touch_price, touch_price, touch_price, 1)
-                first = scan('BTCUSDT', frames, now, snapshot['price'], minute_bars=[minute], **options)
+                quote = depth_quote({'ts': now, 'a': [[touch_price + 1, 1]], 'b': [[touch_price - 1, 1]]},
+                                    now, 1000)
+                first = scan('BTCUSDT', frames, now, snapshot['price'], minute_bars=[minute],
+                             execution_quote=lambda: quote, tick_size='0.1', **options)
                 ledger = StarAlertLedger(Path(tmp) / 'state.json')
                 event, = ledger.observe(first).values()
                 c = event['candidate']
@@ -75,6 +78,21 @@ class StarAlertsTests(unittest.TestCase):
                 self.assertEqual([s['kind'] for s in c['sources']], ['OB'] * 3)
                 self.assertIn('계단은 이후 확인', unit_text(c))
                 self.assertEqual(primary_overlap(c, c['sources'])[:2], tuple(c['band']))
+                self.assertGreaterEqual(len(c['upper']['points']), 2)
+                self.assertGreaterEqual(len(c['lower_wave']['points']), 2)
+                risk = c['observation_risk']
+                plan = risk['plan']
+                self.assertGreaterEqual(plan['rr'], 3)
+                self.assertLessEqual(c['low'], plan['band'][0])
+                self.assertLessEqual(plan['band'][1], c['high'])
+                self.assertIn('직전 고점' if direction == 1 else '직전 저점', unit_text(c))
+                expensive = scan('BTCUSDT', frames, now, snapshot['price'], minute_bars=[minute],
+                                 execution_quote=lambda: {**quote, 'slippage_per_side': .05},
+                                 tick_size='0.1', **options)
+                costly, = unique_contacts(expensive['tracks'])
+                self.assertEqual(costly['level'], 2)
+                self.assertIsNone(costly['observation_risk']['plan'])
+                self.assertIn('비용 반영 1:3 미충족', unit_text(costly))
                 result = ledger.dispatch_units(
                     lambda _: True, lambda _: True,
                     lambda unit: render_side_by_side_unit(first, unit, frames, Path(tmp) / 'formation'))
@@ -195,6 +213,9 @@ class StarAlertsTests(unittest.TestCase):
         quote = depth_quote(book, 1000, 1000)
         self.assertIsNone(entry_plan(99, 101, 98, 112, 1, quote, '.01'))
         self.assertGreaterEqual(entry_plan(99, 101, 98, 112, 1, quote, '.01', require_touch=False)['rr'], 3.)
+        above_target = {**quote, 'mid': 115., 'buy_vwap': 115.1}
+        self.assertIsNone(entry_plan(99, 101, 98, 112, 1, above_target, '.01'))
+        self.assertIsNotNone(entry_plan(99, 101, 98, 112, 1, above_target, '.01', require_touch=False))
 
     def test_mixed_delivery_sends_observations_without_entry_recheck(self):
         timeline = list(replay(-1))

@@ -45,9 +45,8 @@ def entry_plan(low, high, stop, target, direction, quote, tick_size, *, prior_ba
         return None
     mid = quote['mid']
     vwap = quote['buy_vwap'] if direction == 1 else quote['sell_vwap']
-    if direction * (mid - stop) <= 0 or direction * (target - mid) <= 0:
-        return None
-    if require_touch and not low <= vwap <= high:
+    if require_touch and (direction * (mid - stop) <= 0 or direction * (target - mid) <= 0
+                          or not low <= vwap <= high):
         return None
     slip = quote['slippage_per_side']
     lo, hi = risk_band(low, high, stop, target, direction, slippage=slip)

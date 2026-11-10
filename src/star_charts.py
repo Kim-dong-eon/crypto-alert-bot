@@ -55,6 +55,9 @@ def window(frames, tf, event, current_at):
         start = min(event['upper']['chart_start'], event['parent']['origin']) - 4 * TF_MS[tf]
     elif 'lower' in event:
         start = event['lower']['chart_start'] - 5 * TF_MS[tf]
+    elif wave := event.get('lower_wave'):
+        start = max(bars[-72].timestamp if len(bars) >= 72 else bars[0].timestamp,
+                    min(wave['chart_start'] - 3 * TF_MS[tf], bars[-min(36, len(bars))].timestamp))
     else:
         return bars[-36:]
     return [b for b in bars if b.timestamp >= start]
@@ -65,7 +68,7 @@ def draw_panel(ax, tf, candles, event):
     now, level = event['now'], event['level']
     top, middle, final = event['path']
     is_top = tf == top
-    colors = {top: '#78aaff', middle: '#4cddd5', final: '#e7ae62'}
+    colors = {top: '#659dff', middle: '#43d9bc', final: '#f2a75b'}
     start, step = candles[0].timestamp, TF_MS[tf]
     position = lambda stamp: (stamp - start) / step
     edge = len(candles) + 2
@@ -89,8 +92,8 @@ def draw_panel(ax, tf, candles, event):
     for z in zones:
         color = '#8bece6' if z['timeframe'] == middle and z['kind'] == 'FVG' else colors[z['timeframe']]
         left = max(-.6, position(z['created']))
-        ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], color=color, alpha=.07, zorder=1))
-        ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], fill=False, edgecolor=color, linewidth=.75, zorder=2))
+        ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], color=color, alpha=.12, zorder=1))
+        ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], fill=False, edgecolor=color, linewidth=1, zorder=2))
         boxes.append((left, z['low'], z['high']))
         name = f"{LABELS[z['timeframe']]} {z['kind']}"
         legend[name] = Patch(facecolor=color, alpha=.62, label=name)
@@ -108,7 +111,7 @@ def draw_panel(ax, tf, candles, event):
                 ax.add_patch(Rectangle((left, low), right - left, high - low, facecolor=color,
                                        alpha=.94, edgecolor='none', zorder=1.5))
         ax.add_patch(Rectangle((start_core, lo), edge - start_core, hi - lo, fill=False,
-                               edgecolor=WHITE, linewidth=1.2, zorder=3))
+                               edgecolor=WHITE, linewidth=1.5, zorder=3))
         prices.extend((lo, hi))
         legend['핵심'] = Patch(facecolor='none', edgecolor=WHITE, label='핵심 3중 겹침')
 
@@ -130,8 +133,8 @@ def draw_panel(ax, tf, candles, event):
     risk = event.get('observation_risk') or {}
     if not is_top and (plan := risk.get('plan')):
         lo, hi = plan['band']
-        left = max(-.6, position(event['touch']['valid_from']))
-        ax.hlines(sorted({lo, hi}), left, edge, color=REFERENCE, linestyle='--', linewidth=1.2, zorder=3.5)
+        left = position(frame_open(event['touch'].get('bar_open', event['touch']['at'] - 1), tf))
+        ax.hlines(sorted({lo, hi}), max(-.6, left), edge, color=REFERENCE, linestyle='--', linewidth=2, zorder=6)
         legend['참고'] = Patch(facecolor='none', edgecolor=REFERENCE, linestyle='--', label='참고 1:3')
 
     candle_span = max(b.high for b in candles) - min(b.low for b in candles)
@@ -143,16 +146,21 @@ def draw_panel(ax, tf, candles, event):
         ax.add_patch(Rectangle((i - .31, (b.open + b.close - height) / 2), .62, height,
                                facecolor=color, edgecolor=GOLD if b.timestamp + step > now else color,
                                linewidth=1 if b.timestamp + step > now else .35, zorder=5))
-    stair = event['upper'] if is_top else event.get('lower')
-    if stair:
-        points = stair['points']
+    structure = event['upper'] if is_top else event.get('lower') or event.get('lower_wave')
+    if structure:
+        points = [p for p in structure['points'] if start <= p['timestamp'] <= candles[-1].timestamp]
         xs = [position(p['timestamp']) for p in points]
         ys = [p['price'] for p in points]
-        ax.plot(xs, ys, color='#69e1e8', linewidth=1.65, marker='o', markersize=3, zorder=7)
-        goal = risk['target'] if level < 3 and risk.get('plan') else stair['target']
+        if points:
+            ax.plot(xs, ys, color='#78ebff', linewidth=2.05, marker='o', markersize=4, zorder=7)
+        if level == 2 and points and points[-1]['timestamp'] < candles[-1].timestamp:
+            ax.plot([xs[-1], len(candles) - 1], [ys[-1], candles[-1].close],
+                    color=GOLD, linestyle='--', linewidth=1.5, zorder=7)
+        goal = risk.get('target', structure['target'])
         if is_top and goal is not None:
             ax.axhline(goal, color='#88dfa4', linestyle='--', linewidth=1.1, zorder=3)
-            ax.text(.98, goal, f"{LABELS[top]} 목표 {fmt(goal)}",
+            extreme = '고점' if event['direction'] == 1 else '저점'
+            ax.text(.98, goal, f"{LABELS[top]} 직전 {extreme} · 목표 {fmt(goal)}",
                     transform=ax.get_yaxis_transform(), ha='right', va='top', color='#9eecad', fontsize=10)
             prices.append(goal)
         elif not is_top and level == 3:
@@ -168,6 +176,12 @@ def draw_panel(ax, tf, candles, event):
             ax.text(.98, event['entry'], f"진입 {bound} {fmt(event['entry'])}", transform=ax.get_yaxis_transform(),
                     ha='right', va='bottom', color=GOLD, fontsize=10, zorder=8,
                     bbox={'facecolor': '#152130', 'edgecolor': 'none', 'pad': 2})
+    if level == 2 and not is_top and risk:
+        stop = risk['stop']
+        ax.axhline(stop, color='#ff9da9', linestyle=':', linewidth=1.3, zorder=4)
+        ax.text(.02, stop, f'{LABELS[final]} OB 손절 {fmt(stop)}', transform=ax.get_yaxis_transform(),
+                ha='left', va='bottom', color='#ffabb4', fontsize=10, zorder=8)
+        prices.append(stop)
 
     lo, hi = (event['parent']['low'], event['parent']['high']) if is_top else event['band']
     if is_top:
@@ -201,6 +215,7 @@ def draw_panel(ax, tf, candles, event):
 
 def render(snapshot, alert, frames, prefix):
     from matplotlib.patches import Patch
+    from matplotlib.lines import Line2D
     configure_font()
     event = alert['candidate']
     level, now = event['level'], event['now']
@@ -217,18 +232,21 @@ def render(snapshot, alert, frames, prefix):
     exchange = event.get('exchange', 'bitget').title()
     fig.text(.036, .868, f"{exchange} {event['symbol']}  ·  {TRACK_LABELS[event['track']]} {side}  ·  {kst(now)}",
              color=MUTED, size=12)
-    fig.legend(handles=[Patch(facecolor=color, label=label) for color, label in zip(DENSITY, ('3개 겹침', '4개 겹침', '5개 이상'))],
+    keys = ([Line2D([], [], color='#78ebff', linewidth=2, label='확정 파동'),
+             Line2D([], [], color=GOLD, linestyle='--', label='진행 파동')]
+            if level == 2 else [Patch(facecolor=color, label=label) for color, label in zip(DENSITY, ('3개 겹침', '4개 겹침', '5개 이상'))])
+    fig.legend(handles=keys,
                loc='center right', bbox_to_anchor=(.94, .876), ncol=3, fontsize=10,
                frameon=False, labelcolor=WHITE, handlelength=1.3, columnspacing=1.2)
     if snapshot.get('illustrative'):
         priced = event.get('execution') or (event.get('observation_risk') or {}).get('plan')
-        preview = '과거 캔들 · 예시 호가' if priced else '과거 시세 재생 미리보기'
+        preview = '과거 캔들 · 비용 예시' if priced else '과거 시세 재생 미리보기'
         fig.text(.94, .935, preview, color=MUTED, size=11, ha='right')
     try:
         for ax, tf in zip(axes, (top, final)):
             draw_panel(ax, tf, window(frames, tf, event, snapshot['as_of']), event)
             upper_label = '계단 · 상위 OB와 목표' if event['upper']['target'] is not None else '상위 구조 · OB 접촉'
-            panel = upper_label if tf == top else '계단 · 진입 확인' if level == 3 else '확대 · 접촉 확인'
+            panel = upper_label if tf == top else '계단 · 진입 확인' if level == 3 else '구조 확대 · 접촉 확인'
             ax.set_title(f'{LABELS[tf]} {panel}', color=WHITE, loc='left', fontsize=13, pad=29)
         if level == 1:
             message = f'{LABELS[top]} OB 반응 안에서 같은 방향의 {LABELS[final]} OB 접촉'
@@ -247,10 +265,13 @@ def render(snapshot, alert, frames, prefix):
             detail = f"진입 {fmt(lo)} ~ {fmt(hi)}     손절 {fmt(event['stop'])}     목표 {fmt(event['target'])}"
             if x := event.get('execution'):
                 detail += f"     편도 슬리피지 {x['slippage_per_side']:.3%} · {x['notional']:,.0f} USDT 기준"
-        elif (risk := event.get('observation_risk')) and (plan := risk['plan']):
-            lo, hi = plan['band']
-            detail = (f"참고 1:3 구간 {fmt(lo)} ~ {fmt(hi)}     OB 손절 {fmt(risk['stop'])}"
-                      f"     상위 직전 목표 {fmt(risk['target'])}     비용 반영 1:{plan['rr']:.2f}")
+        elif risk := event.get('observation_risk'):
+            if plan := risk['plan']:
+                lo, hi = plan['band']
+                detail = (f"참고 진입 {fmt(lo)} ~ {fmt(hi)}     OB 손절 {fmt(risk['stop'])}"
+                          f"     상위 직전 목표 {fmt(risk['target'])}     비용 반영 1:{plan['rr']:.2f}")
+            elif level == 2:
+                detail += '     ·     ' + ('비용 반영 1:3 미충족' if risk.get('costs_checked') else '비용 확인 대기 · 1:3 미확정')
         fig.text(.035, .064, detail, color=MUTED, size=11)
         prefix = Path(prefix)
         path = prefix.with_name(f'{prefix.name}_star{level}.png')
