@@ -26,6 +26,9 @@ def split_units(events):
 
 
 def unit_text(event):
+    if event['candidate'].get('level'):
+        from src.star_alerts import unit_text as star_text
+        return star_text(event['candidate'])
     if event['candidate'].get('alert_policy')=='root-ob-pullback-v1':
         from src.pullback_alerts import unit_text as pullback_text
         return pullback_text(event)
@@ -75,6 +78,9 @@ def message_example(units):
 
 def render_side_by_side_unit(snapshot,event,frames,prefix):
     """One alert/lens in one image: left context, right close-up."""
+    if event['candidate'].get('level'):
+        from src.star_charts import render
+        return render(snapshot,event,frames,prefix)
     if event['candidate'].get('alert_policy')=='root-ob-pullback-v1':
         from src.pullback_charts import render_unit
         return render_unit(snapshot,event,frames,prefix)

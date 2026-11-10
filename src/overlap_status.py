@@ -16,11 +16,15 @@ def nearest_sources(zones,price):
 def overview_events(snapshot):
     events=[];price=snapshot['price']
     all_zones=[PDZone(**row) for row in snapshot.get('valid_zones',[])]
-    for track,pair in TRACKS.items():
+    graded = snapshot.get('ruleset') == 'star-ob-reaction-v1'
+    scopes = {track: state['pair'] for track, state in snapshot['tracks'].items()} if graded else TRACKS
+    for track,pair in scopes.items():
         state=snapshot['tracks'].get(track,{'status':'data_unavailable','context':None,'candidate':None})
         actual=state.get('candidate');context=state.get('context');pending=state.get('pending_sweep')
         unavailable=state['status']=='data_unavailable'
         direction=context.get('direction',actual.get('direction',0) if actual else 0) if context else 0
+        if graded:
+            direction = actual['direction'] if actual else state.get('direction', 0)
         preferred=direction or (pending['direction'] if pending else 0)
         zones=[z for z in all_zones if z.timeframe in pair and (not preferred or z.direction==preferred)]
         since=(context.get('sweep_time') if context else pending['sweep'] if pending else None)
@@ -53,6 +57,13 @@ def overview_events(snapshot):
                 view['pending_context']={'sweep_time':pending['sweep'],'swept_level':pending['level']}
         if unavailable:
             headline='자료 대기';reason='완성 봉 자료 부족·지연'
+        elif graded:
+            headline = '강세(LONG)' if direction == 1 else '약세(SHORT)' if direction == -1 else '방향 미확정'
+            if actual:
+                from src.star_alerts import TITLES
+                reason = '★' * actual['level'] + ' ' + TITLES[actual['level']]
+            else:
+                reason = '별점 접촉 대기'
         elif actual:
             headline='강세(LONG)' if direction==1 else '약세(SHORT)'
             if alert_eligible(actual):
@@ -85,7 +96,8 @@ def overview_events(snapshot):
 
 
 def overview_notice(events):
-    ordered=sorted(events,key=lambda e:list(TRACKS).index(e['view']['track']))
+    order = {track: i for i, track in enumerate(('fast', *TRACKS))}
+    ordered=sorted(events,key=lambda e:order[e['view']['track']])
     first=ordered[0]['view'];number=lambda value:f'{value:,.2f}'.rstrip('0').rstrip('.')
     lines=[f"[{first['exchange'].title()} · {first['symbol']}] 현재가 {number(first['price'])}",'']
     for event in ordered:

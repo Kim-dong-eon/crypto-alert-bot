@@ -1,4 +1,4 @@
-"""Four nested staircase/OTE/3R horizons; preview by default."""
+"""Four timeframe paths with graded OB reaction alerts; preview by default."""
 import argparse
 from contextlib import nullcontext
 import json
@@ -11,7 +11,8 @@ from config.overlap_settings import TRACK_LABELS, BASES, POLL_SECONDS,DIVERSIFIE
 from src.ict_overlap import compact_notice,alert_eligible
 from src.structure_alerts import StructureLedger,candidates
 from src.pullback_alerts import scan,refinement_history_starts,POLICY,TRIPLE_TRACKS,TRACKS
-from src.pullback_delivery import PullbackAlertLedger
+from src.star_delivery import StarAlertLedger
+from src.star_alerts import RULESET as STAR_RULESET, scan as scan_stars, unit_text as star_text
 from src.pullback_data import live_frames
 from src.staircase_rules import RULESET
 from src.ict_engine import TF_MS,frame_open
@@ -29,6 +30,8 @@ ROOT=Path(__file__).resolve().parent
 
 def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,image_sender=None,render_previews=False,listing_check=None,status_symbols=(),unit_text_sender=None):
     results=[];failures=[];chart_frames={}
+    graded = isinstance(ledger, StarAlertLedger)
+    paths = TRIPLE_TRACKS if graded else TRACKS
     tickers,received=market.tickers()
     for instrument in instruments:
         symbol=instrument["symbol"];frames={};errors={};now=int(time.time()*1000)
@@ -36,7 +39,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         try:price=quote_price(tickers[symbol],now)
         except (KeyError,ValueError,TypeError):
             failures.append({"symbol":symbol,"reason":"ticker_unavailable_or_stale"});continue
-        for tf in {tf for pair in TRACKS.values() for tf in pair}:
+        for tf in sorted({tf for path in paths.values() for tf in path}, key=TF_MS.get):
             try:frames[tf]=market.frame(symbol,tf,now)
             except Exception as error:errors[tf]=type(error).__name__
         touch_since=ledger.state.get('touch_cursors',{}).get(symbol,(now//MINUTE-5)*MINUTE)
@@ -46,10 +49,11 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         try:minute_bars,minute_coverage=recent_minutes(market,symbol,min(touch_since,frame_open(now,'4h')),int(time.time()*1000))
         except Exception as error:minute_error=type(error).__name__
         refinement_starts={}
-        try:
-            refinement_starts=refinement_history_starts(symbol,frames,now,price,minute_bars,
-                                                        max(touch_since,minute_coverage['start']) if minute_coverage else touch_since)
-        except Exception as error:errors['refinement_context']=type(error).__name__
+        if not graded:
+            try:
+                refinement_starts=refinement_history_starts(symbol,frames,now,price,minute_bars,
+                                                            max(touch_since,minute_coverage['start']) if minute_coverage else touch_since)
+            except Exception as error:errors['refinement_context']=type(error).__name__
         for tf,start in refinement_starts.items():
             if frames.get(tf) and frames[tf][0].timestamp<=start:continue
             try:frames[tf]=market.refinement_frame(symbol,tf,int(time.time()*1000),start)
@@ -78,8 +82,12 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         try:price=quote_price(tickers[symbol],observed)
         except (KeyError,ValueError,TypeError):
             failures.append({"symbol":symbol,"reason":"ticker_became_stale_during_scan"});continue
-        result=scan(symbol,frames,observed,price,equilibrium_filter=True,
-                    minute_bars=minute_bars,touch_since=max(touch_since,minute_coverage['start']) if minute_coverage else touch_since)
+        since = max(touch_since, minute_coverage['start']) if minute_coverage else touch_since
+        if graded:
+            result = scan_stars(symbol, frames, observed, price, minute_bars=minute_bars, touch_since=since,
+                                contexts=ledger.state['star_contexts'].get(symbol))
+        else:
+            result=scan(symbol,frames,observed,price,equilibrium_filter=True,minute_bars=minute_bars,touch_since=since)
         result.update(minute_coverage=minute_coverage,minute_error=minute_error)
         if instrument['baseCoin'] in DIVERSIFIER_BASES:
             try:
@@ -104,10 +112,11 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         chart_frames[symbol]=live_frames(frames,minute_bars,observed,price)
         if sender is None:
             own=[e for e in pending.values() if e['candidate']['symbol']==symbol]
-            if own:print(compact_notice(own))
+            if own:print('\n\n'.join(star_text(e['candidate']) for e in own) if graded else compact_notice(own))
         for name,state in result["tracks"].items():
             c=state["candidate"]
-            print(f"{symbol} {TRACK_LABELS[name]}: "+(f"{c['low']:.4f}~{c['high']:.4f} ({c['score']}/4)" if c else state["status"]))
+            label = '★' * c['level'] if graded and c else f"{c['score']}/4" if c else ''
+            print(f"{symbol} {TRACK_LABELS[name]}: "+(f"{c['low']:.4f}~{c['high']:.4f} ({label})" if c else state["status"]))
     # Dispatch only events refreshed by a successful scan in this run. A full
     # symbol fetch failure cannot leak an older pending alert into delivery.
     delivery={"sent":0,"failed":0}
@@ -160,7 +169,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         else:delivery=ledger.dispatch(sender,batch=True)
         ledger.state['pending'].update(held);ledger.save()
     report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","strategy":POLICY,'paths':TRIPLE_TRACKS,'deduplication_enabled':True,"binance_listing_check":listing_check,"instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery,'status_delivery':status_delivery}
-    report['ruleset']=RULESET
+    report['ruleset']=STAR_RULESET if graded else RULESET
     if snapshot:
         path=Path(snapshot);path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     print(f"중첩 알림: 전송 {delivery['sent']}건 / 실패 {delivery['failed']}건")
@@ -168,7 +177,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
 
 
 def main(argv=None):
-    parser=argparse.ArgumentParser(description="계단·OTE·3R: 초단기1H/15m/5m·단기4H/1H/15m·중기1D/4H/1H·장기1W/1D/4H")
+    parser=argparse.ArgumentParser(description="별점 알림: 초단기1H/15m/5m·단기4H/1H/15m·중기1D/4H/1H·장기1W/1D/4H")
     parser.add_argument('--send',action='store_true');parser.add_argument('--watch',action='store_true')
     parser.add_argument('--resend-current',action='store_true',help='이번 검사만 기존 발송 잠금을 무시하고 현재 조건 충족 구간 재발송')
     parser.add_argument('--inspect-symbol',help='이번 실행만 이 공통 상장 종목의 전체 상태 발송. 여러 종목은 쉼표로 구분')
@@ -184,7 +193,7 @@ def main(argv=None):
         symbol,track=args.unlock
         if track not in TRACKS:parser.error('TRACK must be fast, short, medium or long')
         with single_writer(args.state.with_suffix('.lock')):
-            PullbackAlertLedger(args.state).unlock(symbol,track)
+            StarAlertLedger(args.state).unlock(symbol,track)
         print(f'{symbol} {TRACK_LABELS[track]} 잠금 해제');return 0
     market=HistoricalMarket(ROOT/'runtime/ict_overlap/cache/structure')
     catalog=market.instruments()
@@ -201,7 +210,7 @@ def main(argv=None):
         from dotenv import load_dotenv
         load_dotenv(ROOT/'.env');sender=telegram_sender(os.getenv('TELEGRAM_BOT_TOKEN'),os.getenv('TELEGRAM_CHAT_ID'))
     with single_writer(args.state.with_suffix('.lock')) if args.send or args.watch else nullcontext():
-        ledger=PullbackAlertLedger(args.state,require_images=args.send,overlap_only=True,approach_only=True,force_resend=args.resend_current)
+        ledger=StarAlertLedger(args.state,require_images=args.send,force_resend=args.resend_current)
         image_sender=None
         unit_text_sender=None
         if args.send:

@@ -63,7 +63,7 @@ def rooted_context(parent,bars,points,areas,tf,now):
             'invalidated_at':None}
 
 
-def prepare(symbol,frames,now,price,tracks=None):
+def prepare(symbol,frames,now,price,tracks=None,*,build_overlaps=True):
     """Closed-bar causal context; returned views also drive the chart."""
     if not math.isfinite(price) or price<=0:raise ValueError('Invalid price')
     tracks=TRACKS if tracks is None else tracks
@@ -104,6 +104,7 @@ def prepare(symbol,frames,now,price,tracks=None):
             if lows and bars[-1].close<lows[-1]:view['structure']='down'
             elif highs and bars[-1].close>highs[-1]:view['structure']='up'
             analysis['views'][lens]=view
+            if not build_overlaps:continue
             for parent in parents:
                 area=rooted_context(parent,bars,points,areas,top,now)
                 if area is None:continue

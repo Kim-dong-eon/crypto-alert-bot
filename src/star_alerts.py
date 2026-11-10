@@ -1,0 +1,229 @@
+"""Three alert grades for a single higher-timeframe OB reaction."""
+
+from collections import defaultdict
+from dataclasses import asdict
+import hashlib
+
+from src.ict_engine import TF_MS, frame_open
+from src.ict_overlap import LABELS, kst, overlaps
+from src.overlap_entry import MINUTE
+from src.pullback_alerts import POLICY, REFINEMENT, TOP_COUNTS, prepare, rooted_context
+from src.staircase_rules import band_touch, net_rr, opposing_upper_contact, risk_band, staircases
+from src.structure_review import turns
+from config.overlap_settings import TRACK_LABELS
+
+
+RULESET = 'star-ob-reaction-v1'
+TITLES = {1: '하위 OB 관찰', 2: '3중 겹침 첫 접촉', 3: '진입 조건 충족'}
+
+
+def confirmed_direction(bars, points, tf):
+    """Most recent body-close break of a level already known at that close."""
+    confirmations = defaultdict(list)
+    for point in points:
+        confirmations[point['confirmed_index']].append(point)
+    levels = {}
+    direction = 0
+    known_at = 0
+    for i, bar in enumerate(bars):
+        if i:
+            previous = bars[i - 1].close
+            if direction != 1 and 'high' in levels and previous <= levels['high'] < bar.close:
+                direction, known_at = 1, bar.timestamp + TF_MS[tf]
+            elif direction != -1 and 'low' in levels and previous >= levels['low'] > bar.close:
+                direction, known_at = -1, bar.timestamp + TF_MS[tf]
+        for point in confirmations.get(i, ()):
+            levels[point['kind']] = point['price']
+    return direction, known_at
+
+
+def first_contact(low, high, known, price, now, minutes, since):
+    """Save the first causal contact, even if later minutes move away."""
+    for bar in minutes:
+        if (bar.timestamp >= max(known, since) and bar.timestamp + MINUTE <= now
+                and bar.volume > 0 and bar.low <= high and bar.high >= low):
+            return {'hit': True, 'at': bar.timestamp + MINUTE, 'bar_open': bar.timestamp,
+                    'valid_from': known, 'observed_low': bar.low, 'observed_high': bar.high,
+                    'evidence': 'completed_1m_range'}
+    return band_touch(low, high, known, price, now, (), since)
+
+
+def contact_price(touch, low, high):
+    if 'observed_price' in touch:
+        return touch['observed_price']
+    return (max(low, touch['observed_low']) + min(high, touch['observed_high'])) / 2
+
+
+def choose_stair(bars, points, tf, direction):
+    for end in range(len(points), 3, -1):
+        found = staircases(bars, points[end - 4:end], tf, direction)
+        if found:
+            return found[0]
+    return None
+
+
+def overview_wave(bars, points, area, staircase):
+    if staircase:
+        return staircase
+    root = area['pivot_origin']
+    index = next(i for i, p in enumerate(points) if bars[p['index']].timestamp == root)
+    relevant = points[max(0, index - 2):index + 2]
+    display = [{**p, 'timestamp': bars[p['index']].timestamp} for p in relevant]
+    return {'points': display, 'chart_start': display[0]['timestamp'], 'target': None}
+
+
+def overlap_contacts(parent, area, lower_obs, zones, pair, arm, price, now, minutes, since):
+    top, middle = pair
+    evidence = [parent]
+    evidence.extend(z for z in zones if z.direction == parent.direction
+                    and z.low < parent.high and z.high > parent.low
+                    and ((z.timeframe == top and z.kind == 'FVG')
+                         or (z.timeframe == middle and z.origin >= area['origin'] - 2 * TF_MS[middle])))
+    contacts = []
+    for raw in overlaps(evidence, pair, price):
+        if parent.id not in raw['source_ids'] or not any(z['kind'] == 'FVG' for z in raw['sources']):
+            continue
+        for ob in lower_obs:
+            lo, hi = max(raw['low'], ob.low), min(raw['high'], ob.high)
+            if lo >= hi:
+                continue
+            known = max(raw['latest_source'], ob.created, arm['at'])
+            hit = first_contact(lo, hi, known, price, now, minutes, since)
+            if hit['hit']:
+                contacts.append({'level': 2, 'touch': hit, 'sources': raw['sources'] + [asdict(ob)],
+                                 'band': [lo, hi], 'score': raw['score'] + 1})
+    return contacts
+
+
+def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=None, tracks=None):
+    recent_minutes = tuple(b for b in minute_bars if b.timestamp >= touch_since)
+    result, usable, zones = prepare(symbol, frames, now, price, tracks, build_overlaps=False)
+    result['ruleset'] = RULESET
+    previous = contexts or {}
+    updated = {}
+    for track, state in result['tracks'].items():
+        top, middle = state['pair']
+        final = REFINEMENT[track]
+        if 'analysis' not in state or len(usable.get(final, ())) < 16:
+            updated.update((key, episode) for key, episode in previous.items() if episode['track'] == track)
+            state['status'] = 'data_unavailable'
+            continue
+        upper_bars = usable[top][-TOP_COUNTS[top]:]
+        lower_bars = usable[final]
+        lower_points = turns(lower_bars, 1.5, 0., final)
+        lower_stairs = {d: choose_stair(lower_bars, lower_points, final, d) for d in (1, -1)}
+        found = []
+        for lens, view in state['analysis']['views'].items():
+            points = view['turns']
+            direction, direction_at = confirmed_direction(upper_bars, points, top)
+            view['structure'] = 'up' if direction == 1 else 'down' if direction == -1 else 'mixed'
+            if lens == 'recent':
+                state['direction'] = direction
+            if not direction:
+                continue
+            upper_stairs = {s['origin']: s for s in staircases(upper_bars, points, top, direction)}
+            for parent in zones:
+                if parent.timeframe != top or parent.kind != 'OB' or parent.direction != direction:
+                    continue
+                arm_probe = first_contact(parent.low, parent.high, parent.created, price, now, recent_minutes, touch_since)
+                if not arm_probe['hit'] and not any(e['parent_id'] == parent.id and e['track'] == track
+                                                   and e['lens'] == lens for e in previous.values()):
+                    continue
+                area = rooted_context(parent, upper_bars, points, view['areas'], top, now)
+                if area is None:
+                    continue
+                root = area['pivot_origin']
+                identity = f'{track}|{lens}|{parent.id}|{root}'
+                upper = upper_stairs.get(root)
+                root_bar = next(b for b in upper_bars if b.timestamp == root)
+                protected = root_bar.low if direction == 1 else root_bar.high
+                if any(b.timestamp >= area['created'] and direction * (b.close - protected) < 0 for b in upper_bars):
+                    continue
+                if direction * (price - protected) < 0 or direction * (price - parent.stop) < 0:
+                    if identity in previous and previous[identity]['arm']['at'] >= direction_at:
+                        updated[identity] = previous[identity]
+                    continue
+                if upper and (any(s['invalidated_at'] for s in upper_stairs.values() if s['origin'] >= root)
+                              or any(b.timestamp >= upper['known_at'] and direction * ((b.high if direction == 1 else b.low) - upper['target']) >= 0
+                                     for b in upper_bars)):
+                    continue
+                episode = previous.get(identity)
+                if episode is None or episode['arm']['at'] < direction_at:
+                    arm = first_contact(parent.low, parent.high, max(area['created'], parent.created, direction_at),
+                                        price, now, recent_minutes, touch_since)
+                    if not arm['hit']:
+                        continue
+                    episode = {'track': track, 'lens': lens, 'parent_id': parent.id, 'arm': arm, 'overlap': None}
+                arm = episode['arm']
+                floor = upper['end'] if upper else area['origin']
+                lower_obs = [z for z in zones if z.timeframe == final and z.kind == 'OB'
+                             and z.direction == direction and z.origin >= floor]
+                choices = overlap_contacts(parent, area, lower_obs, zones, (top, middle), arm,
+                                           price, now, recent_minutes, touch_since)
+                if episode['overlap'] is None and choices:
+                    first_overlap = min(choices, key=lambda c: (c['touch']['at'], -c['score']))
+                    episode = {**episode, 'overlap': first_overlap}
+                updated[identity] = episode
+                for ob in lower_obs:
+                    hit = first_contact(ob.low, ob.high, max(ob.created, arm['at']), price, now, recent_minutes, touch_since)
+                    if hit['hit']:
+                        choices.append({'level': 1, 'touch': hit, 'sources': [asdict(parent), asdict(ob)],
+                                        'band': [ob.low, ob.high], 'score': 2})
+                step = lower_stairs[direction]
+                latest_upper = next(reversed(upper_stairs.values()), None)
+                if (upper and episode['overlap'] and step and not step['invalidated_at']
+                        and direction * (price - latest_upper['protected']) >= 0
+                        and step['origin'] >= max(upper['end'], frame_open(arm['at'] - 1, final))
+                        and step['known_at'] > arm['at'] and direction * (price - step['protected']) > 0
+                        and not opposing_upper_contact({'direction': direction, 'pair': state['pair'], 'trade_setup': {'upper': upper}},
+                                                       usable, zones, now, price, minute_bars)):
+                    stop, target = step['protected'], upper['target']
+                    for ob in lower_obs:
+                        if not step['origin'] - 2 * TF_MS[final] <= ob.origin <= step['end']:
+                            continue
+                        lo, hi = risk_band(ob.low, ob.high, stop, target, direction)
+                        if lo >= hi:
+                            continue
+                        entry = hi if direction == 1 else lo
+                        rr = net_rr(entry, stop, target, direction)
+                        if rr < 3 - 1e-9:
+                            continue
+                        known = max(upper['known_at'], step['known_at'], ob.created, episode['overlap']['touch']['at'])
+                        hit = first_contact(lo, hi, known, price, now, recent_minutes, touch_since)
+                        if hit['hit']:
+                            choices.append({'level': 3, 'touch': hit, 'sources': [asdict(parent), asdict(ob)],
+                                            'band': [lo, hi], 'score': episode['overlap']['score'], 'lower': step,
+                                            'entry': entry, 'stop': stop, 'target': target, 'rr': rr,
+                                            'overlap': episode['overlap']})
+                if choices:
+                    best = max(choices, key=lambda c: (c['level'], c['score'], c.get('rr', 0)))
+                    sources = best['sources']
+                    found.append({**best, 'symbol': symbol, 'exchange': 'bitget', 'track': track, 'path': state['path'],
+                                  'pair': state['pair'], 'refinement_tf': final, 'direction': direction, 'price': price,
+                                  'now': now, 'id': hashlib.sha256(identity.encode()).hexdigest()[:24],
+                                  'context_id': identity, 'lenses': [lens],
+                                  'parent': asdict(parent), 'arm': arm['at'], 'arm_price': contact_price(arm, parent.low, parent.high),
+                                  'upper': overview_wave(upper_bars, points, area, upper), 'source_ids': [z['id'] for z in sources],
+                                  'low': best['band'][0], 'high': best['band'][1], 'alert_policy': POLICY, 'ruleset': RULESET,
+                                  'context_price_breach': False, 'equilibrium': {'eligible': True}})
+        state.update(candidates=found, candidate=None, status='watching' if found else 'no_star_contact')
+    result['star_contexts'] = updated
+    return result
+
+
+def unit_text(candidate):
+    c = candidate
+    level, side = c['level'], 'LONG' if c['direction'] == 1 else 'SHORT'
+    label = f"{LABELS[c['pair'][0]]} {TRACK_LABELS[c['track']]}"
+    title = f"{LABELS[c['refinement_tf']]} OB 관찰" if level == 1 else TITLES[level]
+    lines = [f"[Bitget · {c['symbol']}] {side}", f"{'★' * level} {title} · {label}"]
+    if level >= 2:
+        evidence = c['overlap']['sources'] if level == 3 else c['sources']
+        names = sorted({(z['timeframe'], z['kind']) for z in evidence}, key=lambda key: (-TF_MS[key[0]], key[1]))
+        lines.append(' + '.join(f'{LABELS[tf]} {kind}' for tf, kind in names))
+    if level == 3:
+        extreme = '저점' if c['direction'] == 1 else '고점'
+        lines.append(f"상위·하위 계단 · 비용 반영 1:{c['rr']:.2f}")
+        lines.append(f"하위 기준 {extreme} {c['stop']:,.4f} · 상위 목표 {c['target']:,.4f}")
+    lines.append(f"접촉 확인 · {kst(c['touch']['at'])}")
+    return '\n'.join(lines)
