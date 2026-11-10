@@ -2077,6 +2077,15 @@
         2008,
         2009
       ]
+    },
+    "c5ac47b209624d967d172c72": {
+      "symbol": "EWZUSDT",
+      "stage": "star1",
+      "timestamp": 1794321674722,
+      "message_ids": [
+        2010,
+        2011
+      ]
     }
   },
   "pending": {},
@@ -3685,6 +3694,15 @@
         2008,
         2009
       ]
+    },
+    "c5ac47b209624d967d172c72": {
+      "symbol": "EWZUSDT",
+      "stage": "star1",
+      "timestamp": 1794321674722,
+      "message_ids": [
+        2010,
+        2011
+      ]
     }
   },
   "structure_migration": {
@@ -3695,157 +3713,157 @@
   "strategy": "root-ob-pullback-v1",
   "dedup_audits": {
     "BTCUSDT": {
-      "at": 1794321377533,
+      "at": 1794321657726,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "SKHYNIXUSDT": {
-      "at": 1794321378651,
+      "at": 1794321658467,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "NVDAUSDT": {
-      "at": 1794321379534,
+      "at": 1794321659275,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "TSLAUSDT": {
-      "at": 1794321380375,
+      "at": 1794321660022,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "AAPLUSDT": {
-      "at": 1794321381231,
-      "suppressed": 1,
+      "at": 1794321661366,
+      "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "MSFTUSDT": {
-      "at": 1794321382060,
+      "at": 1794321662012,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "AMZNUSDT": {
-      "at": 1794321382887,
+      "at": 1794321662800,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "GOOGLUSDT": {
-      "at": 1794321383634,
-      "suppressed": 1,
+      "at": 1794321663462,
+      "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "METAUSDT": {
-      "at": 1794321384581,
+      "at": 1794321664210,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "QQQUSDT": {
-      "at": 1794321385534,
+      "at": 1794321664950,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "SPYUSDT": {
-      "at": 1794321386372,
+      "at": 1794321665645,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "CLUSDT": {
-      "at": 1794321387164,
+      "at": 1794321666407,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "BZUSDT": {
-      "at": 1794321388526,
+      "at": 1794321667099,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "BSPUSDT": {
-      "at": 1794321389291,
+      "at": 1794321667741,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "VUSDT": {
-      "at": 1794321389992,
+      "at": 1794321668477,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "LLYUSDT": {
-      "at": 1794321390692,
+      "at": 1794321669075,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "NAVERUSDT": {
-      "at": 1794321391402,
+      "at": 1794321669696,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "WENUSDT": {
-      "at": 1794321392391,
+      "at": 1794321670346,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "MCDUSDT": {
-      "at": 1794321393033,
+      "at": 1794321670952,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "POPMARTUSDT": {
-      "at": 1794321393806,
+      "at": 1794321671583,
       "suppressed": 1,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "UNITREEUSDT": {
-      "at": 1794321394450,
+      "at": 1794321672285,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "TMFUSDT": {
-      "at": 1794321395037,
+      "at": 1794321672872,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "ADBEUSDT": {
-      "at": 1794321395779,
+      "at": 1794321673498,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "MEITUANUSDT": {
-      "at": 1794321396450,
+      "at": 1794321674143,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "EWZUSDT": {
-      "at": 1794321397130,
+      "at": 1794321674722,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "MRKUSDT": {
-      "at": 1794321397777,
+      "at": 1794321675340,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
@@ -49913,35 +49931,180 @@
           ]
         }
       }
+    },
+    "c5ac47b209624d967d172c72": {
+      "symbol": "EWZUSDT",
+      "track": "fast",
+      "stage": "star1",
+      "attempt": 1794321674722,
+      "candidate": {
+        "level": 1,
+        "touch": {
+          "hit": true,
+          "at": 1794321600000,
+          "bar_open": 1794321540000,
+          "valid_from": 1794321540000,
+          "observed_low": 32.247,
+          "observed_high": 32.318,
+          "evidence": "completed_1m_range"
+        },
+        "sources": [
+          {
+            "id": "1h:OB:1794229200000:1794236400000:1",
+            "timeframe": "1h",
+            "kind": "OB",
+            "direction": 1,
+            "low": 32.31,
+            "high": 32.313,
+            "created": 1794236400000,
+            "origin": 1794229200000,
+            "stop": 32.232,
+            "invalidation": 32.31,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "5m:OB:1794228600000:1794229200000:1",
+            "timeframe": "5m",
+            "kind": "OB",
+            "direction": 1,
+            "low": 32.237,
+            "high": 32.271,
+            "created": 1794229200000,
+            "origin": 1794228600000,
+            "stop": 32.237,
+            "invalidation": 32.237,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "band": [
+          32.237,
+          32.271
+        ],
+        "score": 2,
+        "symbol": "EWZUSDT",
+        "exchange": "bitget",
+        "track": "fast",
+        "path": [
+          "1h",
+          "15m",
+          "5m"
+        ],
+        "pair": [
+          "1h",
+          "15m"
+        ],
+        "refinement_tf": "5m",
+        "direction": 1,
+        "price": 32.269,
+        "now": 1794321674722,
+        "id": "edd1bb18138ccb5e24011505",
+        "context_id": "fast|recent|1h:OB:1794229200000:1794236400000:1|1793919600000",
+        "lenses": [
+          "recent"
+        ],
+        "parent": {
+          "id": "1h:OB:1794229200000:1794236400000:1",
+          "timeframe": "1h",
+          "kind": "OB",
+          "direction": 1,
+          "low": 32.31,
+          "high": 32.313,
+          "created": 1794236400000,
+          "origin": 1794229200000,
+          "stop": 32.232,
+          "invalidation": 32.31,
+          "expiry": 9223372036854775807
+        },
+        "arm": 1794321540000,
+        "arm_price": 32.3115,
+        "upper": {
+          "points": [
+            {
+              "kind": "low",
+              "index": 925,
+              "price": 31.556,
+              "confirmed_index": 931,
+              "confirmed_at": 1793786400000,
+              "threshold": 0.7889,
+              "timestamp": 1793761200000
+            },
+            {
+              "kind": "high",
+              "index": 957,
+              "price": 32.637,
+              "confirmed_index": 964,
+              "confirmed_at": 1793905200000,
+              "threshold": 0.815925,
+              "timestamp": 1793876400000
+            },
+            {
+              "kind": "low",
+              "index": 969,
+              "price": 31.262,
+              "confirmed_index": 984,
+              "confirmed_at": 1793977200000,
+              "threshold": 0.7815500000000001,
+              "timestamp": 1793919600000
+            }
+          ],
+          "chart_start": 1793761200000,
+          "target": null
+        },
+        "source_ids": [
+          "1h:OB:1794229200000:1794236400000:1",
+          "5m:OB:1794228600000:1794229200000:1"
+        ],
+        "low": 32.237,
+        "high": 32.271,
+        "alert_policy": "root-ob-pullback-v1",
+        "ruleset": "star-ob-reaction-v1",
+        "context_price_breach": false,
+        "equilibrium": {
+          "eligible": true
+        }
+      },
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            2010
+          ],
+          "text_message_ids": [
+            2011
+          ]
+        }
+      }
     }
   },
   "touch_cursors": {
-    "BTCUSDT": 1794321360000,
-    "SKHYNIXUSDT": 1794321360000,
-    "NVDAUSDT": 1794321360000,
-    "TSLAUSDT": 1794321360000,
-    "AAPLUSDT": 1794321360000,
-    "MSFTUSDT": 1794321360000,
-    "AMZNUSDT": 1794321360000,
-    "GOOGLUSDT": 1794321360000,
-    "METAUSDT": 1794321360000,
-    "QQQUSDT": 1794321360000,
-    "SPYUSDT": 1794321360000,
-    "CLUSDT": 1794321360000,
-    "BZUSDT": 1794321360000,
-    "BSPUSDT": 1794321360000,
-    "VUSDT": 1794321360000,
-    "LLYUSDT": 1794321360000,
-    "NAVERUSDT": 1794321360000,
-    "WENUSDT": 1794321360000,
-    "MCDUSDT": 1794321360000,
-    "POPMARTUSDT": 1794321360000,
-    "UNITREEUSDT": 1794321360000,
-    "TMFUSDT": 1794321360000,
-    "ADBEUSDT": 1794321360000,
-    "MEITUANUSDT": 1794321360000,
-    "EWZUSDT": 1794321360000,
-    "MRKUSDT": 1794321360000
+    "BTCUSDT": 1794321600000,
+    "SKHYNIXUSDT": 1794321600000,
+    "NVDAUSDT": 1794321600000,
+    "TSLAUSDT": 1794321660000,
+    "AAPLUSDT": 1794321660000,
+    "MSFTUSDT": 1794321660000,
+    "AMZNUSDT": 1794321660000,
+    "GOOGLUSDT": 1794321660000,
+    "METAUSDT": 1794321660000,
+    "QQQUSDT": 1794321660000,
+    "SPYUSDT": 1794321660000,
+    "CLUSDT": 1794321660000,
+    "BZUSDT": 1794321660000,
+    "BSPUSDT": 1794321660000,
+    "VUSDT": 1794321660000,
+    "LLYUSDT": 1794321660000,
+    "NAVERUSDT": 1794321660000,
+    "WENUSDT": 1794321660000,
+    "MCDUSDT": 1794321660000,
+    "POPMARTUSDT": 1794321660000,
+    "UNITREEUSDT": 1794321660000,
+    "TMFUSDT": 1794321660000,
+    "ADBEUSDT": 1794321660000,
+    "MEITUANUSDT": 1794321660000,
+    "EWZUSDT": 1794321660000,
+    "MRKUSDT": 1794321660000
   },
   "notification_policy": "star-ob-reaction-v1",
   "delivery_mode": "star-ob-reaction-v1",
@@ -50183,7 +50346,23 @@
       }
     },
     "MEITUANUSDT": {},
-    "EWZUSDT": {},
+    "EWZUSDT": {
+      "fast|recent|1h:OB:1794229200000:1794236400000:1|1793919600000": {
+        "track": "fast",
+        "lens": "recent",
+        "parent_id": "1h:OB:1794229200000:1794236400000:1",
+        "arm": {
+          "hit": true,
+          "at": 1794321540000,
+          "bar_open": 1794321480000,
+          "valid_from": 1794254400000,
+          "observed_low": 32.285,
+          "observed_high": 32.36,
+          "evidence": "completed_1m_range"
+        },
+        "overlap": null
+      }
+    },
     "MRKUSDT": {
       "medium|recent|1d:OB:1790035200000:1790208000000:-1|1790035200000": {
         "track": "medium",
@@ -50511,7 +50690,28 @@
       }
     },
     "MEITUANUSDT": {},
-    "EWZUSDT": {},
+    "EWZUSDT": {
+      "edd1bb18138ccb5e24011505": {
+        "track": "fast",
+        "level": 1,
+        "parent": {
+          "id": "1h:OB:1794229200000:1794236400000:1",
+          "timeframe": "1h",
+          "kind": "OB",
+          "direction": 1,
+          "low": 32.31,
+          "high": 32.313,
+          "created": 1794236400000,
+          "origin": 1794229200000,
+          "stop": 32.232,
+          "invalidation": 32.31,
+          "expiry": 9223372036854775807
+        },
+        "direction": 1,
+        "low": 32.237,
+        "high": 32.271
+      }
+    },
     "MRKUSDT": {
       "9f88ed41b8415430b48b237b": {
         "track": "medium",
