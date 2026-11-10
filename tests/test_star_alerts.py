@@ -5,9 +5,10 @@ import tempfile
 import unittest
 
 from src.ict_engine import Bar, TF_MS
+from src.entry_execution import depth_quote, entry_plan
 from src.ict_overlap import VERSION
 from src.split_alert_preview import render_side_by_side_unit
-from src.star_alerts import scan
+from src.star_alerts import scan, unit_text
 from src.star_delivery import StarAlertLedger, unique_contacts
 
 
@@ -76,6 +77,52 @@ class StarAlertsTests(unittest.TestCase):
         self.assertEqual(unique_contacts(tracks), [higher])
         base['level'] = 3
         self.assertEqual(unique_contacts(tracks), [base])
+
+    def test_entry_delivery_requires_a_current_cost_checked_plan(self):
+        timeline = list(replay(-1))
+        for snapshot, _ in timeline[1:3]:
+            self.assertFalse(unique_contacts(snapshot['tracks'], entry_only=True))
+        snapshot, frames = timeline[-1]
+        old = snapshot['tracks']['short']['candidates'][0]
+        self.assertFalse(unique_contacts(snapshot['tracks'], entry_only=True))
+        raw = json.loads(FIXTURE.read_text(encoding='utf-8'))
+        minutes = [Bar(*row) for row in raw['ticks'][-1]['minutes']]
+        mid = sum(old['band']) / 2
+        book = {'ts': snapshot['as_of'], 'a': [[mid + 1, 1]], 'b': [[mid - 1, 1]]}
+        quote = depth_quote(book, snapshot['as_of'], 1000)
+        options = dict(minute_bars=minutes, touch_since=snapshot['as_of']-300000,
+                       contexts=timeline[-2][0]['star_contexts'], tracks={'short': ('4h', '1h')}, tick_size='0.1')
+        for value in (None, {**quote, 'mid': mid-1000}, {**quote, 'slippage_per_side': .025}):
+            rejected = scan('BTCUSDT', frames, snapshot['as_of'], minutes[-1].close,
+                            execution_quote=lambda: value, **options)
+            self.assertFalse(unique_contacts(rejected['tracks'], entry_only=True))
+        checked = scan('BTCUSDT', frames, snapshot['as_of'], minutes[-1].close,
+                       execution_quote=lambda: quote, **options)
+        c, = unique_contacts(checked['tracks'], entry_only=True)
+        self.assertEqual(c['touch']['evidence'], 'live_orderbook_mid')
+        self.assertIn('예상 슬리피지', unit_text(c))
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = StarAlertLedger(Path(tmp) / 'state.json', entry_only=True)
+            self.assertEqual(len(ledger.observe(checked)), 1)
+            sender = lambda _: self.fail('expired plan must not be sent')
+            result = ledger.dispatch_units(sender, sender, sender, refresh=lambda _: None)
+            self.assertEqual(result['sent'], 0)
+
+    def test_depth_changes_both_long_and_short_entry_boundaries(self):
+        book = {'ts': 1000, 'a': [[100.1, 2], [100.3, 20]], 'b': [[99.9, 2], [99.7, 20]]}
+        quote = depth_quote(book, 1000, 1000)
+        self.assertAlmostEqual(quote['buy_vwap'], 100.26)
+        self.assertAlmostEqual(quote['sell_vwap'], 99.74)
+        self.assertAlmostEqual(quote['slippage_per_side'], .0028)
+        with self.assertRaisesRegex(ValueError, 'insufficient_orderbook_depth'):
+            depth_quote(book, 1000, 10000)
+        with self.assertRaisesRegex(ValueError, 'stale_orderbook'):
+            depth_quote(book, 40000, 1000)
+        for direction, stop, target in ((1, 98., 110.), (-1, 102., 90.)):
+            plan = entry_plan(99., 101., stop, target, direction, quote, '.01')
+            self.assertGreaterEqual(plan['rr'], 3.)
+            self.assertEqual(plan['entry'], plan['band'][1 if direction == 1 else 0])
+            self.assertIsNone(entry_plan(99., 101., stop, target, direction, quote, None))
 
     def test_higher_grade_shadows_its_original_overlap_in_later_scans(self):
         timeline = list(replay(-1))

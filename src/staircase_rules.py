@@ -44,17 +44,23 @@ def ote_band(stair):
     return low+.62*width,low+.79*width
 
 
-def net_rr(entry,stop,target,direction):
-    k=FEE_PER_SIDE+SLIPPAGE_PER_SIDE
-    risk=direction*(entry-stop)+k*(entry+stop)
-    reward=direction*(target-entry)-k*(entry+target)
+def net_rr(entry,stop,target,direction,*,slippage=SLIPPAGE_PER_SIDE):
+    buy=(1+slippage)*(1+FEE_PER_SIDE)
+    sell=(1-slippage)*(1-FEE_PER_SIDE)
+    if direction==1:
+        risk=entry*buy-stop*sell
+        reward=target*sell-entry*buy
+    else:
+        risk=stop*buy-entry*sell
+        reward=entry*sell-target*buy
     return reward/risk if risk>0 and direction*(entry-stop)>0 else -1.
 
 
-def risk_band(low,high,stop,target,direction):
-    k=FEE_PER_SIDE+SLIPPAGE_PER_SIDE
-    if direction==1:high=min(high,(target+MIN_RR*stop)*(1-k)/((1+MIN_RR)*(1+k)))
-    else:low=max(low,(target+MIN_RR*stop)*(1+k)/((1+MIN_RR)*(1-k)))
+def risk_band(low,high,stop,target,direction,*,slippage=SLIPPAGE_PER_SIDE):
+    buy=(1+slippage)*(1+FEE_PER_SIDE)
+    sell=(1-slippage)*(1-FEE_PER_SIDE)
+    if direction==1:high=min(high,(target+MIN_RR*stop)*sell/((1+MIN_RR)*buy))
+    else:low=max(low,(target+MIN_RR*stop)*buy/((1+MIN_RR)*sell))
     return low,high
 
 

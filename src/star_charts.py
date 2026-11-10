@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from src.ict_engine import TF_MS, frame_open
 from src.ict_overlap import LABELS, kst
 from src.overlap_charts import configure_font
-from src.star_alerts import TITLES, unit_text
+from src.star_alerts import TITLES, price_text as fmt, unit_text
 from config.overlap_settings import TRACK_LABELS
 
 WHITE = '#edf3fb'
@@ -25,10 +25,6 @@ def window(frames, tf, event, current_at):
     else:
         return bars[-36:]
     return [b for b in bars if b.timestamp >= start]
-
-
-def fmt(value):
-    return f'{value:,.2f}'.rstrip('0').rstrip('.')
 
 
 def draw_panel(ax, tf, candles, event):
@@ -76,10 +72,13 @@ def draw_panel(ax, tf, candles, event):
         ax.hlines((lo + hi) / 2, left, edge, color=GOLD, linewidth=1.2, zorder=3)
         legend['재접촉'] = Patch(facecolor=GOLD, alpha=.65, label='1:3 충족 구간')
 
+    candle_span = max(b.high for b in candles) - min(b.low for b in candles)
+    min_body = max(candle_span * .0015, abs(candles[-1].close) * .000005)
     for i, b in enumerate(candles):
         color = '#46d3aa' if b.close >= b.open else '#fa7b8a'
         ax.vlines(i, b.low, b.high, color=color, linewidth=.85, zorder=4)
-        ax.add_patch(Rectangle((i - .31, min(b.open, b.close)), .62, max(abs(b.close - b.open), .3),
+        height = max(abs(b.close - b.open), min_body)
+        ax.add_patch(Rectangle((i - .31, (b.open + b.close - height) / 2), .62, height,
                                facecolor=color, edgecolor=GOLD if b.timestamp + step > now else color,
                                linewidth=1 if b.timestamp + step > now else .35, zorder=5))
     stair = event['upper'] if is_top else event.get('lower')
@@ -100,6 +99,12 @@ def draw_panel(ax, tf, candles, event):
                     transform=ax.get_yaxis_transform(), ha='left', va='bottom', color='#ffabb4', fontsize=10,
                     bbox={'facecolor': '#152130', 'edgecolor': 'none', 'pad': 3})
             prices.append(event['stop'])
+            ax.hlines(event['entry'], max(-.6, position(event['touch']['valid_from'])), edge,
+                      color=GOLD, linestyle='--', linewidth=1.1, zorder=6)
+            bound = '상한' if event['direction'] == 1 else '하한'
+            ax.text(.98, event['entry'], f"진입 {bound} {fmt(event['entry'])}", transform=ax.get_yaxis_transform(),
+                    ha='right', va='bottom', color=GOLD, fontsize=10, zorder=8,
+                    bbox={'facecolor': '#152130', 'edgecolor': 'none', 'pad': 2})
 
     lo, hi = (event['parent']['low'], event['parent']['high']) if is_top else event['band']
     if is_top:
@@ -119,8 +124,9 @@ def draw_panel(ax, tf, candles, event):
                     color=GOLD, fontsize=10, zorder=10, arrowprops={'arrowstyle': '-', 'color': GOLD},
                     bbox={'facecolor': '#152130', 'edgecolor': 'none', 'pad': 3})
     lo, hi = min(prices), max(prices)
-    pad = max((hi - lo) * .16, 25)
-    ax.set_ylim(lo - pad, hi + pad)
+    pad = max((hi - lo) * .16, abs(candles[-1].close) * .0005)
+    ax.set_ylim(max(0, lo - pad), hi + pad)
+    ax.ticklabel_format(axis='y', style='plain', useOffset=False)
     ax.set_xlim(-.65, edge)
     ticks = list(range(0, len(candles), max(1, len(candles) // 5)))
     ax.set_xticks(ticks, [kst(candles[i].timestamp).replace(' KST', '') for i in ticks])
@@ -146,7 +152,8 @@ def render(snapshot, alert, frames, prefix):
     fig.text(.036, .868, f"{exchange} {event['symbol']}  ·  {TRACK_LABELS[event['track']]} {side}  ·  {kst(now)}",
              color=MUTED, size=12)
     if snapshot.get('illustrative'):
-        fig.text(.94, .935, '과거 시세 재생 미리보기', color=MUTED, size=11, ha='right')
+        preview = '과거 캔들 · 예시 호가' if event.get('execution') else '과거 시세 재생 미리보기'
+        fig.text(.94, .935, preview, color=MUTED, size=11, ha='right')
     try:
         for ax, tf in zip(axes, (top, final)):
             draw_panel(ax, tf, window(frames, tf, event, snapshot['as_of']), event)
@@ -163,9 +170,9 @@ def render(snapshot, alert, frames, prefix):
         lo, hi = event['band']
         detail = f'접촉 구간 {fmt(lo)} ~ {fmt(hi)}'
         if level == 3:
-            extreme = '저점' if event['direction'] == 1 else '고점'
-            detail += (f"     진입 계산 {fmt(event['entry'])}     {LABELS[final]} 기준 {extreme} {fmt(event['stop'])}"
-                       f"     {LABELS[top]} 목표 {fmt(event['target'])}")
+            detail = f"진입 {fmt(lo)} ~ {fmt(hi)}     손절 {fmt(event['stop'])}     목표 {fmt(event['target'])}"
+            if x := event.get('execution'):
+                detail += f"     편도 슬리피지 {x['slippage_per_side']:.3%} · {x['notional']:,.0f} USDT 기준"
         fig.text(.035, .064, detail, color=MUTED, size=11)
         prefix = Path(prefix)
         path = prefix.with_name(f'{prefix.name}_star{level}.png')

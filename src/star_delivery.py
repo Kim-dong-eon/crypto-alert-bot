@@ -6,6 +6,7 @@ from src.ict_engine import TF_MS
 from src.ict_overlap import alert_eligible
 from src.pullback_delivery import delivery_started, physical_id, POLICY
 from src.star_alerts import RULESET
+from src.staircase_rules import MIN_RR
 from src.structure_alerts import StructureLedger, candidates
 
 
@@ -27,12 +28,17 @@ def shadowed_by_higher(candidate, blockers):
     return any(other['level'] > candidate['level'] and intersects(candidate, other) for other in blockers)
 
 
-def eligible_contacts(tracks):
-    return [c for row in tracks.values() for c in candidates(row) if alert_eligible(c)]
+def eligible_contacts(tracks, entry_only=False):
+    return [c for row in tracks.values() for c in candidates(row)
+            if alert_eligible(c) and (not entry_only or executable(c))]
 
 
-def unique_contacts(tracks):
-    ranked = sorted(eligible_contacts(tracks),
+def executable(candidate):
+    return candidate.get('level') == 3 and candidate.get('execution') and candidate['rr'] >= MIN_RR - 1e-9
+
+
+def unique_contacts(tracks, entry_only=False):
+    ranked = sorted(eligible_contacts(tracks, entry_only),
                     key=lambda c: (-c['level'], -TF_MS[c['pair'][0]], -c['score'], c['id']))
     accepted = []
     seen = set()
@@ -48,8 +54,9 @@ def unique_contacts(tracks):
 
 
 class StarAlertLedger(StructureLedger):
-    def __init__(self, path, **kwargs):
+    def __init__(self, path, *, entry_only=False, **kwargs):
         super().__init__(path, **kwargs)
+        self.entry_only = entry_only
         self.state.setdefault('star_contexts', {})
         self.state.setdefault('star_locks', {})
         if self.state.get('delivery_mode') == RULESET:
@@ -116,8 +123,8 @@ class StarAlertLedger(StructureLedger):
             if start is not None and parent['origin'] >= start and parent['id'] not in active_ids:
                 del locks[key]
 
-        contacts = eligible_contacts(snapshot['tracks'])
-        selected = unique_contacts(snapshot['tracks'])
+        contacts = eligible_contacts(snapshot['tracks'], self.entry_only)
+        selected = unique_contacts(snapshot['tracks'], self.entry_only)
         active_locks = [lock for lock in locks.values() if lock['parent']['id'] in active_ids]
         # Keep the scan, image previews and delivery on the same selections.
         for track, row in snapshot['tracks'].items():
@@ -138,12 +145,17 @@ class StarAlertLedger(StructureLedger):
             if not self.force_resend and duplicates and not unfinished:
                 suppressed += 1
                 continue
+            if self.entry_only and unfinished and not executable(p['candidate']):
+                if delivery_started(p):
+                    continue
+                del presentations[key]
+                unfinished = False
             pending[key] = {'candidate': p['candidate'] if unfinished else c, 'stage': stage,
                             'timestamp': p['attempt'] if unfinished else now, 'display_name': display_name or symbol}
 
         # A confirmed photo can receive its text after the touch minute passes.
         selected_grades = {physical_id(c): c['level'] for c in selected}
-        for key, p in presentations.items():
+        for key, p in (() if self.entry_only else presentations.items()):
             c = p.get('candidate') or {}
             if key in pending or p.get('complete') or c.get('symbol') != symbol or c.get('ruleset') != RULESET:
                 continue
@@ -171,7 +183,26 @@ class StarAlertLedger(StructureLedger):
             self.state = before
         return result
 
-    def dispatch_units(self, image_sender, text_sender, renderer):
+    def dispatch_units(self, image_sender, text_sender, renderer, *, refresh=None):
+        for key, event in list(self.state['pending'].items()):
+            c = event['candidate']
+            if self.entry_only and not executable(c):
+                del self.state['pending'][key]
+                continue
+            if refresh is not None:
+                checked = refresh(c)
+                if checked is None:
+                    del self.state['pending'][key]
+                    continue
+                p = self.state['presentations'].get(key)
+                if p and not p['complete']:
+                    if delivery_started(p):
+                        # A partial delivery must retain the same chart and text.
+                        if checked['band'] != c['band']:
+                            del self.state['pending'][key]
+                        continue
+                    p['candidate'] = checked
+                event['candidate'] = checked
         attempted = tuple(self.state['pending'])
         result = super().dispatch_units(image_sender, text_sender, renderer)
         for key in attempted:

@@ -5,6 +5,7 @@ from dataclasses import asdict
 import hashlib
 
 from src.ict_engine import TF_MS, frame_open
+from src.entry_execution import entry_plan
 from src.ict_overlap import LABELS, kst, overlaps
 from src.overlap_entry import MINUTE
 from src.pullback_alerts import POLICY, REFINEMENT, TOP_COUNTS, prepare, rooted_context
@@ -95,7 +96,8 @@ def overlap_contacts(parent, area, lower_obs, zones, pair, arm, price, now, minu
     return contacts
 
 
-def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=None, tracks=None):
+def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=None, tracks=None,
+         execution_quote=None, tick_size=None):
     recent_minutes = tuple(b for b in minute_bars if b.timestamp >= touch_since)
     result, usable, zones = prepare(symbol, frames, now, price, tracks, build_overlaps=False)
     result['ruleset'] = RULESET
@@ -190,11 +192,24 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                             continue
                         known = max(upper['known_at'], step['known_at'], ob.created, episode['overlap']['touch']['at'])
                         hit = first_contact(lo, hi, known, price, now, recent_minutes, touch_since)
-                        if hit['hit']:
-                            choices.append({'level': 3, 'touch': hit, 'sources': [asdict(parent), asdict(ob)],
-                                            'band': [lo, hi], 'score': episode['overlap']['score'], 'lower': step,
-                                            'entry': entry, 'stop': stop, 'target': target, 'rr': rr,
-                                            'overlap': episode['overlap']})
+                        if not hit['hit']:
+                            continue
+                        plan = {'band': [lo, hi], 'entry': entry, 'rr': rr}
+                        if execution_quote is not None:
+                            quote = execution_quote()
+                            if direction == 1:
+                                permitted = [max(ob.low, protected, parent.stop, latest_upper['protected']), ob.high]
+                            else:
+                                permitted = [ob.low, min(ob.high, protected, parent.stop, latest_upper['protected'])]
+                            plan = entry_plan(*permitted, stop, target, direction, quote, tick_size)
+                            if plan is None:
+                                continue
+                            plan['structural_band'] = permitted
+                            hit = {'hit': True, 'at': now, 'valid_from': known, 'observed_price': quote['mid'],
+                                   'evidence': 'live_orderbook_mid'}
+                        choices.append({'level': 3, 'touch': hit, 'sources': [asdict(parent), asdict(ob)],
+                                        'score': episode['overlap']['score'], 'lower': step, 'stop': stop,
+                                        'target': target, 'overlap': episode['overlap'], **plan})
                 if choices:
                     best = max(choices, key=lambda c: (c['level'], c['score'], c.get('rr', 0)))
                     sources = best['sources']
@@ -216,14 +231,25 @@ def unit_text(candidate):
     level, side = c['level'], 'LONG' if c['direction'] == 1 else 'SHORT'
     label = f"{LABELS[c['pair'][0]]} {TRACK_LABELS[c['track']]}"
     title = f"{LABELS[c['refinement_tf']]} OB 관찰" if level == 1 else TITLES[level]
-    lines = [f"[Bitget · {c['symbol']}] {side}", f"{'★' * level} {title} · {label}"]
+    exchange = c.get('exchange', 'bitget').title()
+    lines = [f"[{exchange} · {c['symbol']}] {side}", f"{'★' * level} {title} · {label}"]
     if level >= 2:
         evidence = c['overlap']['sources'] if level == 3 else c['sources']
         names = sorted({(z['timeframe'], z['kind']) for z in evidence}, key=lambda key: (-TF_MS[key[0]], key[1]))
         lines.append(' + '.join(f'{LABELS[tf]} {kind}' for tf, kind in names))
     if level == 3:
-        extreme = '저점' if c['direction'] == 1 else '고점'
+        edge = '상한' if c['direction'] == 1 else '하한'
+        lo, hi = c['band']
+        lines.append(f"진입 구간 {price_text(lo)} ~ {price_text(hi)} · {edge} {price_text(c['entry'])}")
+        lines.append(f"손절 {price_text(c['stop'])} · {LABELS[c['pair'][0]]} 목표 {price_text(c['target'])}")
         lines.append(f"상위·하위 계단 · 비용 반영 1:{c['rr']:.2f}")
-        lines.append(f"하위 기준 {extreme} {c['stop']:,.4f} · 상위 목표 {c['target']:,.4f}")
+        if x := c.get('execution'):
+            lines.append(f"{x['notional']:,.0f} USDT 기준 · 편도 수수료 {x['fee_per_side']:.3%} · 예상 슬리피지 {x['slippage_per_side']:.3%}")
+            lines.append(f"호가 기준 예상 체결가 {price_text(x['vwap'])} · {kst(x['at'])}")
+            return '\n'.join(lines)
     lines.append(f"접촉 확인 · {kst(c['touch']['at'])}")
     return '\n'.join(lines)
+
+
+def price_text(value):
+    return f'{value:,.8f}'.rstrip('0').rstrip('.')

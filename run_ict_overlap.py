@@ -2,10 +2,14 @@
 import argparse
 from contextlib import nullcontext
 import json
+import math
 import os
 from pathlib import Path
 import time
 import traceback
+from functools import lru_cache
+
+import requests
 
 from config.overlap_settings import TRACK_LABELS, BASES, POLL_SECONDS,DIVERSIFIER_BASES
 from src.ict_overlap import compact_notice,alert_eligible
@@ -13,6 +17,7 @@ from src.structure_alerts import StructureLedger,candidates
 from src.pullback_alerts import scan,refinement_history_starts,POLICY,TRIPLE_TRACKS,TRACKS
 from src.star_delivery import StarAlertLedger
 from src.star_alerts import RULESET as STAR_RULESET, scan as scan_stars, unit_text as star_text
+from src.entry_execution import depth_quote, entry_plan
 from src.pullback_data import live_frames
 from src.staircase_rules import RULESET
 from src.ict_engine import TF_MS,frame_open
@@ -26,12 +31,36 @@ from src.overlap_diversification import diversification_gate
 from src.overlap_status import overview_events
 
 ROOT=Path(__file__).resolve().parent
+ENTRY_NOTIONAL_USDT = 1000.
 
 
-def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,image_sender=None,render_previews=False,listing_check=None,status_symbols=(),unit_text_sender=None):
+def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,image_sender=None,render_previews=False,listing_check=None,status_symbols=(),unit_text_sender=None,entry_notional=ENTRY_NOTIONAL_USDT):
     results=[];failures=[];chart_frames={}
     graded = isinstance(ledger, StarAlertLedger)
+    entry_only = graded and ledger.entry_only
     paths = TRIPLE_TRACKS if graded else TRACKS
+    tick_sizes = {item['symbol']:item.get('priceMultiplier') for item in instruments}
+    execution_checks = {}
+
+    def get_execution_quote(symbol):
+        try:
+            book = market.get('orderbook', category='USDT-FUTURES', symbol=symbol, limit='50')['data']
+            quote = depth_quote(book, int(time.time()*1000), entry_notional)
+        except (requests.RequestException, ValueError, KeyError, TypeError, OverflowError) as error:
+            execution_checks[symbol] = {'available': False, 'reason': str(error) if type(error) is ValueError else type(error).__name__}
+            return None
+        execution_checks[symbol] = {'available': True, **quote}
+        return quote
+
+    def refresh_entry(c):
+        quote = get_execution_quote(c['symbol'])
+        plan = entry_plan(*c['structural_band'], c['stop'], c['target'], c['direction'], quote,
+                          tick_sizes[c['symbol']], prior_band=c['band'])
+        if plan is None:
+            return None
+        lo, hi = plan['band']
+        return {**c, **plan, 'low': lo, 'high': hi,
+                'touch': {**c['touch'], 'observed_price': quote['mid']}}
     tickers,received=market.tickers()
     for instrument in instruments:
         symbol=instrument["symbol"];frames={};errors={};now=int(time.time()*1000)
@@ -85,7 +114,9 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         since = max(touch_since, minute_coverage['start']) if minute_coverage else touch_since
         if graded:
             result = scan_stars(symbol, frames, observed, price, minute_bars=minute_bars, touch_since=since,
-                                contexts=ledger.state['star_contexts'].get(symbol))
+                                contexts=ledger.state['star_contexts'].get(symbol),
+                                execution_quote=lru_cache(maxsize=1)(lambda: get_execution_quote(symbol)) if entry_only else None,
+                                tick_size=tick_sizes[symbol])
         else:
             result=scan(symbol,frames,observed,price,equilibrium_filter=True,minute_bars=minute_bars,touch_since=since)
         result.update(minute_coverage=minute_coverage,minute_error=minute_error)
@@ -151,7 +182,10 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
                     c=unit['candidate'];item=next(r for r in results if r['symbol']==c['symbol'])
                     prefix=ROOT/'runtime/ict_overlap/charts'/f"{c['symbol']}_{c['track']}_{c['lenses'][0]}_{c['id']}"
                     return render_side_by_side_unit(item,unit,chart_frames[c['symbol']],prefix)
-                delivery=ledger.dispatch_units(image_sender,unit_text_sender or sender,unit_renderer)
+                if entry_only:
+                    delivery=ledger.dispatch_units(image_sender,unit_text_sender or sender,unit_renderer,refresh=refresh_entry)
+                else:
+                    delivery=ledger.dispatch_units(image_sender,unit_text_sender or sender,unit_renderer)
             else:delivery=ledger.dispatch_symbols(image_sender,renderer,contexts)
             completed={symbol for symbol,keys in before.items() if keys and keys.isdisjoint(ledger.state['pending'])}
             for symbol in status_symbols:
@@ -170,6 +204,8 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         ledger.state['pending'].update(held);ledger.save()
     report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","strategy":POLICY,'paths':TRIPLE_TRACKS,'deduplication_enabled':True,"binance_listing_check":listing_check,"instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery,'status_delivery':status_delivery}
     report['ruleset']=STAR_RULESET if graded else RULESET
+    if entry_only:
+        report.update(entry_only=True, entry_notional_usdt=entry_notional, execution_checks=execution_checks)
     if snapshot:
         path=Path(snapshot);path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     print(f"중첩 알림: 전송 {delivery['sent']}건 / 실패 {delivery['failed']}건")
@@ -182,11 +218,13 @@ def main(argv=None):
     parser.add_argument('--resend-current',action='store_true',help='이번 검사만 기존 발송 잠금을 무시하고 현재 조건 충족 구간 재발송')
     parser.add_argument('--inspect-symbol',help='이번 실행만 이 공통 상장 종목의 전체 상태 발송. 여러 종목은 쉼표로 구분')
     parser.add_argument('--render-preview',action='store_true',help='미리보기에서도 현재 중첩 차트 이미지 생성')
+    parser.add_argument('--entry-notional',type=float,default=ENTRY_NOTIONAL_USDT,help='호가 슬리피지 계산에 사용할 주문금액(USDT)')
     parser.add_argument('--bases',nargs='+',default=list(BASES),help='거래소 기초 심볼. 코인은BTC만 허용')
     parser.add_argument('--state',type=Path,default=ROOT/'runtime/ict_overlap/state.json')
     parser.add_argument('--snapshot',type=Path,default=ROOT/'runtime/ict_overlap/preview.json')
     parser.add_argument('--unlock',nargs=2,metavar=('SYMBOL','TRACK'),help='특정 종목·단기/중기/장기 잠금만 수동 해제')
     args=parser.parse_args(argv)
+    if not math.isfinite(args.entry_notional) or args.entry_notional <= 0:parser.error('--entry-notional must be positive')
     if args.resend_current and args.watch:parser.error('--resend-current is one-shot only; omit --watch')
     if args.inspect_symbol and args.watch:parser.error('--inspect-symbol is one-shot only; omit --watch')
     if args.unlock:
@@ -210,7 +248,7 @@ def main(argv=None):
         from dotenv import load_dotenv
         load_dotenv(ROOT/'.env');sender=telegram_sender(os.getenv('TELEGRAM_BOT_TOKEN'),os.getenv('TELEGRAM_CHAT_ID'))
     with single_writer(args.state.with_suffix('.lock')) if args.send or args.watch else nullcontext():
-        ledger=StarAlertLedger(args.state,require_images=args.send,force_resend=args.resend_current)
+        ledger=StarAlertLedger(args.state,require_images=args.send,force_resend=args.resend_current,entry_only=True)
         image_sender=None
         unit_text_sender=None
         if args.send:
@@ -224,7 +262,7 @@ def main(argv=None):
                     binance_rows,listing_check=binance_listings(ROOT/'config/binance_contracts.json',market.cache/'binance_contracts.json')
                     instruments=select_common_instruments(select_instruments(market.instruments(),tuple(dict.fromkeys(args.bases))),binance_rows)
                     catalog_checked=time.monotonic()
-                report=run_once(market,instruments,ledger,sender,persist=args.watch,snapshot=args.snapshot,image_sender=image_sender,render_previews=args.render_preview,listing_check=listing_check,status_symbols=inspect_symbols,unit_text_sender=unit_text_sender)
+                report=run_once(market,instruments,ledger,sender,persist=args.watch,snapshot=args.snapshot,image_sender=image_sender,render_previews=args.render_preview,listing_check=listing_check,status_symbols=inspect_symbols,unit_text_sender=unit_text_sender,entry_notional=args.entry_notional)
             except Exception as error:
                 if not args.watch:raise
                 print(f'시세 확인 보류 ({type(error).__name__}); 다음 주기에 재시도',flush=True)
