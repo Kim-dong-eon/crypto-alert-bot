@@ -56,8 +56,9 @@ def window(frames, tf, event, current_at):
     elif 'lower' in event:
         start = event['lower']['chart_start'] - 5 * TF_MS[tf]
     elif wave := event.get('lower_wave'):
+        pivot_at = (event.get('observation_risk') or {}).get('pivot_at', wave['chart_start'])
         start = max(bars[-72].timestamp if len(bars) >= 72 else bars[0].timestamp,
-                    min(wave['chart_start'] - 3 * TF_MS[tf], bars[-min(36, len(bars))].timestamp))
+                    min(min(wave['chart_start'], pivot_at) - 3 * TF_MS[tf], bars[-min(36, len(bars))].timestamp))
     else:
         return bars[-36:]
     return [b for b in bars if b.timestamp >= start]
@@ -179,8 +180,12 @@ def draw_panel(ax, tf, candles, event):
     if level == 2 and not is_top and risk:
         stop = risk['stop']
         ax.axhline(stop, color='#ff9da9', linestyle=':', linewidth=1.3, zorder=4)
-        ax.text(.02, stop, f'{LABELS[final]} OB 손절 {fmt(stop)}', transform=ax.get_yaxis_transform(),
+        stop_kind = '구조' if 'pivot_at' in risk else 'OB'
+        ax.text(.02, stop, f'{LABELS[final]} {stop_kind} 손절 {fmt(stop)}', transform=ax.get_yaxis_transform(),
                 ha='left', va='bottom', color='#ffabb4', fontsize=10, zorder=8)
+        if (pivot_at := risk.get('pivot_at')) is not None and start <= pivot_at <= candles[-1].timestamp:
+            ax.scatter(position(pivot_at), risk['pivot_price'], s=66, facecolors='none', edgecolors='#ff9da9',
+                       linewidths=1.5, zorder=9)
         prices.append(stop)
 
     lo, hi = (event['parent']['low'], event['parent']['high']) if is_top else event['band']
@@ -268,7 +273,8 @@ def render(snapshot, alert, frames, prefix):
         elif risk := event.get('observation_risk'):
             if plan := risk['plan']:
                 lo, hi = plan['band']
-                detail = (f"참고 진입 {fmt(lo)} ~ {fmt(hi)}     OB 손절 {fmt(risk['stop'])}"
+                stop_kind = '구조' if 'pivot_at' in risk else 'OB'
+                detail = (f"참고 진입 {fmt(lo)} ~ {fmt(hi)}     {stop_kind} 손절 {fmt(risk['stop'])}"
                           f"     상위 직전 목표 {fmt(risk['target'])}     비용 반영 1:{plan['rr']:.2f}")
             elif level == 2:
                 detail += '     ·     ' + ('비용 반영 1:3 미충족' if risk.get('costs_checked') else '비용 확인 대기 · 1:3 미확정')

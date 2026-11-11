@@ -205,7 +205,7 @@ class StarAlertsTests(unittest.TestCase):
             self.assertEqual(plan['entry'], plan['band'][1 if direction == 1 else 0])
             self.assertIsNone(entry_plan(99., 101., stop, target, direction, quote, None))
 
-    def test_observation_uses_ob_wick_and_only_prior_confirmed_target(self):
+    def test_one_star_observation_uses_ob_wick_and_only_prior_confirmed_target(self):
         bar = Bar(100, 102, 103, 98, 101, 1)
         choice = {'sources': [{'origin': 100}], 'touch': {'at': 500}}
         points = [{'kind': 'high', 'price': 112, 'confirmed_at': 400},
@@ -220,6 +220,28 @@ class StarAlertsTests(unittest.TestCase):
         above_target = {**quote, 'mid': 115., 'buy_vwap': 115.1}
         self.assertIsNone(entry_plan(99, 101, 98, 112, 1, above_target, '.01'))
         self.assertIsNotNone(entry_plan(99, 101, 98, 112, 1, above_target, '.01', require_touch=False))
+
+    def test_two_star_stop_uses_the_ob_wave_and_rejects_a_broken_pivot(self):
+        bars = [Bar(0, 104, 105, 98.02, 102), Bar(100, 102, 104, 101, 103),
+                Bar(200, 103, 107, 102, 106), Bar(300, 106, 107, 104, 105)]
+        choice = {'level': 2, 'sources': [{'origin': 100}], 'touch': {'at': 500, 'bar_open': 400}}
+        points = [{'kind': 'high', 'price': 120, 'confirmed_at': 300},
+                  {'kind': 'high', 'price': 125, 'confirmed_at': 450}]
+        low = {'index': 0, 'kind': 'low', 'price': 98.02, 'confirmed_at': 200}
+        later_low = {'index': 2, 'kind': 'low', 'price': 102, 'confirmed_at': 400}
+        kwargs = {'lower_points': [low, later_low], 'tick_size': '0.01', 'price': 103}
+        self.assertEqual(observation_reference(choice, bars, points, 1, **kwargs),
+                         {'stop': 98.01, 'target': 120, 'pivot_at': 0, 'pivot_price': 98.02})
+        broken = Bar(400, 103, 104, 97.99, 103)
+        self.assertIsNone(observation_reference(choice, bars, points, 1, minute_bars=[broken], **kwargs))
+        self.assertIsNone(observation_reference(choice, bars, points, 1,
+                                                **{**kwargs, 'lower_points': [{**low, 'confirmed_at': 401}]}))
+        short_bars = [Bar(b.timestamp, 200-b.open, 200-b.low, 200-b.high, 200-b.close) for b in bars]
+        high = {**low, 'kind': 'high', 'price': 101.98}
+        short_target = [{'kind': 'low', 'price': 80, 'confirmed_at': 300}]
+        self.assertEqual(observation_reference(choice, short_bars, short_target, -1,
+                                               lower_points=[high], tick_size='0.01', price=97),
+                         {'stop': 101.99, 'target': 80, 'pivot_at': 0, 'pivot_price': 101.98})
 
     def test_mixed_delivery_sends_observations_without_entry_recheck(self):
         timeline = list(replay(-1))

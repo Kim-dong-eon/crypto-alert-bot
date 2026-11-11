@@ -2,6 +2,7 @@
 
 from collections import defaultdict
 from dataclasses import asdict
+from decimal import Decimal, InvalidOperation, ROUND_CEILING, ROUND_FLOOR
 import hashlib
 from itertools import product
 
@@ -84,16 +85,50 @@ def observation_wave(bars, points, at, origin=None):
     return {'points': display, 'chart_start': display[0]['timestamp'] if display else at, 'target': None}
 
 
-def observation_reference(choice, lower_bars, points, direction):
+def observation_reference(choice, lower_bars, points, direction, *, lower_points=(), tick_size=None,
+                          minute_bars=(), price=None):
     source = choice['sources'][-1]
-    origin = next((bar for bar in lower_bars if bar.timestamp == source['origin']), None)
     kind = 'high' if direction == 1 else 'low'
     touch = choice['touch']
+    known_at = touch.get('bar_open', touch['at'])
     target = next((p for p in reversed(points) if p['kind'] == kind
-                   and p['confirmed_at'] <= touch.get('bar_open', touch['at'])), None)
-    if origin is None or target is None:
+                   and p['confirmed_at'] <= known_at), None)
+    if target is None:
         return None
-    return {'stop': origin.low if direction == 1 else origin.high, 'target': target['price']}
+    if choice.get('level') != 2:
+        origin = next((bar for bar in lower_bars if bar.timestamp == source['origin']), None)
+        if origin is None:
+            return None
+        return {'stop': origin.low if direction == 1 else origin.high, 'target': target['price']}
+
+    # Tie the stop to the leg that was in progress at the lower OB's origin.
+    # A later confirmed turn may describe a different reaction to that OB.
+    pivot = next((p for p in reversed(lower_points) if p['confirmed_at'] <= known_at
+                  and lower_bars[p['index']].timestamp <= source['origin']), None)
+    stop_kind = 'low' if direction == 1 else 'high'
+    if pivot is None or pivot['kind'] != stop_kind:
+        return None
+    pivot_at = lower_bars[pivot['index']].timestamp
+    extreme = pivot['price']
+    if price is not None and direction * (price - extreme) < 0:
+        return None
+    for bars in (lower_bars[pivot['index'] + 1:], minute_bars):
+        if any(b.timestamp > pivot_at and direction * ((b.low if direction == 1 else b.high) - extreme) < 0
+               for b in bars):
+            return None
+
+    try:
+        tick = Decimal(str(tick_size))
+    except InvalidOperation:
+        return None
+    if not tick.is_finite() or tick <= 0:
+        return None
+    rounding = ROUND_CEILING if direction == 1 else ROUND_FLOOR
+    units = (Decimal(str(extreme)) / tick).to_integral_value(rounding=rounding)
+    stop = float((units - direction) * tick)
+    if stop <= 0:
+        return None
+    return {'stop': stop, 'target': target['price'], 'pivot_at': pivot_at, 'pivot_price': extreme}
 
 
 def overlap_contacts(parent, area, lower_obs, zones, pair, arm, price, now, minutes, since):
@@ -146,7 +181,8 @@ def formation_contacts(parent, zones, path, direction_at, price, now, minutes, s
 
 def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=None, tracks=None,
          formation_tracks=(), execution_quote=None, tick_size=None):
-    recent_minutes = tuple(b for b in minute_bars if b.timestamp >= touch_since)
+    closed_minutes = tuple(b for b in minute_bars if b.timestamp + MINUTE <= now)
+    recent_minutes = tuple(b for b in closed_minutes if b.timestamp >= touch_since)
     result, usable, zones = prepare(symbol, frames, now, price, tracks, build_overlaps=False)
     result['ruleset'] = RULESET
     previous = contexts or {}
@@ -291,7 +327,9 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                         best['lower_wave'] = observation_wave(lower_bars, lower_points, at)
                     if best['level'] < 3:
                         target_points = recent_upper_points if best['level'] == 2 else points
-                        reference = observation_reference(best, lower_bars, target_points, direction)
+                        reference = observation_reference(best, lower_bars, target_points, direction,
+                                                          lower_points=lower_points, tick_size=tick_size,
+                                                          minute_bars=closed_minutes, price=price)
                         if reference:
                             quote = execution_quote() if execution_quote else None
                             plan = entry_plan(*best['band'], reference['stop'], reference['target'], direction,
@@ -338,7 +376,8 @@ def unit_text(candidate):
             return '\n'.join(lines)
     elif risk := c.get('observation_risk'):
         target_kind = '고점' if c['direction'] == 1 else '저점'
-        lines.append(f"{LABELS[c['refinement_tf']]} OB 손절 {price_text(risk['stop'])} · {LABELS[c['pair'][0]]} 직전 {target_kind} {price_text(risk['target'])}")
+        stop_kind = '구조' if 'pivot_at' in risk else 'OB'
+        lines.append(f"{LABELS[c['refinement_tf']]} {stop_kind} 손절 {price_text(risk['stop'])} · {LABELS[c['pair'][0]]} 직전 {target_kind} {price_text(risk['target'])}")
         if plan := risk['plan']:
             lo, hi = plan['band']
             lines.append(f"참고 진입 {price_text(lo)} ~ {price_text(hi)} · 비용 반영 1:{plan['rr']:.2f}")
@@ -348,7 +387,7 @@ def unit_text(candidate):
         elif level == 2:
             lines.append('공통 구간 내 비용 반영 1:3 미충족' if risk.get('costs_checked') else '비용 확인 대기 · 1:3 미확정')
     elif level == 2:
-        lines.append('상위 직전 고저점 또는 OB 손절 미확정')
+        lines.append('하위 구조 손절 또는 상위 목표 미확정')
     if level != 2:
         lines.append(f"접촉 확인 · {kst(c['touch']['at'])}")
     return '\n'.join(lines)
