@@ -1,2201 +1,7 @@
 {
   "version": "ict-two-frame-ob-fvg-v10-external",
-  "tracks": {
-    "BTCUSDT|medium": {
-      "candidate": null,
-      "checked_at": 1794275445011
-    },
-    "BTCUSDT|long": {
-      "candidate": null,
-      "checked_at": 1794275445011
-    },
-    "SKHYNIXUSDT|medium": {
-      "candidate": null,
-      "checked_at": 1794275445592
-    },
-    "SKHYNIXUSDT|long": {
-      "candidate": null,
-      "checked_at": 1794275445592
-    },
-    "NVDAUSDT|medium": {
-      "candidate": null,
-      "checked_at": 1794275446126
-    },
-    "NVDAUSDT|long": {
-      "candidate": null,
-      "checked_at": 1794275446126
-    },
-    "TSLAUSDT|medium": {
-      "candidate": null,
-      "checked_at": 1794275446647
-    },
-    "TSLAUSDT|long": {
-      "candidate": null,
-      "checked_at": 1794275446647
-    },
-    "AAPLUSDT|medium": {
-      "candidate": null,
-      "checked_at": 1794275447230
-    },
-    "AAPLUSDT|long": {
-      "candidate": null,
-      "checked_at": 1794275447230
-    },
-    "MSFTUSDT|medium": {
-      "candidate": null,
-      "checked_at": 1794275447753
-    },
-    "MSFTUSDT|long": {
-      "candidate": null,
-      "checked_at": 1794275447753
-    },
-    "AMZNUSDT|medium": {
-      "candidate": null,
-      "checked_at": 1794275448274
-    },
-    "AMZNUSDT|long": {
-      "candidate": null,
-      "checked_at": 1794275448274
-    },
-    "GOOGLUSDT|medium": {
-      "candidate": null,
-      "checked_at": 1794275448791
-    },
-    "GOOGLUSDT|long": {
-      "candidate": null,
-      "checked_at": 1794275448791
-    },
-    "METAUSDT|medium": {
-      "candidate": null,
-      "checked_at": 1794275449370
-    },
-    "METAUSDT|long": {
-      "candidate": null,
-      "checked_at": 1794275449370
-    },
-    "QQQUSDT|medium": {
-      "candidate": null,
-      "checked_at": 1794275449894
-    },
-    "QQQUSDT|long": {
-      "candidate": null,
-      "checked_at": 1794275449894
-    },
-    "SPYUSDT|medium": {
-      "candidate": null,
-      "checked_at": 1794275450419
-    },
-    "SPYUSDT|long": {
-      "candidate": null,
-      "checked_at": 1794275450419
-    },
-    "NDX100USDT|medium": {
-      "candidate": {
-        "low": 29055.0,
-        "high": 29088.0,
-        "score": 2,
-        "groups": [
-          "1d:OB",
-          "4h:OB"
-        ],
-        "source_ids": [
-          "1d:OB:1792800000000:1792972800000:1",
-          "4h:OB:1792915200000:1792944000000:1"
-        ],
-        "sources": [
-          {
-            "id": "1d:OB:1792800000000:1792972800000:1",
-            "timeframe": "1d",
-            "kind": "OB",
-            "direction": 1,
-            "low": 29052.0,
-            "high": 29088.0,
-            "created": 1792972800000,
-            "origin": 1792800000000,
-            "stop": 28903.0,
-            "invalidation": 29052.0,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "4h:OB:1792915200000:1792944000000:1",
-            "timeframe": "4h",
-            "kind": "OB",
-            "direction": 1,
-            "low": 29055.0,
-            "high": 29102.0,
-            "created": 1792944000000,
-            "origin": 1792915200000,
-            "stop": 29017.0,
-            "invalidation": 29055.0,
-            "expiry": 9223372036854775807
-          }
-        ],
-        "latest_source": 1792972800000,
-        "equilibrium": {
-          "midpoint": 30066.5,
-          "eligible": true,
-          "range_low": 28807.0,
-          "range_high": 31326.0,
-          "distance_to_zone": 347.0
-        },
-        "id": "396866a38db02130a349edfc",
-        "track": "medium",
-        "symbol": "NDX100USDT",
-        "direction": 1,
-        "context_id": "real:1d:1789430400000:1789948800000:1",
-        "context": {
-          "id": "real:1d:1789430400000:1789948800000:1",
-          "direction": 1,
-          "formed": 1789948800000,
-          "sweep_time": 1789430400000,
-          "swept_level": 28934.0,
-          "structure_level": 29736.0,
-          "invalidation": 28807.0,
-          "swing_low": 28807.0,
-          "swing_high": 31326.0
-        },
-        "pair": [
-          "1d",
-          "4h"
-        ],
-        "formed_at": 1792972800000,
-        "location": "waiting",
-        "price": 29435.0,
-        "context_price_breach": false,
-        "resistance_support": [
-          {
-            "id": "1d:OB:1793059200000:1793232000000:-1",
-            "timeframe": "1d",
-            "kind": "OB",
-            "direction": -1,
-            "low": 29484.0,
-            "high": 29770.0,
-            "created": 1793232000000,
-            "origin": 1793059200000,
-            "stop": 29987.0,
-            "invalidation": 29770.0,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "1d:OB:1792022400000:1792195200000:-1",
-            "timeframe": "1d",
-            "kind": "OB",
-            "direction": -1,
-            "low": 29834.0,
-            "high": 29842.0,
-            "created": 1792195200000,
-            "origin": 1792022400000,
-            "stop": 30059.0,
-            "invalidation": 29842.0,
-            "expiry": 9223372036854775807
-          }
-        ]
-      },
-      "checked_at": 1793240146925
-    },
-    "NDX100USDT|long": {
-      "candidate": null,
-      "checked_at": 1793240146925
-    },
-    "SP500USDT|medium": {
-      "candidate": null,
-      "checked_at": 1793240146946
-    },
-    "SP500USDT|long": {
-      "candidate": null,
-      "checked_at": 1793240146946
-    },
-    "BTCUSDT|short": {
-      "candidate": null,
-      "checked_at": 1794275445011
-    },
-    "SKHYNIXUSDT|short": {
-      "candidate": null,
-      "checked_at": 1794275445592
-    },
-    "NVDAUSDT|short": {
-      "candidate": null,
-      "checked_at": 1794275446126
-    },
-    "TSLAUSDT|short": {
-      "candidate": null,
-      "checked_at": 1794275446647
-    },
-    "AAPLUSDT|short": {
-      "candidate": null,
-      "checked_at": 1794275447230
-    },
-    "MSFTUSDT|short": {
-      "candidate": null,
-      "checked_at": 1794275447753
-    },
-    "AMZNUSDT|short": {
-      "candidate": null,
-      "checked_at": 1794275448274
-    },
-    "GOOGLUSDT|short": {
-      "candidate": null,
-      "checked_at": 1794275448791
-    },
-    "METAUSDT|short": {
-      "candidate": null,
-      "checked_at": 1794275449370
-    },
-    "QQQUSDT|short": {
-      "candidate": null,
-      "checked_at": 1794275449894
-    },
-    "SPYUSDT|short": {
-      "candidate": null,
-      "checked_at": 1794275450419
-    },
-    "NDX100USDT|short": {
-      "candidate": {
-        "low": 29292.0,
-        "high": 29296.0,
-        "score": 3,
-        "groups": [
-          "1h:FVG",
-          "4h:FVG",
-          "4h:OB"
-        ],
-        "source_ids": [
-          "1h:FVG:1793084400000:1793095200000:1",
-          "4h:FVG:1793001600000:1793044800000:1",
-          "4h:OB:1793073600000:1793102400000:1"
-        ],
-        "sources": [
-          {
-            "id": "1h:FVG:1793084400000:1793095200000:1",
-            "timeframe": "1h",
-            "kind": "FVG",
-            "direction": 1,
-            "low": 29292.0,
-            "high": 29316.0,
-            "created": 1793095200000,
-            "origin": 1793084400000,
-            "stop": 29292.0,
-            "invalidation": 29292.0,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "4h:FVG:1793001600000:1793044800000:1",
-            "timeframe": "4h",
-            "kind": "FVG",
-            "direction": 1,
-            "low": 29221.0,
-            "high": 29296.0,
-            "created": 1793044800000,
-            "origin": 1793001600000,
-            "stop": 29221.0,
-            "invalidation": 29221.0,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "4h:OB:1793073600000:1793102400000:1",
-            "timeframe": "4h",
-            "kind": "OB",
-            "direction": 1,
-            "low": 29279.0,
-            "high": 29412.0,
-            "created": 1793102400000,
-            "origin": 1793073600000,
-            "stop": 29265.0,
-            "invalidation": 29279.0,
-            "expiry": 9223372036854775807
-          }
-        ],
-        "latest_source": 1793102400000,
-        "equilibrium": {
-          "midpoint": 29405.5,
-          "eligible": false,
-          "range_low": 28903.0,
-          "range_high": 29908.0,
-          "distance_to_zone": 139.0
-        },
-        "id": "d8f92e4edf305cdc354b592b",
-        "track": "short",
-        "symbol": "NDX100USDT",
-        "direction": 1,
-        "context_id": "real:4h:1792857600000:1792958400000:1",
-        "context": {
-          "id": "real:4h:1792857600000:1792958400000:1",
-          "direction": 1,
-          "formed": 1792958400000,
-          "sweep_time": 1792857600000,
-          "swept_level": 28950.0,
-          "structure_level": 29149.0,
-          "invalidation": 28903.0,
-          "swing_low": 28903.0,
-          "swing_high": 29908.0
-        },
-        "pair": [
-          "4h",
-          "1h"
-        ],
-        "formed_at": 1793102400000,
-        "location": "waiting",
-        "price": 29435.0,
-        "context_price_breach": false,
-        "resistance_support": [
-          {
-            "id": "4h:FVG:1792137600000:1792180800000:-1",
-            "timeframe": "4h",
-            "kind": "FVG",
-            "direction": -1,
-            "low": 29657.0,
-            "high": 29919.0,
-            "created": 1792180800000,
-            "origin": 1792137600000,
-            "stop": 29919.0,
-            "invalidation": 29919.0,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "4h:OB:1793203200000:1793232000000:-1",
-            "timeframe": "4h",
-            "kind": "OB",
-            "direction": -1,
-            "low": 29746.0,
-            "high": 29874.0,
-            "created": 1793232000000,
-            "origin": 1793203200000,
-            "stop": 29987.0,
-            "invalidation": 29874.0,
-            "expiry": 9223372036854775807
-          }
-        ]
-      },
-      "checked_at": 1793240146925
-    },
-    "SP500USDT|short": {
-      "candidate": null,
-      "checked_at": 1793240146946
-    },
-    "CLUSDT|short": {
-      "candidate": null,
-      "checked_at": 1794275450921
-    },
-    "CLUSDT|medium": {
-      "candidate": null,
-      "checked_at": 1794275450921
-    },
-    "CLUSDT|long": {
-      "candidate": null,
-      "checked_at": 1794275450921
-    },
-    "BZUSDT|short": {
-      "candidate": null,
-      "checked_at": 1794275451460
-    },
-    "BZUSDT|medium": {
-      "candidate": null,
-      "checked_at": 1794275451460
-    },
-    "BZUSDT|long": {
-      "candidate": null,
-      "checked_at": 1794275451460
-    },
-    "BTCUSDT|fast": {
-      "candidate": null,
-      "checked_at": 1794275445011
-    },
-    "SKHYNIXUSDT|fast": {
-      "candidate": null,
-      "checked_at": 1794275445592
-    },
-    "NVDAUSDT|fast": {
-      "candidate": null,
-      "checked_at": 1794275446126
-    },
-    "TSLAUSDT|fast": {
-      "candidate": null,
-      "checked_at": 1794275446647
-    },
-    "AAPLUSDT|fast": {
-      "candidate": null,
-      "checked_at": 1794275447230
-    },
-    "MSFTUSDT|fast": {
-      "candidate": null,
-      "checked_at": 1794275447753
-    },
-    "AMZNUSDT|fast": {
-      "candidate": null,
-      "checked_at": 1794275448274
-    },
-    "GOOGLUSDT|fast": {
-      "candidate": null,
-      "checked_at": 1794275448791
-    },
-    "METAUSDT|fast": {
-      "candidate": null,
-      "checked_at": 1794275449370
-    },
-    "QQQUSDT|fast": {
-      "candidate": null,
-      "checked_at": 1794275449894
-    },
-    "SPYUSDT|fast": {
-      "candidate": null,
-      "checked_at": 1794275450419
-    },
-    "CLUSDT|fast": {
-      "candidate": null,
-      "checked_at": 1794275450921
-    },
-    "BZUSDT|fast": {
-      "candidate": null,
-      "checked_at": 1794275451460
-    }
-  },
-  "delivered": {
-    "747ca1c2d9c419b472aa97eb": {
-      "symbol": "BTCUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224273
-    },
-    "729a10e4e885a9a51d24afca": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224289
-    },
-    "f6cb603522e5614a64282975": {
-      "symbol": "NVDAUSDT",
-      "stage": "prepared",
-      "timestamp": 1793211439081
-    },
-    "b75da8e286ffce23dba727b8": {
-      "symbol": "NVDAUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224307
-    },
-    "7ecc4042da3134bea3c81032": {
-      "symbol": "TSLAUSDT",
-      "stage": "prepared",
-      "timestamp": 1793211439290
-    },
-    "29029a8ec85632770224a9ce": {
-      "symbol": "AAPLUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224341
-    },
-    "122f692f82906478bfa4c7bc": {
-      "symbol": "MSFTUSDT",
-      "stage": "prepared",
-      "timestamp": 1793211439674
-    },
-    "4c9755bb171089f75cffddf7": {
-      "symbol": "MSFTUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224357
-    },
-    "6ee5e567e0619a735a1f8846": {
-      "symbol": "AMZNUSDT",
-      "stage": "touched",
-      "timestamp": 1793211439898
-    },
-    "8db7ef01fb3e9a69992dbec7": {
-      "symbol": "GOOGLUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224394
-    },
-    "3021c63280d8cc472e151c8a": {
-      "symbol": "METAUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224413
-    },
-    "7902c66255bd5807e65ab26a": {
-      "symbol": "QQQUSDT",
-      "stage": "prepared",
-      "timestamp": 1793211440511
-    },
-    "86857db8be021c6b589fc514": {
-      "symbol": "SPYUSDT",
-      "stage": "prepared",
-      "timestamp": 1793211440693
-    },
-    "03e451907c0b40e605604437": {
-      "symbol": "SPYUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224453
-    },
-    "291e313ae83f5f5d7c11fefb": {
-      "symbol": "NDX100USDT",
-      "stage": "prepared",
-      "timestamp": 1793211440950
-    },
-    "c8fbbf00cb3f6c4fab319632": {
-      "symbol": "NDX100USDT",
-      "stage": "prepared",
-      "timestamp": 1793213224472
-    },
-    "922caeb16edd758661abc4d2": {
-      "symbol": "NVDAUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224307
-    },
-    "0721fa52e97a03b4c0c3d9c8": {
-      "symbol": "TSLAUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224324
-    },
-    "8dca807421e3a085edd335cf": {
-      "symbol": "MSFTUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224357
-    },
-    "79a92ecb7caf2301640e84c1": {
-      "symbol": "AMZNUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224377
-    },
-    "ec657fd00bc380b91eb12675": {
-      "symbol": "QQQUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224432
-    },
-    "cbe264bb49c26cdba08fb4a5": {
-      "symbol": "SPYUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224453
-    },
-    "0033cb98cef9a8cf6c429c6e": {
-      "symbol": "NDX100USDT",
-      "stage": "prepared",
-      "timestamp": 1793213224472
-    },
-    "d17f257269ea844a0cbd644a": {
-      "symbol": "SPYUSDT",
-      "stage": "approach",
-      "timestamp": 1793215811193
-    },
-    "7e695eae7bc245fd01c309eb": {
-      "symbol": "NDX100USDT",
-      "stage": "approach",
-      "timestamp": 1793215811208
-    },
-    "2749596672a14a2d0fe0193e": {
-      "symbol": "MSFTUSDT",
-      "stage": "approach",
-      "timestamp": 1793217049629
-    },
-    "b595bafacaa89cda35baa5ad": {
-      "symbol": "MSFTUSDT",
-      "stage": "approach",
-      "timestamp": 1793217687568
-    },
-    "39b0b25193dff4b467cce206": {
-      "symbol": "SPYUSDT",
-      "stage": "approach",
-      "timestamp": 1793217689677
-    },
-    "d74b9f581a3b71f271715f33": {
-      "symbol": "AAPLUSDT",
-      "stage": "approach",
-      "timestamp": 1793250634673
-    },
-    "5399e3ca0398775aabff18ed": {
-      "symbol": "BZUSDT",
-      "stage": "approach",
-      "timestamp": 1793270924200
-    },
-    "69b15461aa6b73f2527d73d2": {
-      "symbol": "BZUSDT",
-      "stage": "approach",
-      "timestamp": 1793271252037
-    },
-    "972f2551e60315346487872a": {
-      "symbol": "BZUSDT",
-      "stage": "approach",
-      "timestamp": 1793275271205
-    },
-    "2f884604d265358170f2ef5c": {
-      "symbol": "BTCUSDT",
-      "stage": "approach",
-      "timestamp": 1793460981825,
-      "message_ids": [
-        1606,
-        1607
-      ]
-    },
-    "d79098f0bb2dd2ae0b764f44": {
-      "symbol": "BTCUSDT",
-      "stage": "approach",
-      "timestamp": 1793460981825,
-      "message_ids": [
-        1608,
-        1609
-      ]
-    },
-    "5cba71dbb3022cf7b076497e": {
-      "symbol": "BTCUSDT",
-      "stage": "approach",
-      "timestamp": 1793460981825,
-      "message_ids": [
-        1610,
-        1611
-      ]
-    },
-    "028c11a16056be9b3676e079": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "approach",
-      "timestamp": 1793460981977,
-      "message_ids": [
-        1612,
-        1613,
-        1614,
-        1615
-      ]
-    },
-    "ce1aa08cd93e6df63e3ab910": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "approach",
-      "timestamp": 1793460981977,
-      "message_ids": [
-        1616,
-        1617
-      ]
-    },
-    "a14fc5858d88c478ea756cc7": {
-      "symbol": "NVDAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982108,
-      "message_ids": [
-        1618,
-        1619
-      ]
-    },
-    "95a7678afc3e789134dbdb4e": {
-      "symbol": "NVDAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982108,
-      "message_ids": [
-        1620,
-        1621
-      ]
-    },
-    "e70e91e3e3cc21af429251bf": {
-      "symbol": "NVDAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982108,
-      "message_ids": [
-        1622,
-        1623
-      ]
-    },
-    "34cf802256e5628c2d864723": {
-      "symbol": "TSLAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982246,
-      "message_ids": [
-        1624,
-        1625,
-        1626,
-        1627
-      ]
-    },
-    "9819724798cd0a0f2698d3d4": {
-      "symbol": "TSLAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982246,
-      "message_ids": [
-        1628,
-        1629,
-        1630,
-        1631
-      ]
-    },
-    "51b5c84693855ea5dfbf4c0f": {
-      "symbol": "TSLAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982246,
-      "message_ids": [
-        1632,
-        1633
-      ]
-    },
-    "91f6d7dcd02ff1b49f146106": {
-      "symbol": "AAPLUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982387,
-      "message_ids": [
-        1634,
-        1635
-      ]
-    },
-    "b9d788aba2b828a7c0668013": {
-      "symbol": "AAPLUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982387,
-      "message_ids": [
-        1636,
-        1637
-      ]
-    },
-    "a47aa28f35de6bd6c5980f92": {
-      "symbol": "MSFTUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982519,
-      "message_ids": [
-        1638,
-        1639,
-        1640,
-        1641
-      ]
-    },
-    "8a45f7970b4c9b55d2ab00a3": {
-      "symbol": "MSFTUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982519,
-      "message_ids": [
-        1642,
-        1643
-      ]
-    },
-    "b3dcbb1a00b7de51afc6d6a8": {
-      "symbol": "MSFTUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982519,
-      "message_ids": [
-        1644,
-        1645,
-        1646,
-        1647
-      ]
-    },
-    "107f4bedd3fc128b9ac53239": {
-      "symbol": "AMZNUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982660,
-      "message_ids": [
-        1648,
-        1649
-      ]
-    },
-    "84f6eb22aa006bc4038f0664": {
-      "symbol": "AMZNUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982660,
-      "message_ids": [
-        1650,
-        1651
-      ]
-    },
-    "586c25915d39cf51fd22af30": {
-      "symbol": "AMZNUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982660,
-      "message_ids": [
-        1652,
-        1653
-      ]
-    },
-    "489ab07bb959ac03fd0bf254": {
-      "symbol": "AMZNUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982660,
-      "message_ids": [
-        1654,
-        1655
-      ]
-    },
-    "5c041baf1407347812e507fb": {
-      "symbol": "GOOGLUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982793,
-      "message_ids": [
-        1656,
-        1657
-      ]
-    },
-    "182ffa2c7506d9affc86d6c0": {
-      "symbol": "METAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982931,
-      "message_ids": [
-        1658,
-        1659
-      ]
-    },
-    "e13010a318c22f983a617e2e": {
-      "symbol": "METAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982931,
-      "message_ids": [
-        1660,
-        1661,
-        1662,
-        1663
-      ]
-    },
-    "50c0e629209384a43d9efae1": {
-      "symbol": "METAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982931,
-      "message_ids": [
-        1664,
-        1665,
-        1666,
-        1667
-      ]
-    },
-    "46a5a1c344f361129da326ed": {
-      "symbol": "QQQUSDT",
-      "stage": "approach",
-      "timestamp": 1793460983082,
-      "message_ids": [
-        1668,
-        1669,
-        1670,
-        1671
-      ]
-    },
-    "ddfabda25b1ab47b3af6bf92": {
-      "symbol": "SPYUSDT",
-      "stage": "approach",
-      "timestamp": 1793460983217,
-      "message_ids": [
-        1672,
-        1673
-      ]
-    },
-    "bdaa125327e9a898cebda945": {
-      "symbol": "SPYUSDT",
-      "stage": "approach",
-      "timestamp": 1793460983217,
-      "message_ids": [
-        1674,
-        1675
-      ]
-    },
-    "4db6d6f3f06b22698b84f3ab": {
-      "symbol": "CLUSDT",
-      "stage": "approach",
-      "timestamp": 1793460983366,
-      "message_ids": [
-        1676,
-        1677,
-        1678,
-        1679
-      ]
-    },
-    "99bb11d03d689154a3d1bdea": {
-      "symbol": "CLUSDT",
-      "stage": "approach",
-      "timestamp": 1793460983366,
-      "message_ids": [
-        1680,
-        1681,
-        1682,
-        1683
-      ]
-    },
-    "e24b22aad8ea352133e8b5dc": {
-      "symbol": "BZUSDT",
-      "stage": "approach",
-      "timestamp": 1793460983530,
-      "message_ids": [
-        1684,
-        1685,
-        1686,
-        1687
-      ]
-    },
-    "704e66a77236f637510714a6": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1793462071439,
-      "message_ids": [
-        1688,
-        1689
-      ]
-    },
-    "8592f8a259837ae5372cb5f1": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793462072442,
-      "message_ids": [
-        1690,
-        1691
-      ]
-    },
-    "0cce0257a89ee035ad7c615c": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793462073468,
-      "message_ids": [
-        1692,
-        1693
-      ]
-    },
-    "410a3b14b313c8d518709627": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793463340870,
-      "message_ids": [
-        1694,
-        1695,
-        1696,
-        1697
-      ]
-    },
-    "e70afd031e0ba9f04a4ae919": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793463342390,
-      "message_ids": [
-        1698,
-        1699
-      ]
-    },
-    "8016daa9cf78ab0b8baad92b": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793470844521,
-      "message_ids": [
-        1700,
-        1701
-      ]
-    },
-    "4ee895e2e25ebfebd5294eb3": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793475347612,
-      "message_ids": [
-        1702,
-        1703
-      ]
-    },
-    "99067749d405d125315cbaf5": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793482851561,
-      "message_ids": [
-        1704,
-        1705
-      ]
-    },
-    "1cc58d553da34b1978d5a691": {
-      "symbol": "SPYUSDT",
-      "stage": "entry",
-      "timestamp": 1793482852336,
-      "message_ids": [
-        1706,
-        1707
-      ]
-    },
-    "a9ee91ecc92dadd6311f3f16": {
-      "symbol": "SPYUSDT",
-      "stage": "entry",
-      "timestamp": 1793482852336,
-      "message_ids": [
-        1708,
-        1709
-      ]
-    },
-    "70e488a9d5b9b7accd7a55d5": {
-      "symbol": "CLUSDT",
-      "stage": "entry",
-      "timestamp": 1793486152356,
-      "message_ids": [
-        1710,
-        1711,
-        1712,
-        1713
-      ]
-    },
-    "ad17f2c234c5d9bbecbaa818": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793498464012,
-      "message_ids": [
-        1714,
-        1715
-      ]
-    },
-    "ba9353450a5b352f117e0cae": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793508649690,
-      "message_ids": [
-        1716,
-        1717
-      ]
-    },
-    "60c3136aa707881f811ed5c5": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793527264005,
-      "message_ids": [
-        1718,
-        1719
-      ]
-    },
-    "2d2c89f94781836dc6f0d617": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1793557247089,
-      "message_ids": [
-        1720,
-        1721
-      ]
-    },
-    "1420426b74873eb145b5e9f0": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793560552742,
-      "message_ids": [
-        1722,
-        1723
-      ]
-    },
-    "1e3fefe9388016230cfad0fd": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793560843520,
-      "message_ids": [
-        1724,
-        1725
-      ]
-    },
-    "03764f511cbbfe7af301e156": {
-      "symbol": "CLUSDT",
-      "stage": "entry",
-      "timestamp": 1793563281945,
-      "message_ids": [
-        1726,
-        1727,
-        1728,
-        1729
-      ]
-    },
-    "44a466714ba421cdd7349b34": {
-      "symbol": "CLUSDT",
-      "stage": "entry",
-      "timestamp": 1793573154198,
-      "message_ids": [
-        1730,
-        1731,
-        1732,
-        1733
-      ]
-    },
-    "7640ba5ce8f6e6f7ba090a82": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "entry",
-      "timestamp": 1793574067239,
-      "message_ids": [
-        1734,
-        1735
-      ]
-    },
-    "b8d726e190f098daee52d681": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793574068862,
-      "message_ids": [
-        1736,
-        1737,
-        1738,
-        1739
-      ]
-    },
-    "ae1e2f1902fccf326b65b396": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793574945442,
-      "message_ids": [
-        1740,
-        1741,
-        1742,
-        1743
-      ]
-    },
-    "5ef69090066f530d87884efa": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793581276542,
-      "message_ids": [
-        1744,
-        1745
-      ]
-    },
-    "f346b74c7252b4805ce99b02": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793581278353,
-      "message_ids": [
-        1746,
-        1747
-      ]
-    },
-    "e11780bb6b3639d06af5228d": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793582152333,
-      "message_ids": [
-        1748,
-        1749
-      ]
-    },
-    "c5a07c4ea35dcb5b31a04114": {
-      "symbol": "CLUSDT",
-      "stage": "entry",
-      "timestamp": 1793582155491,
-      "message_ids": [
-        1750,
-        1751
-      ]
-    },
-    "af74d594b528ea9f0cba5566": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793585749551,
-      "message_ids": [
-        1752,
-        1753
-      ]
-    },
-    "2ac7a9af58eab329b8ab9f36": {
-      "symbol": "CLUSDT",
-      "stage": "entry",
-      "timestamp": 1793586056141,
-      "message_ids": [
-        1754,
-        1755
-      ]
-    },
-    "9c1985d2d7e77a70b0caeb7e": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793586950263,
-      "message_ids": [
-        1756,
-        1757
-      ]
-    },
-    "39adf3ee23b952c554dcc841": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793590255187,
-      "message_ids": [
-        1758,
-        1759
-      ]
-    },
-    "7deb581773a7d24adc1edb03": {
-      "symbol": "CLUSDT",
-      "stage": "entry",
-      "timestamp": 1793596555235,
-      "message_ids": [
-        1760,
-        1761
-      ]
-    },
-    "c357042843947e83d76f6f56": {
-      "symbol": "CLUSDT",
-      "stage": "entry",
-      "timestamp": 1793597751644,
-      "message_ids": [
-        1762,
-        1763
-      ]
-    },
-    "e8cb590fd9aa2998b21bfcab": {
-      "symbol": "BTCUSDT",
-      "stage": "entry",
-      "timestamp": 1793605867366,
-      "message_ids": [
-        1764,
-        1765
-      ]
-    },
-    "60f572d2aaef3d294a3ca4b3": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793611548254,
-      "message_ids": [
-        1766,
-        1767
-      ]
-    },
-    "f0297748c4162b99af640daf": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793614861786,
-      "message_ids": [
-        1768,
-        1769
-      ]
-    },
-    "0d36b3f8338e47591d8b672c": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793629687525,
-      "message_ids": [
-        1770,
-        1771
-      ]
-    },
-    "a502f945480f717b3f25d969": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793629687525,
-      "message_ids": [
-        1772,
-        1773
-      ]
-    },
-    "3f6be2dda3d65127382cd799": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793629688272,
-      "message_ids": [
-        1774,
-        1775
-      ]
-    },
-    "0dbe00352cd665fd01911234": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793629688272,
-      "message_ids": [
-        1776,
-        1777
-      ]
-    },
-    "ead75d9a33c5177678e65782": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793629871572,
-      "message_ids": [
-        1778,
-        1779
-      ]
-    },
-    "886737a08ebe2f452c39b74e": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793629871572,
-      "message_ids": [
-        1780,
-        1781
-      ]
-    },
-    "d4e9e8cefe17cb16b535c527": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793629872448,
-      "message_ids": [
-        1782,
-        1783
-      ]
-    },
-    "df9719e50603103e285a207c": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793629872448,
-      "message_ids": [
-        1784,
-        1785
-      ]
-    },
-    "378e88b176443868fa814a12": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793629872448,
-      "message_ids": [
-        1786,
-        1787
-      ]
-    },
-    "b4dece4a61080860374c680e": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793629872448,
-      "message_ids": [
-        1788,
-        1789
-      ]
-    },
-    "00808349544de1554ef2a692": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793630169394,
-      "message_ids": [
-        1790,
-        1791
-      ]
-    },
-    "fdf540530a8323456d861bdd": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793630169394,
-      "message_ids": [
-        1792,
-        1793
-      ]
-    },
-    "813ed297ac729163fca47f35": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630169815,
-      "message_ids": [
-        1794,
-        1795
-      ]
-    },
-    "f8d6b15e5832006baee58b88": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630169815,
-      "message_ids": [
-        1796,
-        1797
-      ]
-    },
-    "1bf32cb90b01ad7d9906e093": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630169815,
-      "message_ids": [
-        1798,
-        1799
-      ]
-    },
-    "666dc5f736f387e40ccdd50e": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630169815,
-      "message_ids": [
-        1800,
-        1801
-      ]
-    },
-    "0df5191dbb228687bacf5cfa": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793630255456,
-      "message_ids": [
-        1802,
-        1803
-      ]
-    },
-    "2d49cd7836ef82194880ccd8": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630256030,
-      "message_ids": [
-        1804,
-        1805
-      ]
-    },
-    "45766ebd5088cb8fcf792115": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630256030,
-      "message_ids": [
-        1806,
-        1807
-      ]
-    },
-    "84d9e79b728e31960cda4e6f": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630256030,
-      "message_ids": [
-        1808,
-        1809
-      ]
-    },
-    "b377dbdcb50609cc05db6265": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630256030,
-      "message_ids": [
-        1810,
-        1811
-      ]
-    },
-    "da5531559e53a15d272e3335": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793630455724,
-      "message_ids": [
-        1812,
-        1813
-      ]
-    },
-    "c1758821a312ce85d6cbcb8e": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793630455724,
-      "message_ids": [
-        1814,
-        1815
-      ]
-    },
-    "0d989ee1dc221dc7361ebd0a": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630456240,
-      "message_ids": [
-        1816,
-        1817
-      ]
-    },
-    "30492b2cb5e51e5ab6a60718": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630456240,
-      "message_ids": [
-        1818,
-        1819
-      ]
-    },
-    "f41a0dbb8be5c96e1ac97663": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793631102334,
-      "message_ids": [
-        1820,
-        1821
-      ]
-    },
-    "a1342c05921d204ad7723cdc": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793631103140,
-      "message_ids": [
-        1822,
-        1823,
-        1824,
-        1825
-      ]
-    },
-    "4109ebb1aa440031ce59ca81": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793631103140,
-      "message_ids": [
-        1826,
-        1827,
-        1828,
-        1829
-      ]
-    },
-    "58d59df1da09ee33c73adc13": {
-      "symbol": "AMZNUSDT",
-      "stage": "entry",
-      "timestamp": 1793633457169,
-      "message_ids": [
-        1830,
-        1831
-      ]
-    },
-    "fa1b37cc430663c793b5941c": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793639762713,
-      "message_ids": [
-        1832,
-        1833
-      ]
-    },
-    "3c634fce110edf20c8647d06": {
-      "symbol": "QQQUSDT",
-      "stage": "entry",
-      "timestamp": 1793640679562,
-      "message_ids": [
-        1834,
-        1835,
-        1836,
-        1837
-      ]
-    },
-    "dbb65f71b9f48d77bb7ad4d3": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793647257651,
-      "message_ids": [
-        1838,
-        1839,
-        1840,
-        1841
-      ]
-    },
-    "a038104a3447c6f53726a371": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793647864956,
-      "message_ids": [
-        1842,
-        1843
-      ]
-    },
-    "4a0b7832da108e70e9ad6f35": {
-      "symbol": "BTCUSDT",
-      "stage": "entry",
-      "timestamp": 1793686269604,
-      "message_ids": [
-        1844,
-        1845,
-        1846,
-        1847
-      ]
-    },
-    "0ebfd43708f3ca5b4157623c": {
-      "symbol": "SPYUSDT",
-      "stage": "entry",
-      "timestamp": 1793689573113,
-      "message_ids": [
-        1848,
-        1849
-      ]
-    },
-    "7c31b5ddb58700b9fad885d7": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793712963315,
-      "message_ids": [
-        1850,
-        1851,
-        1852,
-        1853
-      ]
-    },
-    "c800fe4272f8153b5b390941": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793713564840,
-      "message_ids": [
-        1854,
-        1855
-      ]
-    },
-    "055575b7c350ede64cb1ec5b": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793713564840,
-      "message_ids": [
-        1856,
-        1857,
-        1858,
-        1859
-      ]
-    },
-    "cf71009c100009234467e742": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793713564840,
-      "message_ids": [
-        1860,
-        1861,
-        1862,
-        1863
-      ]
-    },
-    "d4dcc91fd3ed4d4c6a3ca24f": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793723142867,
-      "message_ids": [
-        1864,
-        1865
-      ]
-    },
-    "f8a4c183baed023adc8398df": {
-      "symbol": "QQQUSDT",
-      "stage": "entry",
-      "timestamp": 1793754356848,
-      "message_ids": [
-        1866,
-        1867,
-        1868,
-        1869
-      ]
-    },
-    "e43eea08ef416498589d4190": {
-      "symbol": "BTCUSDT",
-      "stage": "entry",
-      "timestamp": 1793761560512,
-      "message_ids": [
-        1870,
-        1871,
-        1872,
-        1873
-      ]
-    },
-    "b98d9cf56609485c87b51a0b": {
-      "symbol": "GOOGLUSDT",
-      "stage": "entry",
-      "timestamp": 1793761839343,
-      "message_ids": [
-        1874,
-        1875,
-        1876,
-        1877
-      ]
-    },
-    "8f47a5caeecfbe20a30bee06": {
-      "symbol": "BTCUSDT",
-      "stage": "entry",
-      "timestamp": 1793784949539,
-      "message_ids": [
-        1878,
-        1879
-      ]
-    },
-    "487e32205b77600c735864b6": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793786483124,
-      "message_ids": [
-        1880,
-        1881
-      ]
-    },
-    "2e7e06489288daa2ef2550aa": {
-      "symbol": "AMZNUSDT",
-      "stage": "entry",
-      "timestamp": 1793801460837,
-      "message_ids": [
-        1882,
-        1883,
-        1884,
-        1885
-      ]
-    },
-    "6199a4d0d4386a41da8162ac": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1793802986541,
-      "message_ids": [
-        1886,
-        1887,
-        1888,
-        1889
-      ]
-    },
-    "bddae2b443087f42e1514006": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793803557486,
-      "message_ids": [
-        1890,
-        1891,
-        1892,
-        1893
-      ]
-    },
-    "45f9cdfc244f856a71273e08": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793803557486,
-      "message_ids": [
-        1894,
-        1895,
-        1896,
-        1897
-      ]
-    },
-    "22cd771029e08fe2f9f705e2": {
-      "symbol": "CLUSDT",
-      "stage": "entry",
-      "timestamp": 1793810352420,
-      "message_ids": [
-        1898,
-        1899,
-        1900,
-        1901
-      ]
-    },
-    "ef78973c904b7f43a9388445": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793810353279,
-      "message_ids": [
-        1902,
-        1903,
-        1904,
-        1905
-      ]
-    },
-    "84708c3c6278ff767b6c2843": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793810353279,
-      "message_ids": [
-        1906,
-        1907,
-        1908,
-        1909
-      ]
-    },
-    "a793ba4cd49a42779f52e423": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793810353279,
-      "message_ids": [
-        1910,
-        1911,
-        1912,
-        1913
-      ]
-    },
-    "03aff4887600f8faa2812ec0": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "entry",
-      "timestamp": 1793838674097,
-      "message_ids": [
-        1914,
-        1915
-      ]
-    },
-    "b7e6cd1e77377e3ac7354545": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "entry",
-      "timestamp": 1793840492384,
-      "message_ids": [
-        1916,
-        1917
-      ]
-    },
-    "fc881f46d4f49917405b87a6": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1793841357607,
-      "message_ids": [
-        1918,
-        1919
-      ]
-    },
-    "aee3a200c332b55e83a7b743": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1793841643864,
-      "message_ids": [
-        1920,
-        1921,
-        1922,
-        1923
-      ]
-    },
-    "fd288cf2d3a91ec7d69ca22d": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "entry",
-      "timestamp": 1793841950693,
-      "message_ids": [
-        1924,
-        1925
-      ]
-    },
-    "dba61f501d59a7842f1b9843": {
-      "symbol": "AMZNUSDT",
-      "stage": "entry",
-      "timestamp": 1793883972056,
-      "message_ids": [
-        1926,
-        1927
-      ]
-    },
-    "4d10aff0e3a194c3e756c2be": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793889068030,
-      "message_ids": [
-        1928,
-        1929,
-        1930,
-        1931
-      ]
-    },
-    "40dcd1d8c116325eef61ead7": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793889068030,
-      "message_ids": [
-        1932,
-        1933,
-        1934,
-        1935
-      ]
-    },
-    "14905a7607fe40ac003d7603": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793889068030,
-      "message_ids": [
-        1936,
-        1937,
-        1938,
-        1939
-      ]
-    },
-    "0729b0983052de76def5b0d3": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793889367258,
-      "message_ids": [
-        1940,
-        1941,
-        1942,
-        1943
-      ]
-    },
-    "9b565bec6f04f97af5a33c78": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793889367258,
-      "message_ids": [
-        1944,
-        1945,
-        1946,
-        1947
-      ]
-    },
-    "16419d8950df77704ebbf95b": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1793889655303,
-      "message_ids": [
-        1948,
-        1949,
-        1950,
-        1951
-      ]
-    },
-    "8edf01a3ef654b0411caec80": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1793890249824,
-      "message_ids": [
-        1952,
-        1953,
-        1954,
-        1955
-      ]
-    },
-    "014d08cf5f5d7bb3ef521ae0": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793890568234,
-      "message_ids": [
-        1956,
-        1957,
-        1958,
-        1959
-      ]
-    },
-    "02a84c9aa52dc6407f6cd527": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793890568234,
-      "message_ids": [
-        1960,
-        1961,
-        1962,
-        1963
-      ]
-    },
-    "fcb1c8cb30a483d7d0eacbed": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793890568234,
-      "message_ids": [
-        1964,
-        1965,
-        1966,
-        1967
-      ]
-    },
-    "6e04d239067c17a0bd47534d": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793890895131,
-      "message_ids": [
-        1968,
-        1969
-      ]
-    },
-    "e9be4e0f7ad046f0ab1cb93b": {
-      "symbol": "BTCUSDT",
-      "stage": "entry",
-      "timestamp": 1793891418895,
-      "message_ids": [
-        1970,
-        1971,
-        1972,
-        1973
-      ]
-    },
-    "12875ed30ce583943d42a6c8": {
-      "symbol": "QQQUSDT",
-      "stage": "entry",
-      "timestamp": 1793891424946,
-      "message_ids": [
-        1974,
-        1975,
-        1976,
-        1977
-      ]
-    },
-    "e5f7e4676bbc7f3a53510566": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1793891508918,
-      "message_ids": [
-        1978,
-        1979,
-        1980,
-        1981
-      ]
-    },
-    "52296707cb5552c80a14f8e8": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793891785868,
-      "message_ids": [
-        1982,
-        1983
-      ]
-    },
-    "d4ff76ff1d137851e4eddf66": {
-      "symbol": "SPYUSDT",
-      "stage": "entry",
-      "timestamp": 1793893573361,
-      "message_ids": [
-        1984,
-        1985
-      ]
-    },
-    "914f97917adbcc4df6814c47": {
-      "symbol": "SPYUSDT",
-      "stage": "entry",
-      "timestamp": 1793913066674,
-      "message_ids": [
-        1986,
-        1987
-      ]
-    },
-    "02239f3b87510931f6d5d09f": {
-      "symbol": "SPYUSDT",
-      "stage": "entry",
-      "timestamp": 1793913066674,
-      "message_ids": [
-        1988,
-        1989
-      ]
-    },
-    "ad89947526c073b30f89f578": {
-      "symbol": "SPYUSDT",
-      "stage": "entry",
-      "timestamp": 1793913066674,
-      "message_ids": [
-        1990,
-        1991
-      ]
-    },
-    "99c5f84d79269bd932e0f70b": {
-      "symbol": "SPYUSDT",
-      "stage": "entry",
-      "timestamp": 1793920252878,
-      "message_ids": [
-        1992,
-        1993
-      ]
-    },
-    "4d3fb066cf855eeb7bac22db": {
-      "symbol": "GOOGLUSDT",
-      "stage": "entry",
-      "timestamp": 1793976134157,
-      "message_ids": [
-        1994,
-        1995
-      ]
-    },
-    "0f5a8c2cf5403f0485bcf0b8": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1794170150926,
-      "message_ids": [
-        1996,
-        1997
-      ]
-    },
-    "98ce6884846640da24709e9e": {
-      "symbol": "ADBEUSDT",
-      "stage": "star1",
-      "timestamp": 1794290772725,
-      "message_ids": [
-        1998,
-        1999
-      ]
-    },
-    "3db652221d647594ba1fa470": {
-      "symbol": "POPMARTUSDT",
-      "stage": "star2",
-      "timestamp": 1794301586549,
-      "message_ids": [
-        2000,
-        2001
-      ]
-    },
-    "08794be936465cd45f96118f": {
-      "symbol": "MRKUSDT",
-      "stage": "star2",
-      "timestamp": 1794305471788,
-      "message_ids": [
-        2002,
-        2003
-      ]
-    },
-    "7629f0da52692d8675da588f": {
-      "symbol": "SPYUSDT",
-      "stage": "star1",
-      "timestamp": 1794317534051,
-      "message_ids": [
-        2004,
-        2005
-      ]
-    },
-    "69838231f4d116cd5d1da491": {
-      "symbol": "TMFUSDT",
-      "stage": "star1",
-      "timestamp": 1794317776561,
-      "message_ids": [
-        2006,
-        2007
-      ]
-    },
-    "11eca3c9aae6af92b17eb3bd": {
-      "symbol": "GOOGLUSDT",
-      "stage": "star1",
-      "timestamp": 1794318959952,
-      "message_ids": [
-        2008,
-        2009
-      ]
-    },
-    "c5ac47b209624d967d172c72": {
-      "symbol": "EWZUSDT",
-      "stage": "star1",
-      "timestamp": 1794321674722,
-      "message_ids": [
-        2010,
-        2011
-      ]
-    },
-    "aec304764ba1002a1367e9df": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "star1",
-      "timestamp": 1794324356495,
-      "message_ids": [
-        2012,
-        2013
-      ]
-    },
-    "a50a80d200ef2cc55f43d96d": {
-      "symbol": "EWZUSDT",
-      "stage": "star1",
-      "timestamp": 1794324976578,
-      "message_ids": [
-        2014,
-        2015
-      ]
-    },
-    "122ae91e7dd6c3d3c752ec05": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "star2",
-      "timestamp": 1794325873715,
-      "message_ids": [
-        2016,
-        2017
-      ]
-    },
-    "1ce21a7a1efc55fa08d20a62": {
-      "symbol": "EWZUSDT",
-      "stage": "star2",
-      "timestamp": 1794328866422,
-      "message_ids": [
-        2018,
-        2019
-      ]
-    },
-    "9a2ee87e3b18151c89576278": {
-      "symbol": "MSFTUSDT",
-      "stage": "star2",
-      "timestamp": 1794331554863,
-      "message_ids": [
-        2020,
-        2021
-      ]
-    },
-    "5937f51df362dd9211c00215": {
-      "symbol": "EWZUSDT",
-      "stage": "star2",
-      "timestamp": 1794334269436,
-      "message_ids": [
-        2022,
-        2023
-      ]
-    },
-    "b9676c2baf99c3b412e49aca": {
-      "symbol": "VUSDT",
-      "stage": "star2",
-      "timestamp": 1794370569435,
-      "message_ids": [
-        2024,
-        2025
-      ]
-    },
-    "6f4a0d8b940db24ea9195599": {
-      "symbol": "ADBEUSDT",
-      "stage": "star2",
-      "timestamp": 1794384356130,
-      "message_ids": [
-        2026,
-        2027
-      ]
-    },
-    "18caab2f1669b55db5bef0ea": {
-      "symbol": "QQQUSDT",
-      "stage": "star1",
-      "timestamp": 1794417685520,
-      "message_ids": [
-        2029,
-        2030
-      ]
-    },
-    "176ca2014b9e8543e90e047a": {
-      "symbol": "NAVERUSDT",
-      "stage": "star1",
-      "timestamp": 1794445868945,
-      "message_ids": [
-        2031,
-        2032
-      ]
-    },
-    "b8821d7ee61f385dfc02762b": {
-      "symbol": "QQQUSDT",
-      "stage": "star1",
-      "timestamp": 1794476468646,
-      "message_ids": [
-        2033,
-        2034
-      ]
-    },
-    "e3b12e0feab2abb7d073d118": {
-      "symbol": "AMZNUSDT",
-      "stage": "star1",
-      "timestamp": 1794491572673,
-      "message_ids": [
-        2053,
-        2054
-      ]
-    }
-  },
+  "tracks": {},
+  "delivered": {},
   "pending": {},
   "locks": {},
   "profile_migration": {
@@ -2209,1718 +15,7 @@
     ],
     "preserved_medium_long_locks": true
   },
-  "images_delivered": {
-    "747ca1c2d9c419b472aa97eb": {
-      "symbol": "BTCUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224273
-    },
-    "729a10e4e885a9a51d24afca": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224289
-    },
-    "922caeb16edd758661abc4d2": {
-      "symbol": "NVDAUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224307
-    },
-    "b75da8e286ffce23dba727b8": {
-      "symbol": "NVDAUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224307
-    },
-    "0721fa52e97a03b4c0c3d9c8": {
-      "symbol": "TSLAUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224324
-    },
-    "29029a8ec85632770224a9ce": {
-      "symbol": "AAPLUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224341
-    },
-    "8dca807421e3a085edd335cf": {
-      "symbol": "MSFTUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224357
-    },
-    "4c9755bb171089f75cffddf7": {
-      "symbol": "MSFTUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224357
-    },
-    "79a92ecb7caf2301640e84c1": {
-      "symbol": "AMZNUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224377
-    },
-    "8db7ef01fb3e9a69992dbec7": {
-      "symbol": "GOOGLUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224394
-    },
-    "3021c63280d8cc472e151c8a": {
-      "symbol": "METAUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224413
-    },
-    "ec657fd00bc380b91eb12675": {
-      "symbol": "QQQUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224432
-    },
-    "cbe264bb49c26cdba08fb4a5": {
-      "symbol": "SPYUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224453
-    },
-    "03e451907c0b40e605604437": {
-      "symbol": "SPYUSDT",
-      "stage": "prepared",
-      "timestamp": 1793213224453
-    },
-    "0033cb98cef9a8cf6c429c6e": {
-      "symbol": "NDX100USDT",
-      "stage": "prepared",
-      "timestamp": 1793213224472
-    },
-    "c8fbbf00cb3f6c4fab319632": {
-      "symbol": "NDX100USDT",
-      "stage": "prepared",
-      "timestamp": 1793213224472
-    },
-    "d17f257269ea844a0cbd644a": {
-      "symbol": "SPYUSDT",
-      "stage": "approach",
-      "timestamp": 1793215811193
-    },
-    "7e695eae7bc245fd01c309eb": {
-      "symbol": "NDX100USDT",
-      "stage": "approach",
-      "timestamp": 1793215811208
-    },
-    "2749596672a14a2d0fe0193e": {
-      "symbol": "MSFTUSDT",
-      "stage": "approach",
-      "timestamp": 1793217049629
-    },
-    "b595bafacaa89cda35baa5ad": {
-      "symbol": "MSFTUSDT",
-      "stage": "approach",
-      "timestamp": 1793217687568
-    },
-    "39b0b25193dff4b467cce206": {
-      "symbol": "SPYUSDT",
-      "stage": "approach",
-      "timestamp": 1793217689677
-    },
-    "d74b9f581a3b71f271715f33": {
-      "symbol": "AAPLUSDT",
-      "stage": "approach",
-      "timestamp": 1793250634673
-    },
-    "5399e3ca0398775aabff18ed": {
-      "symbol": "BZUSDT",
-      "stage": "approach",
-      "timestamp": 1793270924200
-    },
-    "69b15461aa6b73f2527d73d2": {
-      "symbol": "BZUSDT",
-      "stage": "approach",
-      "timestamp": 1793271252037
-    },
-    "972f2551e60315346487872a": {
-      "symbol": "BZUSDT",
-      "stage": "approach",
-      "timestamp": 1793275271205
-    },
-    "2f884604d265358170f2ef5c": {
-      "symbol": "BTCUSDT",
-      "stage": "approach",
-      "timestamp": 1793460981825,
-      "message_ids": [
-        1606,
-        1607
-      ]
-    },
-    "d79098f0bb2dd2ae0b764f44": {
-      "symbol": "BTCUSDT",
-      "stage": "approach",
-      "timestamp": 1793460981825,
-      "message_ids": [
-        1608,
-        1609
-      ]
-    },
-    "5cba71dbb3022cf7b076497e": {
-      "symbol": "BTCUSDT",
-      "stage": "approach",
-      "timestamp": 1793460981825,
-      "message_ids": [
-        1610,
-        1611
-      ]
-    },
-    "028c11a16056be9b3676e079": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "approach",
-      "timestamp": 1793460981977,
-      "message_ids": [
-        1612,
-        1613,
-        1614,
-        1615
-      ]
-    },
-    "ce1aa08cd93e6df63e3ab910": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "approach",
-      "timestamp": 1793460981977,
-      "message_ids": [
-        1616,
-        1617
-      ]
-    },
-    "a14fc5858d88c478ea756cc7": {
-      "symbol": "NVDAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982108,
-      "message_ids": [
-        1618,
-        1619
-      ]
-    },
-    "95a7678afc3e789134dbdb4e": {
-      "symbol": "NVDAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982108,
-      "message_ids": [
-        1620,
-        1621
-      ]
-    },
-    "e70e91e3e3cc21af429251bf": {
-      "symbol": "NVDAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982108,
-      "message_ids": [
-        1622,
-        1623
-      ]
-    },
-    "34cf802256e5628c2d864723": {
-      "symbol": "TSLAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982246,
-      "message_ids": [
-        1624,
-        1625,
-        1626,
-        1627
-      ]
-    },
-    "9819724798cd0a0f2698d3d4": {
-      "symbol": "TSLAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982246,
-      "message_ids": [
-        1628,
-        1629,
-        1630,
-        1631
-      ]
-    },
-    "51b5c84693855ea5dfbf4c0f": {
-      "symbol": "TSLAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982246,
-      "message_ids": [
-        1632,
-        1633
-      ]
-    },
-    "91f6d7dcd02ff1b49f146106": {
-      "symbol": "AAPLUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982387,
-      "message_ids": [
-        1634,
-        1635
-      ]
-    },
-    "b9d788aba2b828a7c0668013": {
-      "symbol": "AAPLUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982387,
-      "message_ids": [
-        1636,
-        1637
-      ]
-    },
-    "a47aa28f35de6bd6c5980f92": {
-      "symbol": "MSFTUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982519,
-      "message_ids": [
-        1638,
-        1639,
-        1640,
-        1641
-      ]
-    },
-    "8a45f7970b4c9b55d2ab00a3": {
-      "symbol": "MSFTUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982519,
-      "message_ids": [
-        1642,
-        1643
-      ]
-    },
-    "b3dcbb1a00b7de51afc6d6a8": {
-      "symbol": "MSFTUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982519,
-      "message_ids": [
-        1644,
-        1645,
-        1646,
-        1647
-      ]
-    },
-    "107f4bedd3fc128b9ac53239": {
-      "symbol": "AMZNUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982660,
-      "message_ids": [
-        1648,
-        1649
-      ]
-    },
-    "84f6eb22aa006bc4038f0664": {
-      "symbol": "AMZNUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982660,
-      "message_ids": [
-        1650,
-        1651
-      ]
-    },
-    "586c25915d39cf51fd22af30": {
-      "symbol": "AMZNUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982660,
-      "message_ids": [
-        1652,
-        1653
-      ]
-    },
-    "489ab07bb959ac03fd0bf254": {
-      "symbol": "AMZNUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982660,
-      "message_ids": [
-        1654,
-        1655
-      ]
-    },
-    "5c041baf1407347812e507fb": {
-      "symbol": "GOOGLUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982793,
-      "message_ids": [
-        1656,
-        1657
-      ]
-    },
-    "182ffa2c7506d9affc86d6c0": {
-      "symbol": "METAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982931,
-      "message_ids": [
-        1658,
-        1659
-      ]
-    },
-    "e13010a318c22f983a617e2e": {
-      "symbol": "METAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982931,
-      "message_ids": [
-        1660,
-        1661,
-        1662,
-        1663
-      ]
-    },
-    "50c0e629209384a43d9efae1": {
-      "symbol": "METAUSDT",
-      "stage": "approach",
-      "timestamp": 1793460982931,
-      "message_ids": [
-        1664,
-        1665,
-        1666,
-        1667
-      ]
-    },
-    "46a5a1c344f361129da326ed": {
-      "symbol": "QQQUSDT",
-      "stage": "approach",
-      "timestamp": 1793460983082,
-      "message_ids": [
-        1668,
-        1669,
-        1670,
-        1671
-      ]
-    },
-    "ddfabda25b1ab47b3af6bf92": {
-      "symbol": "SPYUSDT",
-      "stage": "approach",
-      "timestamp": 1793460983217,
-      "message_ids": [
-        1672,
-        1673
-      ]
-    },
-    "bdaa125327e9a898cebda945": {
-      "symbol": "SPYUSDT",
-      "stage": "approach",
-      "timestamp": 1793460983217,
-      "message_ids": [
-        1674,
-        1675
-      ]
-    },
-    "4db6d6f3f06b22698b84f3ab": {
-      "symbol": "CLUSDT",
-      "stage": "approach",
-      "timestamp": 1793460983366,
-      "message_ids": [
-        1676,
-        1677,
-        1678,
-        1679
-      ]
-    },
-    "99bb11d03d689154a3d1bdea": {
-      "symbol": "CLUSDT",
-      "stage": "approach",
-      "timestamp": 1793460983366,
-      "message_ids": [
-        1680,
-        1681,
-        1682,
-        1683
-      ]
-    },
-    "e24b22aad8ea352133e8b5dc": {
-      "symbol": "BZUSDT",
-      "stage": "approach",
-      "timestamp": 1793460983530,
-      "message_ids": [
-        1684,
-        1685,
-        1686,
-        1687
-      ]
-    },
-    "704e66a77236f637510714a6": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1793462071439,
-      "message_ids": [
-        1688,
-        1689
-      ]
-    },
-    "8592f8a259837ae5372cb5f1": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793462072442,
-      "message_ids": [
-        1690,
-        1691
-      ]
-    },
-    "0cce0257a89ee035ad7c615c": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793462073468,
-      "message_ids": [
-        1692,
-        1693
-      ]
-    },
-    "410a3b14b313c8d518709627": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793463340870,
-      "message_ids": [
-        1694,
-        1695,
-        1696,
-        1697
-      ]
-    },
-    "e70afd031e0ba9f04a4ae919": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793463342390,
-      "message_ids": [
-        1698,
-        1699
-      ]
-    },
-    "8016daa9cf78ab0b8baad92b": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793470844521,
-      "message_ids": [
-        1700,
-        1701
-      ]
-    },
-    "4ee895e2e25ebfebd5294eb3": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793475347612,
-      "message_ids": [
-        1702,
-        1703
-      ]
-    },
-    "99067749d405d125315cbaf5": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793482851561,
-      "message_ids": [
-        1704,
-        1705
-      ]
-    },
-    "1cc58d553da34b1978d5a691": {
-      "symbol": "SPYUSDT",
-      "stage": "entry",
-      "timestamp": 1793482852336,
-      "message_ids": [
-        1706,
-        1707
-      ]
-    },
-    "a9ee91ecc92dadd6311f3f16": {
-      "symbol": "SPYUSDT",
-      "stage": "entry",
-      "timestamp": 1793482852336,
-      "message_ids": [
-        1708,
-        1709
-      ]
-    },
-    "70e488a9d5b9b7accd7a55d5": {
-      "symbol": "CLUSDT",
-      "stage": "entry",
-      "timestamp": 1793486152356,
-      "message_ids": [
-        1710,
-        1711,
-        1712,
-        1713
-      ]
-    },
-    "ad17f2c234c5d9bbecbaa818": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793498464012,
-      "message_ids": [
-        1714,
-        1715
-      ]
-    },
-    "ba9353450a5b352f117e0cae": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793508649690,
-      "message_ids": [
-        1716,
-        1717
-      ]
-    },
-    "60c3136aa707881f811ed5c5": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793527264005,
-      "message_ids": [
-        1718,
-        1719
-      ]
-    },
-    "2d2c89f94781836dc6f0d617": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1793557247089,
-      "message_ids": [
-        1720,
-        1721
-      ]
-    },
-    "1420426b74873eb145b5e9f0": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793560552742,
-      "message_ids": [
-        1722,
-        1723
-      ]
-    },
-    "1e3fefe9388016230cfad0fd": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793560843520,
-      "message_ids": [
-        1724,
-        1725
-      ]
-    },
-    "03764f511cbbfe7af301e156": {
-      "symbol": "CLUSDT",
-      "stage": "entry",
-      "timestamp": 1793563281945,
-      "message_ids": [
-        1726,
-        1727,
-        1728,
-        1729
-      ]
-    },
-    "44a466714ba421cdd7349b34": {
-      "symbol": "CLUSDT",
-      "stage": "entry",
-      "timestamp": 1793573154198,
-      "message_ids": [
-        1730,
-        1731,
-        1732,
-        1733
-      ]
-    },
-    "7640ba5ce8f6e6f7ba090a82": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "entry",
-      "timestamp": 1793574067239,
-      "message_ids": [
-        1734,
-        1735
-      ]
-    },
-    "b8d726e190f098daee52d681": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793574068862,
-      "message_ids": [
-        1736,
-        1737,
-        1738,
-        1739
-      ]
-    },
-    "ae1e2f1902fccf326b65b396": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793574945442,
-      "message_ids": [
-        1740,
-        1741,
-        1742,
-        1743
-      ]
-    },
-    "5ef69090066f530d87884efa": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793581276542,
-      "message_ids": [
-        1744,
-        1745
-      ]
-    },
-    "f346b74c7252b4805ce99b02": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793581278353,
-      "message_ids": [
-        1746,
-        1747
-      ]
-    },
-    "e11780bb6b3639d06af5228d": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793582152333,
-      "message_ids": [
-        1748,
-        1749
-      ]
-    },
-    "c5a07c4ea35dcb5b31a04114": {
-      "symbol": "CLUSDT",
-      "stage": "entry",
-      "timestamp": 1793582155491,
-      "message_ids": [
-        1750,
-        1751
-      ]
-    },
-    "af74d594b528ea9f0cba5566": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793585749551,
-      "message_ids": [
-        1752,
-        1753
-      ]
-    },
-    "2ac7a9af58eab329b8ab9f36": {
-      "symbol": "CLUSDT",
-      "stage": "entry",
-      "timestamp": 1793586056141,
-      "message_ids": [
-        1754,
-        1755
-      ]
-    },
-    "9c1985d2d7e77a70b0caeb7e": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793586950263,
-      "message_ids": [
-        1756,
-        1757
-      ]
-    },
-    "39adf3ee23b952c554dcc841": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793590255187,
-      "message_ids": [
-        1758,
-        1759
-      ]
-    },
-    "7deb581773a7d24adc1edb03": {
-      "symbol": "CLUSDT",
-      "stage": "entry",
-      "timestamp": 1793596555235,
-      "message_ids": [
-        1760,
-        1761
-      ]
-    },
-    "c357042843947e83d76f6f56": {
-      "symbol": "CLUSDT",
-      "stage": "entry",
-      "timestamp": 1793597751644,
-      "message_ids": [
-        1762,
-        1763
-      ]
-    },
-    "e8cb590fd9aa2998b21bfcab": {
-      "symbol": "BTCUSDT",
-      "stage": "entry",
-      "timestamp": 1793605867366,
-      "message_ids": [
-        1764,
-        1765
-      ]
-    },
-    "60f572d2aaef3d294a3ca4b3": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793611548254,
-      "message_ids": [
-        1766,
-        1767
-      ]
-    },
-    "f0297748c4162b99af640daf": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793614861786,
-      "message_ids": [
-        1768,
-        1769
-      ]
-    },
-    "0d36b3f8338e47591d8b672c": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793629687525,
-      "message_ids": [
-        1770,
-        1771
-      ]
-    },
-    "a502f945480f717b3f25d969": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793629687525,
-      "message_ids": [
-        1772,
-        1773
-      ]
-    },
-    "3f6be2dda3d65127382cd799": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793629688272,
-      "message_ids": [
-        1774,
-        1775
-      ]
-    },
-    "0dbe00352cd665fd01911234": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793629688272,
-      "message_ids": [
-        1776,
-        1777
-      ]
-    },
-    "ead75d9a33c5177678e65782": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793629871572,
-      "message_ids": [
-        1778,
-        1779
-      ]
-    },
-    "886737a08ebe2f452c39b74e": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793629871572,
-      "message_ids": [
-        1780,
-        1781
-      ]
-    },
-    "d4e9e8cefe17cb16b535c527": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793629872448,
-      "message_ids": [
-        1782,
-        1783
-      ]
-    },
-    "df9719e50603103e285a207c": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793629872448,
-      "message_ids": [
-        1784,
-        1785
-      ]
-    },
-    "378e88b176443868fa814a12": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793629872448,
-      "message_ids": [
-        1786,
-        1787
-      ]
-    },
-    "b4dece4a61080860374c680e": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793629872448,
-      "message_ids": [
-        1788,
-        1789
-      ]
-    },
-    "00808349544de1554ef2a692": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793630169394,
-      "message_ids": [
-        1790,
-        1791
-      ]
-    },
-    "fdf540530a8323456d861bdd": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793630169394,
-      "message_ids": [
-        1792,
-        1793
-      ]
-    },
-    "813ed297ac729163fca47f35": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630169815,
-      "message_ids": [
-        1794,
-        1795
-      ]
-    },
-    "f8d6b15e5832006baee58b88": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630169815,
-      "message_ids": [
-        1796,
-        1797
-      ]
-    },
-    "1bf32cb90b01ad7d9906e093": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630169815,
-      "message_ids": [
-        1798,
-        1799
-      ]
-    },
-    "666dc5f736f387e40ccdd50e": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630169815,
-      "message_ids": [
-        1800,
-        1801
-      ]
-    },
-    "0df5191dbb228687bacf5cfa": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793630255456,
-      "message_ids": [
-        1802,
-        1803
-      ]
-    },
-    "2d49cd7836ef82194880ccd8": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630256030,
-      "message_ids": [
-        1804,
-        1805
-      ]
-    },
-    "45766ebd5088cb8fcf792115": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630256030,
-      "message_ids": [
-        1806,
-        1807
-      ]
-    },
-    "84d9e79b728e31960cda4e6f": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630256030,
-      "message_ids": [
-        1808,
-        1809
-      ]
-    },
-    "b377dbdcb50609cc05db6265": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630256030,
-      "message_ids": [
-        1810,
-        1811
-      ]
-    },
-    "da5531559e53a15d272e3335": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793630455724,
-      "message_ids": [
-        1812,
-        1813
-      ]
-    },
-    "c1758821a312ce85d6cbcb8e": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793630455724,
-      "message_ids": [
-        1814,
-        1815
-      ]
-    },
-    "0d989ee1dc221dc7361ebd0a": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630456240,
-      "message_ids": [
-        1816,
-        1817
-      ]
-    },
-    "30492b2cb5e51e5ab6a60718": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793630456240,
-      "message_ids": [
-        1818,
-        1819
-      ]
-    },
-    "f41a0dbb8be5c96e1ac97663": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793631102334,
-      "message_ids": [
-        1820,
-        1821
-      ]
-    },
-    "a1342c05921d204ad7723cdc": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793631103140,
-      "message_ids": [
-        1822,
-        1823,
-        1824,
-        1825
-      ]
-    },
-    "4109ebb1aa440031ce59ca81": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793631103140,
-      "message_ids": [
-        1826,
-        1827,
-        1828,
-        1829
-      ]
-    },
-    "58d59df1da09ee33c73adc13": {
-      "symbol": "AMZNUSDT",
-      "stage": "entry",
-      "timestamp": 1793633457169,
-      "message_ids": [
-        1830,
-        1831
-      ]
-    },
-    "fa1b37cc430663c793b5941c": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793639762713,
-      "message_ids": [
-        1832,
-        1833
-      ]
-    },
-    "3c634fce110edf20c8647d06": {
-      "symbol": "QQQUSDT",
-      "stage": "entry",
-      "timestamp": 1793640679562,
-      "message_ids": [
-        1834,
-        1835,
-        1836,
-        1837
-      ]
-    },
-    "dbb65f71b9f48d77bb7ad4d3": {
-      "symbol": "MSFTUSDT",
-      "stage": "entry",
-      "timestamp": 1793647257651,
-      "message_ids": [
-        1838,
-        1839,
-        1840,
-        1841
-      ]
-    },
-    "a038104a3447c6f53726a371": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793647864956,
-      "message_ids": [
-        1842,
-        1843
-      ]
-    },
-    "4a0b7832da108e70e9ad6f35": {
-      "symbol": "BTCUSDT",
-      "stage": "entry",
-      "timestamp": 1793686269604,
-      "message_ids": [
-        1844,
-        1845,
-        1846,
-        1847
-      ]
-    },
-    "0ebfd43708f3ca5b4157623c": {
-      "symbol": "SPYUSDT",
-      "stage": "entry",
-      "timestamp": 1793689573113,
-      "message_ids": [
-        1848,
-        1849
-      ]
-    },
-    "7c31b5ddb58700b9fad885d7": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793712963315,
-      "message_ids": [
-        1850,
-        1851,
-        1852,
-        1853
-      ]
-    },
-    "c800fe4272f8153b5b390941": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793713564840,
-      "message_ids": [
-        1854,
-        1855
-      ]
-    },
-    "055575b7c350ede64cb1ec5b": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793713564840,
-      "message_ids": [
-        1856,
-        1857,
-        1858,
-        1859
-      ]
-    },
-    "cf71009c100009234467e742": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793713564840,
-      "message_ids": [
-        1860,
-        1861,
-        1862,
-        1863
-      ]
-    },
-    "d4dcc91fd3ed4d4c6a3ca24f": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793723142867,
-      "message_ids": [
-        1864,
-        1865
-      ]
-    },
-    "f8a4c183baed023adc8398df": {
-      "symbol": "QQQUSDT",
-      "stage": "entry",
-      "timestamp": 1793754356848,
-      "message_ids": [
-        1866,
-        1867,
-        1868,
-        1869
-      ]
-    },
-    "e43eea08ef416498589d4190": {
-      "symbol": "BTCUSDT",
-      "stage": "entry",
-      "timestamp": 1793761560512,
-      "message_ids": [
-        1870,
-        1871,
-        1872,
-        1873
-      ]
-    },
-    "b98d9cf56609485c87b51a0b": {
-      "symbol": "GOOGLUSDT",
-      "stage": "entry",
-      "timestamp": 1793761839343,
-      "message_ids": [
-        1874,
-        1875,
-        1876,
-        1877
-      ]
-    },
-    "8f47a5caeecfbe20a30bee06": {
-      "symbol": "BTCUSDT",
-      "stage": "entry",
-      "timestamp": 1793784949539,
-      "message_ids": [
-        1878,
-        1879
-      ]
-    },
-    "487e32205b77600c735864b6": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793786483124,
-      "message_ids": [
-        1880,
-        1881
-      ]
-    },
-    "2e7e06489288daa2ef2550aa": {
-      "symbol": "AMZNUSDT",
-      "stage": "entry",
-      "timestamp": 1793801460837,
-      "message_ids": [
-        1882,
-        1883,
-        1884,
-        1885
-      ]
-    },
-    "6199a4d0d4386a41da8162ac": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1793802986541,
-      "message_ids": [
-        1886,
-        1887,
-        1888,
-        1889
-      ]
-    },
-    "bddae2b443087f42e1514006": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793803557486,
-      "message_ids": [
-        1890,
-        1891,
-        1892,
-        1893
-      ]
-    },
-    "45f9cdfc244f856a71273e08": {
-      "symbol": "AAPLUSDT",
-      "stage": "entry",
-      "timestamp": 1793803557486,
-      "message_ids": [
-        1894,
-        1895,
-        1896,
-        1897
-      ]
-    },
-    "22cd771029e08fe2f9f705e2": {
-      "symbol": "CLUSDT",
-      "stage": "entry",
-      "timestamp": 1793810352420,
-      "message_ids": [
-        1898,
-        1899,
-        1900,
-        1901
-      ]
-    },
-    "ef78973c904b7f43a9388445": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793810353279,
-      "message_ids": [
-        1902,
-        1903,
-        1904,
-        1905
-      ]
-    },
-    "84708c3c6278ff767b6c2843": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793810353279,
-      "message_ids": [
-        1906,
-        1907,
-        1908,
-        1909
-      ]
-    },
-    "a793ba4cd49a42779f52e423": {
-      "symbol": "BZUSDT",
-      "stage": "entry",
-      "timestamp": 1793810353279,
-      "message_ids": [
-        1910,
-        1911,
-        1912,
-        1913
-      ]
-    },
-    "03aff4887600f8faa2812ec0": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "entry",
-      "timestamp": 1793838674097,
-      "message_ids": [
-        1914,
-        1915
-      ]
-    },
-    "b7e6cd1e77377e3ac7354545": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "entry",
-      "timestamp": 1793840492384,
-      "message_ids": [
-        1916,
-        1917
-      ]
-    },
-    "fc881f46d4f49917405b87a6": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1793841357607,
-      "message_ids": [
-        1918,
-        1919
-      ]
-    },
-    "aee3a200c332b55e83a7b743": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1793841643864,
-      "message_ids": [
-        1920,
-        1921,
-        1922,
-        1923
-      ]
-    },
-    "fd288cf2d3a91ec7d69ca22d": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "entry",
-      "timestamp": 1793841950693,
-      "message_ids": [
-        1924,
-        1925
-      ]
-    },
-    "dba61f501d59a7842f1b9843": {
-      "symbol": "AMZNUSDT",
-      "stage": "entry",
-      "timestamp": 1793883972056,
-      "message_ids": [
-        1926,
-        1927
-      ]
-    },
-    "4d10aff0e3a194c3e756c2be": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793889068030,
-      "message_ids": [
-        1928,
-        1929,
-        1930,
-        1931
-      ]
-    },
-    "40dcd1d8c116325eef61ead7": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793889068030,
-      "message_ids": [
-        1932,
-        1933,
-        1934,
-        1935
-      ]
-    },
-    "14905a7607fe40ac003d7603": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793889068030,
-      "message_ids": [
-        1936,
-        1937,
-        1938,
-        1939
-      ]
-    },
-    "0729b0983052de76def5b0d3": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793889367258,
-      "message_ids": [
-        1940,
-        1941,
-        1942,
-        1943
-      ]
-    },
-    "9b565bec6f04f97af5a33c78": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793889367258,
-      "message_ids": [
-        1944,
-        1945,
-        1946,
-        1947
-      ]
-    },
-    "16419d8950df77704ebbf95b": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1793889655303,
-      "message_ids": [
-        1948,
-        1949,
-        1950,
-        1951
-      ]
-    },
-    "8edf01a3ef654b0411caec80": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1793890249824,
-      "message_ids": [
-        1952,
-        1953,
-        1954,
-        1955
-      ]
-    },
-    "014d08cf5f5d7bb3ef521ae0": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793890568234,
-      "message_ids": [
-        1956,
-        1957,
-        1958,
-        1959
-      ]
-    },
-    "02a84c9aa52dc6407f6cd527": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793890568234,
-      "message_ids": [
-        1960,
-        1961,
-        1962,
-        1963
-      ]
-    },
-    "fcb1c8cb30a483d7d0eacbed": {
-      "symbol": "TSLAUSDT",
-      "stage": "entry",
-      "timestamp": 1793890568234,
-      "message_ids": [
-        1964,
-        1965,
-        1966,
-        1967
-      ]
-    },
-    "6e04d239067c17a0bd47534d": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793890895131,
-      "message_ids": [
-        1968,
-        1969
-      ]
-    },
-    "e9be4e0f7ad046f0ab1cb93b": {
-      "symbol": "BTCUSDT",
-      "stage": "entry",
-      "timestamp": 1793891418895,
-      "message_ids": [
-        1970,
-        1971,
-        1972,
-        1973
-      ]
-    },
-    "12875ed30ce583943d42a6c8": {
-      "symbol": "QQQUSDT",
-      "stage": "entry",
-      "timestamp": 1793891424946,
-      "message_ids": [
-        1974,
-        1975,
-        1976,
-        1977
-      ]
-    },
-    "e5f7e4676bbc7f3a53510566": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1793891508918,
-      "message_ids": [
-        1978,
-        1979,
-        1980,
-        1981
-      ]
-    },
-    "52296707cb5552c80a14f8e8": {
-      "symbol": "METAUSDT",
-      "stage": "entry",
-      "timestamp": 1793891785868,
-      "message_ids": [
-        1982,
-        1983
-      ]
-    },
-    "d4ff76ff1d137851e4eddf66": {
-      "symbol": "SPYUSDT",
-      "stage": "entry",
-      "timestamp": 1793893573361,
-      "message_ids": [
-        1984,
-        1985
-      ]
-    },
-    "914f97917adbcc4df6814c47": {
-      "symbol": "SPYUSDT",
-      "stage": "entry",
-      "timestamp": 1793913066674,
-      "message_ids": [
-        1986,
-        1987
-      ]
-    },
-    "02239f3b87510931f6d5d09f": {
-      "symbol": "SPYUSDT",
-      "stage": "entry",
-      "timestamp": 1793913066674,
-      "message_ids": [
-        1988,
-        1989
-      ]
-    },
-    "ad89947526c073b30f89f578": {
-      "symbol": "SPYUSDT",
-      "stage": "entry",
-      "timestamp": 1793913066674,
-      "message_ids": [
-        1990,
-        1991
-      ]
-    },
-    "99c5f84d79269bd932e0f70b": {
-      "symbol": "SPYUSDT",
-      "stage": "entry",
-      "timestamp": 1793920252878,
-      "message_ids": [
-        1992,
-        1993
-      ]
-    },
-    "4d3fb066cf855eeb7bac22db": {
-      "symbol": "GOOGLUSDT",
-      "stage": "entry",
-      "timestamp": 1793976134157,
-      "message_ids": [
-        1994,
-        1995
-      ]
-    },
-    "0f5a8c2cf5403f0485bcf0b8": {
-      "symbol": "NVDAUSDT",
-      "stage": "entry",
-      "timestamp": 1794170150926,
-      "message_ids": [
-        1996,
-        1997
-      ]
-    },
-    "98ce6884846640da24709e9e": {
-      "symbol": "ADBEUSDT",
-      "stage": "star1",
-      "timestamp": 1794290772725,
-      "message_ids": [
-        1998,
-        1999
-      ]
-    },
-    "3db652221d647594ba1fa470": {
-      "symbol": "POPMARTUSDT",
-      "stage": "star2",
-      "timestamp": 1794301586549,
-      "message_ids": [
-        2000,
-        2001
-      ]
-    },
-    "08794be936465cd45f96118f": {
-      "symbol": "MRKUSDT",
-      "stage": "star2",
-      "timestamp": 1794305471788,
-      "message_ids": [
-        2002,
-        2003
-      ]
-    },
-    "7629f0da52692d8675da588f": {
-      "symbol": "SPYUSDT",
-      "stage": "star1",
-      "timestamp": 1794317534051,
-      "message_ids": [
-        2004,
-        2005
-      ]
-    },
-    "69838231f4d116cd5d1da491": {
-      "symbol": "TMFUSDT",
-      "stage": "star1",
-      "timestamp": 1794317776561,
-      "message_ids": [
-        2006,
-        2007
-      ]
-    },
-    "11eca3c9aae6af92b17eb3bd": {
-      "symbol": "GOOGLUSDT",
-      "stage": "star1",
-      "timestamp": 1794318959952,
-      "message_ids": [
-        2008,
-        2009
-      ]
-    },
-    "c5ac47b209624d967d172c72": {
-      "symbol": "EWZUSDT",
-      "stage": "star1",
-      "timestamp": 1794321674722,
-      "message_ids": [
-        2010,
-        2011
-      ]
-    },
-    "aec304764ba1002a1367e9df": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "star1",
-      "timestamp": 1794324356495,
-      "message_ids": [
-        2012,
-        2013
-      ]
-    },
-    "a50a80d200ef2cc55f43d96d": {
-      "symbol": "EWZUSDT",
-      "stage": "star1",
-      "timestamp": 1794324976578,
-      "message_ids": [
-        2014,
-        2015
-      ]
-    },
-    "122ae91e7dd6c3d3c752ec05": {
-      "symbol": "SKHYNIXUSDT",
-      "stage": "star2",
-      "timestamp": 1794325873715,
-      "message_ids": [
-        2016,
-        2017
-      ]
-    },
-    "1ce21a7a1efc55fa08d20a62": {
-      "symbol": "EWZUSDT",
-      "stage": "star2",
-      "timestamp": 1794328866422,
-      "message_ids": [
-        2018,
-        2019
-      ]
-    },
-    "9a2ee87e3b18151c89576278": {
-      "symbol": "MSFTUSDT",
-      "stage": "star2",
-      "timestamp": 1794331554863,
-      "message_ids": [
-        2020,
-        2021
-      ]
-    },
-    "5937f51df362dd9211c00215": {
-      "symbol": "EWZUSDT",
-      "stage": "star2",
-      "timestamp": 1794334269436,
-      "message_ids": [
-        2022,
-        2023
-      ]
-    },
-    "b9676c2baf99c3b412e49aca": {
-      "symbol": "VUSDT",
-      "stage": "star2",
-      "timestamp": 1794370569435,
-      "message_ids": [
-        2024,
-        2025
-      ]
-    },
-    "6f4a0d8b940db24ea9195599": {
-      "symbol": "ADBEUSDT",
-      "stage": "star2",
-      "timestamp": 1794384356130,
-      "message_ids": [
-        2026,
-        2027
-      ]
-    },
-    "18caab2f1669b55db5bef0ea": {
-      "symbol": "QQQUSDT",
-      "stage": "star1",
-      "timestamp": 1794417685520,
-      "message_ids": [
-        2029,
-        2030
-      ]
-    },
-    "176ca2014b9e8543e90e047a": {
-      "symbol": "NAVERUSDT",
-      "stage": "star1",
-      "timestamp": 1794445868945,
-      "message_ids": [
-        2031,
-        2032
-      ]
-    },
-    "b8821d7ee61f385dfc02762b": {
-      "symbol": "QQQUSDT",
-      "stage": "star1",
-      "timestamp": 1794476468646,
-      "message_ids": [
-        2033,
-        2034
-      ]
-    },
-    "e3b12e0feab2abb7d073d118": {
-      "symbol": "AMZNUSDT",
-      "stage": "star1",
-      "timestamp": 1794491572673,
-      "message_ids": [
-        2053,
-        2054
-      ]
-    }
-  },
+  "images_delivered": {},
   "structure_migration": {
     "from": "ict-two-frame-ob-fvg-v9",
     "to": "ict-two-frame-ob-fvg-v10-external",
@@ -3929,195 +24,420 @@
   "strategy": "root-ob-pullback-v1",
   "dedup_audits": {
     "BTCUSDT": {
-      "at": 1794491468132,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "SKHYNIXUSDT": {
-      "at": 1794491159467,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "NVDAUSDT": {
-      "at": 1794491569656,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "TSLAUSDT": {
-      "at": 1794491570476,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "AAPLUSDT": {
-      "at": 1794491571361,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "MSFTUSDT": {
-      "at": 1794491571991,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "AMZNUSDT": {
-      "at": 1794491572673,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "GOOGLUSDT": {
-      "at": 1794491573464,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "METAUSDT": {
-      "at": 1794491574182,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "QQQUSDT": {
-      "at": 1794491574897,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "SPYUSDT": {
-      "at": 1794491575647,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "CLUSDT": {
-      "at": 1794491576305,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "BZUSDT": {
-      "at": 1794491577003,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "BSPUSDT": {
-      "at": 1794491577602,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "VUSDT": {
-      "at": 1794491578215,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "LLYUSDT": {
-      "at": 1794491578891,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "NAVERUSDT": {
-      "at": 1794491170370,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "WENUSDT": {
-      "at": 1794491579584,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "MCDUSDT": {
-      "at": 1794491580498,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "POPMARTUSDT": {
-      "at": 1794491581293,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "UNITREEUSDT": {
-      "at": 1794491581872,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "TMFUSDT": {
-      "at": 1794491582390,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "ADBEUSDT": {
-      "at": 1794491582963,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "MEITUANUSDT": {
-      "at": 1794491583564,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "EWZUSDT": {
-      "at": 1794491584107,
-      "suppressed": 0,
-      "one_off_resend": false,
-      "locking_enabled": true
-    },
-    "MRKUSDT": {
-      "at": 1794491584655,
+      "at": 1794491631242,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "ETHUSDT": {
-      "at": 1794491499554,
+      "at": 1794491631851,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "JCTUSDT": {
-      "at": 1794491520240,
+      "at": 1794491632400,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "AKEUSDT": {
-      "at": 1794491531444,
+      "at": 1794491633043,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "BTWUSDT": {
-      "at": 1794491548041,
+      "at": 1794491633421,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "QUSDT": {
-      "at": 1794491568949,
+      "at": 1794491633869,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "NVDAUSDT": {
+      "at": 1794491634378,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "TSLAUSDT": {
+      "at": 1794491634854,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "AAPLUSDT": {
+      "at": 1794491635366,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "MSFTUSDT": {
+      "at": 1794491635810,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "AMZNUSDT": {
+      "at": 1794491636277,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "GOOGLUSDT": {
+      "at": 1794491636975,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "METAUSDT": {
+      "at": 1794491637505,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "QQQUSDT": {
+      "at": 1794491637993,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "SPYUSDT": {
+      "at": 1794491638566,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "CLUSDT": {
+      "at": 1794491639087,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "BZUSDT": {
+      "at": 1794491639611,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "BSPUSDT": {
+      "at": 1794491640064,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "VUSDT": {
+      "at": 1794491640659,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "LLYUSDT": {
+      "at": 1794491641129,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "WENUSDT": {
+      "at": 1794491641625,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "MCDUSDT": {
+      "at": 1794491642132,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "POPMARTUSDT": {
+      "at": 1794491642577,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "UNITREEUSDT": {
+      "at": 1794491642965,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "TMFUSDT": {
+      "at": 1794491643406,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "ADBEUSDT": {
+      "at": 1794491643808,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "MEITUANUSDT": {
+      "at": 1794491644222,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "EWZUSDT": {
+      "at": 1794491644707,
+      "suppressed": 0,
+      "one_off_resend": false,
+      "locking_enabled": true
+    },
+    "MRKUSDT": {
+      "at": 1794491645137,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     }
   },
   "in_flight": {},
-  "presentations": {
-    "2f884604d265358170f2ef5c": {
+  "presentations": {},
+  "touch_cursors": {
+    "BTCUSDT": 1794491580000,
+    "ETHUSDT": 1794491580000,
+    "JCTUSDT": 1794491580000,
+    "AKEUSDT": 1794491580000,
+    "BTWUSDT": 1794491580000,
+    "QUSDT": 1794491580000,
+    "NVDAUSDT": 1794491580000,
+    "TSLAUSDT": 1794491580000,
+    "AAPLUSDT": 1794491580000,
+    "MSFTUSDT": 1794491580000,
+    "AMZNUSDT": 1794491580000,
+    "GOOGLUSDT": 1794491580000,
+    "METAUSDT": 1794491580000,
+    "QQQUSDT": 1794491580000,
+    "SPYUSDT": 1794491580000,
+    "CLUSDT": 1794491580000,
+    "BZUSDT": 1794491580000,
+    "BSPUSDT": 1794491640000,
+    "VUSDT": 1794491640000,
+    "LLYUSDT": 1794491640000,
+    "WENUSDT": 1794491640000,
+    "MCDUSDT": 1794491640000,
+    "POPMARTUSDT": 1794491640000,
+    "UNITREEUSDT": 1794491640000,
+    "TMFUSDT": 1794491640000,
+    "ADBEUSDT": 1794491640000,
+    "MEITUANUSDT": 1794491640000,
+    "EWZUSDT": 1794491640000,
+    "MRKUSDT": 1794491640000
+  },
+  "notification_policy": "star-ob-reaction-v1",
+  "delivery_mode": "star-ob-reaction-v1",
+  "star_contexts": {
+    "BTCUSDT": {},
+    "ETHUSDT": {},
+    "JCTUSDT": {
+      "medium|broad|1d:OB:1792713600000:1792886400000:1|1788912000000": {
+        "track": "medium",
+        "lens": "broad",
+        "parent_id": "1d:OB:1792713600000:1792886400000:1",
+        "arm": {
+          "hit": true,
+          "band_low": 0.002612,
+          "band_high": 0.00452,
+          "valid_from": 1794182400000,
+          "at": 1794491632400,
+          "observed_price": 0.002981,
+          "evidence": "current_price"
+        },
+        "overlap": null
+      }
+    },
+    "AKEUSDT": {},
+    "BTWUSDT": {},
+    "QUSDT": {},
+    "NVDAUSDT": {},
+    "TSLAUSDT": {},
+    "AAPLUSDT": {},
+    "MSFTUSDT": {},
+    "AMZNUSDT": {
+      "fast|broad|1h:OB:1794315600000:1794322800000:1|1793890800000": {
+        "track": "fast",
+        "lens": "broad",
+        "parent_id": "1h:OB:1794315600000:1794322800000:1",
+        "arm": {
+          "hit": true,
+          "band_low": 265.64,
+          "band_high": 268.06,
+          "valid_from": 1794369600000,
+          "at": 1794491636277,
+          "observed_price": 266.69,
+          "evidence": "current_price"
+        },
+        "overlap": null
+      },
+      "fast|recent|1h:OB:1794315600000:1794322800000:1|1794315600000": {
+        "track": "fast",
+        "lens": "recent",
+        "parent_id": "1h:OB:1794315600000:1794322800000:1",
+        "arm": {
+          "hit": true,
+          "band_low": 265.64,
+          "band_high": 268.06,
+          "valid_from": 1794340800000,
+          "at": 1794491636277,
+          "observed_price": 266.69,
+          "evidence": "current_price"
+        },
+        "overlap": null
+      }
+    },
+    "GOOGLUSDT": {},
+    "METAUSDT": {},
+    "QQQUSDT": {},
+    "SPYUSDT": {},
+    "CLUSDT": {},
+    "BZUSDT": {
+      "short|broad|4h:OB:1794398400000:1794427200000:-1|formation-ob": {
+        "track": "short",
+        "lens": "broad",
+        "parent_id": "4h:OB:1794398400000:1794427200000:-1",
+        "arm": {
+          "hit": true,
+          "band_low": 91.5,
+          "band_high": 92.59,
+          "valid_from": 1794427200000,
+          "at": 1794491639611,
+          "observed_price": 91.67,
+          "evidence": "current_price"
+        },
+        "overlap": null
+      },
+      "short|recent|4h:OB:1794398400000:1794427200000:-1|formation-ob": {
+        "track": "short",
+        "lens": "recent",
+        "parent_id": "4h:OB:1794398400000:1794427200000:-1",
+        "arm": {
+          "hit": true,
+          "band_low": 91.5,
+          "band_high": 92.59,
+          "valid_from": 1794427200000,
+          "at": 1794491639611,
+          "observed_price": 91.67,
+          "evidence": "current_price"
+        },
+        "overlap": null
+      }
+    },
+    "BSPUSDT": {},
+    "VUSDT": {},
+    "LLYUSDT": {
+      "fast|broad|1h:OB:1794463200000:1794470400000:1|1793973600000": {
+        "track": "fast",
+        "lens": "broad",
+        "parent_id": "1h:OB:1794463200000:1794470400000:1",
+        "arm": {
+          "hit": true,
+          "band_low": 1452.66,
+          "band_high": 1458.13,
+          "valid_from": 1794470400000,
+          "at": 1794491641129,
+          "observed_price": 1457.43,
+          "evidence": "current_price"
+        },
+        "overlap": null
+      }
+    },
+    "WENUSDT": {},
+    "MCDUSDT": {},
+    "POPMARTUSDT": {},
+    "UNITREEUSDT": {},
+    "TMFUSDT": {},
+    "ADBEUSDT": {
+      "medium|recent|1d:OB:1791331200000:1791504000000:1|1791331200000": {
+        "track": "medium",
+        "lens": "recent",
+        "parent_id": "1d:OB:1791331200000:1791504000000:1",
+        "arm": {
+          "hit": true,
+          "band_low": 232.72,
+          "band_high": 237.97,
+          "valid_from": 1792108800000,
+          "at": 1794491643808,
+          "observed_price": 236.72,
+          "evidence": "current_price"
+        },
+        "overlap": null
+      }
+    },
+    "MEITUANUSDT": {},
+    "EWZUSDT": {
+      "fast|recent|1h:OB:1794207600000:1794214800000:1|1793919600000": {
+        "track": "fast",
+        "lens": "recent",
+        "parent_id": "1h:OB:1794207600000:1794214800000:1",
+        "arm": {
+          "hit": true,
+          "band_low": 31.971,
+          "band_high": 32.143,
+          "valid_from": 1794254400000,
+          "at": 1794491644707,
+          "observed_price": 32.012,
+          "evidence": "current_price"
+        },
+        "overlap": null
+      },
+      "short|recent|4h:OB:1794196800000:1794225600000:1|formation-ob": {
+        "track": "short",
+        "lens": "recent",
+        "parent_id": "4h:OB:1794196800000:1794225600000:1",
+        "arm": {
+          "hit": true,
+          "band_low": 31.971,
+          "band_high": 32.171,
+          "valid_from": 1794254400000,
+          "at": 1794491644707,
+          "observed_price": 32.012,
+          "evidence": "current_price"
+        },
+        "overlap": null
+      }
+    },
+    "MRKUSDT": {}
+  },
+  "star_locks": {
+    "BTCUSDT": {},
+    "ETHUSDT": {},
+    "JCTUSDT": {},
+    "AKEUSDT": {},
+    "BTWUSDT": {},
+    "QUSDT": {},
+    "NVDAUSDT": {},
+    "TSLAUSDT": {},
+    "AAPLUSDT": {},
+    "MSFTUSDT": {},
+    "AMZNUSDT": {},
+    "GOOGLUSDT": {},
+    "METAUSDT": {},
+    "QQQUSDT": {},
+    "SPYUSDT": {},
+    "CLUSDT": {},
+    "BZUSDT": {},
+    "BSPUSDT": {},
+    "VUSDT": {},
+    "LLYUSDT": {},
+    "WENUSDT": {},
+    "MCDUSDT": {},
+    "POPMARTUSDT": {},
+    "UNITREEUSDT": {},
+    "TMFUSDT": {},
+    "ADBEUSDT": {},
+    "MEITUANUSDT": {},
+    "EWZUSDT": {},
+    "MRKUSDT": {}
+  },
+  "retired_presentations": {
+    "2f884604d265358170f2ef5c:1793460981825": {
       "symbol": "BTCUSDT",
       "track": "short",
       "attempt": 1793460981825,
@@ -4135,7 +455,7 @@
         }
       }
     },
-    "d79098f0bb2dd2ae0b764f44": {
+    "d79098f0bb2dd2ae0b764f44:1793460981825": {
       "symbol": "BTCUSDT",
       "track": "short",
       "attempt": 1793460981825,
@@ -4153,7 +473,7 @@
         }
       }
     },
-    "5cba71dbb3022cf7b076497e": {
+    "5cba71dbb3022cf7b076497e:1793460981825": {
       "symbol": "BTCUSDT",
       "track": "medium",
       "attempt": 1793460981825,
@@ -4171,7 +491,7 @@
         }
       }
     },
-    "028c11a16056be9b3676e079": {
+    "028c11a16056be9b3676e079:1793460981977": {
       "symbol": "SKHYNIXUSDT",
       "track": "short",
       "attempt": 1793460981977,
@@ -4199,7 +519,7 @@
         }
       }
     },
-    "ce1aa08cd93e6df63e3ab910": {
+    "ce1aa08cd93e6df63e3ab910:1793460981977": {
       "symbol": "SKHYNIXUSDT",
       "track": "medium",
       "attempt": 1793460981977,
@@ -4217,7 +537,7 @@
         }
       }
     },
-    "a14fc5858d88c478ea756cc7": {
+    "a14fc5858d88c478ea756cc7:1793460982108": {
       "symbol": "NVDAUSDT",
       "track": "medium",
       "attempt": 1793460982108,
@@ -4235,7 +555,7 @@
         }
       }
     },
-    "95a7678afc3e789134dbdb4e": {
+    "95a7678afc3e789134dbdb4e:1793460982108": {
       "symbol": "NVDAUSDT",
       "track": "medium",
       "attempt": 1793460982108,
@@ -4253,7 +573,7 @@
         }
       }
     },
-    "e70e91e3e3cc21af429251bf": {
+    "e70e91e3e3cc21af429251bf:1793460982108": {
       "symbol": "NVDAUSDT",
       "track": "long",
       "attempt": 1793460982108,
@@ -4271,7 +591,7 @@
         }
       }
     },
-    "34cf802256e5628c2d864723": {
+    "34cf802256e5628c2d864723:1793460982246": {
       "symbol": "TSLAUSDT",
       "track": "short",
       "attempt": 1793460982246,
@@ -4299,7 +619,7 @@
         }
       }
     },
-    "9819724798cd0a0f2698d3d4": {
+    "9819724798cd0a0f2698d3d4:1793460982246": {
       "symbol": "TSLAUSDT",
       "track": "medium",
       "attempt": 1793460982246,
@@ -4327,7 +647,7 @@
         }
       }
     },
-    "51b5c84693855ea5dfbf4c0f": {
+    "51b5c84693855ea5dfbf4c0f:1793460982246": {
       "symbol": "TSLAUSDT",
       "track": "long",
       "attempt": 1793460982246,
@@ -4345,7 +665,7 @@
         }
       }
     },
-    "91f6d7dcd02ff1b49f146106": {
+    "91f6d7dcd02ff1b49f146106:1793460982387": {
       "symbol": "AAPLUSDT",
       "track": "short",
       "attempt": 1793460982387,
@@ -4363,7 +683,7 @@
         }
       }
     },
-    "b9d788aba2b828a7c0668013": {
+    "b9d788aba2b828a7c0668013:1793460982387": {
       "symbol": "AAPLUSDT",
       "track": "medium",
       "attempt": 1793460982387,
@@ -4381,7 +701,7 @@
         }
       }
     },
-    "a47aa28f35de6bd6c5980f92": {
+    "a47aa28f35de6bd6c5980f92:1793460982519": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "attempt": 1793460982519,
@@ -4409,7 +729,7 @@
         }
       }
     },
-    "8a45f7970b4c9b55d2ab00a3": {
+    "8a45f7970b4c9b55d2ab00a3:1793460982519": {
       "symbol": "MSFTUSDT",
       "track": "medium",
       "attempt": 1793460982519,
@@ -4427,7 +747,7 @@
         }
       }
     },
-    "b3dcbb1a00b7de51afc6d6a8": {
+    "b3dcbb1a00b7de51afc6d6a8:1793460982519": {
       "symbol": "MSFTUSDT",
       "track": "medium",
       "attempt": 1793460982519,
@@ -4455,7 +775,7 @@
         }
       }
     },
-    "107f4bedd3fc128b9ac53239": {
+    "107f4bedd3fc128b9ac53239:1793460982660": {
       "symbol": "AMZNUSDT",
       "track": "short",
       "attempt": 1793460982660,
@@ -4473,7 +793,7 @@
         }
       }
     },
-    "84f6eb22aa006bc4038f0664": {
+    "84f6eb22aa006bc4038f0664:1793460982660": {
       "symbol": "AMZNUSDT",
       "track": "short",
       "attempt": 1793460982660,
@@ -4491,7 +811,7 @@
         }
       }
     },
-    "586c25915d39cf51fd22af30": {
+    "586c25915d39cf51fd22af30:1793460982660": {
       "symbol": "AMZNUSDT",
       "track": "medium",
       "attempt": 1793460982660,
@@ -4509,7 +829,7 @@
         }
       }
     },
-    "489ab07bb959ac03fd0bf254": {
+    "489ab07bb959ac03fd0bf254:1793460982660": {
       "symbol": "AMZNUSDT",
       "track": "long",
       "attempt": 1793460982660,
@@ -4527,7 +847,7 @@
         }
       }
     },
-    "5c041baf1407347812e507fb": {
+    "5c041baf1407347812e507fb:1793460982793": {
       "symbol": "GOOGLUSDT",
       "track": "long",
       "attempt": 1793460982793,
@@ -4545,7 +865,7 @@
         }
       }
     },
-    "182ffa2c7506d9affc86d6c0": {
+    "182ffa2c7506d9affc86d6c0:1793460982931": {
       "symbol": "METAUSDT",
       "track": "short",
       "attempt": 1793460982931,
@@ -4563,7 +883,7 @@
         }
       }
     },
-    "e13010a318c22f983a617e2e": {
+    "e13010a318c22f983a617e2e:1793460982931": {
       "symbol": "METAUSDT",
       "track": "medium",
       "attempt": 1793460982931,
@@ -4591,7 +911,7 @@
         }
       }
     },
-    "50c0e629209384a43d9efae1": {
+    "50c0e629209384a43d9efae1:1793460982931": {
       "symbol": "METAUSDT",
       "track": "long",
       "attempt": 1793460982931,
@@ -4619,7 +939,7 @@
         }
       }
     },
-    "46a5a1c344f361129da326ed": {
+    "46a5a1c344f361129da326ed:1793460983082": {
       "symbol": "QQQUSDT",
       "track": "medium",
       "attempt": 1793460983082,
@@ -4647,7 +967,7 @@
         }
       }
     },
-    "ddfabda25b1ab47b3af6bf92": {
+    "ddfabda25b1ab47b3af6bf92:1793460983217": {
       "symbol": "SPYUSDT",
       "track": "short",
       "attempt": 1793460983217,
@@ -4665,7 +985,7 @@
         }
       }
     },
-    "bdaa125327e9a898cebda945": {
+    "bdaa125327e9a898cebda945:1793460983217": {
       "symbol": "SPYUSDT",
       "track": "medium",
       "attempt": 1793460983217,
@@ -4683,7 +1003,7 @@
         }
       }
     },
-    "4db6d6f3f06b22698b84f3ab": {
+    "4db6d6f3f06b22698b84f3ab:1793460983366": {
       "symbol": "CLUSDT",
       "track": "short",
       "attempt": 1793460983366,
@@ -4711,7 +1031,7 @@
         }
       }
     },
-    "99bb11d03d689154a3d1bdea": {
+    "99bb11d03d689154a3d1bdea:1793460983366": {
       "symbol": "CLUSDT",
       "track": "medium",
       "attempt": 1793460983366,
@@ -4739,7 +1059,7 @@
         }
       }
     },
-    "e24b22aad8ea352133e8b5dc": {
+    "e24b22aad8ea352133e8b5dc:1793460983530": {
       "symbol": "BZUSDT",
       "track": "medium",
       "attempt": 1793460983530,
@@ -4767,7 +1087,7 @@
         }
       }
     },
-    "704e66a77236f637510714a6": {
+    "704e66a77236f637510714a6:1793462071439": {
       "symbol": "NVDAUSDT",
       "track": "long",
       "stage": "entry",
@@ -4938,7 +1258,7 @@
         }
       }
     },
-    "8592f8a259837ae5372cb5f1": {
+    "8592f8a259837ae5372cb5f1:1793462072442": {
       "symbol": "MSFTUSDT",
       "track": "medium",
       "stage": "entry",
@@ -5410,7 +1730,7 @@
         }
       }
     },
-    "0cce0257a89ee035ad7c615c": {
+    "0cce0257a89ee035ad7c615c:1793462073468": {
       "symbol": "METAUSDT",
       "track": "short",
       "stage": "entry",
@@ -6014,7 +2334,7 @@
         }
       }
     },
-    "410a3b14b313c8d518709627": {
+    "410a3b14b313c8d518709627:1793463340870": {
       "symbol": "TSLAUSDT",
       "track": "short",
       "stage": "entry",
@@ -6625,7 +2945,7 @@
         }
       }
     },
-    "e70afd031e0ba9f04a4ae919": {
+    "e70afd031e0ba9f04a4ae919:1793463342390": {
       "symbol": "METAUSDT",
       "track": "short",
       "stage": "entry",
@@ -7229,7 +3549,7 @@
         }
       }
     },
-    "8016daa9cf78ab0b8baad92b": {
+    "8016daa9cf78ab0b8baad92b:1793470844521": {
       "symbol": "TSLAUSDT",
       "track": "short",
       "stage": "entry",
@@ -7814,7 +4134,7 @@
         }
       }
     },
-    "4ee895e2e25ebfebd5294eb3": {
+    "4ee895e2e25ebfebd5294eb3:1793475347612": {
       "symbol": "TSLAUSDT",
       "track": "short",
       "stage": "entry",
@@ -8465,7 +4785,7 @@
         }
       }
     },
-    "99067749d405d125315cbaf5": {
+    "99067749d405d125315cbaf5:1793482851561": {
       "symbol": "METAUSDT",
       "track": "short",
       "stage": "entry",
@@ -9056,7 +5376,7 @@
         }
       }
     },
-    "1cc58d553da34b1978d5a691": {
+    "1cc58d553da34b1978d5a691:1793482852336": {
       "symbol": "SPYUSDT",
       "track": "short",
       "stage": "entry",
@@ -9391,7 +5711,7 @@
         }
       }
     },
-    "a9ee91ecc92dadd6311f3f16": {
+    "a9ee91ecc92dadd6311f3f16:1793482852336": {
       "symbol": "SPYUSDT",
       "track": "medium",
       "stage": "entry",
@@ -9613,7 +5933,7 @@
         }
       }
     },
-    "70e488a9d5b9b7accd7a55d5": {
+    "70e488a9d5b9b7accd7a55d5:1793486152356": {
       "symbol": "CLUSDT",
       "track": "medium",
       "stage": "entry",
@@ -9990,7 +6310,7 @@
         }
       }
     },
-    "ad17f2c234c5d9bbecbaa818": {
+    "ad17f2c234c5d9bbecbaa818:1793498464012": {
       "symbol": "TSLAUSDT",
       "track": "short",
       "stage": "entry",
@@ -10639,7 +6959,7 @@
         }
       }
     },
-    "ba9353450a5b352f117e0cae": {
+    "ba9353450a5b352f117e0cae:1793508649690": {
       "symbol": "TSLAUSDT",
       "track": "short",
       "stage": "entry",
@@ -11290,7 +7610,7 @@
         }
       }
     },
-    "60c3136aa707881f811ed5c5": {
+    "60c3136aa707881f811ed5c5:1793527264005": {
       "symbol": "METAUSDT",
       "track": "short",
       "stage": "entry",
@@ -12186,7 +8506,7 @@
         }
       }
     },
-    "2d2c89f94781836dc6f0d617": {
+    "2d2c89f94781836dc6f0d617:1793557247089": {
       "symbol": "NVDAUSDT",
       "track": "medium",
       "stage": "entry",
@@ -12387,7 +8707,7 @@
         }
       }
     },
-    "1420426b74873eb145b5e9f0": {
+    "1420426b74873eb145b5e9f0:1793560552742": {
       "symbol": "METAUSDT",
       "track": "short",
       "stage": "entry",
@@ -13317,7 +9637,7 @@
         }
       }
     },
-    "1e3fefe9388016230cfad0fd": {
+    "1e3fefe9388016230cfad0fd:1793560843520": {
       "symbol": "METAUSDT",
       "track": "short",
       "stage": "entry",
@@ -14245,7 +10565,7 @@
         }
       }
     },
-    "03764f511cbbfe7af301e156": {
+    "03764f511cbbfe7af301e156:1793563281945": {
       "symbol": "CLUSDT",
       "track": "medium",
       "stage": "entry",
@@ -14620,7 +10940,7 @@
         }
       }
     },
-    "44a466714ba421cdd7349b34": {
+    "44a466714ba421cdd7349b34:1793573154198": {
       "symbol": "CLUSDT",
       "track": "medium",
       "stage": "entry",
@@ -14997,7 +11317,7 @@
         }
       }
     },
-    "7640ba5ce8f6e6f7ba090a82": {
+    "7640ba5ce8f6e6f7ba090a82:1793574067239": {
       "symbol": "SKHYNIXUSDT",
       "track": "medium",
       "stage": "entry",
@@ -15219,7 +11539,7 @@
         }
       }
     },
-    "b8d726e190f098daee52d681": {
+    "b8d726e190f098daee52d681:1793574068862": {
       "symbol": "TSLAUSDT",
       "track": "short",
       "stage": "entry",
@@ -15802,7 +12122,7 @@
         }
       }
     },
-    "ae1e2f1902fccf326b65b396": {
+    "ae1e2f1902fccf326b65b396:1793574945442": {
       "symbol": "TSLAUSDT",
       "track": "short",
       "stage": "entry",
@@ -16385,7 +12705,7 @@
         }
       }
     },
-    "5ef69090066f530d87884efa": {
+    "5ef69090066f530d87884efa:1793581276542": {
       "symbol": "MSFTUSDT",
       "track": "medium",
       "stage": "entry",
@@ -17081,7 +13401,7 @@
         }
       }
     },
-    "f346b74c7252b4805ce99b02": {
+    "f346b74c7252b4805ce99b02:1793581278353": {
       "symbol": "METAUSDT",
       "track": "short",
       "stage": "entry",
@@ -18041,7 +14361,7 @@
         }
       }
     },
-    "e11780bb6b3639d06af5228d": {
+    "e11780bb6b3639d06af5228d:1793582152333": {
       "symbol": "AAPLUSDT",
       "track": "short",
       "stage": "entry",
@@ -18470,7 +14790,7 @@
         }
       }
     },
-    "c5a07c4ea35dcb5b31a04114": {
+    "c5a07c4ea35dcb5b31a04114:1793582155491": {
       "symbol": "CLUSDT",
       "track": "short",
       "stage": "entry",
@@ -18838,7 +15158,7 @@
         }
       }
     },
-    "af74d594b528ea9f0cba5566": {
+    "af74d594b528ea9f0cba5566:1793585749551": {
       "symbol": "TSLAUSDT",
       "track": "short",
       "stage": "entry",
@@ -19423,7 +15743,7 @@
         }
       }
     },
-    "2ac7a9af58eab329b8ab9f36": {
+    "2ac7a9af58eab329b8ab9f36:1793586056141": {
       "symbol": "CLUSDT",
       "track": "short",
       "stage": "entry",
@@ -19808,7 +16128,7 @@
         }
       }
     },
-    "9c1985d2d7e77a70b0caeb7e": {
+    "9c1985d2d7e77a70b0caeb7e:1793586950263": {
       "symbol": "BZUSDT",
       "track": "short",
       "stage": "entry",
@@ -20063,7 +16383,7 @@
         }
       }
     },
-    "39adf3ee23b952c554dcc841": {
+    "39adf3ee23b952c554dcc841:1793590255187": {
       "symbol": "BZUSDT",
       "track": "short",
       "stage": "entry",
@@ -20320,7 +16640,7 @@
         }
       }
     },
-    "7deb581773a7d24adc1edb03": {
+    "7deb581773a7d24adc1edb03:1793596555235": {
       "symbol": "CLUSDT",
       "track": "short",
       "stage": "entry",
@@ -20577,7 +16897,7 @@
         }
       }
     },
-    "c357042843947e83d76f6f56": {
+    "c357042843947e83d76f6f56:1793597751644": {
       "symbol": "CLUSDT",
       "track": "short",
       "stage": "entry",
@@ -20834,7 +17154,7 @@
         }
       }
     },
-    "e8cb590fd9aa2998b21bfcab": {
+    "e8cb590fd9aa2998b21bfcab:1793605867366": {
       "symbol": "BTCUSDT",
       "track": "medium",
       "stage": "entry",
@@ -21154,7 +17474,7 @@
         }
       }
     },
-    "60f572d2aaef3d294a3ca4b3": {
+    "60f572d2aaef3d294a3ca4b3:1793611548254": {
       "symbol": "AAPLUSDT",
       "track": "medium",
       "stage": "entry",
@@ -21583,7 +17903,7 @@
         }
       }
     },
-    "f0297748c4162b99af640daf": {
+    "f0297748c4162b99af640daf:1793614861786": {
       "symbol": "AAPLUSDT",
       "track": "short",
       "stage": "entry",
@@ -21997,7 +18317,7 @@
         }
       }
     },
-    "0d36b3f8338e47591d8b672c": {
+    "0d36b3f8338e47591d8b672c:1793629687525": {
       "symbol": "AAPLUSDT",
       "track": "short",
       "stage": "entry",
@@ -22167,7 +18487,7 @@
         }
       }
     },
-    "a502f945480f717b3f25d969": {
+    "a502f945480f717b3f25d969:1793629687525": {
       "symbol": "AAPLUSDT",
       "track": "medium",
       "stage": "entry",
@@ -22322,7 +18642,7 @@
         }
       }
     },
-    "3f6be2dda3d65127382cd799": {
+    "3f6be2dda3d65127382cd799:1793629688272": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -22492,7 +18812,7 @@
         }
       }
     },
-    "0dbe00352cd665fd01911234": {
+    "0dbe00352cd665fd01911234:1793629688272": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -22662,7 +18982,7 @@
         }
       }
     },
-    "ead75d9a33c5177678e65782": {
+    "ead75d9a33c5177678e65782:1793629871572": {
       "symbol": "AAPLUSDT",
       "track": "short",
       "stage": "entry",
@@ -22832,7 +19152,7 @@
         }
       }
     },
-    "886737a08ebe2f452c39b74e": {
+    "886737a08ebe2f452c39b74e:1793629871572": {
       "symbol": "AAPLUSDT",
       "track": "medium",
       "stage": "entry",
@@ -22987,7 +19307,7 @@
         }
       }
     },
-    "d4e9e8cefe17cb16b535c527": {
+    "d4e9e8cefe17cb16b535c527:1793629872448": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -23157,7 +19477,7 @@
         }
       }
     },
-    "df9719e50603103e285a207c": {
+    "df9719e50603103e285a207c:1793629872448": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -23327,7 +19647,7 @@
         }
       }
     },
-    "378e88b176443868fa814a12": {
+    "378e88b176443868fa814a12:1793629872448": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -23497,7 +19817,7 @@
         }
       }
     },
-    "b4dece4a61080860374c680e": {
+    "b4dece4a61080860374c680e:1793629872448": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -23667,7 +19987,7 @@
         }
       }
     },
-    "00808349544de1554ef2a692": {
+    "00808349544de1554ef2a692:1793630169394": {
       "symbol": "AAPLUSDT",
       "track": "short",
       "stage": "entry",
@@ -23837,7 +20157,7 @@
         }
       }
     },
-    "fdf540530a8323456d861bdd": {
+    "fdf540530a8323456d861bdd:1793630169394": {
       "symbol": "AAPLUSDT",
       "track": "medium",
       "stage": "entry",
@@ -23992,7 +20312,7 @@
         }
       }
     },
-    "813ed297ac729163fca47f35": {
+    "813ed297ac729163fca47f35:1793630169815": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -24162,7 +20482,7 @@
         }
       }
     },
-    "f8d6b15e5832006baee58b88": {
+    "f8d6b15e5832006baee58b88:1793630169815": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -24332,7 +20652,7 @@
         }
       }
     },
-    "1bf32cb90b01ad7d9906e093": {
+    "1bf32cb90b01ad7d9906e093:1793630169815": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -24502,7 +20822,7 @@
         }
       }
     },
-    "666dc5f736f387e40ccdd50e": {
+    "666dc5f736f387e40ccdd50e:1793630169815": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -24672,7 +20992,7 @@
         }
       }
     },
-    "0df5191dbb228687bacf5cfa": {
+    "0df5191dbb228687bacf5cfa:1793630255456": {
       "symbol": "AAPLUSDT",
       "track": "medium",
       "stage": "entry",
@@ -24825,7 +21145,7 @@
         }
       }
     },
-    "2d49cd7836ef82194880ccd8": {
+    "2d49cd7836ef82194880ccd8:1793630256030": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -24995,7 +21315,7 @@
         }
       }
     },
-    "45766ebd5088cb8fcf792115": {
+    "45766ebd5088cb8fcf792115:1793630256030": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -25165,7 +21485,7 @@
         }
       }
     },
-    "84d9e79b728e31960cda4e6f": {
+    "84d9e79b728e31960cda4e6f:1793630256030": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -25335,7 +21655,7 @@
         }
       }
     },
-    "b377dbdcb50609cc05db6265": {
+    "b377dbdcb50609cc05db6265:1793630256030": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -25505,7 +21825,7 @@
         }
       }
     },
-    "da5531559e53a15d272e3335": {
+    "da5531559e53a15d272e3335:1793630455724": {
       "symbol": "AAPLUSDT",
       "track": "short",
       "stage": "entry",
@@ -25675,7 +21995,7 @@
         }
       }
     },
-    "c1758821a312ce85d6cbcb8e": {
+    "c1758821a312ce85d6cbcb8e:1793630455724": {
       "symbol": "AAPLUSDT",
       "track": "medium",
       "stage": "entry",
@@ -25830,7 +22150,7 @@
         }
       }
     },
-    "0d989ee1dc221dc7361ebd0a": {
+    "0d989ee1dc221dc7361ebd0a:1793630456240": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -26000,7 +22320,7 @@
         }
       }
     },
-    "30492b2cb5e51e5ab6a60718": {
+    "30492b2cb5e51e5ab6a60718:1793630456240": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -26170,7 +22490,7 @@
         }
       }
     },
-    "f41a0dbb8be5c96e1ac97663": {
+    "f41a0dbb8be5c96e1ac97663:1793631102334": {
       "symbol": "AAPLUSDT",
       "track": "medium",
       "stage": "entry",
@@ -26455,7 +22775,7 @@
         }
       }
     },
-    "a1342c05921d204ad7723cdc": {
+    "a1342c05921d204ad7723cdc:1793631103140": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -26932,7 +23252,7 @@
         }
       }
     },
-    "4109ebb1aa440031ce59ca81": {
+    "4109ebb1aa440031ce59ca81:1793631103140": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -27409,7 +23729,7 @@
         }
       }
     },
-    "58d59df1da09ee33c73adc13": {
+    "58d59df1da09ee33c73adc13:1793633457169": {
       "symbol": "AMZNUSDT",
       "track": "short",
       "stage": "entry",
@@ -27698,7 +24018,7 @@
         }
       }
     },
-    "fa1b37cc430663c793b5941c": {
+    "fa1b37cc430663c793b5941c:1793639762713": {
       "symbol": "AAPLUSDT",
       "track": "short",
       "stage": "entry",
@@ -27987,7 +24307,7 @@
         }
       }
     },
-    "3c634fce110edf20c8647d06": {
+    "3c634fce110edf20c8647d06:1793640679562": {
       "symbol": "QQQUSDT",
       "track": "short",
       "stage": "entry",
@@ -28419,7 +24739,7 @@
         }
       }
     },
-    "dbb65f71b9f48d77bb7ad4d3": {
+    "dbb65f71b9f48d77bb7ad4d3:1793647257651": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "entry",
@@ -28890,7 +25210,7 @@
         }
       }
     },
-    "a038104a3447c6f53726a371": {
+    "a038104a3447c6f53726a371:1793647864956": {
       "symbol": "BZUSDT",
       "track": "short",
       "stage": "entry",
@@ -29249,7 +25569,7 @@
         }
       }
     },
-    "4a0b7832da108e70e9ad6f35": {
+    "4a0b7832da108e70e9ad6f35:1793686269604": {
       "symbol": "BTCUSDT",
       "track": "short",
       "stage": "entry",
@@ -29696,7 +26016,7 @@
         }
       }
     },
-    "0ebfd43708f3ca5b4157623c": {
+    "0ebfd43708f3ca5b4157623c:1793689573113": {
       "symbol": "SPYUSDT",
       "track": "short",
       "stage": "entry",
@@ -30025,7 +26345,7 @@
         }
       }
     },
-    "7c31b5ddb58700b9fad885d7": {
+    "7c31b5ddb58700b9fad885d7:1793712963315": {
       "symbol": "BZUSDT",
       "track": "medium",
       "stage": "entry",
@@ -30577,7 +26897,7 @@
         }
       }
     },
-    "c800fe4272f8153b5b390941": {
+    "c800fe4272f8153b5b390941:1793713564840": {
       "symbol": "BZUSDT",
       "track": "short",
       "stage": "entry",
@@ -30976,7 +27296,7 @@
         }
       }
     },
-    "055575b7c350ede64cb1ec5b": {
+    "055575b7c350ede64cb1ec5b:1793713564840": {
       "symbol": "BZUSDT",
       "track": "short",
       "stage": "entry",
@@ -31573,7 +27893,7 @@
         }
       }
     },
-    "cf71009c100009234467e742": {
+    "cf71009c100009234467e742:1793713564840": {
       "symbol": "BZUSDT",
       "track": "medium",
       "stage": "entry",
@@ -32125,7 +28445,7 @@
         }
       }
     },
-    "d4dcc91fd3ed4d4c6a3ca24f": {
+    "d4dcc91fd3ed4d4c6a3ca24f:1793723142867": {
       "symbol": "TSLAUSDT",
       "track": "short",
       "stage": "entry",
@@ -32420,7 +28740,7 @@
         }
       }
     },
-    "f8a4c183baed023adc8398df": {
+    "f8a4c183baed023adc8398df:1793754356848": {
       "symbol": "QQQUSDT",
       "track": "medium",
       "stage": "entry",
@@ -32861,7 +29181,7 @@
         }
       }
     },
-    "e43eea08ef416498589d4190": {
+    "e43eea08ef416498589d4190:1793761560512": {
       "symbol": "BTCUSDT",
       "track": "short",
       "stage": "entry",
@@ -33308,7 +29628,7 @@
         }
       }
     },
-    "b98d9cf56609485c87b51a0b": {
+    "b98d9cf56609485c87b51a0b:1793761839343": {
       "symbol": "GOOGLUSDT",
       "track": "medium",
       "stage": "entry",
@@ -33800,7 +30120,7 @@
         }
       }
     },
-    "8f47a5caeecfbe20a30bee06": {
+    "8f47a5caeecfbe20a30bee06:1793784949539": {
       "symbol": "BTCUSDT",
       "track": "short",
       "stage": "entry",
@@ -34129,7 +30449,7 @@
         }
       }
     },
-    "487e32205b77600c735864b6": {
+    "487e32205b77600c735864b6:1793786483124": {
       "symbol": "METAUSDT",
       "track": "short",
       "stage": "entry",
@@ -34428,7 +30748,7 @@
         }
       }
     },
-    "2e7e06489288daa2ef2550aa": {
+    "2e7e06489288daa2ef2550aa:1793801460837": {
       "symbol": "AMZNUSDT",
       "track": "short",
       "stage": "entry",
@@ -34920,7 +31240,7 @@
         }
       }
     },
-    "6199a4d0d4386a41da8162ac": {
+    "6199a4d0d4386a41da8162ac:1793802986541": {
       "symbol": "NVDAUSDT",
       "track": "short",
       "stage": "entry",
@@ -35367,7 +31687,7 @@
         }
       }
     },
-    "bddae2b443087f42e1514006": {
+    "bddae2b443087f42e1514006:1793803557486": {
       "symbol": "AAPLUSDT",
       "track": "short",
       "stage": "entry",
@@ -35808,7 +32128,7 @@
         }
       }
     },
-    "45f9cdfc244f856a71273e08": {
+    "45f9cdfc244f856a71273e08:1793803557486": {
       "symbol": "AAPLUSDT",
       "track": "medium",
       "stage": "entry",
@@ -36249,7 +32569,7 @@
         }
       }
     },
-    "22cd771029e08fe2f9f705e2": {
+    "22cd771029e08fe2f9f705e2:1793810352420": {
       "symbol": "CLUSDT",
       "track": "short",
       "stage": "entry",
@@ -36846,7 +33166,7 @@
         }
       }
     },
-    "ef78973c904b7f43a9388445": {
+    "ef78973c904b7f43a9388445:1793810353279": {
       "symbol": "BZUSDT",
       "track": "short",
       "stage": "entry",
@@ -37398,7 +33718,7 @@
         }
       }
     },
-    "84708c3c6278ff767b6c2843": {
+    "84708c3c6278ff767b6c2843:1793810353279": {
       "symbol": "BZUSDT",
       "track": "short",
       "stage": "entry",
@@ -37995,7 +34315,7 @@
         }
       }
     },
-    "a793ba4cd49a42779f52e423": {
+    "a793ba4cd49a42779f52e423:1793810353279": {
       "symbol": "BZUSDT",
       "track": "medium",
       "stage": "entry",
@@ -38592,7 +34912,7 @@
         }
       }
     },
-    "03aff4887600f8faa2812ec0": {
+    "03aff4887600f8faa2812ec0:1793838674097": {
       "symbol": "SKHYNIXUSDT",
       "track": "short",
       "stage": "entry",
@@ -38891,7 +35211,7 @@
         }
       }
     },
-    "b7e6cd1e77377e3ac7354545": {
+    "b7e6cd1e77377e3ac7354545:1793840492384": {
       "symbol": "SKHYNIXUSDT",
       "track": "short",
       "stage": "entry",
@@ -39190,7 +35510,7 @@
         }
       }
     },
-    "fc881f46d4f49917405b87a6": {
+    "fc881f46d4f49917405b87a6:1793841357607": {
       "symbol": "NVDAUSDT",
       "track": "medium",
       "stage": "entry",
@@ -39489,7 +35809,7 @@
         }
       }
     },
-    "aee3a200c332b55e83a7b743": {
+    "aee3a200c332b55e83a7b743:1793841643864": {
       "symbol": "NVDAUSDT",
       "track": "short",
       "stage": "entry",
@@ -39930,7 +36250,7 @@
         }
       }
     },
-    "fd288cf2d3a91ec7d69ca22d": {
+    "fd288cf2d3a91ec7d69ca22d:1793841950693": {
       "symbol": "SKHYNIXUSDT",
       "track": "short",
       "stage": "entry",
@@ -40229,7 +36549,7 @@
         }
       }
     },
-    "dba61f501d59a7842f1b9843": {
+    "dba61f501d59a7842f1b9843:1793883972056": {
       "symbol": "AMZNUSDT",
       "track": "short",
       "stage": "entry",
@@ -40524,7 +36844,7 @@
         }
       }
     },
-    "4d10aff0e3a194c3e756c2be": {
+    "4d10aff0e3a194c3e756c2be:1793889068030": {
       "symbol": "TSLAUSDT",
       "track": "short",
       "stage": "entry",
@@ -40971,7 +37291,7 @@
         }
       }
     },
-    "40dcd1d8c116325eef61ead7": {
+    "40dcd1d8c116325eef61ead7:1793889068030": {
       "symbol": "TSLAUSDT",
       "track": "short",
       "stage": "entry",
@@ -41418,7 +37738,7 @@
         }
       }
     },
-    "14905a7607fe40ac003d7603": {
+    "14905a7607fe40ac003d7603:1793889068030": {
       "symbol": "TSLAUSDT",
       "track": "medium",
       "stage": "entry",
@@ -41910,7 +38230,7 @@
         }
       }
     },
-    "0729b0983052de76def5b0d3": {
+    "0729b0983052de76def5b0d3:1793889367258": {
       "symbol": "TSLAUSDT",
       "track": "short",
       "stage": "entry",
@@ -42357,7 +38677,7 @@
         }
       }
     },
-    "9b565bec6f04f97af5a33c78": {
+    "9b565bec6f04f97af5a33c78:1793889367258": {
       "symbol": "TSLAUSDT",
       "track": "short",
       "stage": "entry",
@@ -42849,7 +39169,7 @@
         }
       }
     },
-    "16419d8950df77704ebbf95b": {
+    "16419d8950df77704ebbf95b:1793889655303": {
       "symbol": "NVDAUSDT",
       "track": "short",
       "stage": "entry",
@@ -43296,7 +39616,7 @@
         }
       }
     },
-    "8edf01a3ef654b0411caec80": {
+    "8edf01a3ef654b0411caec80:1793890249824": {
       "symbol": "NVDAUSDT",
       "track": "short",
       "stage": "entry",
@@ -43788,7 +40108,7 @@
         }
       }
     },
-    "014d08cf5f5d7bb3ef521ae0": {
+    "014d08cf5f5d7bb3ef521ae0:1793890568234": {
       "symbol": "TSLAUSDT",
       "track": "short",
       "stage": "entry",
@@ -44229,7 +40549,7 @@
         }
       }
     },
-    "02a84c9aa52dc6407f6cd527": {
+    "02a84c9aa52dc6407f6cd527:1793890568234": {
       "symbol": "TSLAUSDT",
       "track": "short",
       "stage": "entry",
@@ -44676,7 +40996,7 @@
         }
       }
     },
-    "fcb1c8cb30a483d7d0eacbed": {
+    "fcb1c8cb30a483d7d0eacbed:1793890568234": {
       "symbol": "TSLAUSDT",
       "track": "short",
       "stage": "entry",
@@ -45123,7 +41443,7 @@
         }
       }
     },
-    "6e04d239067c17a0bd47534d": {
+    "6e04d239067c17a0bd47534d:1793890895131": {
       "symbol": "METAUSDT",
       "track": "short",
       "stage": "entry",
@@ -45452,7 +41772,7 @@
         }
       }
     },
-    "e9be4e0f7ad046f0ab1cb93b": {
+    "e9be4e0f7ad046f0ab1cb93b:1793891418895": {
       "symbol": "BTCUSDT",
       "track": "short",
       "stage": "entry",
@@ -45893,7 +42213,7 @@
         }
       }
     },
-    "12875ed30ce583943d42a6c8": {
+    "12875ed30ce583943d42a6c8:1793891424946": {
       "symbol": "QQQUSDT",
       "track": "short",
       "stage": "entry",
@@ -46379,7 +42699,7 @@
         }
       }
     },
-    "e5f7e4676bbc7f3a53510566": {
+    "e5f7e4676bbc7f3a53510566:1793891508918": {
       "symbol": "NVDAUSDT",
       "track": "medium",
       "stage": "entry",
@@ -46820,7 +43140,7 @@
         }
       }
     },
-    "52296707cb5552c80a14f8e8": {
+    "52296707cb5552c80a14f8e8:1793891785868": {
       "symbol": "METAUSDT",
       "track": "short",
       "stage": "entry",
@@ -47119,7 +43439,7 @@
         }
       }
     },
-    "d4ff76ff1d137851e4eddf66": {
+    "d4ff76ff1d137851e4eddf66:1793893573361": {
       "symbol": "SPYUSDT",
       "track": "medium",
       "stage": "entry",
@@ -47418,7 +43738,7 @@
         }
       }
     },
-    "914f97917adbcc4df6814c47": {
+    "914f97917adbcc4df6814c47:1793913066674": {
       "symbol": "SPYUSDT",
       "track": "short",
       "stage": "entry",
@@ -47717,7 +44037,7 @@
         }
       }
     },
-    "02239f3b87510931f6d5d09f": {
+    "02239f3b87510931f6d5d09f:1793913066674": {
       "symbol": "SPYUSDT",
       "track": "short",
       "stage": "entry",
@@ -48016,7 +44336,7 @@
         }
       }
     },
-    "ad89947526c073b30f89f578": {
+    "ad89947526c073b30f89f578:1793913066674": {
       "symbol": "SPYUSDT",
       "track": "medium",
       "stage": "entry",
@@ -48315,7 +44635,7 @@
         }
       }
     },
-    "99c5f84d79269bd932e0f70b": {
+    "99c5f84d79269bd932e0f70b:1793920252878": {
       "symbol": "SPYUSDT",
       "track": "short",
       "stage": "entry",
@@ -48610,7 +44930,7 @@
         }
       }
     },
-    "4d3fb066cf855eeb7bac22db": {
+    "4d3fb066cf855eeb7bac22db:1793976134157": {
       "symbol": "GOOGLUSDT",
       "track": "short",
       "stage": "entry",
@@ -48909,7 +45229,7 @@
         }
       }
     },
-    "0f5a8c2cf5403f0485bcf0b8": {
+    "0f5a8c2cf5403f0485bcf0b8:1794170150926": {
       "symbol": "NVDAUSDT",
       "track": "short",
       "stage": "entry",
@@ -49208,7 +45528,7 @@
         }
       }
     },
-    "98ce6884846640da24709e9e": {
+    "98ce6884846640da24709e9e:1794290772725": {
       "symbol": "ADBEUSDT",
       "track": "medium",
       "stage": "star1",
@@ -49371,7 +45691,7 @@
         }
       }
     },
-    "3db652221d647594ba1fa470": {
+    "3db652221d647594ba1fa470:1794301586549": {
       "symbol": "POPMARTUSDT",
       "track": "short",
       "stage": "star2",
@@ -49548,7 +45868,7 @@
         }
       }
     },
-    "08794be936465cd45f96118f": {
+    "08794be936465cd45f96118f:1794305471788": {
       "symbol": "MRKUSDT",
       "track": "medium",
       "stage": "star2",
@@ -49707,7 +46027,7 @@
         }
       }
     },
-    "7629f0da52692d8675da588f": {
+    "7629f0da52692d8675da588f:1794317534051": {
       "symbol": "SPYUSDT",
       "track": "medium",
       "stage": "star1",
@@ -49861,7 +46181,7 @@
         }
       }
     },
-    "69838231f4d116cd5d1da491": {
+    "69838231f4d116cd5d1da491:1794317776561": {
       "symbol": "TMFUSDT",
       "track": "short",
       "stage": "star1",
@@ -50015,7 +46335,7 @@
         }
       }
     },
-    "11eca3c9aae6af92b17eb3bd": {
+    "11eca3c9aae6af92b17eb3bd:1794318959952": {
       "symbol": "GOOGLUSDT",
       "track": "fast",
       "stage": "star1",
@@ -50178,7 +46498,7 @@
         }
       }
     },
-    "c5ac47b209624d967d172c72": {
+    "c5ac47b209624d967d172c72:1794321674722": {
       "symbol": "EWZUSDT",
       "track": "fast",
       "stage": "star1",
@@ -50323,7 +46643,7 @@
         }
       }
     },
-    "aec304764ba1002a1367e9df": {
+    "aec304764ba1002a1367e9df:1794324356495": {
       "symbol": "SKHYNIXUSDT",
       "track": "fast",
       "stage": "star1",
@@ -50468,7 +46788,7 @@
         }
       }
     },
-    "a50a80d200ef2cc55f43d96d": {
+    "a50a80d200ef2cc55f43d96d:1794324976578": {
       "symbol": "EWZUSDT",
       "track": "short",
       "stage": "star1",
@@ -50613,7 +46933,7 @@
         }
       }
     },
-    "122ae91e7dd6c3d3c752ec05": {
+    "122ae91e7dd6c3d3c752ec05:1794325873715": {
       "symbol": "SKHYNIXUSDT",
       "track": "fast",
       "stage": "star2",
@@ -50786,7 +47106,7 @@
         }
       }
     },
-    "1ce21a7a1efc55fa08d20a62": {
+    "1ce21a7a1efc55fa08d20a62:1794328866422": {
       "symbol": "EWZUSDT",
       "track": "fast",
       "stage": "star2",
@@ -50976,7 +47296,7 @@
         }
       }
     },
-    "9a2ee87e3b18151c89576278": {
+    "9a2ee87e3b18151c89576278:1794331554863": {
       "symbol": "MSFTUSDT",
       "track": "short",
       "stage": "star2",
@@ -51204,7 +47524,7 @@
         }
       }
     },
-    "5937f51df362dd9211c00215": {
+    "5937f51df362dd9211c00215:1794334269436": {
       "symbol": "EWZUSDT",
       "track": "short",
       "stage": "star2",
@@ -51441,7 +47761,7 @@
         }
       }
     },
-    "b9676c2baf99c3b412e49aca": {
+    "b9676c2baf99c3b412e49aca:1794370569435": {
       "symbol": "VUSDT",
       "track": "short",
       "stage": "star2",
@@ -51669,7 +47989,7 @@
         }
       }
     },
-    "6f4a0d8b940db24ea9195599": {
+    "6f4a0d8b940db24ea9195599:1794384356130": {
       "symbol": "ADBEUSDT",
       "track": "medium",
       "stage": "star2",
@@ -51925,7 +48245,7 @@
         }
       }
     },
-    "18caab2f1669b55db5bef0ea": {
+    "18caab2f1669b55db5bef0ea:1794417685520": {
       "symbol": "QQQUSDT",
       "track": "medium",
       "stage": "star1",
@@ -52093,7 +48413,7 @@
         }
       }
     },
-    "176ca2014b9e8543e90e047a": {
+    "176ca2014b9e8543e90e047a:1794445868945": {
       "symbol": "NAVERUSDT",
       "track": "medium",
       "stage": "star1",
@@ -52244,7 +48564,7 @@
         }
       }
     },
-    "b8821d7ee61f385dfc02762b": {
+    "b8821d7ee61f385dfc02762b:1794476468646": {
       "symbol": "QQQUSDT",
       "track": "medium",
       "stage": "star1",
@@ -52412,7 +48732,7 @@
         }
       }
     },
-    "e3b12e0feab2abb7d073d118": {
+    "e3b12e0feab2abb7d073d118:1794491572673": {
       "symbol": "AMZNUSDT",
       "track": "fast",
       "stage": "star1",
@@ -52581,1300 +48901,5 @@
       }
     }
   },
-  "touch_cursors": {
-    "BTCUSDT": 1794491460000,
-    "SKHYNIXUSDT": 1794491100000,
-    "NVDAUSDT": 1794491520000,
-    "TSLAUSDT": 1794491520000,
-    "AAPLUSDT": 1794491520000,
-    "MSFTUSDT": 1794491520000,
-    "AMZNUSDT": 1794491520000,
-    "GOOGLUSDT": 1794491520000,
-    "METAUSDT": 1794491520000,
-    "QQQUSDT": 1794491520000,
-    "SPYUSDT": 1794491520000,
-    "CLUSDT": 1794491520000,
-    "BZUSDT": 1794491520000,
-    "BSPUSDT": 1794491520000,
-    "VUSDT": 1794491520000,
-    "LLYUSDT": 1794491520000,
-    "NAVERUSDT": 1794491160000,
-    "WENUSDT": 1794491520000,
-    "MCDUSDT": 1794491580000,
-    "POPMARTUSDT": 1794491580000,
-    "UNITREEUSDT": 1794491580000,
-    "TMFUSDT": 1794491580000,
-    "ADBEUSDT": 1794491580000,
-    "MEITUANUSDT": 1794491580000,
-    "EWZUSDT": 1794491580000,
-    "MRKUSDT": 1794491580000,
-    "ETHUSDT": 1794491460000,
-    "JCTUSDT": 1794491520000,
-    "AKEUSDT": 1794491520000,
-    "BTWUSDT": 1794491520000,
-    "QUSDT": 1794491520000
-  },
-  "notification_policy": "star-ob-reaction-v1",
-  "delivery_mode": "star-ob-reaction-v1",
-  "star_contexts": {
-    "BTCUSDT": {
-      "short|broad|4h:OB:1794283200000:1794312000000:-1|formation-ob": {
-        "track": "short",
-        "lens": "broad",
-        "parent_id": "4h:OB:1794283200000:1794312000000:-1",
-        "arm": {
-          "hit": true,
-          "at": 1794417540000,
-          "bar_open": 1794417480000,
-          "valid_from": 1794312000000,
-          "observed_low": 74370.1,
-          "observed_high": 74682.5,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "short|recent|4h:OB:1794283200000:1794312000000:-1|formation-ob": {
-        "track": "short",
-        "lens": "recent",
-        "parent_id": "4h:OB:1794283200000:1794312000000:-1",
-        "arm": {
-          "hit": true,
-          "at": 1794417540000,
-          "bar_open": 1794417480000,
-          "valid_from": 1794312000000,
-          "observed_low": 74370.1,
-          "observed_high": 74682.5,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      }
-    },
-    "SKHYNIXUSDT": {},
-    "NVDAUSDT": {
-      "short|broad|4h:OB:1794456000000:1794484800000:-1|formation-ob": {
-        "track": "short",
-        "lens": "broad",
-        "parent_id": "4h:OB:1794456000000:1794484800000:-1",
-        "arm": {
-          "hit": true,
-          "at": 1794485940000,
-          "bar_open": 1794485880000,
-          "valid_from": 1794484800000,
-          "observed_low": 160.87,
-          "observed_high": 161.26,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "short|recent|4h:OB:1794456000000:1794484800000:-1|formation-ob": {
-        "track": "short",
-        "lens": "recent",
-        "parent_id": "4h:OB:1794456000000:1794484800000:-1",
-        "arm": {
-          "hit": true,
-          "at": 1794485940000,
-          "bar_open": 1794485880000,
-          "valid_from": 1794484800000,
-          "observed_low": 160.87,
-          "observed_high": 161.26,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      }
-    },
-    "TSLAUSDT": {
-      "short|recent|4h:OB:1794369600000:1794398400000:1|formation-ob": {
-        "track": "short",
-        "lens": "recent",
-        "parent_id": "4h:OB:1794369600000:1794398400000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794438840000,
-          "bar_open": 1794438780000,
-          "valid_from": 1794412800000,
-          "observed_low": 385.79,
-          "observed_high": 386.1,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      }
-    },
-    "AAPLUSDT": {},
-    "MSFTUSDT": {
-      "short|broad|4h:OB:1794427200000:1794456000000:1|formation-ob": {
-        "track": "short",
-        "lens": "broad",
-        "parent_id": "4h:OB:1794427200000:1794456000000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794479700000,
-          "bar_open": 1794479640000,
-          "valid_from": 1794456000000,
-          "observed_low": 520.62,
-          "observed_high": 520.94,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "short|recent|4h:OB:1794355200000:1794384000000:-1|formation-ob": {
-        "track": "short",
-        "lens": "recent",
-        "parent_id": "4h:OB:1794355200000:1794384000000:-1",
-        "arm": {
-          "hit": true,
-          "at": 1794384840000,
-          "bar_open": 1794384780000,
-          "valid_from": 1794384000000,
-          "observed_low": 535.67,
-          "observed_high": 535.89,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      }
-    },
-    "AMZNUSDT": {
-      "fast|broad|1h:OB:1794315600000:1794322800000:1|1793890800000": {
-        "track": "fast",
-        "lens": "broad",
-        "parent_id": "1h:OB:1794315600000:1794322800000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794491400000,
-          "bar_open": 1794491340000,
-          "valid_from": 1794369600000,
-          "observed_low": 265.37,
-          "observed_high": 265.77,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "fast|recent|1h:OB:1794315600000:1794322800000:1|1794315600000": {
-        "track": "fast",
-        "lens": "recent",
-        "parent_id": "1h:OB:1794315600000:1794322800000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794491400000,
-          "bar_open": 1794491340000,
-          "valid_from": 1794340800000,
-          "observed_low": 265.37,
-          "observed_high": 265.77,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      }
-    },
-    "GOOGLUSDT": {},
-    "METAUSDT": {},
-    "QQQUSDT": {
-      "medium|broad|1d:OB:1793491200000:1793664000000:-1|1791244800000": {
-        "track": "medium",
-        "lens": "broad",
-        "parent_id": "1d:OB:1793491200000:1793664000000:-1",
-        "arm": {
-          "hit": true,
-          "at": 1794417780000,
-          "bar_open": 1794417720000,
-          "valid_from": 1793923200000,
-          "observed_low": 694.67,
-          "observed_high": 695.21,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "medium|broad|1d:OB:1793750400000:1793923200000:-1|1791244800000": {
-        "track": "medium",
-        "lens": "broad",
-        "parent_id": "1d:OB:1793750400000:1793923200000:-1",
-        "arm": {
-          "hit": true,
-          "at": 1794386160000,
-          "bar_open": 1794386100000,
-          "valid_from": 1793923200000,
-          "observed_low": 687.11,
-          "observed_high": 687.21,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      }
-    },
-    "SPYUSDT": {
-      "medium|recent|1d:OB:1793750400000:1793923200000:-1|1791763200000": {
-        "track": "medium",
-        "lens": "recent",
-        "parent_id": "1d:OB:1793750400000:1793923200000:-1",
-        "arm": {
-          "hit": true,
-          "band_low": 756.2,
-          "band_high": 768.12,
-          "valid_from": 1793923200000,
-          "at": 1794291958429,
-          "observed_price": 756.23,
-          "evidence": "current_price"
-        },
-        "overlap": null
-      }
-    },
-    "CLUSDT": {
-      "short|broad|4h:OB:1794398400000:1794427200000:-1|formation-ob": {
-        "track": "short",
-        "lens": "broad",
-        "parent_id": "4h:OB:1794398400000:1794427200000:-1",
-        "arm": {
-          "hit": true,
-          "at": 1794468240000,
-          "bar_open": 1794468180000,
-          "valid_from": 1794427200000,
-          "observed_low": 86.008,
-          "observed_high": 86.079,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "short|recent|4h:OB:1794398400000:1794427200000:-1|formation-ob": {
-        "track": "short",
-        "lens": "recent",
-        "parent_id": "4h:OB:1794398400000:1794427200000:-1",
-        "arm": {
-          "hit": true,
-          "at": 1794468240000,
-          "bar_open": 1794468180000,
-          "valid_from": 1794427200000,
-          "observed_low": 86.008,
-          "observed_high": 86.079,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      }
-    },
-    "BZUSDT": {
-      "short|broad|4h:OB:1794398400000:1794427200000:-1|formation-ob": {
-        "track": "short",
-        "lens": "broad",
-        "parent_id": "4h:OB:1794398400000:1794427200000:-1",
-        "arm": {
-          "hit": true,
-          "at": 1794468000000,
-          "bar_open": 1794467940000,
-          "valid_from": 1794427200000,
-          "observed_low": 91.44,
-          "observed_high": 91.51,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "short|recent|4h:OB:1794398400000:1794427200000:-1|formation-ob": {
-        "track": "short",
-        "lens": "recent",
-        "parent_id": "4h:OB:1794398400000:1794427200000:-1",
-        "arm": {
-          "hit": true,
-          "at": 1794468000000,
-          "bar_open": 1794467940000,
-          "valid_from": 1794427200000,
-          "observed_low": 91.44,
-          "observed_high": 91.51,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      }
-    },
-    "BSPUSDT": {},
-    "VUSDT": {},
-    "LLYUSDT": {
-      "fast|broad|1h:OB:1794463200000:1794470400000:1|1793973600000": {
-        "track": "fast",
-        "lens": "broad",
-        "parent_id": "1h:OB:1794463200000:1794470400000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794491520000,
-          "bar_open": 1794491460000,
-          "valid_from": 1794470400000,
-          "observed_low": 1457.43,
-          "observed_high": 1459.17,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      }
-    },
-    "NAVERUSDT": {
-      "medium|recent|1d:OB:1794096000000:1794268800000:1|1793750400000": {
-        "track": "medium",
-        "lens": "recent",
-        "parent_id": "1d:OB:1794096000000:1794268800000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794441660000,
-          "bar_open": 1794441600000,
-          "valid_from": 1794355200000,
-          "observed_low": 138.91,
-          "observed_high": 142.1,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      }
-    },
-    "WENUSDT": {
-      "short|broad|4h:OB:1794398400000:1794427200000:1|formation-ob": {
-        "track": "short",
-        "lens": "broad",
-        "parent_id": "4h:OB:1794398400000:1794427200000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794447720000,
-          "bar_open": 1794447660000,
-          "valid_from": 1794427200000,
-          "observed_low": 8.286,
-          "observed_high": 8.295,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "short|broad|4h:OB:1794441600000:1794470400000:1|formation-ob": {
-        "track": "short",
-        "lens": "broad",
-        "parent_id": "4h:OB:1794441600000:1794470400000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794470940000,
-          "bar_open": 1794470880000,
-          "valid_from": 1794470400000,
-          "observed_low": 8.33,
-          "observed_high": 8.341,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "short|recent|4h:OB:1794398400000:1794427200000:1|formation-ob": {
-        "track": "short",
-        "lens": "recent",
-        "parent_id": "4h:OB:1794398400000:1794427200000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794447720000,
-          "bar_open": 1794447660000,
-          "valid_from": 1794427200000,
-          "observed_low": 8.286,
-          "observed_high": 8.295,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "short|recent|4h:OB:1794441600000:1794470400000:1|formation-ob": {
-        "track": "short",
-        "lens": "recent",
-        "parent_id": "4h:OB:1794441600000:1794470400000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794470940000,
-          "bar_open": 1794470880000,
-          "valid_from": 1794470400000,
-          "observed_low": 8.33,
-          "observed_high": 8.341,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      }
-    },
-    "MCDUSDT": {
-      "short|broad|4h:OB:1793952000000:1793980800000:1|formation-ob": {
-        "track": "short",
-        "lens": "broad",
-        "parent_id": "4h:OB:1793952000000:1793980800000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794412560000,
-          "bar_open": 1794412500000,
-          "valid_from": 1793980800000,
-          "observed_low": 275.13,
-          "observed_high": 275.4,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "short|recent|4h:OB:1793952000000:1793980800000:1|formation-ob": {
-        "track": "short",
-        "lens": "recent",
-        "parent_id": "4h:OB:1793952000000:1793980800000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794412560000,
-          "bar_open": 1794412500000,
-          "valid_from": 1793980800000,
-          "observed_low": 275.13,
-          "observed_high": 275.4,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      }
-    },
-    "POPMARTUSDT": {
-      "short|broad|4h:OB:1792108800000:1792137600000:-1|formation-ob": {
-        "track": "short",
-        "lens": "broad",
-        "parent_id": "4h:OB:1792108800000:1792137600000:-1",
-        "arm": {
-          "hit": true,
-          "at": 1794329880000,
-          "bar_open": 1794329820000,
-          "valid_from": 1792137600000,
-          "observed_low": 18.621,
-          "observed_high": 18.653,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "short|recent|4h:OB:1793908800000:1793937600000:1|formation-ob": {
-        "track": "short",
-        "lens": "recent",
-        "parent_id": "4h:OB:1793908800000:1793937600000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794447960000,
-          "bar_open": 1794447900000,
-          "valid_from": 1793937600000,
-          "observed_low": 18.13,
-          "observed_high": 18.247,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "short|recent|4h:OB:1794168000000:1794196800000:1|formation-ob": {
-        "track": "short",
-        "lens": "recent",
-        "parent_id": "4h:OB:1794168000000:1794196800000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794448440000,
-          "bar_open": 1794448380000,
-          "valid_from": 1794196800000,
-          "observed_low": 18.095,
-          "observed_high": 18.16,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "medium|recent|1d:OB:1794096000000:1794268800000:1|1793059200000": {
-        "track": "medium",
-        "lens": "recent",
-        "parent_id": "1d:OB:1794096000000:1794268800000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794448440000,
-          "bar_open": 1794448380000,
-          "valid_from": 1794268800000,
-          "observed_low": 18.095,
-          "observed_high": 18.16,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      }
-    },
-    "UNITREEUSDT": {},
-    "TMFUSDT": {},
-    "ADBEUSDT": {
-      "short|broad|4h:OB:1794441600000:1794470400000:-1|formation-ob": {
-        "track": "short",
-        "lens": "broad",
-        "parent_id": "4h:OB:1794441600000:1794470400000:-1",
-        "arm": {
-          "hit": true,
-          "at": 1794470820000,
-          "bar_open": 1794470760000,
-          "valid_from": 1794470400000,
-          "observed_low": 237.35,
-          "observed_high": 237.61,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "short|recent|4h:OB:1794441600000:1794470400000:-1|formation-ob": {
-        "track": "short",
-        "lens": "recent",
-        "parent_id": "4h:OB:1794441600000:1794470400000:-1",
-        "arm": {
-          "hit": true,
-          "at": 1794470820000,
-          "bar_open": 1794470760000,
-          "valid_from": 1794470400000,
-          "observed_low": 237.35,
-          "observed_high": 237.61,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "medium|recent|1d:OB:1791331200000:1791504000000:1|1791331200000": {
-        "track": "medium",
-        "lens": "recent",
-        "parent_id": "1d:OB:1791331200000:1791504000000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794284940000,
-          "bar_open": 1794284880000,
-          "valid_from": 1792108800000,
-          "observed_low": 237.92,
-          "observed_high": 238.13,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": {
-          "level": 2,
-          "touch": {
-            "hit": true,
-            "at": 1794384240000,
-            "bar_open": 1794384180000,
-            "valid_from": 1794355200000,
-            "observed_low": 234.66,
-            "observed_high": 234.98,
-            "evidence": "completed_1m_range"
-          },
-          "sources": [
-            {
-              "id": "1d:FVG:1785024000000:1785283200000:1",
-              "timeframe": "1d",
-              "kind": "FVG",
-              "direction": 1,
-              "low": 225.75,
-              "high": 236.92,
-              "created": 1785283200000,
-              "origin": 1785024000000,
-              "stop": 225.75,
-              "invalidation": 225.75,
-              "expiry": 9223372036854775807
-            },
-            {
-              "id": "1d:OB:1791331200000:1791504000000:1",
-              "timeframe": "1d",
-              "kind": "OB",
-              "direction": 1,
-              "low": 232.72,
-              "high": 237.97,
-              "created": 1791504000000,
-              "origin": 1791331200000,
-              "stop": 227.24,
-              "invalidation": 232.72,
-              "expiry": 9223372036854775807
-            },
-            {
-              "id": "4h:OB:1794326400000:1794355200000:1",
-              "timeframe": "4h",
-              "kind": "OB",
-              "direction": 1,
-              "low": 234.59,
-              "high": 235.06,
-              "created": 1794355200000,
-              "origin": 1794326400000,
-              "stop": 232.18,
-              "invalidation": 234.59,
-              "expiry": 9223372036854775807
-            },
-            {
-              "id": "1h:OB:1794337200000:1794344400000:1",
-              "timeframe": "1h",
-              "kind": "OB",
-              "direction": 1,
-              "low": 234.59,
-              "high": 234.8,
-              "created": 1794344400000,
-              "origin": 1794337200000,
-              "stop": 234.23,
-              "invalidation": 234.59,
-              "expiry": 9223372036854775807
-            }
-          ],
-          "band": [
-            234.59,
-            234.8
-          ],
-          "score": 4,
-          "lower_wave": {
-            "points": [
-              {
-                "kind": "low",
-                "index": 3723,
-                "price": 232.75,
-                "confirmed_index": 3724,
-                "confirmed_at": 1794326400000,
-                "threshold": 2.1856236437161436,
-                "timestamp": 1794319200000
-              },
-              {
-                "kind": "high",
-                "index": 3724,
-                "price": 236.51,
-                "confirmed_index": 3726,
-                "confirmed_at": 1794333600000,
-                "threshold": 2.193436240593562,
-                "timestamp": 1794322800000
-              },
-              {
-                "kind": "low",
-                "index": 3727,
-                "price": 232.18,
-                "confirmed_index": 3729,
-                "confirmed_at": 1794344400000,
-                "threshold": 2.4337242786385045,
-                "timestamp": 1794333600000
-              },
-              {
-                "kind": "high",
-                "index": 3730,
-                "price": 237.47,
-                "confirmed_index": 3740,
-                "confirmed_at": 1794384000000,
-                "threshold": 2.4586961516650128,
-                "timestamp": 1794344400000
-              }
-            ],
-            "chart_start": 1794319200000,
-            "target": null
-          },
-          "observation_risk": {
-            "stop": 234.23,
-            "target": 272.36,
-            "plan": {
-              "band": [
-                234.59,
-                234.8
-              ],
-              "entry": 234.8,
-              "rr": 25.423638220237628,
-              "execution": {
-                "at": 1794384356281,
-                "notional": 1000.0,
-                "mid": 234.91500000000002,
-                "buy_vwap": 235.122937792,
-                "sell_vwap": 234.66701522499997,
-                "fee_per_side": 0.0006,
-                "slippage_per_side": 0.0012556361875574406,
-                "vwap": 235.122937792
-              }
-            },
-            "costs_checked": true
-          }
-        }
-      }
-    },
-    "MEITUANUSDT": {},
-    "EWZUSDT": {
-      "fast|recent|1h:OB:1794207600000:1794214800000:1|1793919600000": {
-        "track": "fast",
-        "lens": "recent",
-        "parent_id": "1h:OB:1794207600000:1794214800000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794491340000,
-          "bar_open": 1794491280000,
-          "valid_from": 1794254400000,
-          "observed_low": 31.978,
-          "observed_high": 32.057,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "short|broad|4h:OB:1794412800000:1794441600000:-1|formation-ob": {
-        "track": "short",
-        "lens": "broad",
-        "parent_id": "4h:OB:1794412800000:1794441600000:-1",
-        "arm": {
-          "hit": true,
-          "at": 1794449100000,
-          "bar_open": 1794449040000,
-          "valid_from": 1794441600000,
-          "observed_low": 32.394,
-          "observed_high": 32.426,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "short|recent|4h:OB:1794196800000:1794225600000:1|formation-ob": {
-        "track": "short",
-        "lens": "recent",
-        "parent_id": "4h:OB:1794196800000:1794225600000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794329820000,
-          "bar_open": 1794329760000,
-          "valid_from": 1794254400000,
-          "observed_low": 32.171,
-          "observed_high": 32.178,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": {
-          "level": 2,
-          "touch": {
-            "hit": true,
-            "at": 1794334260000,
-            "bar_open": 1794334200000,
-            "valid_from": 1794254400000,
-            "observed_low": 32.032,
-            "observed_high": 32.091,
-            "evidence": "completed_1m_range"
-          },
-          "sources": [
-            {
-              "id": "4h:OB:1794196800000:1794225600000:1",
-              "timeframe": "4h",
-              "kind": "OB",
-              "direction": 1,
-              "low": 31.971,
-              "high": 32.171,
-              "created": 1794225600000,
-              "origin": 1794196800000,
-              "stop": 31.971,
-              "invalidation": 31.971,
-              "expiry": 9223372036854775807
-            },
-            {
-              "id": "1h:OB:1794207600000:1794214800000:1",
-              "timeframe": "1h",
-              "kind": "OB",
-              "direction": 1,
-              "low": 31.971,
-              "high": 32.143,
-              "created": 1794214800000,
-              "origin": 1794207600000,
-              "stop": 31.971,
-              "invalidation": 31.971,
-              "expiry": 9223372036854775807
-            },
-            {
-              "id": "15m:OB:1794210300000:1794212100000:1",
-              "timeframe": "15m",
-              "kind": "OB",
-              "direction": 1,
-              "low": 31.971,
-              "high": 32.056,
-              "created": 1794212100000,
-              "origin": 1794210300000,
-              "stop": 31.971,
-              "invalidation": 31.971,
-              "expiry": 9223372036854775807
-            }
-          ],
-          "band": [
-            31.971,
-            32.056
-          ],
-          "score": 3,
-          "formation": {
-            "start": 1794196800000,
-            "end": 1794225600000
-          },
-          "lower_wave": {
-            "points": [
-              {
-                "kind": "low",
-                "index": 4336,
-                "price": 32.638,
-                "confirmed_index": 4337,
-                "confirmed_at": 1794306600000,
-                "threshold": 0.11645669473761164,
-                "timestamp": 1794304800000
-              },
-              {
-                "kind": "high",
-                "index": 4344,
-                "price": 32.826,
-                "confirmed_index": 4345,
-                "confirmed_at": 1794313800000,
-                "threshold": 0.13229558080121057,
-                "timestamp": 1794312000000
-              },
-              {
-                "kind": "low",
-                "index": 4355,
-                "price": 32.08,
-                "confirmed_index": 4357,
-                "confirmed_at": 1794324600000,
-                "threshold": 0.16591663497984332,
-                "timestamp": 1794321900000
-              },
-              {
-                "kind": "high",
-                "index": 4357,
-                "price": 32.323,
-                "confirmed_index": 4359,
-                "confirmed_at": 1794326400000,
-                "threshold": 0.17241791485506863,
-                "timestamp": 1794323700000
-              }
-            ],
-            "chart_start": 1794304800000,
-            "target": null
-          },
-          "observation_risk": {
-            "stop": 31.971,
-            "target": 33.037,
-            "plan": {
-              "band": [
-                31.972,
-                32.056
-              ],
-              "entry": 32.056,
-              "rr": 3.928327233971434,
-              "execution": {
-                "at": 1794334269590,
-                "notional": 1000.0,
-                "mid": 32.025499999999994,
-                "buy_vwap": 32.065333430605,
-                "sell_vwap": 32.004528741005004,
-                "fee_per_side": 0.0006,
-                "slippage_per_side": 0.0014438035504522827,
-                "vwap": 32.065333430605
-              }
-            },
-            "costs_checked": true
-          }
-        }
-      },
-      "short|recent|4h:OB:1794369600000:1794398400000:1|formation-ob": {
-        "track": "short",
-        "lens": "recent",
-        "parent_id": "4h:OB:1794369600000:1794398400000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794478200000,
-          "bar_open": 1794478140000,
-          "valid_from": 1794398400000,
-          "observed_low": 32.045,
-          "observed_high": 32.356,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      }
-    },
-    "MRKUSDT": {
-      "short|recent|4h:OB:1793952000000:1793980800000:1|formation-ob": {
-        "track": "short",
-        "lens": "recent",
-        "parent_id": "4h:OB:1793952000000:1793980800000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794411420000,
-          "bar_open": 1794411360000,
-          "valid_from": 1793980800000,
-          "observed_low": 145.84,
-          "observed_high": 146.08,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      },
-      "medium|recent|1d:OB:1790035200000:1790208000000:-1|1790035200000": {
-        "track": "medium",
-        "lens": "recent",
-        "parent_id": "1d:OB:1790035200000:1790208000000:-1",
-        "arm": {
-          "hit": true,
-          "at": 1794285120000,
-          "bar_open": 1794285060000,
-          "valid_from": 1791244800000,
-          "observed_low": 149.73,
-          "observed_high": 150.14,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": {
-          "level": 2,
-          "touch": {
-            "hit": true,
-            "at": 1794305400000,
-            "bar_open": 1794305340000,
-            "valid_from": 1794304800000,
-            "observed_low": 149.94,
-            "observed_high": 150.21,
-            "evidence": "completed_1m_range"
-          },
-          "sources": [
-            {
-              "id": "1d:OB:1790035200000:1790208000000:-1",
-              "timeframe": "1d",
-              "kind": "OB",
-              "direction": -1,
-              "low": 149.68,
-              "high": 151.17,
-              "created": 1790208000000,
-              "origin": 1790035200000,
-              "stop": 153.23,
-              "invalidation": 151.17,
-              "expiry": 9223372036854775807
-            },
-            {
-              "id": "4h:FVG:1793880000000:1793923200000:-1",
-              "timeframe": "4h",
-              "kind": "FVG",
-              "direction": -1,
-              "low": 148.75,
-              "high": 151.06,
-              "created": 1793923200000,
-              "origin": 1793880000000,
-              "stop": 151.06,
-              "invalidation": 151.06,
-              "expiry": 9223372036854775807
-            },
-            {
-              "id": "1h:OB:1794297600000:1794304800000:-1",
-              "timeframe": "1h",
-              "kind": "OB",
-              "direction": -1,
-              "low": 150.02,
-              "high": 150.27,
-              "created": 1794304800000,
-              "origin": 1794297600000,
-              "stop": 150.28,
-              "invalidation": 150.27,
-              "expiry": 9223372036854775807
-            }
-          ],
-          "band": [
-            150.02,
-            150.27
-          ],
-          "score": 3
-        }
-      }
-    },
-    "ETHUSDT": {},
-    "JCTUSDT": {
-      "medium|broad|1d:OB:1792713600000:1792886400000:1|1788912000000": {
-        "track": "medium",
-        "lens": "broad",
-        "parent_id": "1d:OB:1792713600000:1792886400000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794491220000,
-          "bar_open": 1794491160000,
-          "valid_from": 1794182400000,
-          "observed_low": 0.00295,
-          "observed_high": 0.002973,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      }
-    },
-    "AKEUSDT": {},
-    "BTWUSDT": {},
-    "QUSDT": {}
-  },
-  "star_locks": {
-    "AAPLUSDT": {},
-    "AMZNUSDT": {
-      "216ce5ea4d2b19dec78363af": {
-        "track": "fast",
-        "level": 1,
-        "parent": {
-          "id": "1h:OB:1794315600000:1794322800000:1",
-          "timeframe": "1h",
-          "kind": "OB",
-          "direction": 1,
-          "low": 265.64,
-          "high": 268.06,
-          "created": 1794322800000,
-          "origin": 1794315600000,
-          "stop": 265.15,
-          "invalidation": 265.64,
-          "expiry": 9223372036854775807
-        },
-        "direction": 1,
-        "low": 264.91,
-        "high": 265.27
-      }
-    },
-    "GOOGLUSDT": {
-      "2f7c0aa7e4dc50a8a6a9dd8e": {
-        "track": "medium",
-        "level": 3,
-        "parent": {
-          "id": "1d:OB:1774828800000:1775001600000:1",
-          "timeframe": "1d",
-          "kind": "OB",
-          "direction": 1,
-          "low": 272.69,
-          "high": 273.32,
-          "created": 1775001600000,
-          "origin": 1774828800000,
-          "stop": 272.0,
-          "invalidation": 272.69,
-          "expiry": 9223372036854775807
-        },
-        "direction": 1,
-        "low": 272.69,
-        "high": 273.32
-      }
-    },
-    "SPYUSDT": {
-      "ab202ac562acc6b74213512d": {
-        "track": "short",
-        "level": 3,
-        "parent": {
-          "id": "4h:OB:1782460800000:1782489600000:1",
-          "timeframe": "4h",
-          "kind": "OB",
-          "direction": 1,
-          "low": 730.59,
-          "high": 733.25,
-          "created": 1782489600000,
-          "origin": 1782460800000,
-          "stop": 728.38,
-          "invalidation": 730.59,
-          "expiry": 9223372036854775807
-        },
-        "direction": 1,
-        "low": 732.12,
-        "high": 732.65
-      },
-      "cfc38d5e0e425f8f7b3e9536": {
-        "track": "short",
-        "level": 3,
-        "parent": {
-          "id": "4h:OB:1781179200000:1781208000000:1",
-          "timeframe": "4h",
-          "kind": "OB",
-          "direction": 1,
-          "low": 727.87,
-          "high": 730.97,
-          "created": 1781208000000,
-          "origin": 1781179200000,
-          "stop": 724.2,
-          "invalidation": 727.87,
-          "expiry": 9223372036854775807
-        },
-        "direction": 1,
-        "low": 729.83,
-        "high": 730.97
-      },
-      "c51c141962bbaba1e9419068": {
-        "track": "medium",
-        "level": 3,
-        "parent": {
-          "id": "1d:OB:1781049600000:1781222400000:1",
-          "timeframe": "1d",
-          "kind": "OB",
-          "direction": 1,
-          "low": 722.56,
-          "high": 735.43,
-          "created": 1781222400000,
-          "origin": 1781049600000,
-          "stop": 721.04,
-          "invalidation": 722.56,
-          "expiry": 9223372036854775807
-        },
-        "direction": 1,
-        "low": 730.59,
-        "high": 732.65
-      },
-      "829b96d5996ad33678ed1de0": {
-        "track": "medium",
-        "level": 1,
-        "parent": {
-          "id": "1d:OB:1793750400000:1793923200000:-1",
-          "timeframe": "1d",
-          "kind": "OB",
-          "direction": -1,
-          "low": 756.2,
-          "high": 768.12,
-          "created": 1793923200000,
-          "origin": 1793750400000,
-          "stop": 770.35,
-          "invalidation": 768.12,
-          "expiry": 9223372036854775807
-        },
-        "direction": -1,
-        "low": 755.29,
-        "high": 755.61
-      }
-    },
-    "MSFTUSDT": {},
-    "QQQUSDT": {
-      "136306b4b938f68f90a12959": {
-        "track": "medium",
-        "level": 1,
-        "parent": {
-          "id": "1d:OB:1793750400000:1793923200000:-1",
-          "timeframe": "1d",
-          "kind": "OB",
-          "direction": -1,
-          "low": 687.18,
-          "high": 691.91,
-          "created": 1793923200000,
-          "origin": 1793750400000,
-          "stop": 702.48,
-          "invalidation": 691.91,
-          "expiry": 9223372036854775807
-        },
-        "direction": -1,
-        "low": 694.64,
-        "high": 694.82
-      },
-      "45f368cbc47f99750fec370f": {
-        "track": "medium",
-        "level": 1,
-        "parent": {
-          "id": "1d:OB:1793491200000:1793664000000:-1",
-          "timeframe": "1d",
-          "kind": "OB",
-          "direction": -1,
-          "low": 695.09,
-          "high": 698.11,
-          "created": 1793664000000,
-          "origin": 1793491200000,
-          "stop": 700.91,
-          "invalidation": 698.11,
-          "expiry": 9223372036854775807
-        },
-        "direction": -1,
-        "low": 687.04,
-        "high": 687.39
-      }
-    },
-    "BZUSDT": {},
-    "BTCUSDT": {},
-    "TSLAUSDT": {},
-    "METAUSDT": {},
-    "NVDAUSDT": {},
-    "CLUSDT": {},
-    "SKHYNIXUSDT": {},
-    "BSPUSDT": {},
-    "VUSDT": {},
-    "LLYUSDT": {},
-    "NAVERUSDT": {
-      "0c06ffb9579a3a6203af63c1": {
-        "track": "medium",
-        "level": 1,
-        "parent": {
-          "id": "1d:OB:1794096000000:1794268800000:1",
-          "timeframe": "1d",
-          "kind": "OB",
-          "direction": 1,
-          "low": 138.9,
-          "high": 139.28,
-          "created": 1794268800000,
-          "origin": 1794096000000,
-          "stop": 136.81,
-          "invalidation": 138.9,
-          "expiry": 9223372036854775807
-        },
-        "direction": 1,
-        "low": 137.59,
-        "high": 138.4
-      }
-    },
-    "WENUSDT": {},
-    "MCDUSDT": {},
-    "POPMARTUSDT": {
-      "2cbc359e52df1cf2de446e39": {
-        "track": "short",
-        "level": 2,
-        "parent": {
-          "id": "4h:OB:1792108800000:1792137600000:-1",
-          "timeframe": "4h",
-          "kind": "OB",
-          "direction": -1,
-          "low": 18.643,
-          "high": 18.768,
-          "created": 1792137600000,
-          "origin": 1792108800000,
-          "stop": 18.8,
-          "invalidation": 18.768,
-          "expiry": 9223372036854775807
-        },
-        "direction": -1,
-        "low": 18.683,
-        "high": 18.711
-      }
-    },
-    "UNITREEUSDT": {},
-    "TMFUSDT": {},
-    "ADBEUSDT": {
-      "b97e30caf92fa3116cb25bfa": {
-        "track": "medium",
-        "level": 2,
-        "parent": {
-          "id": "1d:OB:1791331200000:1791504000000:1",
-          "timeframe": "1d",
-          "kind": "OB",
-          "direction": 1,
-          "low": 232.72,
-          "high": 237.97,
-          "created": 1791504000000,
-          "origin": 1791331200000,
-          "stop": 227.24,
-          "invalidation": 232.72,
-          "expiry": 9223372036854775807
-        },
-        "direction": 1,
-        "low": 234.59,
-        "high": 234.8
-      }
-    },
-    "MEITUANUSDT": {},
-    "EWZUSDT": {
-      "65345beb07c925ff60f45335": {
-        "track": "short",
-        "level": 2,
-        "parent": {
-          "id": "4h:OB:1794196800000:1794225600000:1",
-          "timeframe": "4h",
-          "kind": "OB",
-          "direction": 1,
-          "low": 31.971,
-          "high": 32.171,
-          "created": 1794225600000,
-          "origin": 1794196800000,
-          "stop": 31.971,
-          "invalidation": 31.971,
-          "expiry": 9223372036854775807
-        },
-        "direction": 1,
-        "low": 31.971,
-        "high": 32.056
-      },
-      "de559c11c7baadf8cef12e46": {
-        "track": "fast",
-        "level": 2,
-        "parent": {
-          "id": "1h:OB:1794207600000:1794214800000:1",
-          "timeframe": "1h",
-          "kind": "OB",
-          "direction": 1,
-          "low": 31.971,
-          "high": 32.143,
-          "created": 1794214800000,
-          "origin": 1794207600000,
-          "stop": 31.971,
-          "invalidation": 31.971,
-          "expiry": 9223372036854775807
-        },
-        "direction": 1,
-        "low": 32.074,
-        "high": 32.087
-      }
-    },
-    "MRKUSDT": {
-      "9f88ed41b8415430b48b237b": {
-        "track": "medium",
-        "level": 2,
-        "parent": {
-          "id": "1d:OB:1790035200000:1790208000000:-1",
-          "timeframe": "1d",
-          "kind": "OB",
-          "direction": -1,
-          "low": 149.68,
-          "high": 151.17,
-          "created": 1790208000000,
-          "origin": 1790035200000,
-          "stop": 153.23,
-          "invalidation": 151.17,
-          "expiry": 9223372036854775807
-        },
-        "direction": -1,
-        "low": 150.02,
-        "high": 150.27
-      }
-    },
-    "ETHUSDT": {},
-    "JCTUSDT": {},
-    "AKEUSDT": {},
-    "BTWUSDT": {},
-    "QUSDT": {}
-  }
+  "alert_reset_at": 1794491630274
 }
