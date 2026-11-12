@@ -1,5 +1,6 @@
 """Three alert grades for a single higher-timeframe OB reaction."""
 
+from bisect import bisect_left
 from collections import defaultdict
 from dataclasses import asdict
 from decimal import Decimal, InvalidOperation, ROUND_CEILING, ROUND_FLOOR
@@ -173,10 +174,27 @@ def formation_contacts(parent, zones, path, direction_at, price, now, minutes, s
             continue
         hit = first_contact(lo, hi, known, price, now, minutes, since)
         if hit['hit']:
-            contacts.append({'level': 2, 'touch': hit, 'sources': [asdict(ob) for ob in sources],
+            contacts.append({'level': 1, 'phase': 'first_contact', 'touch': hit, 'sources': [asdict(ob) for ob in sources],
                              'band': [lo, hi], 'score': 3,
                              'formation': {'start': parent.origin, 'end': parent.created}})
     return contacts
+
+
+def formation_reaction(overlap, bars, points, tf, direction):
+    touch = overlap['touch']
+    cutoff = touch.get('bar_open', touch['at'])
+    kind = 'high' if direction == 1 else 'low'
+    pivot = next((p for p in reversed(points) if p['kind'] == kind and p['confirmed_at'] <= cutoff), None)
+    if pivot is None:
+        return None
+    level = pivot['price']
+    width = TF_MS[tf]
+    start = max(1, bisect_left(bars, touch['at'] - width + 1, key=lambda b: b.timestamp))
+    for i in range(start, len(bars)):
+        if direction * (bars[i - 1].close - level) <= 0 < direction * (bars[i].close - level):
+            return {'at': bars[i].timestamp + width, 'bar_open': bars[i].timestamp,
+                    'price': bars[i].close, 'level': level}
+    return None
 
 
 def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=None, tracks=None,
@@ -270,6 +288,19 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                         choices = [first_overlap]
                 elif anchored:
                     choices = [c for c in choices if c['sources'] == prior_overlap['sources']]
+                prior_reaction = episode.get('reaction')
+                if anchored and episode['overlap'] and prior_reaction is None:
+                    waiting = episode.get('pending_reaction')
+                    reaction = waiting or formation_reaction(episode['overlap'], lower_bars, lower_points, final, direction)
+                    if reaction:
+                        episode = dict(episode)
+                        if prior_overlap is None:
+                            episode['pending_reaction'] = reaction
+                        else:
+                            episode.pop('pending_reaction', None)
+                            episode['reaction'] = reaction
+                            if waiting or reaction['at'] > touch_since:
+                                choices.append({**prior_overlap, 'level': 2, 'phase': 'reaction', 'reaction': reaction})
                 updated[identity] = episode
                 for ob in (() if anchored else lower_obs):
                     hit = first_contact(ob.low, ob.high, max(ob.created, arm['at']), price, now, recent_minutes, touch_since)
@@ -280,7 +311,7 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                 latest_upper = next(reversed(upper_stairs.values()), None)
                 followup = prior_overlap if anchored else episode['overlap']
                 reaction_at = followup['touch']['at'] if anchored and followup else arm['at']
-                if (upper_ready and followup and step and not step['invalidated_at']
+                if (upper_ready and followup and (not anchored or prior_reaction) and step and not step['invalidated_at']
                         and direction * (price - latest_upper['protected']) >= 0
                         and step['origin'] >= max(upper['end'], frame_open(reaction_at - 1, final))
                         and step['known_at'] > reaction_at and direction * (price - step['protected']) > 0
@@ -297,7 +328,8 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                         rr = net_rr(entry, stop, target, direction)
                         if rr < 3 - 1e-9:
                             continue
-                        known = max(upper['known_at'], step['known_at'], ob.created, episode['overlap']['touch']['at'])
+                        known = max(upper['known_at'], step['known_at'], ob.created, episode['overlap']['touch']['at'],
+                                    prior_reaction['at'] if prior_reaction else 0)
                         hit = first_contact(lo, hi, known, price, now, recent_minutes, touch_since)
                         if not hit['hit']:
                             continue
@@ -321,11 +353,11 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                     best = max(choices, key=lambda c: (c['level'], c['score'], c.get('rr', 0)))
                     sources = best['sources']
                     upper_wave = overview_wave(upper_bars, points, root, upper if upper_ready else None)
-                    if best['level'] == 2:
-                        at = best['touch']['at']
+                    if best['level'] == 2 or best.get('formation'):
+                        at = best.get('reaction', best['touch'])['at']
                         upper_wave = observation_wave(upper_bars, recent_upper_points, at, parent.origin)
                         best['lower_wave'] = observation_wave(lower_bars, lower_points, at)
-                    if best['level'] < 3:
+                    if best['level'] < 3 and best.get('phase') != 'first_contact':
                         target_points = recent_upper_points if best['level'] == 2 else points
                         reference = observation_reference(best, lower_bars, target_points, direction,
                                                           lower_points=lower_points, tick_size=tick_size,
@@ -348,20 +380,31 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
     return result
 
 
+def alert_title(candidate):
+    if candidate.get('phase') == 'reaction':
+        return '하위 구조 반응 확인'
+    if candidate.get('formation'):
+        return '3중 OB 첫 접촉'
+    if candidate['level'] == 1:
+        return f"{LABELS[candidate['refinement_tf']]} OB 관찰"
+    return TITLES[candidate['level']]
+
+
 def unit_text(candidate):
     c = candidate
     level, side = c['level'], 'LONG' if c['direction'] == 1 else 'SHORT'
     label = f"{LABELS[c['pair'][0]]} {TRACK_LABELS[c['track']]}"
-    title = f"{LABELS[c['refinement_tf']]} OB 관찰" if level == 1 else TITLES[level]
-    if level == 2 and c.get('formation'):
-        title = '3중 OB 첫 접촉'
+    title = alert_title(c)
     exchange = c.get('exchange', 'bitget').title()
     lines = [f"[{exchange} · {c['symbol']}] {side}", f"{'★' * level} {title} · {label}"]
-    if level >= 2:
+    if level >= 2 or c.get('formation'):
         evidence = c['overlap']['sources'] if level == 3 else c['sources']
         names = sorted({(z['timeframe'], z['kind']) for z in evidence}, key=lambda key: (-TF_MS[key[0]], key[1]))
         lines.append(' + '.join(f'{LABELS[tf]} {kind}' for tf, kind in names))
-        if level == 2 and c.get('formation'):
+        if c.get('reaction'):
+            r = c['reaction']
+            lines.append(f"{LABELS[c['refinement_tf']]} 종가 {price_text(r['price'])} · 돌파 기준 {price_text(r['level'])}")
+        elif c.get('formation'):
             lo, hi = c['band']
             lines.append(f'공통 구간 {price_text(lo)} ~ {price_text(hi)} · 계단은 이후 확인')
     if level == 3:

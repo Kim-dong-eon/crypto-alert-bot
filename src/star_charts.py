@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from src.ict_engine import TF_MS, frame_open
 from src.ict_overlap import LABELS, kst
 from src.overlap_charts import configure_font
-from src.star_alerts import TITLES, price_text as fmt, unit_text
+from src.star_alerts import alert_title, price_text as fmt, unit_text
 from config.overlap_settings import TRACK_LABELS
 
 WHITE = '#edf3fb'
@@ -28,11 +28,11 @@ def overlap_cells(boxes, edge):
 
 def primary_overlap(event, zones):
     """Prefer the middle FVG when showing the actual three-frame intersection."""
-    if event['level'] < 2:
-        return None
     overlap = event['overlap'] if event['level'] == 3 else event
     if formation := overlap.get('formation'):
         return *overlap['band'], formation['end'], 'OB'
+    if event['level'] < 2:
+        return None
     _, middle, final = event['path']
     parent = next((z for z in zones if z['id'] == event['parent']['id']), None)
     middle_sources = [z for z in zones if z['timeframe'] == middle]
@@ -154,7 +154,7 @@ def draw_panel(ax, tf, candles, event):
         ys = [p['price'] for p in points]
         if points:
             ax.plot(xs, ys, color='#78ebff', linewidth=2.05, marker='o', markersize=4, zorder=7)
-        if level == 2 and points and points[-1]['timestamp'] < candles[-1].timestamp:
+        if (level == 2 or event.get('formation')) and points and points[-1]['timestamp'] < candles[-1].timestamp:
             ax.plot([xs[-1], len(candles) - 1], [ys[-1], candles[-1].close],
                     color=GOLD, linestyle='--', linewidth=1.5, zorder=7)
         goal = risk.get('target', structure['target'])
@@ -187,6 +187,13 @@ def draw_panel(ax, tf, candles, event):
             ax.scatter(position(pivot_at), risk['pivot_price'], s=66, facecolors='none', edgecolors='#ff9da9',
                        linewidths=1.5, zorder=9)
         prices.append(stop)
+    if not is_top and (reaction := event.get('reaction')):
+        x = position(reaction['bar_open'])
+        ax.axhline(reaction['level'], color='#88dfa4', linestyle='--', linewidth=1, zorder=3)
+        ax.scatter(x, reaction['price'], marker='D', color='#88dfa4', s=38, zorder=9)
+        ax.annotate('종가 돌파', (x, reaction['price']), xytext=(-12, 18), textcoords='offset points',
+                    ha='right', color='#9eecad', fontsize=10, zorder=10)
+        prices.extend((reaction['level'], reaction['price']))
 
     lo, hi = (event['parent']['low'], event['parent']['high']) if is_top else event['band']
     if is_top:
@@ -230,16 +237,14 @@ def render(snapshot, alert, frames, prefix):
     fig.patch.set_facecolor('#101a27')
     fig.subplots_adjust(left=.035, right=.94, top=.71, bottom=.19, wspace=.17)
     fig.text(.035, .938, '★' * level, color=GOLD, size=23, weight='bold', va='center')
-    title = f'{LABELS[final]} OB 관찰' if level == 1 else TITLES[level]
-    if level == 2 and event.get('formation'):
-        title = '3중 OB 첫 접촉'
+    title = alert_title(event)
     fig.text(.155, .938, title, color=WHITE, size=23, weight='bold', va='center')
     exchange = event.get('exchange', 'bitget').title()
     fig.text(.036, .868, f"{exchange} {event['symbol']}  ·  {TRACK_LABELS[event['track']]} {side}  ·  {kst(now)}",
              color=MUTED, size=12)
     keys = ([Line2D([], [], color='#78ebff', linewidth=2, label='확정 파동'),
              Line2D([], [], color=GOLD, linestyle='--', label='진행 파동')]
-            if level == 2 else [Patch(facecolor=color, label=label) for color, label in zip(DENSITY, ('3개 겹침', '4개 겹침', '5개 이상'))])
+            if level == 2 or event.get('formation') else [Patch(facecolor=color, label=label) for color, label in zip(DENSITY, ('3개 겹침', '4개 겹침', '5개 이상'))])
     fig.legend(handles=keys,
                loc='center right', bbox_to_anchor=(.94, .876), ncol=3, fontsize=10,
                frameon=False, labelcolor=WHITE, handlelength=1.3, columnspacing=1.2)
@@ -253,9 +258,11 @@ def render(snapshot, alert, frames, prefix):
             upper_label = '계단 · 상위 OB와 목표' if event['upper']['target'] is not None else '상위 구조 · OB 접촉'
             panel = upper_label if tf == top else '계단 · 진입 확인' if level == 3 else '구조 확대 · 접촉 확인'
             ax.set_title(f'{LABELS[tf]} {panel}', color=WHITE, loc='left', fontsize=13, pad=29)
-        if level == 1:
+        if event.get('phase') == 'reaction':
+            message = f"{LABELS[final]} 종가 {fmt(event['reaction']['price'])} · 돌파 기준 {fmt(event['reaction']['level'])}"
+        elif level == 1 and not event.get('formation'):
             message = f'{LABELS[top]} OB 반응 안에서 같은 방향의 {LABELS[final]} OB 접촉'
-        elif level == 2:
+        elif level <= 2:
             core = primary_overlap(event, event['sources'])
             kind = core[3] if core else 'OB/FVG'
             message = f'{LABELS[top]} OB × {LABELS[middle]} {kind} × {LABELS[final]} OB · 핵심 3중 겹침'

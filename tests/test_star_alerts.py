@@ -3,13 +3,14 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from run_ict_overlap import FORMATION_TRACKS, STAR_TRACKS
 from src.ict_engine import Bar, TF_MS
 from src.entry_execution import depth_quote, entry_plan
 from src.ict_overlap import PDZone, VERSION
 from src.split_alert_preview import render_side_by_side_unit
-from src.star_alerts import formation_contacts, observation_reference, scan, unit_text
+from src.star_alerts import formation_contacts, formation_reaction, observation_reference, scan, unit_text
 from src.star_charts import overlap_cells, primary_overlap
 from src.star_delivery import StarAlertLedger, unique_contacts
 
@@ -74,17 +75,33 @@ class StarAlertsTests(unittest.TestCase):
                 minute = Bar(now - 60000, touch_price, touch_price, touch_price, touch_price, 1)
                 quote = depth_quote({'ts': now, 'a': [[touch_price + 1, 1]], 'b': [[touch_price - 1, 1]]},
                                     now, 1000)
-                first = scan('BTCUSDT', frames, now, snapshot['price'], minute_bars=[minute],
-                             execution_quote=lambda: quote, tick_size='0.1', **options)
+                confirmation = {'at': now, 'bar_open': now - TF_MS['15m'], 'price': snapshot['price'],
+                                'level': snapshot['price'] - direction}
+                with patch('src.star_alerts.formation_reaction', return_value=confirmation):
+                    first = scan('BTCUSDT', frames, now, snapshot['price'], minute_bars=[minute],
+                                 execution_quote=lambda: quote, tick_size='0.1', **options)
                 ledger = StarAlertLedger(Path(tmp) / 'state.json')
                 event, = ledger.observe(first).values()
                 c = event['candidate']
-                self.assertEqual((c['level'], c['direction']), (2, direction))
+                self.assertEqual((c['level'], c['direction']), (1, direction))
                 self.assertEqual([s['kind'] for s in c['sources']], ['OB'] * 3)
                 self.assertIn('계단은 이후 확인', unit_text(c))
                 self.assertEqual(primary_overlap(c, c['sources'])[:2], tuple(c['band']))
                 self.assertGreaterEqual(len(c['upper']['points']), 2)
                 self.assertGreaterEqual(len(c['lower_wave']['points']), 2)
+                self.assertNotIn('observation_risk', c)
+                result = ledger.dispatch_units(
+                    lambda _: True, lambda _: True,
+                    lambda unit: render_side_by_side_unit(first, unit, frames, Path(tmp) / 'formation'))
+                self.assertEqual(result['sent'], 1)
+                self.assertFalse(ledger.observe(first))
+
+                reaction = scan('BTCUSDT', frames, now + 60000, snapshot['price'], touch_since=now,
+                                contexts=first['star_contexts'], execution_quote=lambda: quote,
+                                tick_size='0.1', **options)
+                middle, = ledger.observe(reaction).values()
+                c = middle['candidate']
+                self.assertEqual((c['level'], c['phase']), (2, 'reaction'))
                 risk = c['observation_risk']
                 plan = risk['plan']
                 self.assertGreaterEqual(plan['rr'], 3)
@@ -95,30 +112,43 @@ class StarAlertsTests(unittest.TestCase):
                 self.assertIn('비용 반영 1:', notice)
                 self.assertNotIn('예상 슬리피지', notice)
                 self.assertNotIn('접촉 확인 ·', notice)
-                expensive = scan('BTCUSDT', frames, now, snapshot['price'], minute_bars=[minute],
-                                 execution_quote=lambda: {**quote, 'slippage_per_side': .05},
-                                 tick_size='0.1', **options)
+                with patch('src.star_alerts.formation_reaction', return_value=confirmation):
+                    expensive = scan('BTCUSDT', frames, now, snapshot['price'], minute_bars=[minute],
+                                     contexts=first['star_contexts'],
+                                     execution_quote=lambda: {**quote, 'slippage_per_side': .05},
+                                     tick_size='0.1', **options)
                 costly, = unique_contacts(expensive['tracks'])
                 self.assertEqual(costly['level'], 2)
                 self.assertIsNone(costly['observation_risk']['plan'])
                 self.assertIn('비용 반영 1:3 미충족', unit_text(costly))
                 result = ledger.dispatch_units(
                     lambda _: True, lambda _: True,
-                    lambda unit: render_side_by_side_unit(first, unit, frames, Path(tmp) / 'formation'))
+                    lambda unit: render_side_by_side_unit(reaction, unit, frames, Path(tmp) / 'reaction'))
                 self.assertEqual(result['sent'], 1)
-                self.assertFalse(ledger.observe(first))
+                self.assertFalse(ledger.observe(reaction))
 
                 snapshot, frames = timeline[-1]
                 now = snapshot['as_of']
                 minutes = [Bar(*r) if direction == -1 else Bar(r[0], 130000-r[1], 130000-r[3],
                            130000-r[2], 130000-r[4], r[5]) for r in raw['ticks'][-1]['minutes']]
                 followup = scan('BTCUSDT', frames, now, snapshot['price'], minute_bars=minutes,
-                                touch_since=now - 300000, contexts=first['star_contexts'], **options)
+                                touch_since=now - 300000, contexts=reaction['star_contexts'], **options)
                 entry, = ledger.observe(followup).values()
                 c = entry['candidate']
                 self.assertEqual(c['level'], 3)
                 self.assertGreaterEqual(c['rr'], 3)
                 self.assertLess(c['overlap']['touch']['at'], c['lower']['known_at'])
+
+    def test_reaction_requires_a_closed_cross_of_a_pivot_known_at_touch(self):
+        width = TF_MS['5m']
+        points = [{'kind': 'high', 'price': 105, 'confirmed_at': width},
+                  {'kind': 'high', 'price': 112, 'confirmed_at': 3 * width}]
+        bars = [Bar(0, 101, 105, 99, 102), Bar(width, 102, 104, 99, 103),
+                Bar(2 * width, 103, 109, 102, 105), Bar(3 * width, 105, 110, 103, 106)]
+        overlap = {'touch': {'at': 2 * width, 'bar_open': 2 * width - 60000}}
+        self.assertIsNone(formation_reaction(overlap, bars[:-1], points, '5m', 1))
+        self.assertEqual(formation_reaction(overlap, bars, points, '5m', 1),
+                         {'at': 4 * width, 'bar_open': 3 * width, 'price': 106, 'level': 105})
 
     def test_both_sides_upgrade_once_and_render_the_highest_grade(self):
         for direction in (-1, 1):
