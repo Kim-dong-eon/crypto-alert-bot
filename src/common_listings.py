@@ -9,7 +9,7 @@ FIELDS = ('symbol','baseAsset','quoteAsset','status','contractType','underlyingT
 EQUITY_TYPES = ('EQUITY', 'KR_EQUITY', 'HK_EQUITY', 'CN_EQUITY')
 
 
-def select_common_instruments(bitget_instruments, binance_rows):
+def select_common_instruments(bitget_instruments, binance_rows, *, exclude_korean_equities=False):
     allowed = {}
     for row in binance_rows:
         if (row.get('status') == 'TRADING' and row.get('quoteAsset') == 'USDT'
@@ -20,7 +20,10 @@ def select_common_instruments(bitget_instruments, binance_rows):
         row = allowed.get(instrument['symbol'])
         if not row or row.get('baseAsset') != instrument.get('baseCoin'):
             continue
-        crypto = instrument.get('baseCoin') == 'BTC' and row.get('underlyingType') == 'COIN'
+        if exclude_korean_equities and row.get('underlyingType') == 'KR_EQUITY':
+            continue
+        crypto = ((instrument.get('symbolType') or instrument.get('instrumentType')) == 'crypto'
+                  and row.get('underlyingType') == 'COIN')
         equity = instrument.get('instrumentType') in ('stock','etf') and row.get('underlyingType') in EQUITY_TYPES
         index = instrument.get('instrumentType') == 'index' and row.get('underlyingType') == 'INDEX'
         commodity = instrument.get('instrumentType') in ('metal','energy') and row.get('underlyingType') == 'COMMODITY'

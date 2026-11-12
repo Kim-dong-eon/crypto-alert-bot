@@ -159,6 +159,27 @@ class StarAlertsTests(unittest.TestCase):
         base['level'] = 3
         self.assertEqual(unique_contacts(tracks), [base])
 
+    def test_one_hour_and_four_hour_overlap_deliver_independently(self):
+        snapshot = list(replay(-1))[2][0]
+        short = snapshot['tracks']['short']['candidates'][0]
+        fast = {**short, 'id': 'fast', 'track': 'fast', 'pair': ['1h', '15m'], 'level': 1,
+                'refinement_tf': '5m'}
+        snapshot['tracks']['fast'] = {'candidates': [fast]}
+        self.assertEqual([c['track'] for c in unique_contacts(snapshot['tracks'])], ['short', 'fast'])
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = StarAlertLedger(Path(tmp) / 'state.json')
+            ledger._remember(short, 2)
+            pending = ledger.observe(copy.deepcopy(snapshot))
+            self.assertEqual([e['candidate']['track'] for e in pending.values()], ['fast'])
+            ledger.dispatch_units(lambda _: True, lambda _: True, lambda _: {'images': ['mock.png']})
+            self.assertFalse(ledger.observe(copy.deepcopy(snapshot)))
+            ledger.reset_alerts(snapshot['as_of'])
+            self.assertFalse(ledger.state['star_locks'])
+            self.assertFalse(ledger.state['presentations'])
+            self.assertTrue(ledger.state['retired_presentations'])
+            self.assertEqual(ledger.state['alert_reset_at'], snapshot['as_of'])
+            self.assertEqual(len(ledger.observe(copy.deepcopy(snapshot))), 2)
+
     def test_entry_delivery_requires_a_current_cost_checked_plan(self):
         timeline = list(replay(-1))
         for snapshot, _ in timeline[1:3]:

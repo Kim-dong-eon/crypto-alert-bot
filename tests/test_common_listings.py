@@ -29,6 +29,12 @@ class CommonListingTests(unittest.TestCase):
             row=binance('AAPL');row[field]=value
             self.assertEqual(select_common_instruments([bitget('AAPL')],[row]),[])
 
+    def test_production_filter_keeps_ethereum_and_excludes_korean_equities(self):
+        instruments = [bitget('ETH', 'crypto'), bitget('NAVER'), bitget('AAPL')]
+        listings = [binance('ETH', 'COIN'), binance('NAVER', 'KR_EQUITY'), binance('AAPL')]
+        chosen = select_common_instruments(instruments, listings, exclude_korean_equities=True)
+        self.assertEqual([r['baseCoin'] for r in chosen], ['ETH', 'AAPL'])
+
     def test_official_451_uses_dated_snapshot_without_claiming_live_check(self):
         with tempfile.TemporaryDirectory() as directory:
             path=Path(directory)/'saved.json';stamp=int(time.time()*1000)-1000

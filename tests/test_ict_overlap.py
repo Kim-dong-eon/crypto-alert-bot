@@ -58,11 +58,11 @@ class ZoneTests(unittest.TestCase):
 
 
 class MarketTests(unittest.TestCase):
-    def test_crypto_only_btc_and_verified_stock_metadata(self):
+    def test_crypto_watchlist_and_verified_stock_metadata(self):
         def item(base,kind='crypto',asset='crypto'):
             return {'baseCoin':base,'symbol':base+'USDT','category':'USDT-FUTURES','quoteCoin':'USDT','status':'online','type':'perpetual','symbolType':kind,'instrumentType':asset,'isRwa':'YES'}
         rows=[item('BTC'),item('ETH'),item('SKHYNIX','stock','stock'),item('QQQ','stock','etf'),item('ONDO')]
-        self.assertEqual([x['baseCoin'] for x in select_instruments(rows,('BTC','ETH','SKHYNIX','QQQ','ONDO'))],['BTC','SKHYNIX','QQQ'])
+        self.assertEqual([x['baseCoin'] for x in select_instruments(rows,('BTC','ETH','SKHYNIX','QQQ','ONDO'))],['BTC','ETH','SKHYNIX','QQQ'])
 
     def test_stale_ticker_rejected(self):
         with self.assertRaises(ValueError):quote_price({'lastPrice':'100','ts':'0'},121000)

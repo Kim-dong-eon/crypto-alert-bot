@@ -15,6 +15,10 @@ on:
         description: 'One run only: resend all currently eligible zones, then keep normal locks enabled'
         type: boolean
         default: false
+      reset_alerts:
+        description: 'Start a fresh alert ledger from this run'
+        type: boolean
+        default: false
       inspect_symbol:
         description: 'One run only: send all three scope states; comma-separated verified symbols, e.g. BTCUSDT,AAPLUSDT'
         type: string
@@ -89,6 +93,7 @@ jobs:
           UNLOCK_SYMBOL: ${{ inputs.unlock_symbol }}
           UNLOCK_TRACK: ${{ inputs.unlock_track }}
           BOT_RESEND: ${{ inputs.resend_current }}
+          BOT_RESET: ${{ inputs.reset_alerts }}
           BOT_INSPECT: ${{ inputs.inspect_symbol }}
         run: |
           if [ "$BOT_SEND" = "true" ]; then
@@ -98,6 +103,9 @@ jobs:
             args=(--send --state alert_state/ict_overlap.json --snapshot runtime/ict_overlap/actions.json)
             if [ "$BOT_RESEND" = "true" ]; then
               args+=(--resend-current)
+            fi
+            if [ "$BOT_RESET" = "true" ]; then
+              args+=(--reset-alerts)
             fi
             if [ -n "$BOT_INSPECT" ]; then
               args+=(--inspect-symbol "$BOT_INSPECT")

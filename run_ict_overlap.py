@@ -32,7 +32,7 @@ from src.overlap_status import overview_events
 
 ROOT=Path(__file__).resolve().parent
 ENTRY_NOTIONAL_USDT = 1000.
-STAR_TRACKS = {name: pair for name, pair in TRACKS.items() if name != 'fast'}
+STAR_TRACKS = TRACKS
 FORMATION_TRACKS = ('short',)
 
 
@@ -74,6 +74,8 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
             try:frames[tf]=market.frame(symbol,tf,now)
             except Exception as error:errors[tf]=type(error).__name__
         touch_since=ledger.state.get('touch_cursors',{}).get(symbol,(now//MINUTE-5)*MINUTE)
+        if reset_at := ledger.state.get('alert_reset_at'):
+            touch_since = max(touch_since, ((reset_at + MINUTE - 1) // MINUTE) * MINUTE)
         minute_bars=[];minute_coverage=None;minute_error=None
         # The same completed minutes both detect between-scan contacts and
         # reconstruct the still-open 4H candle for the approved image format.
@@ -120,7 +122,6 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
                                 formation_tracks=FORMATION_TRACKS,
                                 execution_quote=lru_cache(maxsize=1)(lambda: get_execution_quote(symbol)) if require_execution else None,
                                 tick_size=tick_sizes[symbol])
-            result['disabled_tracks'] = ['fast']
         else:
             result=scan(symbol,frames,observed,price,equilibrium_filter=True,minute_bars=minute_bars,touch_since=since)
         result.update(minute_coverage=minute_coverage,minute_error=minute_error)
@@ -136,7 +137,8 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
                     candidate['diversification']=eligibility
             print(f"{symbol} BTC 상관·유동성: "+('통과' if eligibility['eligible'] else '대기'))
         asset_label={'stock':'주식','etf':'ETF','index':'지수','energy':'원유','metal':'금속'}.get(instrument.get('instrumentType'),'상품')
-        result.update(display_name=f"Bitget · {instrument.get('fullName',symbol)} ({symbol}) · "+('BTC 무기한' if instrument['baseCoin']=='BTC' else f'거래소 {asset_label} 무기한'),data_errors=errors)
+        instrument_label = '코인 무기한' if instrument.get('symbolType') == 'crypto' else f'거래소 {asset_label} 무기한'
+        result.update(display_name=f"Bitget · {instrument.get('fullName',symbol)} ({symbol}) · {instrument_label}",data_errors=errors)
         pending=ledger.observe(result,result["display_name"],persist=persist or sender is not None)
         if persist or sender is not None:
             cursors=ledger.state.setdefault('touch_cursors',{})
@@ -210,6 +212,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
     report['ruleset']=STAR_RULESET if graded else RULESET
     if graded:
         report['formation_tracks'] = FORMATION_TRACKS
+        report['alert_reset_at'] = ledger.state.get('alert_reset_at')
     if require_execution:
         report.update(entry_only=ledger.entry_only, execution_required_for_grade=3,
                       entry_notional_usdt=entry_notional, execution_checks=execution_checks)
@@ -220,19 +223,22 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
 
 
 def main(argv=None):
-    parser=argparse.ArgumentParser(description="별점 알림: 단기4H/1H/15m·중기1D/4H/1H·장기1W/1D/4H")
+    parser=argparse.ArgumentParser(description="별점 알림: 초단기1H/15m/5m·단기4H/1H/15m·중기1D/4H/1H·장기1W/1D/4H")
     parser.add_argument('--send',action='store_true');parser.add_argument('--watch',action='store_true')
     parser.add_argument('--resend-current',action='store_true',help='이번 검사만 기존 발송 잠금을 무시하고 현재 조건 충족 구간 재발송')
+    parser.add_argument('--reset-alerts', action='store_true', help='모든 알림 잠금과 접촉 이력을 초기화하고 새 검사 시작')
     parser.add_argument('--inspect-symbol',help='이번 실행만 이 공통 상장 종목의 전체 상태 발송. 여러 종목은 쉼표로 구분')
     parser.add_argument('--render-preview',action='store_true',help='미리보기에서도 현재 중첩 차트 이미지 생성')
     parser.add_argument('--entry-notional',type=float,default=ENTRY_NOTIONAL_USDT,help='호가 슬리피지 계산에 사용할 주문금액(USDT)')
-    parser.add_argument('--bases',nargs='+',default=list(BASES),help='거래소 기초 심볼. 코인은BTC만 허용')
+    parser.add_argument('--bases',nargs='+',default=list(BASES),help='공통 상장 선물의 기초 심볼')
     parser.add_argument('--state',type=Path,default=ROOT/'runtime/ict_overlap/state.json')
     parser.add_argument('--snapshot',type=Path,default=ROOT/'runtime/ict_overlap/preview.json')
     parser.add_argument('--unlock',nargs=2,metavar=('SYMBOL','TRACK'),help='특정 종목·단기/중기/장기 잠금만 수동 해제')
     args=parser.parse_args(argv)
     if not math.isfinite(args.entry_notional) or args.entry_notional <= 0:parser.error('--entry-notional must be positive')
     if args.resend_current and args.watch:parser.error('--resend-current is one-shot only; omit --watch')
+    if args.reset_alerts and (not args.send or args.resend_current or args.unlock):
+        parser.error('--reset-alerts requires --send and cannot be combined with --resend-current or --unlock')
     if args.inspect_symbol and args.watch:parser.error('--inspect-symbol is one-shot only; omit --watch')
     if args.unlock:
         symbol,track=args.unlock
@@ -243,7 +249,8 @@ def main(argv=None):
     market=HistoricalMarket(ROOT/'runtime/ict_overlap/cache/structure')
     catalog=market.instruments()
     binance_rows,listing_check=binance_listings(ROOT/'config/binance_contracts.json',market.cache/'binance_contracts.json')
-    instruments=select_common_instruments(select_instruments(catalog,tuple(dict.fromkeys(args.bases))),binance_rows)
+    bases = tuple(dict.fromkeys(args.bases))
+    instruments=select_common_instruments(select_instruments(catalog,bases),binance_rows,exclude_korean_equities=True)
     print('공통 상장 확인: '+listing_check['mode']+' / '+str(listing_check['verified_at']))
     missing=set(args.bases)-{r['baseCoin'] for r in instruments}
     if missing:print('지원 대상에서 제외된 요청 심볼: '+', '.join(sorted(missing)))
@@ -256,6 +263,8 @@ def main(argv=None):
         load_dotenv(ROOT/'.env');sender=telegram_sender(os.getenv('TELEGRAM_BOT_TOKEN'),os.getenv('TELEGRAM_CHAT_ID'))
     with single_writer(args.state.with_suffix('.lock')) if args.send or args.watch else nullcontext():
         ledger=StarAlertLedger(args.state,require_images=args.send,force_resend=args.resend_current,require_execution=True)
+        if args.reset_alerts:
+            ledger.reset_alerts(int(time.time()*1000))
         image_sender=None
         unit_text_sender=None
         if args.send:
@@ -267,7 +276,7 @@ def main(argv=None):
             try:
                 if time.monotonic()-catalog_checked>=3600:
                     binance_rows,listing_check=binance_listings(ROOT/'config/binance_contracts.json',market.cache/'binance_contracts.json')
-                    instruments=select_common_instruments(select_instruments(market.instruments(),tuple(dict.fromkeys(args.bases))),binance_rows)
+                    instruments=select_common_instruments(select_instruments(market.instruments(),bases),binance_rows,exclude_korean_equities=True)
                     catalog_checked=time.monotonic()
                 report=run_once(market,instruments,ledger,sender,persist=args.watch,snapshot=args.snapshot,image_sender=image_sender,render_previews=args.render_preview,listing_check=listing_check,status_symbols=inspect_symbols,unit_text_sender=unit_text_sender,entry_notional=args.entry_notional)
             except Exception as error:

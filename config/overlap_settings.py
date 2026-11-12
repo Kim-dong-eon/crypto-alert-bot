@@ -2,12 +2,14 @@
 TRACKS = {"short": ("4h", "1h"), "medium": ("1d", "4h"),
           "long": ("1w", "1d")}
 TRACK_LABELS = {"fast":"초단기", "short": "단기", "medium": "중기", "long": "장기", "auxiliary": "4H·1H 보조"}
-BASES = ("BTC", "SKHYNIX", "NVDA", "TSLA", "AAPL", "MSFT", "AMZN", "GOOGL", "META", "QQQ", "SPY")
-BASES += ("NDX100", "SP500")
+# 2026-11-12 Bitget screen: 24h and median 30d quote turnover >= $5M,
+# with absolute BTC return correlation <= 0.30 on 4h/1d over both 30d and 60d.
+CRYPTO_BASES = ("BTC", "ETH", "JCT", "AKE", "BTW", "Q")
+BASES = CRYPTO_BASES + ("NVDA", "TSLA", "AAPL", "MSFT", "AMZN", "GOOGL", "META", "QQQ", "SPY")
 DIVERSIFIER_BASES = ("CL", "BZ")
 BASES += DIVERSIFIER_BASES
 # Fixed additions from the 2026-11-10 BTC correlation screen (max |r| <= 0.20).
-BASES += ("BSP", "V", "LLY", "NAVER", "WEN", "MCD", "POPMART", "UNITREE", "TMF", "ADBE", "MEITUAN", "EWZ", "MRK")
+BASES += ("BSP", "V", "LLY", "WEN", "MCD", "POPMART", "UNITREE", "TMF", "ADBE", "MEITUAN", "EWZ", "MRK")
 HISTORY_BARS = 400
 POLL_SECONDS = 60
 MIN_HISTORY_BARS = 8

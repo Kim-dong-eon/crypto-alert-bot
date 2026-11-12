@@ -18,6 +18,8 @@ def alert_bands(candidate):
 
 
 def intersects(a, b):
+    if {a.get('track'), b.get('track')} == {'fast', 'short'}:
+        return False
     return a['direction'] == b['direction'] and any(
         max(a_low, b_low) < min(a_high, b_high)
         for a_low, a_high in alert_bands(a) for b_low, b_high in alert_bands(b)
@@ -99,6 +101,16 @@ class StarAlertLedger(StructureLedger):
             if (candidate['symbol'], candidate['track']) == (symbol, track):
                 del self.state['pending'][key]
         super().unlock(symbol, track)
+
+    def reset_alerts(self, now):
+        retired = self.state.setdefault('retired_presentations', {})
+        for key, presentation in self.state.get('presentations', {}).items():
+            retired[f"{key}:{presentation['attempt']}"] = presentation
+        for key in ('presentations', 'pending', 'in_flight', 'locks', 'star_locks', 'star_contexts',
+                    'tracks', 'delivered', 'images_delivered', 'touch_cursors', 'dedup_audits'):
+            self.state[key] = {}
+        self.state['alert_reset_at'] = now
+        self.save()
 
     def observe(self, snapshot, display_name=None, persist=True):
         if snapshot.get('ruleset') != RULESET:

@@ -5,7 +5,7 @@ from pathlib import Path
 import time
 import requests
 
-from config.overlap_settings import BASES, HISTORY_BARS
+from config.overlap_settings import BASES, CRYPTO_BASES, HISTORY_BARS
 from src.ict_engine import TF_MS, frame_open, closed_bars
 
 INTERVALS = {"5m": "5m", "15m": "15m", "1h": "1H", "4h": "4H", "1d": "1Dutc", "1w": "1Wutc"}
@@ -15,8 +15,8 @@ def select_instruments(rows, bases=BASES):
     chosen = []
     for base in bases:
         matches = [r for r in rows if r.get("baseCoin") == base and r.get("category") == "USDT-FUTURES" and r.get("quoteCoin") == "USDT" and r.get("status") == "online" and r.get("type") == "perpetual"]
-        matches = [r for r in matches if (base == "BTC" and r.get("symbolType") == "crypto") or
-                   (base != "BTC" and r.get("isRwa") == "YES" and
+        matches = [r for r in matches if (base in CRYPTO_BASES and r.get("symbolType") == "crypto") or
+                   (base not in CRYPTO_BASES and r.get("isRwa") == "YES" and
                     ((r.get("symbolType") == "stock" and r.get("instrumentType") in ("stock", "etf", "index")) or
                      (r.get("symbolType") == "commodity" and r.get("instrumentType") == "energy") or
                      (r.get("symbolType") == "metal" and r.get("instrumentType") == "metal")))]

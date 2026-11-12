@@ -1,6 +1,6 @@
 {
   "source": "https://fapi.binance.com/fapi/v1/exchangeInfo",
-  "verified_at": 1794278409924,
+  "verified_at": 1794491135468,
   "symbols": [
     {
       "symbol": "BTCUSDT",
@@ -11,36 +11,12 @@
       "underlyingType": "COIN"
     },
     {
-      "symbol": "BTCUSDC",
-      "baseAsset": "BTC",
-      "quoteAsset": "USDC",
+      "symbol": "ETHUSDT",
+      "baseAsset": "ETH",
+      "quoteAsset": "USDT",
       "status": "TRADING",
       "contractType": "PERPETUAL",
       "underlyingType": "COIN"
-    },
-    {
-      "symbol": "TSLAUSDT",
-      "baseAsset": "TSLA",
-      "quoteAsset": "USDT",
-      "status": "TRADING",
-      "contractType": "TRADIFI_PERPETUAL",
-      "underlyingType": "EQUITY"
-    },
-    {
-      "symbol": "AMZNUSDT",
-      "baseAsset": "AMZN",
-      "quoteAsset": "USDT",
-      "status": "TRADING",
-      "contractType": "TRADIFI_PERPETUAL",
-      "underlyingType": "EQUITY"
-    },
-    {
-      "symbol": "METAUSDT",
-      "baseAsset": "META",
-      "quoteAsset": "USDT",
-      "status": "TRADING",
-      "contractType": "TRADIFI_PERPETUAL",
-      "underlyingType": "EQUITY"
     },
     {
       "symbol": "NVDAUSDT",
@@ -51,40 +27,8 @@
       "underlyingType": "EQUITY"
     },
     {
-      "symbol": "GOOGLUSDT",
-      "baseAsset": "GOOGL",
-      "quoteAsset": "USDT",
-      "status": "TRADING",
-      "contractType": "TRADIFI_PERPETUAL",
-      "underlyingType": "EQUITY"
-    },
-    {
-      "symbol": "CLUSDT",
-      "baseAsset": "CL",
-      "quoteAsset": "USDT",
-      "status": "TRADING",
-      "contractType": "TRADIFI_PERPETUAL",
-      "underlyingType": "COMMODITY"
-    },
-    {
-      "symbol": "BZUSDT",
-      "baseAsset": "BZ",
-      "quoteAsset": "USDT",
-      "status": "TRADING",
-      "contractType": "TRADIFI_PERPETUAL",
-      "underlyingType": "COMMODITY"
-    },
-    {
-      "symbol": "QQQUSDT",
-      "baseAsset": "QQQ",
-      "quoteAsset": "USDT",
-      "status": "TRADING",
-      "contractType": "TRADIFI_PERPETUAL",
-      "underlyingType": "EQUITY"
-    },
-    {
-      "symbol": "SPYUSDT",
-      "baseAsset": "SPY",
+      "symbol": "TSLAUSDT",
+      "baseAsset": "TSLA",
       "quoteAsset": "USDT",
       "status": "TRADING",
       "contractType": "TRADIFI_PERPETUAL",
@@ -107,44 +51,60 @@
       "underlyingType": "EQUITY"
     },
     {
-      "symbol": "BTCUSD1",
-      "baseAsset": "BTC",
-      "quoteAsset": "USD1",
-      "status": "TRADING",
-      "contractType": "PERPETUAL",
-      "underlyingType": "COIN"
-    },
-    {
-      "symbol": "SKHYNIXUSDT",
-      "baseAsset": "SKHYNIX",
+      "symbol": "AMZNUSDT",
+      "baseAsset": "AMZN",
       "quoteAsset": "USDT",
       "status": "TRADING",
       "contractType": "TRADIFI_PERPETUAL",
-      "underlyingType": "KR_EQUITY"
+      "underlyingType": "EQUITY"
     },
     {
-      "symbol": "BTCUSDT_261225",
-      "baseAsset": "BTC",
+      "symbol": "GOOGLUSDT",
+      "baseAsset": "GOOGL",
       "quoteAsset": "USDT",
       "status": "TRADING",
-      "contractType": "CURRENT_QUARTER",
-      "underlyingType": "COIN"
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY"
     },
     {
-      "symbol": "BTCU",
-      "baseAsset": "BTC",
-      "quoteAsset": "U",
-      "status": "TRADING",
-      "contractType": "PERPETUAL",
-      "underlyingType": "COIN"
-    },
-    {
-      "symbol": "BTCUSDT_270326",
-      "baseAsset": "BTC",
+      "symbol": "METAUSDT",
+      "baseAsset": "META",
       "quoteAsset": "USDT",
       "status": "TRADING",
-      "contractType": "NEXT_QUARTER",
-      "underlyingType": "COIN"
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY"
+    },
+    {
+      "symbol": "QQQUSDT",
+      "baseAsset": "QQQ",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY"
+    },
+    {
+      "symbol": "SPYUSDT",
+      "baseAsset": "SPY",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "EQUITY"
+    },
+    {
+      "symbol": "CLUSDT",
+      "baseAsset": "CL",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "COMMODITY"
+    },
+    {
+      "symbol": "BZUSDT",
+      "baseAsset": "BZ",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "TRADIFI_PERPETUAL",
+      "underlyingType": "COMMODITY"
     },
     {
       "symbol": "BSPUSDT",
@@ -169,14 +129,6 @@
       "status": "TRADING",
       "contractType": "TRADIFI_PERPETUAL",
       "underlyingType": "EQUITY"
-    },
-    {
-      "symbol": "NAVERUSDT",
-      "baseAsset": "NAVER",
-      "quoteAsset": "USDT",
-      "status": "TRADING",
-      "contractType": "TRADIFI_PERPETUAL",
-      "underlyingType": "KR_EQUITY"
     },
     {
       "symbol": "WENUSDT",
@@ -249,6 +201,38 @@
       "status": "TRADING",
       "contractType": "TRADIFI_PERPETUAL",
       "underlyingType": "EQUITY"
+    },
+    {
+      "symbol": "JCTUSDT",
+      "baseAsset": "JCT",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "PERPETUAL",
+      "underlyingType": "COIN"
+    },
+    {
+      "symbol": "AKEUSDT",
+      "baseAsset": "AKE",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "PERPETUAL",
+      "underlyingType": "COIN"
+    },
+    {
+      "symbol": "BTWUSDT",
+      "baseAsset": "BTW",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "PERPETUAL",
+      "underlyingType": "COIN"
+    },
+    {
+      "symbol": "QUSDT",
+      "baseAsset": "Q",
+      "quoteAsset": "USDT",
+      "status": "TRADING",
+      "contractType": "PERPETUAL",
+      "underlyingType": "COIN"
     }
   ]
 }
