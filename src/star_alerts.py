@@ -197,8 +197,19 @@ def formation_reaction(overlap, bars, points, tf, direction):
     return None
 
 
+def formation_pivot(parent, bars, points, now):
+    """The upper swing's extreme must belong to the candles that formed the OB."""
+    kind = 'low' if parent.direction == 1 else 'high'
+    for point in reversed(points):
+        stamp = bars[point['index']].timestamp
+        if (point['kind'] == kind and parent.origin <= stamp < parent.created
+                and point['confirmed_at'] <= now):
+            return {**point, 'timestamp': stamp}
+    return None
+
+
 def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=None, tracks=None,
-         formation_tracks=(), execution_quote=None, tick_size=None):
+         formation_tracks=(), origin_tracks=(), execution_quote=None, tick_size=None):
     closed_minutes = tuple(b for b in minute_bars if b.timestamp + MINUTE <= now)
     recent_minutes = tuple(b for b in closed_minutes if b.timestamp >= touch_since)
     result, usable, zones = prepare(symbol, frames, now, price, tracks, build_overlaps=False)
@@ -209,6 +220,7 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
         top, middle = state['pair']
         final = REFINEMENT[track]
         anchored = track in formation_tracks
+        require_origin = anchored and track in origin_tracks
         if 'analysis' not in state or len(usable.get(final, ())) < 16:
             updated.update((key, episode) for key, episode in previous.items() if episode['track'] == track)
             state['status'] = 'data_unavailable'
@@ -237,22 +249,31 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                 if not arm_probe['hit'] and not any(e['parent_id'] == parent.id and e['track'] == track
                                                    and e['lens'] == lens for e in previous.values()):
                     continue
+                pivot = formation_pivot(parent, upper_bars, points, now) if require_origin else None
+                if require_origin and pivot is None:
+                    continue
                 area = rooted_context(parent, upper_bars, points, view['areas'], top, now)
                 if area is None and not anchored:
                     continue
-                root = area['pivot_origin'] if area else parent.origin
-                scope = 'formation-ob' if anchored else root
+                root = pivot['timestamp'] if pivot else area['pivot_origin'] if area else parent.origin
+                if pivot and area and area['pivot_origin'] != root:
+                    area = None
+                scope = 'formation-pivot' if pivot else 'formation-ob' if anchored else root
                 identity = f'{track}|{lens}|{parent.id}|{scope}'
-                upper = upper_stairs.get(root) if area else None
+                upper = upper_stairs.get(root) if area or pivot else None
                 protected = parent.stop
-                if area:
+                if pivot:
+                    protected = pivot['price']
+                elif area:
                     root_bar = next(b for b in upper_bars if b.timestamp == root)
                     protected = root_bar.low if direction == 1 else root_bar.high
-                if area and any(b.timestamp >= area['created'] and direction * (b.close - protected) < 0
-                                for b in upper_bars):
+                origin_known = pivot['confirmed_at'] if pivot else area['created'] if area else None
+                if origin_known is not None and any(b.timestamp >= origin_known and direction * (b.close - protected) < 0
+                                                     for b in upper_bars):
                     continue
+                setup_known = max(direction_at, pivot['confirmed_at']) if pivot else direction_at
                 if direction * (price - protected) < 0 or direction * (price - parent.stop) < 0:
-                    if identity in previous and previous[identity]['arm']['at'] >= direction_at:
+                    if identity in previous and previous[identity]['arm']['at'] >= setup_known:
                         updated[identity] = previous[identity]
                     continue
                 upper_ready = upper and not (
@@ -263,9 +284,9 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                 if not anchored and upper and not upper_ready:
                     continue
                 episode = previous.get(identity)
-                if episode is None or episode['arm']['at'] < direction_at:
+                if episode is None or episode['arm']['at'] < setup_known:
                     ready_at = parent.created if anchored else area['created']
-                    arm = first_contact(parent.low, parent.high, max(ready_at, parent.created, direction_at),
+                    arm = first_contact(parent.low, parent.high, max(ready_at, parent.created, setup_known),
                                         price, now, recent_minutes, touch_since)
                     if not arm['hit']:
                         continue
@@ -276,7 +297,7 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                              and z.direction == direction and z.origin >= floor]
                 prior_overlap = episode['overlap']
                 if anchored:
-                    choices = formation_contacts(parent, zones, state['path'], direction_at,
+                    choices = formation_contacts(parent, zones, state['path'], setup_known,
                                                  price, now, recent_minutes, touch_since)
                 else:
                     choices = overlap_contacts(parent, area, lower_obs, zones, (top, middle), arm,
@@ -355,8 +376,10 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                     upper_wave = overview_wave(upper_bars, points, root, upper if upper_ready else None)
                     if best['level'] == 2 or best.get('formation'):
                         at = best.get('reaction', best['touch'])['at']
-                        upper_wave = observation_wave(upper_bars, recent_upper_points, at, parent.origin)
+                        upper_wave = observation_wave(upper_bars, points if pivot else recent_upper_points, at, parent.origin)
                         best['lower_wave'] = observation_wave(lower_bars, lower_points, at)
+                    if pivot:
+                        best['departure_pivot'] = pivot
                     if best['level'] < 3 and best.get('phase') != 'first_contact':
                         target_points = recent_upper_points if best['level'] == 2 else points
                         reference = observation_reference(best, lower_bars, target_points, direction,

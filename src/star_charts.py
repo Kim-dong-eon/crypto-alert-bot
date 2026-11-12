@@ -197,6 +197,13 @@ def draw_panel(ax, tf, candles, event):
                     ha='right', color='#9eecad', fontsize=10, zorder=10)
         prices.extend((reaction['level'], reaction['price']))
 
+    if is_top and (pivot := event.get('departure_pivot')) and start <= pivot['timestamp'] <= candles[-1].timestamp:
+        kind = '고점' if pivot['kind'] == 'high' else '저점'
+        ax.annotate(f"OB 출발 {kind} {fmt(pivot['price'])}", (position(pivot['timestamp']), pivot['price']),
+                    xytext=(10, 16 if pivot['kind'] == 'high' else -18), textcoords='offset points',
+                    color=WHITE, fontsize=10, zorder=10, arrowprops={'arrowstyle': '-', 'color': WHITE},
+                    bbox={'facecolor': '#152130', 'edgecolor': 'none', 'pad': 2})
+
     lo, hi = (event['parent']['low'], event['parent']['high']) if is_top else event['band']
     if is_top:
         stamp = event['arm'] - 1

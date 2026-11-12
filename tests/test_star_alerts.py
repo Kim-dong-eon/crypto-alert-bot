@@ -10,7 +10,7 @@ from src.ict_engine import Bar, TF_MS
 from src.entry_execution import depth_quote, entry_plan
 from src.ict_overlap import PDZone, VERSION
 from src.split_alert_preview import render_side_by_side_unit
-from src.star_alerts import formation_contacts, formation_reaction, observation_reference, scan, unit_text
+from src.star_alerts import formation_contacts, formation_pivot, formation_reaction, observation_reference, scan, unit_text
 from src.star_charts import overlap_cells, primary_overlap, window
 from src.star_delivery import StarAlertLedger, unique_contacts
 
@@ -40,6 +40,18 @@ class StarAlertsTests(unittest.TestCase):
     def test_live_paths_all_require_the_parent_ob_formation_window(self):
         self.assertEqual(set(FORMATION_TRACKS), set(STAR_TRACKS))
         self.assertIn('fast', FORMATION_TRACKS)
+
+    def test_parent_formation_must_contain_its_confirmed_departure_pivot(self):
+        hour = TF_MS['1h']
+        bars = [Bar(i * hour, 650, 652.7, 638.77, 640.51) for i in range(5)]
+        points = [{'index': 1, 'kind': 'high', 'price': 652.7, 'confirmed_at': 3 * hour},
+                  {'index': 2, 'kind': 'low', 'price': 638.77, 'confirmed_at': 3 * hour},
+                  {'index': 4, 'kind': 'high', 'price': 645., 'confirmed_at': 6 * hour}]
+        parent = PDZone('origin', '1h', 'OB', -1, 649.89, 651.62, 2 * hour, 0, 652.7, 652.7)
+        continuation = PDZone('later', '1h', 'OB', -1, 629.57, 630., 4 * hour, 2 * hour, 632., 632.)
+        self.assertIsNone(formation_pivot(parent, bars, points, 2 * hour))
+        self.assertEqual(formation_pivot(parent, bars, points, 3 * hour)['timestamp'], hour)
+        self.assertIsNone(formation_pivot(continuation, bars, points, 6 * hour))
 
     def test_formation_contact_requires_three_obs_from_the_original_parent_window(self):
         start, end = 0, 2 * TF_MS['4h']
@@ -73,6 +85,9 @@ class StarAlertsTests(unittest.TestCase):
                 outside = scan('BTCUSDT', frames, now, snapshot['price'], **options)
                 self.assertFalse(outside['tracks']['short']['candidates'])
                 minute = Bar(now - 60000, touch_price, touch_price, touch_price, touch_price, 1)
+                origin_only = scan('BTCUSDT', frames, now, snapshot['price'], minute_bars=[minute],
+                                   origin_tracks=('short',), **options)
+                self.assertFalse(origin_only['tracks']['short']['candidates'])
                 quote = depth_quote({'ts': now, 'a': [[touch_price + 1, 1]], 'b': [[touch_price - 1, 1]]},
                                     now, 1000)
                 confirmation = {'at': now, 'bar_open': now - TF_MS['15m'], 'price': snapshot['price'],

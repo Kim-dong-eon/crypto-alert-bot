@@ -120,6 +120,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
             result = scan_stars(symbol, frames, observed, price, minute_bars=minute_bars, touch_since=since,
                                 contexts=ledger.state['star_contexts'].get(symbol), tracks=STAR_TRACKS,
                                 formation_tracks=FORMATION_TRACKS,
+                                origin_tracks=FORMATION_TRACKS,
                                 execution_quote=lru_cache(maxsize=1)(lambda: get_execution_quote(symbol)) if require_execution else None,
                                 tick_size=tick_sizes[symbol])
         else:
@@ -212,6 +213,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
     report['ruleset']=STAR_RULESET if graded else RULESET
     if graded:
         report['formation_tracks'] = FORMATION_TRACKS
+        report['origin_tracks'] = FORMATION_TRACKS
         report['alert_reset_at'] = ledger.state.get('alert_reset_at')
     if require_execution:
         report.update(entry_only=ledger.entry_only, execution_required_for_grade=3,
