@@ -33,7 +33,7 @@ from src.overlap_status import overview_events
 ROOT=Path(__file__).resolve().parent
 ENTRY_NOTIONAL_USDT = 1000.
 STAR_TRACKS = TRACKS
-FORMATION_TRACKS = ('short',)
+FORMATION_TRACKS = tuple(STAR_TRACKS)
 
 
 def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,image_sender=None,render_previews=False,listing_check=None,status_symbols=(),unit_text_sender=None,entry_notional=ENTRY_NOTIONAL_USDT):

@@ -4,6 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
+from run_ict_overlap import FORMATION_TRACKS, STAR_TRACKS
 from src.ict_engine import Bar, TF_MS
 from src.entry_execution import depth_quote, entry_plan
 from src.ict_overlap import PDZone, VERSION
@@ -35,6 +36,10 @@ def replay(direction):
 
 
 class StarAlertsTests(unittest.TestCase):
+    def test_live_paths_all_require_the_parent_ob_formation_window(self):
+        self.assertEqual(set(FORMATION_TRACKS), set(STAR_TRACKS))
+        self.assertIn('fast', FORMATION_TRACKS)
+
     def test_formation_contact_requires_three_obs_from_the_original_parent_window(self):
         start, end = 0, 2 * TF_MS['4h']
         parent = PDZone('parent', '4h', 'OB', 1, 100, 110, end, start, 99, 100)
