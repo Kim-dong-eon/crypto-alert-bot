@@ -11,7 +11,7 @@ from src.entry_execution import depth_quote, entry_plan
 from src.ict_overlap import PDZone, VERSION
 from src.split_alert_preview import render_side_by_side_unit
 from src.star_alerts import formation_contacts, formation_reaction, observation_reference, scan, unit_text
-from src.star_charts import overlap_cells, primary_overlap
+from src.star_charts import overlap_cells, primary_overlap, window
 from src.star_delivery import StarAlertLedger, unique_contacts
 
 
@@ -149,6 +149,18 @@ class StarAlertsTests(unittest.TestCase):
         self.assertIsNone(formation_reaction(overlap, bars[:-1], points, '5m', 1))
         self.assertEqual(formation_reaction(overlap, bars, points, '5m', 1),
                          {'at': 4 * width, 'bar_open': 3 * width, 'price': 106, 'level': 105})
+
+    def test_reaction_chart_ends_at_signal_close_on_both_timeframes(self):
+        hour = TF_MS['1h']
+        five = TF_MS['5m']
+        close = hour + 2 * five
+        sent = close + 6 * 60000
+        frames = {tf: [Bar(t, 100, 101, 99, 100) for t in range(0, sent + 1, step)]
+                  for tf, step in (('1h', hour), ('5m', five))}
+        event = {'now': sent, 'reaction': {'at': close}, 'pair': ['1h', '15m'],
+                 'upper': {'chart_start': 0}, 'parent': {'origin': 0}}
+        self.assertEqual(window(frames, '1h', event, sent)[-1].timestamp, 0)
+        self.assertEqual(window(frames, '5m', event, sent)[-1].timestamp, close - five)
 
     def test_both_sides_upgrade_once_and_render_the_highest_grade(self):
         for direction in (-1, 1):

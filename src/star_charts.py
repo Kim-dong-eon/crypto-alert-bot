@@ -48,9 +48,11 @@ def primary_overlap(event, zones):
 
 
 def window(frames, tf, event, current_at):
-    now = event['now']
-    bars = [b for b in frames[tf] if b.timestamp + TF_MS[tf] <= now
-            or (now == current_at and b.timestamp <= now)]
+    reaction = event.get('reaction')
+    cutoff = reaction['at'] if reaction else event['now']
+    show_live = reaction is None and cutoff == current_at
+    bars = [b for b in frames[tf] if b.timestamp + TF_MS[tf] <= cutoff
+            or (show_live and b.timestamp <= cutoff)]
     if tf == event['pair'][0]:
         start = min(event['upper']['chart_start'], event['parent']['origin']) - 4 * TF_MS[tf]
     elif 'lower' in event:
@@ -231,6 +233,7 @@ def render(snapshot, alert, frames, prefix):
     configure_font()
     event = alert['candidate']
     level, now = event['level'], event['now']
+    reaction = event.get('reaction')
     top, middle, final = event['path']
     side = 'LONG' if event['direction'] == 1 else 'SHORT'
     fig, axes = plt.subplots(1, 2, figsize=(16, 6.1))
@@ -243,7 +246,7 @@ def render(snapshot, alert, frames, prefix):
     fig.text(.036, .868, f"{exchange} {event['symbol']}  ·  {TRACK_LABELS[event['track']]} {side}  ·  {kst(now)}",
              color=MUTED, size=12)
     keys = ([Line2D([], [], color='#78ebff', linewidth=2, label='확정 파동'),
-             Line2D([], [], color=GOLD, linestyle='--', label='진행 파동')]
+             Line2D([], [], color=GOLD, linestyle='--', label='미확정 파동' if reaction else '진행 파동')]
             if level == 2 or event.get('formation') else [Patch(facecolor=color, label=label) for color, label in zip(DENSITY, ('3개 겹침', '4개 겹침', '5개 이상'))])
     fig.legend(handles=keys,
                loc='center right', bbox_to_anchor=(.94, .876), ncol=3, fontsize=10,
@@ -254,12 +257,18 @@ def render(snapshot, alert, frames, prefix):
         fig.text(.94, .935, preview, color=MUTED, size=11, ha='right')
     try:
         for ax, tf in zip(axes, (top, final)):
-            draw_panel(ax, tf, window(frames, tf, event, snapshot['as_of']), event)
+            candles = window(frames, tf, event, snapshot['as_of'])
+            draw_panel(ax, tf, candles, event)
             upper_label = '계단 · 상위 OB와 목표' if event['upper']['target'] is not None else '상위 구조 · OB 접촉'
-            panel = upper_label if tf == top else '계단 · 진입 확인' if level == 3 else '구조 확대 · 접촉 확인'
+            if reaction:
+                close = kst(candles[-1].timestamp + TF_MS[tf]).split()[1]
+                panel = f"{'상위 구조' if tf == top else '종가 돌파'} · {close} 마감까지"
+            else:
+                panel = upper_label if tf == top else '계단 · 진입 확인' if level == 3 else '구조 확대 · 접촉 확인'
             ax.set_title(f'{LABELS[tf]} {panel}', color=WHITE, loc='left', fontsize=13, pad=29)
-        if event.get('phase') == 'reaction':
-            message = f"{LABELS[final]} 종가 {fmt(event['reaction']['price'])} · 돌파 기준 {fmt(event['reaction']['level'])}"
+        if reaction:
+            message = (f"{LABELS[final]}봉 {kst(reaction['at'])} 마감 · 종가 {fmt(reaction['price'])}"
+                       f" · 돌파 기준 {fmt(reaction['level'])}")
         elif level == 1 and not event.get('formation'):
             message = f'{LABELS[top]} OB 반응 안에서 같은 방향의 {LABELS[final]} OB 접촉'
         elif level <= 2:
