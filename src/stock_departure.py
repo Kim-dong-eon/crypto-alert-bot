@@ -102,7 +102,11 @@ class NasdaqHistory:
 
 
 def contract_reference(market, symbol, frames):
-    """Translate USD levels using the contract's minute at the same cash close."""
+    """Translate USD levels with the last traded price available at cash close.
+
+    A zero-volume carried-forward candle is not a new trade. Accept the last
+    actual trade only within 15 minutes, record its age, and never look ahead.
+    """
     daily = frames.get('1d', ())
     if not daily:
         raise ValueError('Missing cash daily reference')
@@ -112,11 +116,15 @@ def contract_reference(market, symbol, frames):
     saved = json.loads(path.read_text(encoding='utf-8')) if path.exists() else {}
     if saved.get('at') != closed:
         payload = market.get('candles', category='USDT-FUTURES', symbol=symbol,
-                             interval='1m', endTime=str(closed), limit='2')['data']
-        rows = [r for r in payload if int(r[0]) + MINUTE == closed and float(r[5]) > 0]
-        if len(rows) != 1:
-            raise ValueError('Missing synchronous contract price at cash close')
-        saved = {'at': closed, 'contract_close': float(rows[0][4])}
+                             interval='1m', endTime=str(closed), limit='17')['data']
+        rows = [r for r in payload if 0 <= closed - (int(r[0]) + MINUTE) <= 15*MINUTE
+                and float(r[5]) > 0]
+        if not rows:
+            raise ValueError('Missing traded contract price within 15 minutes before cash close')
+        latest = max(rows, key=lambda r: int(r[0]))
+        quote_at = int(latest[0]) + MINUTE
+        saved = {'at': closed, 'quote_at': quote_at, 'quote_age_ms': closed - quote_at,
+                 'contract_close': float(latest[4])}
         path.parent.mkdir(parents=True, exist_ok=True)
         temporary = path.with_suffix('.tmp')
         temporary.write_text(json.dumps(saved), encoding='utf-8')
@@ -174,4 +182,6 @@ def stock_contacts(snapshot, ticker, frames, zones, minutes, since, cutoff, *,
 def stock_text(candidate):
     from src.star_alerts import compact_atr_text
     text = compact_atr_text(candidate)
-    return text + f"\n원주식 Nasdaq {candidate['stock_reference']} · 하위/접촉 Bitget · 가격 USDT 환산"
+    age = (candidate.get('price_basis') or {}).get('quote_age_ms', 0) // MINUTE
+    suffix = f' · 환산 기준 {age}분 전 체결' if age else ''
+    return text + f"\n원주식 Nasdaq {candidate['stock_reference']} · 하위/접촉 Bitget · 가격 USDT 환산" + suffix

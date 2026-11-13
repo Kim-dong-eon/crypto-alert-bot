@@ -169,6 +169,8 @@ def _run_batch(market,instruments,ledger,sender=None,persist=False,snapshot=None
                 result['stock_reference_zones'] = len(reference_zones)
             except (OSError, requests.RequestException, ValueError, TypeError, KeyError) as error:
                 result['stock_reference_error'] = type(error).__name__
+                if isinstance(error, ValueError):
+                    result['stock_reference_error_detail'] = str(error)[:200]
                 for key, episode in ledger.state['star_contexts'].get(symbol, {}).items():
                     if 'cash:' in episode['parent_id']:
                         result['star_contexts'][key] = episode

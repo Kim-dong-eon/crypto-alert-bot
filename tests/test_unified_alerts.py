@@ -168,6 +168,23 @@ class UnifiedAlertTests(unittest.TestCase):
             self.assertEqual((frames['1d'][0].low,frames['1d'][0].high),(180,220))
             self.assertEqual(frames['1d'][0].timestamp,daily.timestamp)
 
+    def test_cash_basis_uses_bounded_past_trade_never_future_or_zero_volume(self):
+        daily = Bar(1700000000000,100,110,90,105,100)
+        end = cash_close(daily.timestamp,'1d')
+        with tempfile.TemporaryDirectory() as tmp:
+            class Market:
+                cache = Path(tmp)
+                def get(self, *args, **kwargs):
+                    return {'data':[[end,300,300,300,300,10],
+                                    [end-60000,220,220,220,220,0],
+                                    [end-180000,210,210,210,210,5]]}
+            _, basis = contract_reference(Market(),'TEST',{'1d':[daily]})
+            self.assertEqual(basis['ratio'],2)
+            self.assertEqual(basis['quote_age_ms'],120000)
+            with patch.object(Market,'get',return_value={'data':[[end-17*60000,210,210,210,210,5]]}):
+                with self.assertRaisesRegex(ValueError,'Missing traded'):
+                    contract_reference(Market(),'STALE',{'1d':[daily]})
+
 
 if __name__ == '__main__':
     unittest.main()
