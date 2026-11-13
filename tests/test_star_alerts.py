@@ -37,6 +37,32 @@ def replay(direction):
 
 
 class StarAlertsTests(unittest.TestCase):
+    def test_live_text_is_sent_before_chart_and_is_not_resent_on_retry(self):
+        snapshot = list(replay(-1))[1][0]
+        candidate = snapshot['tracks']['short']['candidates'][0]
+        candidate['first_touch_text'] = True
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = StarAlertLedger(Path(tmp) / 'state.json')
+            self.assertTrue(ledger.observe(copy.deepcopy(snapshot)))
+            sent = []
+
+            def text(_):
+                sent.append('text')
+                return True
+
+            def renderer(_):
+                sent.append('render')
+                return {'images': ['chart.png']}
+
+            first = ledger.dispatch_units(lambda _: False, text, renderer)
+            self.assertEqual(sent, ['text', 'render'])
+            self.assertEqual(first['failed'], 1)
+            self.assertTrue(ledger.observe(copy.deepcopy(snapshot)))
+            second = ledger.dispatch_units(lambda _: True, text, renderer)
+            self.assertEqual(second['sent'], 1)
+            self.assertEqual(sent, ['text', 'render', 'render'])
+            self.assertFalse(ledger.observe(copy.deepcopy(snapshot)))
+
     def test_upper_atr_scan_uses_three_scales_for_each_available_track(self):
         snapshot, frames = list(replay(-1))[-1]
         result = scan('BTCUSDT', frames, snapshot['as_of'], snapshot['price'], upper_atr=True)
@@ -105,6 +131,11 @@ class StarAlertsTests(unittest.TestCase):
         self.assertEqual(choice['band'], [104, 106])
         self.assertEqual(choice['formation'], {'start': start, 'end': end})
         self.assertEqual(choice['touch']['bar_open'], end)
+        self.assertFalse(formation_contacts(parent, [middle, final], path, 0, 105, now,
+                                            [], end, confirmed_only=True))
+        confirmed, = formation_contacts(parent, [middle, final], path, 0, 107, now,
+                                        [touch], end, confirmed_only=True)
+        self.assertEqual(confirmed['touch']['evidence'], 'completed_1m_range')
 
     def test_formation_first_touch_and_later_staircase_on_both_sides(self):
         raw = json.loads(FIXTURE.read_text(encoding='utf-8'))
@@ -118,6 +149,13 @@ class StarAlertsTests(unittest.TestCase):
                 outside = scan('BTCUSDT', frames, now, snapshot['price'], **options)
                 self.assertFalse(outside['tracks']['short']['candidates'])
                 minute = Bar(now - 60000, touch_price, touch_price, touch_price, touch_price, 1)
+                next_bucket = scan('BTCUSDT', frames, now, snapshot['price'], minute_bars=[minute],
+                                   first_touch_cutoff=minute.timestamp, **options)
+                self.assertFalse(next_bucket['tracks']['short']['candidates'])
+                closed_bucket = scan('BTCUSDT', frames, now, snapshot['price'], minute_bars=[minute],
+                                     first_touch_cutoff=now, **options)
+                confirmed, = unique_contacts(closed_bucket['tracks'])
+                self.assertEqual((confirmed['level'], confirmed['touch']['at']), (1, now))
                 origin_only = scan('BTCUSDT', frames, now, snapshot['price'], minute_bars=[minute],
                                    origin_tracks=('short',), **options)
                 self.assertFalse(origin_only['tracks']['short']['candidates'])

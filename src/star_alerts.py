@@ -164,7 +164,7 @@ def overlap_contacts(parent, area, lower_obs, zones, pair, arm, price, now, minu
     return contacts
 
 
-def formation_contacts(parent, zones, path, direction_at, price, now, minutes, since):
+def formation_contacts(parent, zones, path, direction_at, price, now, minutes, since, *, confirmed_only=False):
     """Both child OBs must have formed fully inside this parent OB's original candles."""
     _, middle, final = path
     children = defaultdict(list)
@@ -182,6 +182,8 @@ def formation_contacts(parent, zones, path, direction_at, price, now, minutes, s
         if lo >= hi:
             continue
         hit = first_contact(lo, hi, known, price, now, minutes, since)
+        if confirmed_only and hit.get('evidence') != 'completed_1m_range':
+            continue
         if hit['hit']:
             contacts.append({'level': 1, 'phase': 'first_contact', 'touch': hit, 'sources': [asdict(ob) for ob in sources],
                              'band': [lo, hi], 'score': 3,
@@ -218,9 +220,12 @@ def formation_pivot(parent, bars, points, now):
 
 
 def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=None, tracks=None,
-         formation_tracks=(), origin_tracks=(), execution_quote=None, tick_size=None, upper_atr=False):
+         formation_tracks=(), origin_tracks=(), execution_quote=None, tick_size=None, upper_atr=False,
+         first_touch_cutoff=None):
     closed_minutes = tuple(b for b in minute_bars if b.timestamp + MINUTE <= now)
     recent_minutes = tuple(b for b in closed_minutes if b.timestamp >= touch_since)
+    first_touch_minutes = recent_minutes if first_touch_cutoff is None else tuple(
+        b for b in recent_minutes if b.timestamp + MINUTE <= first_touch_cutoff)
     scales = {'scales': UPPER_ATR_SCALES} if upper_atr else {}
     result, usable, zones = prepare(symbol, frames, now, price, tracks, build_overlaps=False, **scales)
     result['ruleset'] = RULESET
@@ -248,6 +253,8 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
             if upper_atr:
                 multiplier = UPPER_ATR_SCALES[lens]['atr_multiple']
                 state.setdefault('atr_directions', {})[multiplier] = direction
+                if direction:
+                    state.setdefault('atr_waves', {})[multiplier] = observation_wave(upper_bars, points, now)['points']
             if lens == 'recent':
                 state['direction'] = direction
             if not direction:
@@ -313,7 +320,8 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                 prior_overlap = episode['overlap']
                 if anchored:
                     choices = formation_contacts(parent, zones, state['path'], setup_known,
-                                                 price, now, recent_minutes, touch_since)
+                                                 price, now, first_touch_minutes, touch_since,
+                                                 confirmed_only=first_touch_cutoff is not None)
                 else:
                     choices = overlap_contacts(parent, area, lower_obs, zones, (top, middle), arm,
                                                price, now, recent_minutes, touch_since)
@@ -432,19 +440,13 @@ def alert_title(candidate):
 
 def unit_text(candidate):
     c = candidate
+    if c.get('upper_atr') is not None:
+        return compact_atr_text(c)
     level, side = c['level'], 'LONG' if c['direction'] == 1 else 'SHORT'
     label = f"{LABELS[c['pair'][0]]} {TRACK_LABELS[c['track']]}"
     title = alert_title(c)
     exchange = c.get('exchange', 'bitget').title()
     lines = [f"[{exchange} · {c['symbol']}] {side}", f"{'★' * level} {title} · {label}"]
-    if c.get('upper_atr') is not None:
-        directions = c.get('atr_directions', {})
-        matched = c.get('matched_atrs', [c['upper_atr']])
-        checks = ' · '.join(f"{atr_label(n)} {'↑' if d == 1 else '↓' if d == -1 else '—'}"
-                            for n, d in sorted((float(n), d) for n, d in directions.items()))
-        lines.append(f"상위 {LABELS[c['pair'][0]]} · 신호 " + ', '.join(map(atr_label, matched)))
-        if checks:
-            lines.append(checks)
     if level >= 2 or c.get('formation'):
         evidence = c['overlap']['sources'] if level == 3 else c['sources']
         names = sorted({(z['timeframe'], z['kind']) for z in evidence}, key=lambda key: (-TF_MS[key[0]], key[1]))
@@ -480,6 +482,47 @@ def unit_text(candidate):
         lines.append('하위 구조 손절 또는 상위 목표 미확정')
     if level != 2 and not (level == 3 and c.get('execution')):
         lines.append(f"접촉 확인 · {kst(c['touch']['at'])}")
+    if warnings := c.get('cross_track_warnings'):
+        lines.append('⚠ ' + ' / '.join(warnings))
+    return '\n'.join(lines)
+
+
+def compact_atr_text(c):
+    level = c['level']
+    side = '롱' if c['direction'] == 1 else '숏'
+    label = f"{LABELS[c['pair'][0]]} {TRACK_LABELS[c['track']]}"
+    lo, hi = map(price_text, c['band'])
+    lines = [f"[{c['symbol']}] {side} · {label}"]
+    title = alert_title(c)
+    if level == 1:
+        lines.append(f"★ {title} · {lo}~{hi}")
+    elif level == 2 and (reaction := c.get('reaction')):
+        lines.append(f"★★ 반응 확인 · 종가 {price_text(reaction['price'])} / 기준 {price_text(reaction['level'])}")
+    else:
+        lines.append(f"{'★' * level} {title}")
+    evidence = c['overlap']['sources'] if level == 3 else c['sources']
+    groups = {}
+    for z in sorted(evidence, key=lambda z: -TF_MS[z['timeframe']]):
+        groups.setdefault(z['kind'], []).append(LABELS[z['timeframe']])
+    zones = ' + '.join(f"{'·'.join(dict.fromkeys(tfs))} {kind}" for kind, tfs in groups.items())
+    matched = '/'.join(f'{n:g}' for n in c.get('matched_atrs', [c['upper_atr']]))
+    directions = sorted((float(n), d) for n, d in c.get('atr_directions', {}).items())
+    if directions and len({d for _, d in directions}) > 1:
+        checks = ' '.join(f"{n:g}{'↑' if d == 1 else '↓' if d == -1 else '—'}" for n, d in directions)
+        atr = f'ATR {checks} (신호 {matched})'
+    else:
+        atr = f"ATR {matched}" + (' 모두 충족' if len(c.get('matched_atrs', [])) == 3 else ' 충족')
+    lines.append(f'{zones} · {atr}')
+    if level == 3:
+        lines.append(f"진입 {lo}~{hi} · 손절 {price_text(c['stop'])} · 목표 {price_text(c['target'])} · 순 1:{c['rr']:.2f}")
+    elif level == 2:
+        risk = c.get('observation_risk') or {}
+        if plan := risk.get('plan'):
+            a, b = map(price_text, plan['band'])
+            lines.append(f"참고 {a}~{b} · 손절 {price_text(risk['stop'])} · 목표 {price_text(risk['target'])} · 순 1:{plan['rr']:.2f}")
+        else:
+            lines.append('관찰 · 1:3 미충족' if risk.get('costs_checked') else '관찰 · 1:3 미확정')
+    lines.append(kst((c.get('reaction') or c['touch'])['at']))
     if warnings := c.get('cross_track_warnings'):
         lines.append('⚠ ' + ' / '.join(warnings))
     return '\n'.join(lines)

@@ -237,6 +237,71 @@ def draw_panel(ax, tf, candles, event):
               columnspacing=1.1, handletextpad=.5)
 
 
+def render_cross_track(event, comparison, frames, prefix):
+    from matplotlib.patches import Rectangle
+
+    tf = comparison['tf']
+    if tf not in frames:
+        return None
+    bars = [b for b in frames[tf] if b.timestamp + TF_MS[tf] <= event['now']]
+    if not bars:
+        return None
+    wave = comparison['wave']
+    oldest = wave[0]['timestamp'] - 4 * TF_MS[tf] if wave else bars[-min(48, len(bars))].timestamp
+    bars = [b for b in bars if b.timestamp >= oldest]
+    positions = {b.timestamp: i for i, b in enumerate(bars)}
+    points = [p for p in wave if p['timestamp'] in positions]
+    fig, ax = plt.subplots(figsize=(12, 5.2), layout='constrained')
+    fig.patch.set_facecolor('#101a27')
+    ax.set_facecolor('#152130')
+    ax.grid(alpha=.14)
+    ax.tick_params(colors=MUTED)
+    ax.yaxis.tick_right()
+    track = TRACK_LABELS[comparison['track']]
+    try:
+        for i, bar in enumerate(bars):
+            color = '#46d3aa' if bar.close >= bar.open else '#fa7b8a'
+            ax.vlines(i, bar.low, bar.high, color=color, linewidth=.8)
+            ax.add_patch(Rectangle((i - .31, min(bar.open, bar.close)), .62,
+                                   max(abs(bar.close - bar.open), abs(bar.close) * .00001), color=color))
+        lo, hi = event['band']
+        ax.axhspan(lo, hi, color=GOLD, alpha=.24, label='본 알림 구간')
+        main_bands = [(lo, hi)]
+        if event['level'] == 3:
+            first_low, first_high = event['overlap']['band']
+            main_bands.append((first_low, first_high))
+            ax.axhspan(first_low, first_high, color=GOLD, alpha=.15, label='본 신호 첫 접촉 구간')
+        common = set()
+        for i, (low, high, _) in enumerate(comparison['bands']):
+            ax.axhspan(low, high, color=REFERENCE, alpha=.25, label='비교 구간' if not i else None)
+            common.update((max(a, low), min(b, high)) for a, b in main_bands if max(a, low) < min(b, high))
+        for i, (low, high) in enumerate(sorted(common)):
+            ax.axhspan(low, high, facecolor='none', edgecolor=WHITE,
+                       hatch='////', label='실제 공통 가격대' if not i else None)
+        if points:
+            wave_atr = comparison.get('wave_atr') or next(iter(comparison['opposing_atrs']), None)
+            ax.plot([positions[p['timestamp']] for p in points], [p['price'] for p in points],
+                    color='#78ebff', linewidth=2, marker='o', markersize=4,
+                    label=f'{atr_label(wave_atr)} 확정 파동' if wave_atr is not None else '확정 파동')
+        ticks = sorted({round(i * (len(bars) - 1) / 5) for i in range(6)})
+        ax.set_xticks(ticks, [kst(bars[i].timestamp).replace(' KST', '') for i in ticks])
+        ax.set_xlim(-1, len(bars))
+        atrs = comparison['opposing_atrs']
+        side = '숏' if event['direction'] == 1 else '롱'
+        reasons = []
+        if atrs:
+            reasons.append(f"{side} 구조 ({', '.join(map(atr_label, atrs))})")
+        reasons.append('가격대 겹침' if common else '방향 경고')
+        ax.set_title(f"{event['symbol']} · {LABELS[tf]} {track} · {' / '.join(reasons)}",
+                     color=WHITE, loc='left', fontsize=14, pad=12)
+        ax.legend(loc='upper left', facecolor='#152130', labelcolor=WHITE)
+        path = prefix.with_name(f"{prefix.name}_star{event['level']}_{comparison['track']}.png")
+        fig.savefig(path, dpi=135, facecolor=fig.get_facecolor())
+        return str(path.resolve())
+    finally:
+        plt.close(fig)
+
+
 def render(snapshot, alert, frames, prefix):
     from matplotlib.patches import Patch
     from matplotlib.lines import Line2D
@@ -313,4 +378,8 @@ def render(snapshot, alert, frames, prefix):
         fig.savefig(path, dpi=145, facecolor=fig.get_facecolor())
     finally:
         plt.close(fig)
-    return {'images': [str(path.resolve())], 'image_captions': [''], 'text_after_images': unit_text(event)}
+    images = [str(path.resolve())]
+    for comparison in event.get('cross_track_charts', ()):
+        if image := render_cross_track(event, comparison, frames, prefix):
+            images.append(image)
+    return {'images': images, 'image_captions': [''] * len(images), 'text_after_images': unit_text(event)}

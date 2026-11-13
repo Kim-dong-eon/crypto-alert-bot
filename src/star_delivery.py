@@ -40,19 +40,31 @@ def describe_atr_signal(candidate, tracks, contacts, locks):
                if c.get('upper_atr') is not None and c['level'] == candidate['level']
                and physical_id(c) == identity and bands_overlap(c, candidate)}
     warnings = []
+    comparisons = []
     for name, state in tracks.items():
         if name == track or name not in TRACK_LABELS:
             continue
         label = TRACK_LABELS[name]
-        opposing_atrs = [atr_label(n) for n, side in state.get('atr_directions', {}).items() if side == -direction]
+        opposing_atrs = [n for n, side in state.get('atr_directions', {}).items() if side == -direction]
         if opposing_atrs:
-            warnings.append(f"{label} {'롱' if direction == -1 else '숏'} 구조 ({', '.join(opposing_atrs)})")
-        overlaps = {other['direction'] for other in (*contacts, *locks)
-                    if other['track'] == name and bands_overlap(candidate, other)}
-        for side in sorted(overlaps):
+            warnings.append(f"{label} {'롱' if direction == -1 else '숏'} 구조 ({', '.join(map(atr_label, opposing_atrs))})")
+        overlapping = [other for other in (*contacts, *locks)
+                       if other['track'] == name and bands_overlap(candidate, other)]
+        for side in sorted({other['direction'] for other in overlapping}):
             warnings.append(f"{label} {'롱' if side == 1 else '숏'} 구간 겹침")
+        if opposing_atrs or overlapping:
+            waves = state.get('atr_waves', {})
+            wave_atr = next((n for n in sorted(opposing_atrs) if waves.get(n)), None)
+            if wave_atr is None:
+                wave_atr = next((n for n in sorted(waves) if waves[n]), None)
+            comparisons.append({'track': name, 'tf': state.get('pair', [None])[0],
+                                'opposing_atrs': opposing_atrs, 'wave_atr': wave_atr,
+                                'wave': waves.get(wave_atr, []),
+                                'bands': sorted({(lo, hi, other['direction']) for other in overlapping
+                                                 for lo, hi in alert_bands(other)})})
     return {**candidate, 'matched_atrs': sorted(matched),
-            'atr_directions': tracks[track].get('atr_directions', {}), 'cross_track_warnings': warnings}
+            'atr_directions': tracks[track].get('atr_directions', {}),
+            'cross_track_warnings': warnings, 'cross_track_charts': comparisons}
 
 
 def shadowed_by_higher(candidate, blockers):
@@ -226,7 +238,8 @@ class StarAlertLedger(StructureLedger):
                    for other in selected):
                 continue
             records = list(p['units'].values())
-            if records and all(r.get('image_sent') and not r.get('in_flight') for r in records):
+            if records and all((r.get('image_sent') or (c.get('first_touch_text') and r.get('text_sent')))
+                               and not r.get('in_flight') for r in records):
                 pending[key] = {'candidate': c, 'stage': p['stage'], 'timestamp': p['attempt'], 'display_name': display_name or symbol}
 
         self.state.setdefault('dedup_audits', {})[symbol] = {'at': now, 'suppressed': suppressed,

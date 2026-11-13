@@ -254,11 +254,26 @@ class StructureLedger(OverlapLedger):
                     if self.force_resend:record.pop('in_flight')
                     else:result['uncertain']+=1;failed=True;continue
                 text=unit_text(unit)
+                if unit['candidate'].get('first_touch_text') and not record['text_sent']:
+                    record['in_flight']='text';self.save()
+                    try:ok=text_sender(text) is True
+                    except Exception:ok=False
+                    response=receipt(text_sender)
+                    if not ok:
+                        if response.get('outcome')=='unknown':result['uncertain']+=1
+                        else:record.pop('in_flight',None)
+                        failed=True;self.save();continue
+                    record.update(text_sent=True,text_message_ids=response.get('message_ids',[]))
+                    record.pop('in_flight',None);result['texts_sent']+=1;self.save()
                 if not record['image_sent']:
-                    try:rendered=renderer(unit);path=rendered['images'][0]
+                    try:
+                        rendered=renderer(unit)
+                        images=rendered['images']
+                        captions=rendered.get('image_captions',['']*len(images))
+                        if not images or len(images)!=len(captions):raise ValueError('Invalid alert album')
                     except Exception:failed=True;continue
                     record['in_flight']='image';self.save()
-                    try:ok=image_sender([(path,'')]) is True
+                    try:ok=image_sender(list(zip(images,captions))) is True
                     except Exception:ok=False
                     response=receipt(image_sender)
                     if not ok:
@@ -266,17 +281,19 @@ class StructureLedger(OverlapLedger):
                         else:record.pop('in_flight',None)
                         failed=True;self.save();continue
                     record.update(image_sent=True,image_message_ids=response.get('message_ids',[]))
-                    record.pop('in_flight',None);result['images_sent']+=1;self.save()
-                record['in_flight']='text';self.save()
-                try:ok=text_sender(text) is True
-                except Exception:ok=False
-                response=receipt(text_sender)
-                if not ok:
-                    if response.get('outcome')=='unknown':result['uncertain']+=1
-                    else:record.pop('in_flight',None)
-                    failed=True;self.save();continue
-                record.update(text_sent=True,text_message_ids=response.get('message_ids',[]))
-                record.pop('in_flight',None);result['texts_sent']+=1;result['units_sent']+=1;self.save()
+                    record.pop('in_flight',None);result['images_sent']+=len(images);self.save()
+                if not record['text_sent']:
+                    record['in_flight']='text';self.save()
+                    try:ok=text_sender(text) is True
+                    except Exception:ok=False
+                    response=receipt(text_sender)
+                    if not ok:
+                        if response.get('outcome')=='unknown':result['uncertain']+=1
+                        else:record.pop('in_flight',None)
+                        failed=True;self.save();continue
+                    record.update(text_sent=True,text_message_ids=response.get('message_ids',[]))
+                    record.pop('in_flight',None);result['texts_sent']+=1
+                result['units_sent']+=1;self.save()
             if failed:result['failed']+=1;continue
             p['complete']=True
             message_ids=[i for r in p['units'].values() for kind in ('image_message_ids','text_message_ids') for i in r[kind]]

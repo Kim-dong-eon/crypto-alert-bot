@@ -116,12 +116,14 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         except (KeyError,ValueError,TypeError):
             failures.append({"symbol":symbol,"reason":"ticker_became_stale_during_scan"});continue
         since = max(touch_since, minute_coverage['start']) if minute_coverage else touch_since
+        first_touch_cutoff = frame_open(observed, '5m')
         if graded:
             result = scan_stars(symbol, frames, observed, price, minute_bars=minute_bars, touch_since=since,
                                 contexts=ledger.state['star_contexts'].get(symbol), tracks=STAR_TRACKS,
                                 formation_tracks=FORMATION_TRACKS,
                                 origin_tracks=FORMATION_TRACKS,
                                 upper_atr=True,
+                                first_touch_cutoff=first_touch_cutoff,
                                 execution_quote=lru_cache(maxsize=1)(lambda: get_execution_quote(symbol)) if require_execution else None,
                                 tick_size=tick_sizes[symbol])
         else:
@@ -141,11 +143,18 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         asset_label={'stock':'주식','etf':'ETF','index':'지수','energy':'원유','metal':'금속'}.get(instrument.get('instrumentType'),'상품')
         instrument_label = '코인 무기한' if instrument.get('symbolType') == 'crypto' else f'거래소 {asset_label} 무기한'
         result.update(display_name=f"Bitget · {instrument.get('fullName',symbol)} ({symbol}) · {instrument_label}",data_errors=errors)
+        if graded:
+            for state in result['tracks'].values():
+                for candidate in candidates(state):
+                    if candidate['level'] == 1:
+                        candidate['first_touch_text'] = True
         pending=ledger.observe(result,result["display_name"],persist=persist or sender is not None)
         if persist or sender is not None:
             cursors=ledger.state.setdefault('touch_cursors',{})
             cursors.setdefault(symbol,touch_since)
-            if minute_coverage:cursors[symbol]=minute_coverage['end']
+            if minute_coverage:
+                end = min(minute_coverage['end'], first_touch_cutoff) if graded else minute_coverage['end']
+                cursors[symbol] = max(touch_since, end)
             ledger.save()
         results.append(result)
         chart_frames[symbol]=live_frames(frames,minute_bars,observed,price)
