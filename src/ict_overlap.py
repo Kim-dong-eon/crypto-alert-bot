@@ -14,9 +14,39 @@ LABELS = {"5m": "5분", "15m": "15분", "1h": "1시간", "4h": "4시간", "1d": 
 
 
 class Registry:
-    def __init__(self):
+    def __init__(self, departure_ob_frames=()):
         self.zones = {}
         self.recent = {}
+        self.departure_ob_frames = frozenset(departure_ob_frames)
+        self.departures = {}
+
+    def departure_ob(self, tf, bar, stamp):
+        direction = (bar.close > bar.open) - (bar.close < bar.open)
+        if not direction:
+            self.departures.pop(tf, None)
+            return None
+        run, base = self.departures.get(tf, (None, None))
+        if run is None or direction != run['direction']:
+            base = run
+            run = {'direction': direction, 'origin': bar.timestamp, 'count': 0,
+                   'body_low': min(bar.open, bar.close), 'body_high': max(bar.open, bar.close),
+                   'low': bar.low, 'high': bar.high}
+        run['count'] += 1
+        run['body_low'] = min(run['body_low'], bar.open, bar.close)
+        run['body_high'] = max(run['body_high'], bar.open, bar.close)
+        run['low'] = min(run['low'], bar.low)
+        run['high'] = max(run['high'], bar.high)
+        zone = None
+        if base and (bar.close > base['body_high'] if direction == 1 else bar.close < base['body_low']):
+            if base['count'] > 1 or run['count'] > 1:
+                low, high = base['body_low'], base['body_high']
+                origin = base['origin']
+                stop = min(base['low'], run['low']) if direction == 1 else max(base['high'], run['high'])
+                zone = PDZone(f"{tf}:OB:{origin}:{stamp}:{direction}", tf, "OB", direction, low, high,
+                              stamp, origin, stop, low if direction == 1 else high)
+            base = None
+        self.departures[tf] = (run, base)
+        return zone
 
     def step(self, tf, bar):
         stamp = bar.timestamp + TF_MS[tf]
@@ -39,6 +69,8 @@ class Registry:
                 lo, hi = (left.high, bar.low) if d == 1 else (bar.high, left.low)
                 boundary = lo if d == 1 else hi
                 made.append(PDZone(f"{tf}:FVG:{left.timestamp}:{stamp}:{d}", tf, "FVG", d, lo, hi, stamp, left.timestamp, boundary, boundary))
+        if tf in self.departure_ob_frames and (departure := self.departure_ob(tf, bar, stamp)):
+            made.append(departure)
         for z in made:
             if z.low < z.high:
                 self.zones[z.id] = z

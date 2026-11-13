@@ -11,6 +11,7 @@ from src.ict_nested import PDZone
 from src.ict_overlap import Registry,overlaps,scan,format_notice
 from src.overlap_market import select_instruments,quote_price,PublicMarket
 from src.overlap_delivery import OverlapLedger
+from src.stock_departure import stock_contacts
 
 
 def zone(key,tf,kind,low,high,d=1):
@@ -23,6 +24,43 @@ def snapshot(price=120,identifier='one',low=100,high=110,stamp=1000):
 
 
 class ZoneTests(unittest.TestCase):
+    def test_cash_reference_uses_confirmed_revisit_not_current_price(self):
+        cash = zone('cash-ob', '1w', 'OB', 270, 300)
+        minutes = [Bar(240000, 301, 303, 301, 302, 1),
+                   Bar(300000, 302, 304, 299, 301, 1)]
+        row = {'status':'no_star_contact', 'pair':['1w','1d'], 'path':['1w','1d','4h'], 'candidates':[]}
+        result = {'symbol':'GOOGLUSDT', 'as_of':365000, 'ruleset':'test',
+                  'tracks':{'long':row}, 'valid_source_ids':[]}
+        stock_contacts(result, 'GOOGL', [cash], minutes, 300000, 300000)
+        self.assertFalse(row['candidates'])
+        stock_contacts(result, 'GOOGL', [cash], minutes, 300000, 360000)
+        candidate, = row['candidates']
+        self.assertEqual(candidate['stock_reference'], 'GOOGL')
+        self.assertEqual(candidate['touch']['at'], 360000)
+        self.assertIn(candidate['parent']['id'], result['valid_source_ids'])
+
+    def test_departure_ob_waits_for_body_break_on_long_and_short(self):
+        tf = '1w'
+        step = TF_MS[tf]
+        prices = [(302.41, 313.21, 298.29, 300.91),
+                  (300.91, 308.0, 273.1, 273.32),
+                  (273.32, 300.33, 272.0, 294.54),
+                  (294.54, 322.22, 294.17, 313.21)]
+        for direction in (1, -1):
+            with self.subTest(direction=direction):
+                r = Registry(('1w',))
+                bars = [Bar(i * step, o, h, l, c) if direction == 1
+                        else Bar(i * step, 600-o, 600-l, 600-h, 600-c)
+                        for i, (o, h, l, c) in enumerate(prices)]
+                for bar in bars[:-1]:
+                    self.assertFalse(any(z.kind == 'OB' for z in r.step(tf, bar)))
+                ob, = (z for z in r.step(tf, bars[-1]) if z.kind == 'OB')
+                expected = (273.32, 302.41, 272.) if direction == 1 else (600-302.41, 600-273.32, 328.)
+                self.assertEqual((ob.low, ob.high, ob.stop), expected)
+                self.assertEqual((ob.origin, ob.created, ob.direction), (0, 4 * step, direction))
+                other = Registry(('1d',))
+                self.assertFalse(any(z.kind == 'OB' for bar in bars for z in other.step(tf, bar)))
+
     def test_two_timeframes_and_types_share_actual_price(self):
         z=[zone('a','4h','OB',100,120),zone('b','1h','FVG',105,115),zone('c','4h','FVG',107,113),zone('d','1h','OB',109,111)]
         best=overlaps(z,('4h','1h'),120)[0];self.assertEqual((best['low'],best['high'],best['score']),(109,111,4))

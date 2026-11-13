@@ -221,12 +221,14 @@ def formation_pivot(parent, bars, points, now):
 
 def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=None, tracks=None,
          formation_tracks=(), origin_tracks=(), execution_quote=None, tick_size=None, upper_atr=False,
-         first_touch_cutoff=None):
+         first_touch_cutoff=None, departure_ob_frames=()):
     closed_minutes = tuple(b for b in minute_bars if b.timestamp + MINUTE <= now)
     recent_minutes = tuple(b for b in closed_minutes if b.timestamp >= touch_since)
     first_touch_minutes = recent_minutes if first_touch_cutoff is None else tuple(
         b for b in recent_minutes if b.timestamp + MINUTE <= first_touch_cutoff)
     scales = {'scales': UPPER_ATR_SCALES} if upper_atr else {}
+    if departure_ob_frames:
+        scales['departure_ob_frames'] = departure_ob_frames
     result, usable, zones = prepare(symbol, frames, now, price, tracks, build_overlaps=False, **scales)
     result['ruleset'] = RULESET
     previous = contexts or {}
@@ -429,6 +431,8 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
 
 
 def alert_title(candidate):
+    if candidate.get('stock_reference'):
+        return '원주식 출발 OB 접촉'
     if candidate.get('phase') == 'reaction':
         return '하위 구조 반응 확인'
     if candidate.get('formation'):
@@ -440,6 +444,9 @@ def alert_title(candidate):
 
 def unit_text(candidate):
     c = candidate
+    if c.get('stock_reference'):
+        from src.stock_departure import stock_text
+        return stock_text(c)
     if c.get('upper_atr') is not None:
         return compact_atr_text(c)
     level, side = c['level'], 'LONG' if c['direction'] == 1 else 'SHORT'

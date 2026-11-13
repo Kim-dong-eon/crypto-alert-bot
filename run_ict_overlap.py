@@ -29,11 +29,13 @@ from src.ict_notices import single_writer,telegram_sender
 from src.common_listings import binance_listings,select_common_instruments
 from src.overlap_diversification import diversification_gate
 from src.overlap_status import overview_events
+from src.stock_departure import NasdaqHistory, US_EQUITIES, stock_contacts
 
 ROOT=Path(__file__).resolve().parent
 ENTRY_NOTIONAL_USDT = 1000.
 STAR_TRACKS = TRACKS
 FORMATION_TRACKS = tuple(STAR_TRACKS)
+DEPARTURE_OB_FRAMES = ('1d', '1w')
 
 
 def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,image_sender=None,render_previews=False,listing_check=None,status_symbols=(),unit_text_sender=None,entry_notional=ENTRY_NOTIONAL_USDT):
@@ -43,6 +45,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
     paths = {name: TRIPLE_TRACKS[name] for name in STAR_TRACKS} if graded else TRACKS
     tick_sizes = {item['symbol']:item.get('priceMultiplier') for item in instruments}
     execution_checks = {}
+    stock_history = None
 
     def get_execution_quote(symbol):
         try:
@@ -123,12 +126,22 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
                                 formation_tracks=FORMATION_TRACKS,
                                 origin_tracks=FORMATION_TRACKS,
                                 upper_atr=True,
+                                departure_ob_frames=DEPARTURE_OB_FRAMES,
                                 first_touch_cutoff=first_touch_cutoff,
                                 execution_quote=lru_cache(maxsize=1)(lambda: get_execution_quote(symbol)) if require_execution else None,
                                 tick_size=tick_sizes[symbol])
         else:
             result=scan(symbol,frames,observed,price,equilibrium_filter=True,minute_bars=minute_bars,touch_since=since)
         result.update(minute_coverage=minute_coverage,minute_error=minute_error)
+        if graded and instrument['baseCoin'] in US_EQUITIES and minute_coverage:
+            try:
+                if stock_history is None:
+                    stock_history = NasdaqHistory(market.cache)
+                _, reference_zones = stock_history.load(instrument['baseCoin'], observed)
+                stock_contacts(result, instrument['baseCoin'], reference_zones, minute_bars, since, first_touch_cutoff)
+                result['stock_reference_zones'] = len(reference_zones)
+            except (OSError, requests.RequestException, ValueError, TypeError, KeyError) as error:
+                result['stock_reference_error'] = type(error).__name__
         if instrument['baseCoin'] in DIVERSIFIER_BASES:
             try:
                 eligibility=(diversification_gate(frames,*diversity_data,tickers[symbol],observed) if diversity_data

@@ -63,12 +63,12 @@ def rooted_context(parent,bars,points,areas,tf,now):
             'invalidated_at':None}
 
 
-def prepare(symbol,frames,now,price,tracks=None,*,build_overlaps=True,scales=None):
+def prepare(symbol,frames,now,price,tracks=None,*,build_overlaps=True,scales=None,departure_ob_frames=()):
     """Closed-bar causal context; returned views also drive the chart."""
     if not math.isfinite(price) or price<=0:raise ValueError('Invalid price')
     tracks=TRACKS if tracks is None else tracks
     scales=SCALES if scales is None else scales
-    usable={};unavailable={};registry=Registry()
+    usable={};unavailable={};registry=Registry(departure_ob_frames)
     for tf,values in frames.items():
         values=[b for b in values if b.timestamp+TF_MS[tf]<=now]
         if not values or values[-1].timestamp+TF_MS[tf]!=frame_open(now,tf):

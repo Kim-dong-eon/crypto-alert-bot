@@ -346,6 +346,8 @@ def render(snapshot, alert, frames, prefix):
         if reaction:
             message = (f"{LABELS[final]}봉 {kst(reaction['at'])} 마감 · 종가 {fmt(reaction['price'])}"
                        f" · 돌파 기준 {fmt(reaction['level'])}")
+        elif event.get('stock_reference'):
+            message = f"원주식 {event['stock_reference']} {LABELS[top]} OB · Bitget 시세 접촉"
         elif level == 1 and not event.get('formation'):
             message = f'{LABELS[top]} OB 반응 안에서 같은 방향의 {LABELS[final]} OB 접촉'
         elif level <= 2:

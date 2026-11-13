@@ -26,6 +26,8 @@ def bands_overlap(a, b):
 
 
 def intersects(a, b):
+    if not a.get('stock_reference') and b.get('stock_reference'):
+        return False
     if ({a.get('track'), b.get('track')} == {'fast', 'short'}
             and a.get('upper_atr') is None and b.get('upper_atr') is None):
         return False
@@ -83,7 +85,7 @@ def executable(candidate):
 
 def unique_contacts(tracks, entry_only=False, require_execution=False):
     ranked = sorted(eligible_contacts(tracks, entry_only, require_execution),
-                    key=lambda c: (-c['level'], -TF_MS[c['pair'][0]], -c['score'], c['id']))
+                    key=lambda c: (-c['level'], bool(c.get('stock_reference')), -TF_MS[c['pair'][0]], -c['score'], c['id']))
     accepted = []
     seen = set()
     for index, candidate in enumerate(ranked):
@@ -131,6 +133,8 @@ class StarAlertLedger(StructureLedger):
         if old is None or level > old['level']:
             locks[key] = {'track': c['track'], 'level': level, 'parent': c['parent'],
                           'direction': c['direction'], 'low': c['low'], 'high': c['high']}
+            if c.get('stock_reference'):
+                locks[key]['stock_reference'] = c['stock_reference']
         if locks[key]['level'] == level == 3 and c.get('overlap'):
             locks[key].setdefault('overlap', {'band': c['overlap']['band']})
 
@@ -226,7 +230,8 @@ class StarAlertLedger(StructureLedger):
                 continue
             if self.require_execution and c['level'] == 3:
                 continue
-            if c['context_id'] not in episodes or not set(c['source_ids']).issubset(active_ids):
+            if (not c.get('stock_reference') and c['context_id'] not in episodes
+                    or not set(c['source_ids']).issubset(active_ids)):
                 continue
             if snapshot['tracks'].get(c['track'], {}).get('status', 'data_unavailable') == 'data_unavailable':
                 continue
