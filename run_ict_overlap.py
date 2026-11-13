@@ -21,7 +21,7 @@ from src.entry_execution import depth_quote, entry_plan
 from src.pullback_data import live_frames
 from src.staircase_rules import RULESET
 from src.ict_engine import TF_MS,frame_open
-from src.review_history import HistoricalMarket
+from src.review_history import HistoricalMarket, formation_history_starts
 from src.overlap_entry import recent_minutes,MINUTE
 from src.overlap_market import PublicMarket,select_instruments,quote_price
 from src.overlap_delivery import OverlapLedger
@@ -29,16 +29,17 @@ from src.ict_notices import single_writer,telegram_sender
 from src.common_listings import binance_listings,select_common_instruments
 from src.overlap_diversification import diversification_gate
 from src.overlap_status import overview_events
-from src.stock_departure import NasdaqHistory, US_EQUITIES, stock_contacts
+from src.stock_departure import NasdaqHistory, US_EQUITIES, stock_contacts, cash_close, contract_reference
 
 ROOT=Path(__file__).resolve().parent
 ENTRY_NOTIONAL_USDT = 1000.
 STAR_TRACKS = TRACKS
 FORMATION_TRACKS = tuple(STAR_TRACKS)
-DEPARTURE_OB_FRAMES = ('1d', '1w')
+from config.overlap_settings import MULTIBAR_OB_FRAMES, ALLOW_MIDDLE_FVG, REQUIRE_ENTRY_OTE
+DEPARTURE_OB_FRAMES = MULTIBAR_OB_FRAMES
 
 
-def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,image_sender=None,render_previews=False,listing_check=None,status_symbols=(),unit_text_sender=None,entry_notional=ENTRY_NOTIONAL_USDT):
+def _run_batch(market,instruments,ledger,sender=None,persist=False,snapshot=None,image_sender=None,render_previews=False,listing_check=None,status_symbols=(),unit_text_sender=None,entry_notional=ENTRY_NOTIONAL_USDT):
     results=[];failures=[];chart_frames={}
     graded = isinstance(ledger, StarAlertLedger)
     require_execution = graded and ledger.require_execution
@@ -76,7 +77,9 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         for tf in sorted({tf for path in paths.values() for tf in path}, key=TF_MS.get):
             try:frames[tf]=market.frame(symbol,tf,now)
             except Exception as error:errors[tf]=type(error).__name__
-        touch_since=ledger.state.get('touch_cursors',{}).get(symbol,(now//MINUTE-5)*MINUTE)
+        legacy_since=ledger.state.get('touch_cursors',{}).get(symbol,(now//MINUTE-5)*MINUTE)
+        track_cursors=ledger.state.get('track_touch_cursors', {}).get(symbol, {})
+        touch_since=min(track_cursors.values(), default=legacy_since)
         if reset_at := ledger.state.get('alert_reset_at'):
             touch_since = max(touch_since, ((reset_at + MINUTE - 1) // MINUTE) * MINUTE)
         minute_bars=[];minute_coverage=None;minute_error=None
@@ -85,15 +88,22 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         try:minute_bars,minute_coverage=recent_minutes(market,symbol,min(touch_since,frame_open(now,'4h')),int(time.time()*1000))
         except Exception as error:minute_error=type(error).__name__
         refinement_starts={}
-        if not graded:
+        if graded:
+            refinement_starts = formation_history_starts(frames, paths, price, minute_bars,
+                ledger.state.get('star_contexts', {}).get(symbol))
+        else:
             try:
                 refinement_starts=refinement_history_starts(symbol,frames,now,price,minute_bars,
                                                             max(touch_since,minute_coverage['start']) if minute_coverage else touch_since)
             except Exception as error:errors['refinement_context']=type(error).__name__
         for tf,start in refinement_starts.items():
             if frames.get(tf) and frames[tf][0].timestamp<=start:continue
-            try:frames[tf]=market.refinement_frame(symbol,tf,int(time.time()*1000),start)
-            except Exception as error:errors[tf]=type(error).__name__
+            try:
+                frames[tf]=market.refinement_frame(symbol,tf,int(time.time()*1000),start)
+                errors.pop(tf,None)
+            except Exception as error:
+                errors[tf]=type(error).__name__
+                frames.pop(tf,None)
         diversity_data=None;diversity_error=None
         if instrument['baseCoin'] in DIVERSIFIER_BASES:
             try:
@@ -121,28 +131,47 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         since = max(touch_since, minute_coverage['start']) if minute_coverage else touch_since
         first_touch_cutoff = frame_open(observed, '5m')
         if graded:
-            result = scan_stars(symbol, frames, observed, price, minute_bars=minute_bars, touch_since=since,
+            result = scan_stars(symbol, frames, observed, price, minute_bars=minute_bars,
+                                touch_since={name:max(since, track_cursors.get('bitget:'+name, legacy_since)) for name in STAR_TRACKS},
                                 contexts=ledger.state['star_contexts'].get(symbol), tracks=STAR_TRACKS,
                                 formation_tracks=FORMATION_TRACKS,
                                 origin_tracks=FORMATION_TRACKS,
                                 upper_atr=True,
                                 departure_ob_frames=DEPARTURE_OB_FRAMES,
+                                middle_fvg=ALLOW_MIDDLE_FVG, require_ote=REQUIRE_ENTRY_OTE,
                                 first_touch_cutoff=first_touch_cutoff,
                                 execution_quote=lru_cache(maxsize=1)(lambda: get_execution_quote(symbol)) if require_execution else None,
                                 tick_size=tick_sizes[symbol])
         else:
             result=scan(symbol,frames,observed,price,equilibrium_filter=True,minute_bars=minute_bars,touch_since=since)
         result.update(minute_coverage=minute_coverage,minute_error=minute_error)
+        exchange_status = {k:v['status'] for k,v in result['tracks'].items()}
         if graded and instrument['baseCoin'] in US_EQUITIES and minute_coverage:
             try:
                 if stock_history is None:
                     stock_history = NasdaqHistory(market.cache)
                 reference_frames, reference_zones = stock_history.load(instrument['baseCoin'], observed)
+                reference_frames, price_basis = contract_reference(market, symbol, reference_frames)
+                result['stock_price_basis'] = price_basis
+                cash_closes = {tf: {b.timestamp: cash_close(b.timestamp, tf) for b in bars}
+                               for tf, bars in reference_frames.items()}
+                cash_starts = formation_history_starts({**frames, **reference_frames},
+                    {k:v for k,v in paths.items() if k in ('medium', 'long')}, price, minute_bars,
+                    ledger.state.get('star_contexts', {}).get(symbol), cash_closes)
+                for tf, start in cash_starts.items():
+                    if not frames.get(tf) or frames[tf][0].timestamp > start:
+                        frames[tf] = market.refinement_frame(symbol, tf, observed, start)
                 stock_contacts(result, instrument['baseCoin'], reference_frames, reference_zones,
-                               minute_bars, since, first_touch_cutoff)
+                               minute_bars, {name:max(since, track_cursors.get('cash:'+name, legacy_since)) for name in ('medium','long')}, first_touch_cutoff, exchange_frames=frames,
+                               contexts=ledger.state['star_contexts'].get(symbol),
+                               execution_quote=lru_cache(maxsize=1)(lambda: get_execution_quote(symbol)) if require_execution else None,
+                               tick_size=tick_sizes[symbol], price_basis=price_basis)
                 result['stock_reference_zones'] = len(reference_zones)
             except (OSError, requests.RequestException, ValueError, TypeError, KeyError) as error:
                 result['stock_reference_error'] = type(error).__name__
+                for key, episode in ledger.state['star_contexts'].get(symbol, {}).items():
+                    if 'cash:' in episode['parent_id']:
+                        result['star_contexts'][key] = episode
         if instrument['baseCoin'] in DIVERSIFIER_BASES:
             try:
                 eligibility=(diversification_gate(frames,*diversity_data,tickers[symbol],observed) if diversity_data
@@ -157,19 +186,18 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
         asset_label={'stock':'주식','etf':'ETF','index':'지수','energy':'원유','metal':'금속'}.get(instrument.get('instrumentType'),'상품')
         instrument_label = '코인 무기한' if instrument.get('symbolType') == 'crypto' else f'거래소 {asset_label} 무기한'
         result.update(display_name=f"Bitget · {instrument.get('fullName',symbol)} ({symbol}) · {instrument_label}",data_errors=errors)
+        result['source_status'] = {'bitget': exchange_status,
+            'cash': {name: state['status'] for name,state in result.get('cash_tracks', {}).items()}}
         if graded:
             for state in result['tracks'].values():
                 for candidate in candidates(state):
+                    candidate['signal_version'] = 2
                     if candidate['level'] == 1:
                         candidate['first_touch_text'] = True
         pending=ledger.observe(result,result["display_name"],persist=persist or sender is not None)
-        if persist or sender is not None:
-            cursors=ledger.state.setdefault('touch_cursors',{})
-            cursors.setdefault(symbol,touch_since)
-            if minute_coverage:
-                end = min(minute_coverage['end'], first_touch_cutoff) if graded else minute_coverage['end']
-                cursors[symbol] = max(touch_since, end)
-            ledger.save()
+        if errors or minute_error or result.get('stock_reference_error'):
+            failures.append({'symbol': symbol, 'reason': 'incomplete_data',
+                             'frames': errors, 'minutes': minute_error, 'stock': result.get('stock_reference_error')})
         results.append(result)
         chart_frames[symbol]=live_frames(frames,minute_bars,observed,price)
         if sender is None:
@@ -233,6 +261,27 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
                 else:status_delivery['failed']+=1
         else:delivery=ledger.dispatch(sender,batch=True)
         ledger.state['pending'].update(held);ledger.save()
+    if results:
+        if persist or sender is not None:
+            cursors=ledger.state.setdefault('touch_cursors',{})
+            cursors.setdefault(symbol,touch_since)
+            scoped = ledger.state.setdefault('track_touch_cursors', {}).setdefault(symbol, {})
+            end = min(minute_coverage['end'], first_touch_cutoff) if minute_coverage else touch_since
+            for name, status in exchange_status.items():
+                key = 'bitget:' + name
+                scoped.setdefault(key, legacy_since)
+                if minute_coverage and status != 'data_unavailable' and not any(tf in errors for tf in paths[name]):
+                    scoped[key] = max(scoped[key], end)
+            if instrument['baseCoin'] in US_EQUITIES:
+                for name in ('medium', 'long'):
+                    key = 'cash:' + name
+                    scoped.setdefault(key, legacy_since)
+                    state = result.get('cash_tracks', {}).get(name, {})
+                    if (minute_coverage and not result.get('stock_reference_error')
+                            and state.get('status', 'data_unavailable') != 'data_unavailable'):
+                        scoped[key] = max(scoped[key], end)
+            cursors[symbol] = min(scoped.values(), default=touch_since)
+            ledger.save()
     report={"as_of":int(time.time()*1000),"mode":"send" if sender else "preview","exchange":"bitget","category":"USDT-FUTURES","strategy":POLICY,'paths':paths,'deduplication_enabled':True,"binance_listing_check":listing_check,"instruments":instruments,"symbols":results,"failures":failures,"delivery":delivery,'status_delivery':status_delivery}
     report['ruleset']=STAR_RULESET if graded else RULESET
     if graded:
@@ -245,6 +294,32 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
     if snapshot:
         path=Path(snapshot);path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     print(f"중첩 알림: 전송 {delivery['sent']}건 / 실패 {delivery['failed']}건")
+    return report
+
+
+def run_once(market, instruments, ledger, sender=None, persist=False, snapshot=None,
+             image_sender=None, render_previews=False, listing_check=None, status_symbols=(),
+             unit_text_sender=None, entry_notional=ENTRY_NOTIONAL_USDT):
+    reports = []
+    for instrument in instruments:
+        reports.append(_run_batch(market, [instrument], ledger, sender, persist, None,
+                                  image_sender, render_previews, listing_check,
+                                  tuple(s for s in status_symbols if s == instrument["symbol"]),
+                                  unit_text_sender, entry_notional))
+    if not reports:
+        raise ValueError('No instruments to scan')
+    report = dict(reports[-1])
+    for key in ('instruments', 'symbols', 'failures'):
+        report[key] = [item for part in reports for item in part[key]]
+    for key in ('delivery', 'status_delivery'):
+        report[key] = {'sent': sum(part[key]['sent'] for part in reports),
+                       'failed': sum(part[key]['failed'] for part in reports)}
+    report['status_delivery']['symbols'] = [symbol for part in reports for symbol in part['status_delivery']['symbols']]
+    report['execution_checks'] = {k:v for part in reports for k,v in part.get('execution_checks', {}).items()}
+    if snapshot:
+        path = Path(snapshot)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
     return report
 
 

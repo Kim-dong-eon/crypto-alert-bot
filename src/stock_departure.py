@@ -101,89 +101,77 @@ class NasdaqHistory:
         return stock_zones(self.rows(ticker, now), now)
 
 
-def stock_contacts(snapshot, ticker, frames, zones, minutes, since, cutoff):
-    """A closed Bitget minute supplies contact evidence for a cash-market zone."""
-    pairs = [(prev, bar) for prev, bar in zip(minutes, minutes[1:])
-             if since <= bar.timestamp and bar.timestamp + MINUTE <= cutoff
-             and prev.timestamp + MINUTE == bar.timestamp and bar.volume > 0]
-    snapshot['valid_source_ids'].extend(f'cash:{ticker}:{zone.id}' for zone in zones)
-    if not pairs:
-        return
-    # Re-evaluate on either side of a cash-market close inside the catch-up window.
-    cached = {}
-    for track, tf in (('long', '1w'), ('medium', '1d')):
-        state = snapshot['tracks'].get(track)
-        if not state or state['status'] == 'data_unavailable':
-            continue
-        bars = frames.get(tf, ())
-        close_times = [cash_close(b.timestamp, tf) for b in bars]
-        hits = {}
-        for zone in sorted((z for z in zones if z.timeframe == tf), key=lambda z: z.created, reverse=True):
-            if zone.direction in hits:
-                continue
-            for prev, bar in pairs:
-                if (bar.timestamp < zone.created or zone.low <= prev.close <= zone.high
-                        or bar.low > zone.high or bar.high < zone.low):
-                    continue
-                stamp = bar.timestamp
-                end = bisect_right(close_times, stamp)
-                if not end:
-                    continue
-                start = max(0, end - TOP_COUNTS[tf])
-                closed = bars[start:end]
-                key = tf, end
-                if key not in cached:
-                    times = close_times[start:end]
-                    views = {}
-                    for policy in UPPER_ATR_SCALES.values():
-                        multiplier = policy['atr_multiple']
-                        points = turns(closed, multiplier, policy['min_fraction'], tf)
-                        points = [{**p, 'confirmed_at':times[p['confirmed_index']]} for p in points]
-                        direction, known_at = confirmed_direction(closed, points, tf, close_times=times)
-                        views[multiplier] = direction, known_at, points
-                    cached[key] = views
-                views = cached[key]
-                matches = {}
-                for multiplier, (direction, known_at, points) in views.items():
-                    if direction != zone.direction or known_at > stamp:
-                        continue
-                    pivot = formation_pivot(zone, closed, points, stamp)
-                    if (pivot and not any(b.timestamp >= pivot['confirmed_at']
-                                         and direction * (b.close - pivot['price']) < 0 for b in closed)
-                            and all(direction * (snapshot.get('price', bar.close) - bound) >= 0
-                                    for bound in (pivot['price'], zone.stop))):
-                        matches[multiplier] = pivot, points
-                if not matches:
-                    continue
-                selected = min(matches)
-                pivot, points = matches[selected]
-                upper = observation_wave(closed, points, stamp, zone.origin)
-                chart_start = min(upper['chart_start'], zone.origin) - 7 * TF_MS[tf]
-                parent = asdict(zone)
-                parent['id'] = f'cash:{ticker}:{zone.id}'
-                hits[zone.direction] = {
-                    'id':parent['id'], 'context_id':parent['id'], 'symbol':snapshot['symbol'],
-                    'level':1, 'score':1, 'track':track, 'pair':state['pair'], 'direction':zone.direction,
-                    'lenses':['stock'], 'parent':parent, 'source_ids':[parent['id']], 'sources':[parent],
-                    'upper':upper, 'departure_pivot':pivot, 'stock_atr':selected,
-                    'stock_matched_atrs':list(matches),
-                    'stock_bars':[asdict(b) for b in closed if b.timestamp >= chart_start],
-                    'path':state['path'], 'arm':bar.timestamp+MINUTE, 'arm_price':min(zone.high, max(zone.low, bar.close)),
-                    'low':zone.low, 'high':zone.high, 'band':[zone.low,zone.high],
-                    'touch':{'at':bar.timestamp+MINUTE, 'bar_open':bar.timestamp, 'observed_low':bar.low,
-                             'observed_high':bar.high},
-                    'now':snapshot['as_of'], 'stock_reference':ticker, 'first_touch_text':True,
-                    'context_price_breach':False, 'equilibrium':{'eligible':True}, 'ruleset':snapshot['ruleset'],
-                }
-                break
-        state['candidates'].extend(hits.values())
-        if hits:
-            state['status'] = 'watching'
+def contract_reference(market, symbol, frames):
+    """Translate USD levels using the contract's minute at the same cash close."""
+    daily = frames.get('1d', ())
+    if not daily:
+        raise ValueError('Missing cash daily reference')
+    last = daily[-1]
+    closed = cash_close(last.timestamp, '1d')
+    path = market.cache / 'stock-history' / f'{symbol}_basis.json'
+    saved = json.loads(path.read_text(encoding='utf-8')) if path.exists() else {}
+    if saved.get('at') != closed:
+        payload = market.get('candles', category='USDT-FUTURES', symbol=symbol,
+                             interval='1m', endTime=str(closed), limit='2')['data']
+        rows = [r for r in payload if int(r[0]) + MINUTE == closed and float(r[5]) > 0]
+        if len(rows) != 1:
+            raise ValueError('Missing synchronous contract price at cash close')
+        saved = {'at': closed, 'contract_close': float(rows[0][4])}
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = path.with_suffix('.tmp')
+        temporary.write_text(json.dumps(saved), encoding='utf-8')
+        temporary.replace(path)
+    ratio = saved['contract_close'] / last.close
+    if not math.isfinite(ratio) or ratio <= 0:
+        raise ValueError('Invalid cross-market price ratio')
+    projected = {tf: [replace(b, open=b.open*ratio, high=b.high*ratio,
+                              low=b.low*ratio, close=b.close*ratio) for b in bars]
+                 for tf, bars in frames.items()}
+    return projected, {**saved, 'cash_close': last.close, 'ratio': ratio}
 
 
-def stock_text(c):
-    side = '지지' if c['direction'] == 1 else '저항'
-    return (f"[{c['symbol']}] {LABELS[c['pair'][0]]} 원주식 OB 접촉\n"
-            f"{c['stock_reference']} {side} {c['low']:g}~{c['high']:g} USD\n"
-            f"원주식 구조 · {', '.join(map(atr_label, c.get('stock_matched_atrs', ())))}\n"
-            f"Bitget 접촉 확인 · {kst(c['touch']['at'])}")
+def stock_contacts(snapshot, ticker, frames, zones, minutes, since, cutoff, *,
+                   exchange_frames=None, contexts=None, execution_quote=None, tick_size=None, price_basis=None):
+    """Run cash upper frames and original exchange child frames through the shared scanner."""
+    from config.overlap_settings import MULTIBAR_OB_FRAMES, ALLOW_MIDDLE_FVG, REQUIRE_ENTRY_OTE
+    from src.star_alerts import scan
+
+    combined = dict(exchange_frames or {})
+    combined.update(frames)
+    closes = {tf: {b.timestamp: cash_close(b.timestamp, tf) for b in bars}
+              for tf, bars in frames.items()}
+    prefix = {tf: f'cash:{ticker}:' for tf in frames}
+    tracks = {'medium': ('1d', '4h'), 'long': ('1w', '1d')}
+    result = scan(snapshot['symbol'], combined, snapshot['as_of'], snapshot['price'],
+                  tracks=tracks, formation_tracks=tuple(tracks), origin_tracks=tuple(tracks),
+                  upper_atr=True, departure_ob_frames=MULTIBAR_OB_FRAMES,
+                  session_closes=closes, source_prefix=prefix,
+                  middle_fvg=ALLOW_MIDDLE_FVG, require_ote=REQUIRE_ENTRY_OTE,
+                  minute_bars=minutes, touch_since=since, first_touch_cutoff=cutoff,
+                  contexts=contexts, execution_quote=execution_quote, tick_size=tick_size)
+    snapshot['valid_source_ids'].extend(result['valid_source_ids'])
+    snapshot['star_contexts'].update(result['star_contexts'])
+    snapshot['cash_tracks'] = result['tracks']
+    for track, state in result['tracks'].items():
+        target = snapshot['tracks'][track]
+        for candidate in state['candidates']:
+            candidate.update(stock_reference=ticker, signal_version=2, price_basis=price_basis,
+                             source_labels={tf: f'Nasdaq {ticker}' for tf in frames},
+                             atr_directions=state.get('atr_directions', {}),
+                             stock_atr=candidate['upper_atr'],
+                             stock_matched_atrs=[candidate['upper_atr']])
+            top = candidate['pair'][0]
+            chart_start = min(candidate['upper']['chart_start'], candidate['parent']['origin']) - 4*TF_MS[top]
+            chart_end = candidate.get('reaction', {}).get('at', snapshot['as_of'])
+            candidate['stock_bars'] = [asdict(b) for b in frames[top]
+                                       if b.timestamp >= chart_start and closes[top][b.timestamp] <= chart_end]
+        target['candidates'].extend(state['candidates'])
+        if state['candidates']:
+            target['status'] = 'watching'
+    return result
+
+
+def stock_text(candidate):
+    from src.star_alerts import compact_atr_text
+    text = compact_atr_text(candidate)
+    return text + f"\n원주식 Nasdaq {candidate['stock_reference']} · 하위/접촉 Bitget · 가격 USDT 환산"

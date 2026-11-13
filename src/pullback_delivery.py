@@ -17,6 +17,9 @@ def delivery_started(presentation):
 def physical_id(candidate):
     parent=candidate['parent']
     raw=f"{POLICY}|{candidate['symbol']}|{candidate['track']}|{parent['id']}|{candidate['direction']}"
+    if candidate.get('signal_version') == 2:
+        overlap = candidate.get('overlap', candidate)
+        raw += '|sources:' + '|'.join(sorted(z['id'] for z in overlap['sources']))
     return hashlib.sha256(raw.encode()).hexdigest()[:24]
 
 

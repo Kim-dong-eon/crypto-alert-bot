@@ -26,7 +26,7 @@ def bands_overlap(a, b):
 
 
 def intersects(a, b):
-    if not a.get('stock_reference') and b.get('stock_reference'):
+    if b.get('stock_reference') and b.get('score', 1) < 3 and a.get('score', 3) >= 3:
         return False
     if ({a.get('track'), b.get('track')} == {'fast', 'short'}
             and a.get('upper_atr') is None and b.get('upper_atr') is None):
@@ -65,7 +65,7 @@ def describe_atr_signal(candidate, tracks, contacts, locks):
                                 'bands': sorted({(lo, hi, other['direction']) for other in overlapping
                                                  for lo, hi in alert_bands(other)})})
     return {**candidate, 'matched_atrs': sorted(matched),
-            'atr_directions': tracks[track].get('atr_directions', {}),
+            'atr_directions': candidate.get('atr_directions', tracks[track].get('atr_directions', {})),
             'cross_track_warnings': warnings, 'cross_track_charts': comparisons}
 
 
@@ -132,7 +132,8 @@ class StarAlertLedger(StructureLedger):
         old = locks.get(key)
         if old is None or level > old['level']:
             locks[key] = {'track': c['track'], 'level': level, 'parent': c['parent'],
-                          'direction': c['direction'], 'low': c['low'], 'high': c['high']}
+                          'direction': c['direction'], 'low': c['low'], 'high': c['high'],
+                          'score': c.get('score', len(c.get('sources', ())))}
             if c.get('stock_reference'):
                 locks[key]['stock_reference'] = c['stock_reference']
         if locks[key]['level'] == level == 3 and c.get('overlap'):
@@ -152,7 +153,7 @@ class StarAlertLedger(StructureLedger):
         for key, presentation in self.state.get('presentations', {}).items():
             retired[f"{key}:{presentation['attempt']}"] = presentation
         for key in ('presentations', 'pending', 'in_flight', 'locks', 'star_locks', 'star_contexts',
-                    'tracks', 'delivered', 'images_delivered', 'touch_cursors', 'dedup_audits'):
+                    'tracks', 'delivered', 'images_delivered', 'touch_cursors', 'track_touch_cursors', 'dedup_audits'):
             self.state[key] = {}
         self.state['alert_reset_at'] = now
         self.save()
@@ -178,6 +179,10 @@ class StarAlertLedger(StructureLedger):
                 self._remember(c, c['level'])
         for key, lock in list(locks.items()):
             parent = lock['parent']
+            source = 'cash' if lock.get('stock_reference') else 'bitget'
+            source_status = snapshot.get('source_status')
+            if source_status is not None and source_status.get(source, {}).get(lock['track'], 'data_unavailable') == 'data_unavailable':
+                continue
             start = snapshot['history_starts'].get(parent['timeframe'])
             if start is not None and parent['origin'] >= start and parent['id'] not in active_ids:
                 del locks[key]
@@ -204,7 +209,7 @@ class StarAlertLedger(StructureLedger):
                 suppressed += 1
                 continue
             same_parent = locks.get(c['id'], {}).get('level', 0) >= c['level']
-            duplicate_band = any(lock['level'] >= c['level'] and intersects(lock, c) for lock in active_locks)
+            duplicate_band = any(lock['level'] >= c['level'] and intersects(c, lock) for lock in active_locks)
             formation = c.get('formation') or c.get('overlap', {}).get('formation')
             if unfinished and formation and p['candidate']['context_id'] != c['context_id']:
                 if delivery_started(p):
@@ -229,6 +234,9 @@ class StarAlertLedger(StructureLedger):
             if key in pending or p.get('complete') or c.get('symbol') != symbol or c.get('ruleset') != RULESET:
                 continue
             if self.require_execution and c['level'] == 3:
+                continue
+            source = 'cash' if c.get('stock_reference') else 'bitget'
+            if snapshot.get('source_status') is not None and snapshot['source_status'].get(source, {}).get(c['track'], 'data_unavailable') == 'data_unavailable':
                 continue
             if (not c.get('stock_reference') and c['context_id'] not in episodes
                     or not set(c['source_ids']).issubset(active_ids)):

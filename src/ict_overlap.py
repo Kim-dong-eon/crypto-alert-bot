@@ -48,8 +48,8 @@ class Registry:
         self.departures[tf] = (run, base)
         return zone
 
-    def step(self, tf, bar):
-        stamp = bar.timestamp + TF_MS[tf]
+    def step(self, tf, bar, closed_at=None):
+        stamp = closed_at if closed_at is not None else bar.timestamp + TF_MS[tf]
         for key, z in list(self.zones.items()):
             if z.timeframe == tf and z.direction * (bar.close - z.invalidation) < 0:
                 del self.zones[key]

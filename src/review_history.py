@@ -29,6 +29,27 @@ def history_frame(market, symbol, tf, now_ms, count):
         t = int(r[0])
         if t + TF_MS[tf] <= now_ms:
             rows[t] = [t]+[float(v) for v in r[1:6]]
+    # A cache may be older than the latest endpoint's window. Fill the hole
+    # between the two windows before validating or saving either one together.
+    bridge_pages = 0
+    while True:
+        stamps = sorted(rows)
+        gaps = [(a, b) for a, b in zip(stamps, stamps[1:]) if b-a > TF_MS[tf]]
+        if not gaps:
+            break
+        left, right = gaps[-1]
+        if bridge_pages >= count // 90 + 16:
+            raise ValueError('History gap backfill exceeded page budget')
+        batch = market.get('history-candles', category='USDT-FUTURES',
+                           symbol=symbol, interval=INTERVALS[tf],
+                           endTime=str(right), limit='100')['data']
+        missing = [r for r in batch if left < int(r[0]) < right]
+        if not missing:
+            raise ValueError(f'Missing exchange history between {left} and {right}')
+        for r in missing:
+            t = int(r[0])
+            rows[t] = [t]+[float(v) for v in r[1:6]]
+        bridge_pages += 1
     pages = 0
     cursor = min(rows) if rows else expected
     def checkpoint():
@@ -98,3 +119,32 @@ class HistoricalMarket:
         minimum={'5m':1000,'15m':1000,'1h':4368,'4h':6624}[tf]
         count=max(minimum,(frame_open(now_ms,tf)-start)//TF_MS[tf]+3) if start is not None else minimum
         return history_frame(self.public,symbol,tf,now_ms,count)
+
+
+def formation_history_starts(frames, tracks, price, minutes=(), contexts=None, session_closes=None):
+    """Fetch the children of touched or already armed parents from their actual origin."""
+    from config.overlap_settings import MULTIBAR_OB_FRAMES
+    from src.ict_overlap import Registry
+    registry = Registry(MULTIBAR_OB_FRAMES)
+    session_closes = session_closes or {}
+    for tf in {path[0] for path in tracks.values()}:
+        for bar in frames.get(tf, ()):
+            closes = session_closes.get(tf)
+            registry.step(tf, bar, closes[bar.timestamp] if closes is not None else None)
+    low = min([price] + [b.low for b in minutes])
+    high = max([price] + [b.high for b in minutes])
+    armed = {e['parent_id'] for e in (contexts or {}).values()}
+    starts = {}
+    for path in tracks.values():
+        for parent in registry.zones.values():
+            if parent.timeframe != path[0] or parent.kind != 'OB':
+                continue
+            is_armed = any(key == parent.id or key.endswith(':' + parent.id) for key in armed)
+            if (parent.high < low or parent.low > high) and not is_armed:
+                continue
+            for tf in path[1:]:
+                if tf in session_closes:
+                    continue
+                start = parent.origin - 14 * TF_MS[tf]
+                starts[tf] = min(starts.get(tf, start), start)
+    return starts

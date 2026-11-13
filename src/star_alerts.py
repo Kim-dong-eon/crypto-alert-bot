@@ -12,7 +12,7 @@ from src.entry_execution import entry_plan
 from src.ict_overlap import LABELS, kst, overlaps
 from src.overlap_entry import MINUTE
 from src.pullback_alerts import POLICY, REFINEMENT, TOP_COUNTS, prepare, rooted_context
-from src.staircase_rules import band_touch, net_rr, opposing_upper_contact, risk_band, staircases
+from src.staircase_rules import band_touch, net_rr, opposing_upper_contact, risk_band, staircases, ote_band
 from src.structure_review import turns
 from config.overlap_settings import TRACK_LABELS
 
@@ -165,12 +165,14 @@ def overlap_contacts(parent, area, lower_obs, zones, pair, arm, price, now, minu
     return contacts
 
 
-def formation_contacts(parent, zones, path, direction_at, price, now, minutes, since, *, confirmed_only=False):
+def formation_contacts(parent, zones, path, direction_at, price, now, minutes, since, *, confirmed_only=False, middle_fvg=False):
     """Both child OBs must have formed fully inside this parent OB's original candles."""
     _, middle, final = path
     children = defaultdict(list)
     for ob in zones:
-        if (ob.timeframe in (middle, final) and ob.kind == 'OB' and ob.direction == parent.direction
+        if (ob.timeframe in (middle, final)
+                and (ob.kind == 'OB' or (middle_fvg and ob.timeframe == middle and ob.kind == 'FVG'))
+                and ob.direction == parent.direction
                 and parent.origin <= ob.origin < ob.created <= parent.created
                 and max(parent.low, ob.low) < min(parent.high, ob.high)):
             children[ob.timeframe].append(ob)
@@ -222,7 +224,10 @@ def formation_pivot(parent, bars, points, now):
 
 def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=None, tracks=None,
          formation_tracks=(), origin_tracks=(), execution_quote=None, tick_size=None, upper_atr=False,
-         first_touch_cutoff=None, departure_ob_frames=()):
+         first_touch_cutoff=None, departure_ob_frames=(), session_closes=None, source_prefix=None,
+         middle_fvg=False, require_ote=False):
+    track_cursors = touch_since if isinstance(touch_since, dict) else {}
+    touch_since = min(track_cursors.values(), default=0) if isinstance(touch_since, dict) else touch_since
     closed_minutes = tuple(b for b in minute_bars if b.timestamp + MINUTE <= now)
     recent_minutes = tuple(b for b in closed_minutes if b.timestamp >= touch_since)
     first_touch_minutes = recent_minutes if first_touch_cutoff is None else tuple(
@@ -230,11 +235,17 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
     scales = {'scales': UPPER_ATR_SCALES} if upper_atr else {}
     if departure_ob_frames:
         scales['departure_ob_frames'] = departure_ob_frames
-    result, usable, zones = prepare(symbol, frames, now, price, tracks, build_overlaps=False, **scales)
+    session_closes = session_closes or {}
+    result, usable, zones = prepare(symbol, frames, now, price, tracks, build_overlaps=False,
+                                    session_closes=session_closes, source_prefix=source_prefix, **scales)
     result['ruleset'] = RULESET
     previous = contexts or {}
     updated = {}
     for track, state in result['tracks'].items():
+        track_since = track_cursors.get(track, touch_since)
+        recent_minutes = tuple(b for b in closed_minutes if b.timestamp >= track_since)
+        first_touch_minutes = recent_minutes if first_touch_cutoff is None else tuple(
+            b for b in recent_minutes if b.timestamp + MINUTE <= first_touch_cutoff)
         top, middle = state['pair']
         final = REFINEMENT[track]
         anchored = track in formation_tracks
@@ -251,7 +262,9 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
         found = []
         for lens, view in state['analysis']['views'].items():
             points = view['turns']
-            direction, direction_at = confirmed_direction(upper_bars, points, top)
+            closes = session_closes.get(top)
+            direction, direction_at = confirmed_direction(upper_bars, points, top,
+                close_times=[closes[b.timestamp] for b in upper_bars] if closes is not None else None)
             view['structure'] = 'up' if direction == 1 else 'down' if direction == -1 else 'mixed'
             if upper_atr:
                 multiplier = UPPER_ATR_SCALES[lens]['atr_multiple']
@@ -262,20 +275,21 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                 state['direction'] = direction
             if not direction:
                 continue
-            upper_stairs = {s['origin']: s for s in staircases(upper_bars, points, top, direction)}
+            upper_stairs = {s['origin']: s for s in staircases(upper_bars, points, top, direction, session_closes.get(top))}
             for parent in zones:
                 if parent.timeframe != top or parent.kind != 'OB' or parent.direction != direction:
                     continue
                 if anchored and parent.origin < max(usable[middle][0].timestamp, lower_bars[0].timestamp):
+                    state.setdefault('missing_formation_history', []).append(parent.origin)
                     continue
-                arm_probe = first_contact(parent.low, parent.high, parent.created, price, now, recent_minutes, touch_since)
+                arm_probe = first_contact(parent.low, parent.high, parent.created, price, now, recent_minutes, track_since)
                 if not arm_probe['hit'] and not any(e['parent_id'] == parent.id and e['track'] == track
                                                    and e['lens'] == lens for e in previous.values()):
                     continue
                 pivot = formation_pivot(parent, upper_bars, points, now) if require_origin else None
                 if require_origin and pivot is None:
                     continue
-                area = rooted_context(parent, upper_bars, points, view['areas'], top, now)
+                area = None if top in session_closes else rooted_context(parent, upper_bars, points, view['areas'], top, now)
                 if area is None and not anchored:
                     continue
                 root = pivot['timestamp'] if pivot else area['pivot_origin'] if area else parent.origin
@@ -312,7 +326,7 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                 if episode is None or episode['arm']['at'] < setup_known:
                     ready_at = parent.created if anchored else area['created']
                     arm = first_contact(parent.low, parent.high, max(ready_at, parent.created, setup_known),
-                                        price, now, recent_minutes, touch_since)
+                                        price, now, recent_minutes, track_since)
                     if not arm['hit']:
                         continue
                     episode = {'track': track, 'lens': lens, 'parent_id': parent.id, 'arm': arm, 'overlap': None}
@@ -323,11 +337,11 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                 prior_overlap = episode['overlap']
                 if anchored:
                     choices = formation_contacts(parent, zones, state['path'], setup_known,
-                                                 price, now, first_touch_minutes, touch_since,
-                                                 confirmed_only=first_touch_cutoff is not None)
+                                                 price, now, first_touch_minutes, track_since,
+                                                 confirmed_only=first_touch_cutoff is not None, middle_fvg=middle_fvg)
                 else:
                     choices = overlap_contacts(parent, area, lower_obs, zones, (top, middle), arm,
-                                               price, now, recent_minutes, touch_since)
+                                               price, now, recent_minutes, track_since)
                 if prior_overlap is None and choices:
                     first_overlap = min(choices, key=lambda c: (c['touch']['at'], -c['score']))
                     episode = {**episode, 'overlap': first_overlap}
@@ -346,11 +360,11 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                         else:
                             episode.pop('pending_reaction', None)
                             episode['reaction'] = reaction
-                            if waiting or reaction['at'] > touch_since:
+                            if waiting or reaction['at'] > track_since:
                                 choices.append({**prior_overlap, 'level': 2, 'phase': 'reaction', 'reaction': reaction})
                 updated[identity] = episode
                 for ob in (() if anchored else lower_obs):
-                    hit = first_contact(ob.low, ob.high, max(ob.created, arm['at']), price, now, recent_minutes, touch_since)
+                    hit = first_contact(ob.low, ob.high, max(ob.created, arm['at']), price, now, recent_minutes, track_since)
                     if hit['hit']:
                         choices.append({'level': 1, 'touch': hit, 'sources': [asdict(parent), asdict(ob)],
                                         'band': [ob.low, ob.high], 'score': 2})
@@ -368,7 +382,11 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                     for ob in lower_obs:
                         if not step['origin'] - 2 * TF_MS[final] <= ob.origin <= step['end']:
                             continue
-                        lo, hi = risk_band(ob.low, ob.high, stop, target, direction)
+                        entry_low, entry_high = ob.low, ob.high
+                        if require_ote:
+                            ote_low, ote_high = ote_band(step)
+                            entry_low, entry_high = max(entry_low, ote_low), min(entry_high, ote_high)
+                        lo, hi = risk_band(entry_low, entry_high, stop, target, direction)
                         if lo >= hi:
                             continue
                         entry = hi if direction == 1 else lo
@@ -377,16 +395,16 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                             continue
                         known = max(upper['known_at'], step['known_at'], ob.created, episode['overlap']['touch']['at'],
                                     prior_reaction['at'] if prior_reaction else 0)
-                        hit = first_contact(lo, hi, known, price, now, recent_minutes, touch_since)
+                        hit = first_contact(lo, hi, known, price, now, recent_minutes, track_since)
                         if not hit['hit']:
                             continue
                         plan = {'band': [lo, hi], 'entry': entry, 'rr': rr}
                         if execution_quote is not None:
                             quote = execution_quote()
                             if direction == 1:
-                                permitted = [max(ob.low, protected, parent.stop, latest_upper['protected']), ob.high]
+                                permitted = [max(entry_low, protected, parent.stop, latest_upper['protected']), entry_high]
                             else:
-                                permitted = [ob.low, min(ob.high, protected, parent.stop, latest_upper['protected'])]
+                                permitted = [entry_low, min(entry_high, protected, parent.stop, latest_upper['protected'])]
                             plan = entry_plan(*permitted, stop, target, direction, quote, tick_size)
                             if plan is None:
                                 continue
@@ -409,7 +427,7 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                     if upper_atr:
                         best['upper_atr'] = multiplier
                     if best['level'] < 3 and best.get('phase') != 'first_contact':
-                        target_points = recent_upper_points if best['level'] == 2 else points
+                        target_points = points
                         reference = observation_reference(best, lower_bars, target_points, direction,
                                                           lower_points=lower_points, tick_size=tick_size,
                                                           minute_bars=closed_minutes, price=price)
@@ -432,12 +450,10 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
 
 
 def alert_title(candidate):
-    if candidate.get('stock_reference'):
-        return '원주식 출발 OB 접촉'
     if candidate.get('phase') == 'reaction':
         return '하위 구조 반응 확인'
     if candidate.get('formation'):
-        return '3중 OB 첫 접촉'
+        return '3중 겹침 첫 접촉'
     if candidate['level'] == 1:
         return f"{LABELS[candidate['refinement_tf']]} OB 관찰"
     return TITLES[candidate['level']]

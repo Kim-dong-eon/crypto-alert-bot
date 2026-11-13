@@ -22,7 +22,7 @@ def atrs(bars, period=14):
     return result
 
 
-def turns(bars, multiple, fraction, timeframe='4h'):
+def turns(bars, multiple, fraction, timeframe='4h', close_times=None):
     """Append-only confirmed turns; no hindsight or terminal fake pivot."""
     atr=atrs(bars);out=[]
     if len(bars)<15:return out
@@ -46,12 +46,12 @@ def turns(bars, multiple, fraction, timeframe='4h'):
         if seeking==0 and up and down:continue
         if seeking in (0,-1) and up:
             out.append({'kind':'low','index':lo,'price':bars[lo].low,
-                        'confirmed_index':i,'confirmed_at':b.timestamp+TF_MS[timeframe],
+                        'confirmed_index':i,'confirmed_at':close_times[b.timestamp] if close_times is not None else b.timestamp+TF_MS[timeframe],
                         'threshold':max(atr[lo]*multiple,bars[lo].low*fraction)})
             seeking=1;hi=i
         elif seeking in (0,1) and down:
             out.append({'kind':'high','index':hi,'price':bars[hi].high,
-                        'confirmed_index':i,'confirmed_at':b.timestamp+TF_MS[timeframe],
+                        'confirmed_index':i,'confirmed_at':close_times[b.timestamp] if close_times is not None else b.timestamp+TF_MS[timeframe],
                         'threshold':max(atr[hi]*multiple,bars[hi].high*fraction)})
             seeking=-1;lo=i
     return out

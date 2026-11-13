@@ -15,3 +15,8 @@ POLL_SECONDS = 60
 MIN_HISTORY_BARS = 8
 # A rolling local dealing range, rather than every small pivot or all-time highs.
 EXTERNAL_LIQUIDITY_BARS = 20
+
+# Shared live rules for exchange and cash-reference structures.
+MULTIBAR_OB_FRAMES = ("5m", "15m", "1h", "4h", "1d", "1w")
+ALLOW_MIDDLE_FVG = True
+REQUIRE_ENTRY_OTE = True

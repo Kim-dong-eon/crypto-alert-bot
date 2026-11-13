@@ -31,7 +31,9 @@ def primary_overlap(event, zones):
     """Prefer the middle FVG when showing the actual three-frame intersection."""
     overlap = event['overlap'] if event['level'] == 3 else event
     if formation := overlap.get('formation'):
-        return *overlap['band'], formation['end'], 'OB'
+        middle = event['path'][1]
+        kinds = sorted({z['kind'] for z in zones if z['timeframe'] == middle})
+        return *overlap['band'], formation['end'], '/'.join(kinds) or 'OB'
     if event['level'] < 2:
         return None
     _, middle, final = event['path']
@@ -105,7 +107,8 @@ def draw_panel(ax, tf, candles, event):
         ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], color=color, alpha=.12, zorder=1))
         ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], fill=False, edgecolor=color, linewidth=1, zorder=2))
         boxes.append((left, z['low'], z['high']))
-        name = f"{LABELS[z['timeframe']]} {z['kind']}"
+        source = (event.get('source_labels') or {}).get(z['timeframe'], '')
+        name = f"{source + ' ' if source else ''}{LABELS[z['timeframe']]} {z['kind']}"
         legend[name] = Patch(facecolor=color, alpha=.62, label=name)
         if is_top:
             prices.extend([z['low'], z['high']])
@@ -151,11 +154,12 @@ def draw_panel(ax, tf, candles, event):
     min_body = max(candle_span * .0015, abs(candles[-1].close) * .000005)
     for i, b in enumerate(candles):
         color = '#46d3aa' if b.close >= b.open else '#fa7b8a'
+        unclosed = not cash_panel and b.timestamp + step > now
         ax.vlines(i, b.low, b.high, color=color, linewidth=.85, zorder=4)
         height = max(abs(b.close - b.open), min_body)
         ax.add_patch(Rectangle((i - .31, (b.open + b.close - height) / 2), .62, height,
-                               facecolor=color, edgecolor=GOLD if b.timestamp + step > now else color,
-                               linewidth=1 if b.timestamp + step > now else .35, zorder=5))
+                               facecolor=color, edgecolor=GOLD if unclosed else color,
+                               linewidth=1 if unclosed else .35, zorder=5))
     structure = event['upper'] if is_top else event.get('lower') or event.get('lower_wave')
     if structure:
         points = [p for p in structure['points'] if start <= p['timestamp'] <= candles[-1].timestamp]
@@ -358,8 +362,6 @@ def render(snapshot, alert, frames, prefix):
         if reaction:
             message = (f"{LABELS[final]}봉 {kst(reaction['at'])} 마감 · 종가 {fmt(reaction['price'])}"
                        f" · 돌파 기준 {fmt(reaction['level'])}")
-        elif event.get('stock_reference'):
-            message = f"원주식 {event['stock_reference']} {LABELS[top]} OB · Bitget 시세 접촉"
         elif level == 1 and not event.get('formation'):
             message = f'{LABELS[top]} OB 반응 안에서 같은 방향의 {LABELS[final]} OB 접촉'
         elif level <= 2:

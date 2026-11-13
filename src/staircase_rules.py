@@ -11,29 +11,30 @@ STOP_ATR_BUFFER = .10
 MIN_RR = 3.
 
 
-def staircases(bars, points, tf, direction):
+def staircases(bars, points, tf, direction, close_times=None):
     """Four confirmed alternating turns: higher low + close HH, or inverse.
 
     A target is an already confirmed extreme. Prior bodies must break the
     previous wick; a wick-only raid is never a continuation confirmation.
     """
     result=[];kind='low' if direction==1 else 'high';step=TF_MS[tf]
+    close_at = lambda b: close_times[b.timestamp] if close_times is not None else b.timestamp + step
     for j in range(2,len(points)-1):
         a,b,p,q=points[j-2:j+2]
         if [v['kind'] for v in (a,b,p,q)] != [kind,('high' if direction==1 else 'low'),kind,('high' if direction==1 else 'low')]:continue
         if direction*(p['price']-a['price'])<=0 or direction*(q['price']-b['price'])<=0:continue
         broken=next((x for x in bars[p['index']+1:q['index']+1]
-                     if x.timestamp+step>=max(p['confirmed_at'],b['confirmed_at'])
+                     if close_at(x)>=max(p['confirmed_at'],b['confirmed_at'])
                      and direction*(x.close-b['price'])>0),None)
         if broken is None:continue
         tagged=[{**v,'timestamp':bars[v['index']].timestamp} for v in (a,b,p,q)]
-        known=max(q['confirmed_at'],p['confirmed_at'],broken.timestamp+step)
-        invalid=next((x.timestamp+step for x in bars[p['index']+1:]
-                      if x.timestamp+step>=known and direction*(x.close-p['price'])<0),None)
+        known=max(q['confirmed_at'],p['confirmed_at'],close_at(broken))
+        invalid=next((close_at(x) for x in bars[p['index']+1:]
+                      if close_at(x)>=known and direction*(x.close-p['price'])<0),None)
         result.append({'direction':direction,'timeframe':tf,'points':tagged,
                        'origin':tagged[2]['timestamp'],'end':tagged[3]['timestamp'],
                        'chart_start':tagged[0]['timestamp'],'known_at':known,
-                       'break_at':broken.timestamp+step,'break_level':b['price'],
+                       'break_at':close_at(broken),'break_level':b['price'],
                        'protected':p['price'],'target':q['price'],'invalidated_at':invalid})
     return result
 

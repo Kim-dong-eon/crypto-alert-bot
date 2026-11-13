@@ -4,7 +4,7 @@ An OB must belong to a structural departure/base, rather than merely being
 near the latest price. Still-valid lower evidence from that original base is
 retained. A new sweep/MSS at the retest is descriptive, never a required gate.
 """
-from dataclasses import asdict
+from dataclasses import asdict, replace
 import hashlib
 import math
 from config.overlap_settings import TRACKS as CORE_TRACKS
@@ -63,19 +63,26 @@ def rooted_context(parent,bars,points,areas,tf,now):
             'invalidated_at':None}
 
 
-def prepare(symbol,frames,now,price,tracks=None,*,build_overlaps=True,scales=None,departure_ob_frames=()):
+def prepare(symbol,frames,now,price,tracks=None,*,build_overlaps=True,scales=None,departure_ob_frames=(),session_closes=None,source_prefix=None):
     """Closed-bar causal context; returned views also drive the chart."""
     if not math.isfinite(price) or price<=0:raise ValueError('Invalid price')
     tracks=TRACKS if tracks is None else tracks
     scales=SCALES if scales is None else scales
     usable={};unavailable={};registry=Registry(departure_ob_frames)
+    session_closes = session_closes or {}
+    source_prefix = source_prefix or {}
     for tf,values in frames.items():
-        values=[b for b in values if b.timestamp+TF_MS[tf]<=now]
-        if not values or values[-1].timestamp+TF_MS[tf]!=frame_open(now,tf):
+        closes = session_closes.get(tf)
+        values=[b for b in values if (closes[b.timestamp] if closes is not None else b.timestamp+TF_MS[tf])<=now]
+        if not values or (closes is None and values[-1].timestamp+TF_MS[tf]!=frame_open(now,tf)):
             unavailable[tf]='latest_closed_bar_missing';continue
-        if any(b.timestamp-a.timestamp!=TF_MS[tf] for a,b in zip(values,values[1:])):raise ValueError('Gapped history')
+        if closes is None and any(b.timestamp-a.timestamp!=TF_MS[tf] for a,b in zip(values,values[1:])):raise ValueError('Gapped history')
+        if any(b.timestamp <= a.timestamp for a,b in zip(values,values[1:])):raise ValueError('Unordered history')
         usable[tf]=values
-        for b in values:registry.step(tf,b)
+        for b in values:registry.step(tf,b,closes[b.timestamp] if closes is not None else None)
+    registry.zones = {source_prefix.get(z.timeframe, '') + z.id:
+                      replace(z, id=source_prefix.get(z.timeframe, '') + z.id)
+                      for z in registry.zones.values()}
     result={'version':VERSION,'strategy':POLICY,'alert_policy':POLICY,
             'symbol':symbol,'exchange':'bitget','price':price,'as_of':now,'tracks':{},
             'valid_zones':[asdict(z) for z in registry.zones.values()],
@@ -95,7 +102,7 @@ def prepare(symbol,frames,now,price,tracks=None,*,build_overlaps=True,scales=Non
         state['analysis']=analysis
         parents=[z for z in zones if z.timeframe==top and z.kind=='OB']
         for lens,policy in scales.items():
-            points=turns(bars,policy['atr_multiple'],policy['min_fraction'],top)
+            points=turns(bars,policy['atr_multiple'],policy['min_fraction'],top,session_closes.get(top))
             areas=departure_areas(bars,points,lens,top)
             view={'turns':points,'areas':areas,'selected':[],'sweeps':liquidity_events(bars,points,top),'structure':'mixed'}
             highs=[p['price'] for p in points if p['kind']=='high'];lows=[p['price'] for p in points if p['kind']=='low']
