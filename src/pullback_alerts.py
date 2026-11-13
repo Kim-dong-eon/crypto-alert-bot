@@ -63,10 +63,11 @@ def rooted_context(parent,bars,points,areas,tf,now):
             'invalidated_at':None}
 
 
-def prepare(symbol,frames,now,price,tracks=None,*,build_overlaps=True):
+def prepare(symbol,frames,now,price,tracks=None,*,build_overlaps=True,scales=None):
     """Closed-bar causal context; returned views also drive the chart."""
     if not math.isfinite(price) or price<=0:raise ValueError('Invalid price')
     tracks=TRACKS if tracks is None else tracks
+    scales=SCALES if scales is None else scales
     usable={};unavailable={};registry=Registry()
     for tf,values in frames.items():
         values=[b for b in values if b.timestamp+TF_MS[tf]<=now]
@@ -93,7 +94,7 @@ def prepare(symbol,frames,now,price,tracks=None,*,build_overlaps=True):
                   'views':{},'as_of':now,'price':price}
         state['analysis']=analysis
         parents=[z for z in zones if z.timeframe==top and z.kind=='OB']
-        for lens,policy in SCALES.items():
+        for lens,policy in scales.items():
             points=turns(bars,policy['atr_multiple'],policy['min_fraction'],top)
             areas=departure_areas(bars,points,lens,top)
             view={'turns':points,'areas':areas,'selected':[],'sweeps':liquidity_events(bars,points,top),'structure':'mixed'}

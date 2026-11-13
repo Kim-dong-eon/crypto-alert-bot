@@ -121,6 +121,7 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
                                 contexts=ledger.state['star_contexts'].get(symbol), tracks=STAR_TRACKS,
                                 formation_tracks=FORMATION_TRACKS,
                                 origin_tracks=FORMATION_TRACKS,
+                                upper_atr=True,
                                 execution_quote=lru_cache(maxsize=1)(lambda: get_execution_quote(symbol)) if require_execution else None,
                                 tick_size=tick_sizes[symbol])
         else:

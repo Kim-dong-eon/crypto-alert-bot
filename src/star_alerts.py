@@ -19,6 +19,15 @@ from config.overlap_settings import TRACK_LABELS
 
 RULESET = 'star-ob-reaction-v1'
 TITLES = {1: '하위 OB 관찰', 2: '3중 겹침 첫 접촉', 3: '진입 조건 충족'}
+UPPER_ATR_SCALES = {
+    'small': {'atr_multiple': 1.5, 'min_fraction': 0.},
+    'recent': {'atr_multiple': 2., 'min_fraction': 0.},
+    'broad': {'atr_multiple': 3., 'min_fraction': 0.},
+}
+
+
+def atr_label(multiplier):
+    return f'{float(multiplier):g} ATR'
 
 
 def confirmed_direction(bars, points, tf):
@@ -209,10 +218,11 @@ def formation_pivot(parent, bars, points, now):
 
 
 def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=None, tracks=None,
-         formation_tracks=(), origin_tracks=(), execution_quote=None, tick_size=None):
+         formation_tracks=(), origin_tracks=(), execution_quote=None, tick_size=None, upper_atr=False):
     closed_minutes = tuple(b for b in minute_bars if b.timestamp + MINUTE <= now)
     recent_minutes = tuple(b for b in closed_minutes if b.timestamp >= touch_since)
-    result, usable, zones = prepare(symbol, frames, now, price, tracks, build_overlaps=False)
+    scales = {'scales': UPPER_ATR_SCALES} if upper_atr else {}
+    result, usable, zones = prepare(symbol, frames, now, price, tracks, build_overlaps=False, **scales)
     result['ruleset'] = RULESET
     previous = contexts or {}
     updated = {}
@@ -235,6 +245,9 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
             points = view['turns']
             direction, direction_at = confirmed_direction(upper_bars, points, top)
             view['structure'] = 'up' if direction == 1 else 'down' if direction == -1 else 'mixed'
+            if upper_atr:
+                multiplier = UPPER_ATR_SCALES[lens]['atr_multiple']
+                state.setdefault('atr_directions', {})[multiplier] = direction
             if lens == 'recent':
                 state['direction'] = direction
             if not direction:
@@ -259,6 +272,8 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                 if pivot and area and area['pivot_origin'] != root:
                     area = None
                 scope = 'formation-pivot' if pivot else 'formation-ob' if anchored else root
+                if upper_atr:
+                    scope = f'atr:{scope}'
                 identity = f'{track}|{lens}|{parent.id}|{scope}'
                 upper = upper_stairs.get(root) if area or pivot else None
                 protected = parent.stop
@@ -380,6 +395,8 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                         best['lower_wave'] = observation_wave(lower_bars, lower_points, at)
                     if pivot:
                         best['departure_pivot'] = pivot
+                    if upper_atr:
+                        best['upper_atr'] = multiplier
                     if best['level'] < 3 and best.get('phase') != 'first_contact':
                         target_points = recent_upper_points if best['level'] == 2 else points
                         reference = observation_reference(best, lower_bars, target_points, direction,
@@ -420,6 +437,14 @@ def unit_text(candidate):
     title = alert_title(c)
     exchange = c.get('exchange', 'bitget').title()
     lines = [f"[{exchange} · {c['symbol']}] {side}", f"{'★' * level} {title} · {label}"]
+    if c.get('upper_atr') is not None:
+        directions = c.get('atr_directions', {})
+        matched = c.get('matched_atrs', [c['upper_atr']])
+        checks = ' · '.join(f"{atr_label(n)} {'↑' if d == 1 else '↓' if d == -1 else '—'}"
+                            for n, d in sorted((float(n), d) for n, d in directions.items()))
+        lines.append(f"상위 {LABELS[c['pair'][0]]} · 신호 " + ', '.join(map(atr_label, matched)))
+        if checks:
+            lines.append(checks)
     if level >= 2 or c.get('formation'):
         evidence = c['overlap']['sources'] if level == 3 else c['sources']
         names = sorted({(z['timeframe'], z['kind']) for z in evidence}, key=lambda key: (-TF_MS[key[0]], key[1]))
@@ -439,7 +464,6 @@ def unit_text(candidate):
         if x := c.get('execution'):
             lines.append(f"{x['notional']:,.0f} USDT 기준 · 편도 수수료 {x['fee_per_side']:.3%} · 예상 슬리피지 {x['slippage_per_side']:.3%}")
             lines.append(f"호가 기준 예상 체결가 {price_text(x['vwap'])} · {kst(x['at'])}")
-            return '\n'.join(lines)
     elif risk := c.get('observation_risk'):
         target_kind = '고점' if c['direction'] == 1 else '저점'
         stop_kind = '구조' if 'pivot_at' in risk else 'OB'
@@ -454,8 +478,10 @@ def unit_text(candidate):
             lines.append('공통 구간 내 비용 반영 1:3 미충족' if risk.get('costs_checked') else '비용 확인 대기 · 1:3 미확정')
     elif level == 2:
         lines.append('하위 구조 손절 또는 상위 목표 미확정')
-    if level != 2:
+    if level != 2 and not (level == 3 and c.get('execution')):
         lines.append(f"접촉 확인 · {kst(c['touch']['at'])}")
+    if warnings := c.get('cross_track_warnings'):
+        lines.append('⚠ ' + ' / '.join(warnings))
     return '\n'.join(lines)
 
 

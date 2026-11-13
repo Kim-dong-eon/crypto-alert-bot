@@ -5,9 +5,10 @@ import copy
 from src.ict_engine import TF_MS
 from src.ict_overlap import alert_eligible
 from src.pullback_delivery import delivery_started, physical_id, POLICY
-from src.star_alerts import RULESET
+from src.star_alerts import RULESET, atr_label
 from src.staircase_rules import MIN_RR
 from src.structure_alerts import StructureLedger, candidates
+from config.overlap_settings import TRACK_LABELS
 
 
 def alert_bands(candidate):
@@ -17,13 +18,41 @@ def alert_bands(candidate):
         yield tuple(candidate['overlap']['band'])
 
 
-def intersects(a, b):
-    if {a.get('track'), b.get('track')} == {'fast', 'short'}:
-        return False
-    return a['direction'] == b['direction'] and any(
+def bands_overlap(a, b):
+    return any(
         max(a_low, b_low) < min(a_high, b_high)
         for a_low, a_high in alert_bands(a) for b_low, b_high in alert_bands(b)
     )
+
+
+def intersects(a, b):
+    if ({a.get('track'), b.get('track')} == {'fast', 'short'}
+            and a.get('upper_atr') is None and b.get('upper_atr') is None):
+        return False
+    return a['direction'] == b['direction'] and bands_overlap(a, b)
+
+
+def describe_atr_signal(candidate, tracks, contacts, locks):
+    track = candidate['track']
+    direction = candidate['direction']
+    identity = physical_id(candidate)
+    matched = {c['upper_atr'] for c in contacts
+               if c.get('upper_atr') is not None and c['level'] == candidate['level']
+               and physical_id(c) == identity and bands_overlap(c, candidate)}
+    warnings = []
+    for name, state in tracks.items():
+        if name == track or name not in TRACK_LABELS:
+            continue
+        label = TRACK_LABELS[name]
+        opposing_atrs = [atr_label(n) for n, side in state.get('atr_directions', {}).items() if side == -direction]
+        if opposing_atrs:
+            warnings.append(f"{label} {'롱' if direction == -1 else '숏'} 구조 ({', '.join(opposing_atrs)})")
+        overlaps = {other['direction'] for other in (*contacts, *locks)
+                    if other['track'] == name and bands_overlap(candidate, other)}
+        for side in sorted(overlaps):
+            warnings.append(f"{label} {'롱' if side == 1 else '숏'} 구간 겹침")
+    return {**candidate, 'matched_atrs': sorted(matched),
+            'atr_directions': tracks[track].get('atr_directions', {}), 'cross_track_warnings': warnings}
 
 
 def shadowed_by_higher(candidate, blockers):
@@ -142,6 +171,8 @@ class StarAlertLedger(StructureLedger):
         disabled = set(snapshot.get('disabled_tracks', ()))
         active_locks = [lock for lock in locks.values()
                         if lock['track'] not in disabled and lock['parent']['id'] in active_ids]
+        selected = [describe_atr_signal(c, snapshot['tracks'], contacts, active_locks)
+                    if c.get('upper_atr') is not None else c for c in selected]
         # Keep the scan, image previews and delivery on the same selections.
         for track, row in snapshot['tracks'].items():
             row['candidates'] = [c for c in selected if c['track'] == track]

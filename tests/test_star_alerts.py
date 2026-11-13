@@ -37,6 +37,39 @@ def replay(direction):
 
 
 class StarAlertsTests(unittest.TestCase):
+    def test_upper_atr_scan_uses_three_scales_for_each_available_track(self):
+        snapshot, frames = list(replay(-1))[-1]
+        result = scan('BTCUSDT', frames, snapshot['as_of'], snapshot['price'], upper_atr=True)
+        available = [row for row in result['tracks'].values() if row['status'] != 'data_unavailable']
+        self.assertTrue(available)
+        for row in available:
+            self.assertEqual(set(row['atr_directions']), {1.5, 2., 3.})
+
+    def test_atr_same_direction_overlap_keeps_higher_timeframe(self):
+        snapshot = list(replay(-1))[1][0]
+        short = snapshot['tracks']['short']['candidates'][0]
+        short.update(upper_atr=1.5)
+        same_zone = {**short, 'id': 'same-zone', 'upper_atr': 2.}
+        fast = {**short, 'id': 'fast', 'track': 'fast', 'pair': ['1h', '15m']}
+        snapshot['tracks']['short'].update(candidates=[short, same_zone], atr_directions={1.5: -1, 2.: -1, 3.: 0})
+        snapshot['tracks']['fast'] = {'candidates': [fast], 'atr_directions': {1.5: -1, 2.: -1, 3.: 1}}
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = StarAlertLedger(Path(tmp) / 'state.json')
+            pending = ledger.observe(copy.deepcopy(snapshot))
+            event, = pending.values()
+            self.assertEqual(event['candidate']['track'], 'short')
+            self.assertEqual(event['candidate']['matched_atrs'], [1.5, 2.])
+            self.assertIn('⚠ 초단기 롱 구조 (3 ATR) / 초단기 숏 구간 겹침', unit_text(event['candidate']))
+            ledger._remember(short, short['level'])
+            snapshot['tracks']['short']['candidates'] = []
+            self.assertFalse(ledger.observe(copy.deepcopy(snapshot)))
+
+            fast['direction'] = 1
+            snapshot['tracks']['fast']['atr_directions'] = {1.5: 1, 2.: 1, 3.: 0}
+            event, = ledger.observe(copy.deepcopy(snapshot)).values()
+            self.assertEqual(event['candidate']['track'], 'fast')
+            self.assertIn('⚠ 단기 숏 구조 (1.5 ATR, 2 ATR) / 단기 숏 구간 겹침', unit_text(event['candidate']))
+
     def test_live_paths_all_require_the_parent_ob_formation_window(self):
         self.assertEqual(set(FORMATION_TRACKS), set(STAR_TRACKS))
         self.assertIn('fast', FORMATION_TRACKS)

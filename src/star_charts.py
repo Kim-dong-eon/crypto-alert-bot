@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from src.ict_engine import TF_MS, frame_open
 from src.ict_overlap import LABELS, kst
 from src.overlap_charts import configure_font
-from src.star_alerts import alert_title, price_text as fmt, unit_text
+from src.star_alerts import alert_title, atr_label, price_text as fmt, unit_text
 from config.overlap_settings import TRACK_LABELS
 
 WHITE = '#edf3fb'
@@ -275,6 +275,8 @@ def render(snapshot, alert, frames, prefix):
                 panel = f"{'상위 구조' if tf == top else '종가 돌파'} · {close} 마감까지"
             else:
                 panel = upper_label if tf == top else '계단 · 진입 확인' if level == 3 else '구조 확대 · 접촉 확인'
+            if tf == top and event.get('upper_atr') is not None:
+                panel += ' · ' + atr_label(event['upper_atr'])
             ax.set_title(f'{LABELS[tf]} {panel}', color=WHITE, loc='left', fontsize=13, pad=29)
         if reaction:
             message = (f"{LABELS[final]}봉 {kst(reaction['at'])} 마감 · 종가 {fmt(reaction['price'])}"
