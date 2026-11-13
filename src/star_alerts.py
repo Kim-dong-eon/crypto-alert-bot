@@ -30,7 +30,7 @@ def atr_label(multiplier):
     return f'{float(multiplier):g} ATR'
 
 
-def confirmed_direction(bars, points, tf):
+def confirmed_direction(bars, points, tf, *, close_times=None):
     """Most recent body-close break of a level already known at that close."""
     confirmations = defaultdict(list)
     for point in points:
@@ -41,10 +41,11 @@ def confirmed_direction(bars, points, tf):
     for i, bar in enumerate(bars):
         if i:
             previous = bars[i - 1].close
+            closed_at = close_times[i] if close_times is not None else bar.timestamp + TF_MS[tf]
             if direction != 1 and 'high' in levels and previous <= levels['high'] < bar.close:
-                direction, known_at = 1, bar.timestamp + TF_MS[tf]
+                direction, known_at = 1, closed_at
             elif direction != -1 and 'low' in levels and previous >= levels['low'] > bar.close:
-                direction, known_at = -1, bar.timestamp + TF_MS[tf]
+                direction, known_at = -1, closed_at
         for point in confirmations.get(i, ()):
             levels[point['kind']] = point['price']
     return direction, known_at

@@ -1,6 +1,7 @@
 """Reference OBs from Nasdaq-listed and NYSE-listed US cash equities."""
+from bisect import bisect_right
 from collections import defaultdict
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from datetime import datetime, time, timedelta
 from pathlib import Path
 import json
@@ -9,15 +10,25 @@ from zoneinfo import ZoneInfo
 
 import requests
 
-from src.ict_engine import Bar, frame_open
+from src.ict_engine import Bar, TF_MS, frame_open
 from src.ict_overlap import LABELS, Registry, kst
 from src.overlap_entry import MINUTE
+from src.pullback_alerts import TOP_COUNTS
+from src.star_alerts import UPPER_ATR_SCALES, atr_label, confirmed_direction, formation_pivot, observation_wave
+from src.structure_review import turns
 
 
 US_EQUITIES = frozenset(('NVDA', 'TSLA', 'AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'QQQ', 'SPY',
                          'V', 'LLY', 'WEN', 'MCD', 'TMF', 'ADBE', 'EWZ', 'MRK'))
 US_ETFS = frozenset(('QQQ', 'SPY', 'TMF', 'EWZ'))
 NEW_YORK = ZoneInfo('America/New_York')
+
+
+def cash_close(stamp, tf):
+    date = datetime.fromtimestamp(stamp / 1000, NEW_YORK).date()
+    if tf == '1w':
+        date += timedelta(days=(4 - date.weekday()) % 7)
+    return int(datetime.combine(date, time(16), NEW_YORK).timestamp() * 1000)
 
 
 def stock_zones(rows, now=None):
@@ -42,9 +53,7 @@ def stock_zones(rows, now=None):
     for bar in frames['1d']:
         weeks[frame_open(bar.timestamp, '1w')].append(bar)
     for stamp, bars in weeks.items():
-        friday = datetime.fromtimestamp(bars[0].timestamp / 1000, NEW_YORK).date()
-        friday += timedelta(days=4-friday.weekday())
-        if now is None or datetime.combine(friday, time(16), NEW_YORK).timestamp() * 1000 > now:
+        if now is None or cash_close(stamp, '1w') > now:
             continue
         frames['1w'].append(Bar(stamp, bars[0].open, max(b.high for b in bars),
                                 min(b.low for b in bars), bars[-1].close, sum(b.volume for b in bars)))
@@ -52,7 +61,9 @@ def stock_zones(rows, now=None):
     for tf, bars in frames.items():
         for bar in bars:
             registry.step(tf, bar)
-    return frames, [zone for zone in registry.zones.values() if zone.kind == 'OB']
+    zones = [replace(z, created=cash_close(z.created - TF_MS[z.timeframe], z.timeframe))
+             for z in registry.zones.values() if z.kind == 'OB']
+    return frames, zones
 
 
 class NasdaqHistory:
@@ -90,15 +101,22 @@ class NasdaqHistory:
         return stock_zones(self.rows(ticker, now), now)
 
 
-def stock_contacts(snapshot, ticker, zones, minutes, since, cutoff):
+def stock_contacts(snapshot, ticker, frames, zones, minutes, since, cutoff):
     """A closed Bitget minute supplies contact evidence for a cash-market zone."""
     pairs = [(prev, bar) for prev, bar in zip(minutes, minutes[1:])
              if since <= bar.timestamp and bar.timestamp + MINUTE <= cutoff
              and prev.timestamp + MINUTE == bar.timestamp and bar.volume > 0]
+    snapshot['valid_source_ids'].extend(f'cash:{ticker}:{zone.id}' for zone in zones)
+    if not pairs:
+        return
+    # Re-evaluate on either side of a cash-market close inside the catch-up window.
+    cached = {}
     for track, tf in (('long', '1w'), ('medium', '1d')):
         state = snapshot['tracks'].get(track)
         if not state or state['status'] == 'data_unavailable':
             continue
+        bars = frames.get(tf, ())
+        close_times = [cash_close(b.timestamp, tf) for b in bars]
         hits = {}
         for zone in sorted((z for z in zones if z.timeframe == tf), key=lambda z: z.created, reverse=True):
             if zone.direction in hits:
@@ -107,13 +125,49 @@ def stock_contacts(snapshot, ticker, zones, minutes, since, cutoff):
                 if (bar.timestamp < zone.created or zone.low <= prev.close <= zone.high
                         or bar.low > zone.high or bar.high < zone.low):
                     continue
+                stamp = bar.timestamp
+                end = bisect_right(close_times, stamp)
+                if not end:
+                    continue
+                start = max(0, end - TOP_COUNTS[tf])
+                closed = bars[start:end]
+                key = tf, end
+                if key not in cached:
+                    times = close_times[start:end]
+                    views = {}
+                    for policy in UPPER_ATR_SCALES.values():
+                        multiplier = policy['atr_multiple']
+                        points = turns(closed, multiplier, policy['min_fraction'], tf)
+                        points = [{**p, 'confirmed_at':times[p['confirmed_index']]} for p in points]
+                        direction, known_at = confirmed_direction(closed, points, tf, close_times=times)
+                        views[multiplier] = direction, known_at, points
+                    cached[key] = views
+                views = cached[key]
+                matches = {}
+                for multiplier, (direction, known_at, points) in views.items():
+                    if direction != zone.direction or known_at > stamp:
+                        continue
+                    pivot = formation_pivot(zone, closed, points, stamp)
+                    if (pivot and not any(b.timestamp >= pivot['confirmed_at']
+                                         and direction * (b.close - pivot['price']) < 0 for b in closed)
+                            and all(direction * (snapshot.get('price', bar.close) - bound) >= 0
+                                    for bound in (pivot['price'], zone.stop))):
+                        matches[multiplier] = pivot, points
+                if not matches:
+                    continue
+                selected = min(matches)
+                pivot, points = matches[selected]
+                upper = observation_wave(closed, points, stamp, zone.origin)
+                chart_start = min(upper['chart_start'], zone.origin) - 7 * TF_MS[tf]
                 parent = asdict(zone)
                 parent['id'] = f'cash:{ticker}:{zone.id}'
                 hits[zone.direction] = {
                     'id':parent['id'], 'context_id':parent['id'], 'symbol':snapshot['symbol'],
                     'level':1, 'score':1, 'track':track, 'pair':state['pair'], 'direction':zone.direction,
                     'lenses':['stock'], 'parent':parent, 'source_ids':[parent['id']], 'sources':[parent],
-                    'upper':{'chart_start': zone.origin, 'points':[], 'target':None},
+                    'upper':upper, 'departure_pivot':pivot, 'stock_atr':selected,
+                    'stock_matched_atrs':list(matches),
+                    'stock_bars':[asdict(b) for b in closed if b.timestamp >= chart_start],
                     'path':state['path'], 'arm':bar.timestamp+MINUTE, 'arm_price':min(zone.high, max(zone.low, bar.close)),
                     'low':zone.low, 'high':zone.high, 'band':[zone.low,zone.high],
                     'touch':{'at':bar.timestamp+MINUTE, 'bar_open':bar.timestamp, 'observed_low':bar.low,
@@ -125,11 +179,11 @@ def stock_contacts(snapshot, ticker, zones, minutes, since, cutoff):
         state['candidates'].extend(hits.values())
         if hits:
             state['status'] = 'watching'
-    snapshot['valid_source_ids'].extend(f'cash:{ticker}:{zone.id}' for zone in zones)
 
 
 def stock_text(c):
     side = '지지' if c['direction'] == 1 else '저항'
     return (f"[{c['symbol']}] {LABELS[c['pair'][0]]} 원주식 OB 접촉\n"
             f"{c['stock_reference']} {side} {c['low']:g}~{c['high']:g} USD\n"
+            f"원주식 구조 · {', '.join(map(atr_label, c.get('stock_matched_atrs', ())))}\n"
             f"Bitget 접촉 확인 · {kst(c['touch']['at'])}")

@@ -11,7 +11,7 @@ from src.ict_nested import PDZone
 from src.ict_overlap import Registry,overlaps,scan,format_notice
 from src.overlap_market import select_instruments,quote_price,PublicMarket
 from src.overlap_delivery import OverlapLedger
-from src.stock_departure import stock_contacts
+from src.stock_departure import cash_close, stock_contacts
 
 
 def zone(key,tf,kind,low,high,d=1):
@@ -25,18 +25,28 @@ def snapshot(price=120,identifier='one',low=100,high=110,stamp=1000):
 
 class ZoneTests(unittest.TestCase):
     def test_cash_reference_uses_confirmed_revisit_not_current_price(self):
-        cash = zone('cash-ob', '1w', 'OB', 270, 300)
-        minutes = [Bar(240000, 301, 303, 301, 302, 1),
-                   Bar(300000, 302, 304, 299, 301, 1)]
+        week = TF_MS['1w']
+        now = 20 * week
+        cash = PDZone('cash-ob', '1w', 'OB', 1, 270, 300, now-week, now-3*week, 265, 270)
+        frames = {'1w':[Bar(now-i*week, 280, 300, 270, 290) for i in (4, 3, 2, 1)]}
+        minutes = [Bar(now-120000, 301, 303, 301, 302, 1),
+                   Bar(now-60000, 302, 304, 299, 301, 1)]
         row = {'status':'no_star_contact', 'pair':['1w','1d'], 'path':['1w','1d','4h'], 'candidates':[]}
-        result = {'symbol':'GOOGLUSDT', 'as_of':365000, 'ruleset':'test',
+        result = {'symbol':'GOOGLUSDT', 'as_of':now, 'ruleset':'test',
                   'tracks':{'long':row}, 'valid_source_ids':[]}
-        stock_contacts(result, 'GOOGL', [cash], minutes, 300000, 300000)
+        stock_contacts(result, 'GOOGL', frames, [cash], minutes, now-60000, now-60000)
         self.assertFalse(row['candidates'])
-        stock_contacts(result, 'GOOGL', [cash], minutes, 300000, 360000)
+        points = [{'index':1, 'kind':'low', 'price':270, 'confirmed_index':2}]
+        with patch('src.stock_departure.turns', return_value=points):
+            with patch('src.stock_departure.confirmed_direction', return_value=(-1, 0)):
+                stock_contacts(result, 'GOOGL', frames, [cash], minutes, now-60000, now)
+                self.assertFalse(row['candidates'])
+            with patch('src.stock_departure.confirmed_direction', return_value=(1, 0)):
+                stock_contacts(result, 'GOOGL', frames, [cash], minutes, now-60000, now)
         candidate, = row['candidates']
         self.assertEqual(candidate['stock_reference'], 'GOOGL')
-        self.assertEqual(candidate['touch']['at'], 360000)
+        self.assertEqual(candidate['touch']['at'], now)
+        self.assertEqual(candidate['upper']['points'][0]['confirmed_at'], cash_close(now-2*week, '1w'))
         self.assertIn(candidate['parent']['id'], result['valid_source_ids'])
 
     def test_departure_ob_waits_for_body_break_on_long_and_short(self):

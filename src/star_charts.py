@@ -1,9 +1,10 @@
 """Side-by-side star alert charts using the approved historical preview style."""
 from pathlib import Path
+from bisect import bisect_left
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from src.ict_engine import TF_MS, frame_open
+from src.ict_engine import Bar, TF_MS, frame_open
 from src.ict_overlap import LABELS, kst
 from src.overlap_charts import configure_font
 from src.star_alerts import alert_title, atr_label, price_text as fmt, unit_text
@@ -74,6 +75,10 @@ def draw_panel(ax, tf, candles, event):
     colors = {top: '#659dff', middle: '#43d9bc', final: '#f2a75b'}
     start, step = candles[0].timestamp, TF_MS[tf]
     position = lambda stamp: (stamp - start) / step
+    cash_panel = is_top and event.get('stock_bars')
+    if cash_panel:
+        timestamps = [bar.timestamp for bar in candles]
+        position = lambda stamp: bisect_left(timestamps, stamp)
     edge = len(candles) + 2
     ax.set_facecolor('#152130')
     ax.grid(color='#a0b7d1', alpha=.12)
@@ -84,7 +89,9 @@ def draw_panel(ax, tf, candles, event):
     core = primary_overlap(event, zones)
     legend = {}
     overlap = event.get('overlap', event)
-    if is_top and (formation := overlap.get('formation')):
+    formation = ({'start':event['parent']['origin'], 'end':event['parent']['created']}
+                 if cash_panel else overlap.get('formation'))
+    if is_top and formation:
         left = position(formation['start']) - .5
         right = position(formation['end']) - .5
         ax.axvspan(left, right, facecolor=GOLD, alpha=.12, zorder=1)
@@ -156,7 +163,7 @@ def draw_panel(ax, tf, candles, event):
         ys = [p['price'] for p in points]
         if points:
             ax.plot(xs, ys, color='#78ebff', linewidth=2.05, marker='o', markersize=4, zorder=7)
-        if (level == 2 or event.get('formation')) and points and points[-1]['timestamp'] < candles[-1].timestamp:
+        if (level == 2 or event.get('formation') or cash_panel) and points and points[-1]['timestamp'] < candles[-1].timestamp:
             ax.plot([xs[-1], len(candles) - 1], [ys[-1], candles[-1].close],
                     color=GOLD, linestyle='--', linewidth=1.5, zorder=7)
         goal = risk.get('target', structure['target'])
@@ -217,7 +224,7 @@ def draw_panel(ax, tf, candles, event):
         price = touch['observed_price'] if 'observed_price' in touch else (max(lo, touch['observed_low']) + min(hi, touch['observed_high'])) / 2
     assert lo <= price <= hi
     px = position(frame_open(stamp, tf))
-    if -.6 <= px < edge:
+    if not cash_panel and -.6 <= px < edge:
         ax.scatter([px], [price], marker='D', color=GOLD, s=29, zorder=9)
         label = f'{LABELS[top]} OB 첫 접촉' if is_top else '접촉 확인' if level < 3 else f'{LABELS[final]} OB 재접촉'
         offset = (-17, -27) if level == 3 and not is_top else (-15, 22)
@@ -322,7 +329,7 @@ def render(snapshot, alert, frames, prefix):
              color=MUTED, size=12)
     keys = ([Line2D([], [], color='#78ebff', linewidth=2, label='확정 파동'),
              Line2D([], [], color=GOLD, linestyle='--', label='미확정 파동' if reaction else '진행 파동')]
-            if level == 2 or event.get('formation') else [Patch(facecolor=color, label=label) for color, label in zip(DENSITY, ('3개 겹침', '4개 겹침', '5개 이상'))])
+            if level == 2 or event.get('formation') or event.get('stock_bars') else [Patch(facecolor=color, label=label) for color, label in zip(DENSITY, ('3개 겹침', '4개 겹침', '5개 이상'))])
     fig.legend(handles=keys,
                loc='center right', bbox_to_anchor=(.94, .876), ncol=3, fontsize=10,
                frameon=False, labelcolor=WHITE, handlelength=1.3, columnspacing=1.2)
@@ -332,7 +339,8 @@ def render(snapshot, alert, frames, prefix):
         fig.text(.94, .935, preview, color=MUTED, size=11, ha='right')
     try:
         for ax, tf in zip(axes, (top, final)):
-            candles = window(frames, tf, event, snapshot['as_of'])
+            cash_panel = tf == top and event.get('stock_bars')
+            candles = [Bar(**b) for b in cash_panel] if cash_panel else window(frames, tf, event, snapshot['as_of'])
             draw_panel(ax, tf, candles, event)
             upper_label = '계단 · 상위 OB와 목표' if event['upper']['target'] is not None else '상위 구조 · OB 접촉'
             if reaction:
@@ -340,7 +348,11 @@ def render(snapshot, alert, frames, prefix):
                 panel = f"{'상위 구조' if tf == top else '종가 돌파'} · {close} 마감까지"
             else:
                 panel = upper_label if tf == top else '계단 · 진입 확인' if level == 3 else '구조 확대 · 접촉 확인'
-            if tf == top and event.get('upper_atr') is not None:
+            if cash_panel:
+                panel = f"원주식 {event['stock_reference']} 전체 구조 · {atr_label(event['stock_atr'])}"
+            elif event.get('stock_reference') and tf == final:
+                panel = 'Bitget 접촉 확대'
+            elif tf == top and event.get('upper_atr') is not None:
                 panel += ' · ' + atr_label(event['upper_atr'])
             ax.set_title(f'{LABELS[tf]} {panel}', color=WHITE, loc='left', fontsize=13, pad=29)
         if reaction:

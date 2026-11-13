@@ -137,8 +137,9 @@ def run_once(market,instruments,ledger,sender=None,persist=False,snapshot=None,i
             try:
                 if stock_history is None:
                     stock_history = NasdaqHistory(market.cache)
-                _, reference_zones = stock_history.load(instrument['baseCoin'], observed)
-                stock_contacts(result, instrument['baseCoin'], reference_zones, minute_bars, since, first_touch_cutoff)
+                reference_frames, reference_zones = stock_history.load(instrument['baseCoin'], observed)
+                stock_contacts(result, instrument['baseCoin'], reference_frames, reference_zones,
+                               minute_bars, since, first_touch_cutoff)
                 result['stock_reference_zones'] = len(reference_zones)
             except (OSError, requests.RequestException, ValueError, TypeError, KeyError) as error:
                 result['stock_reference_error'] = type(error).__name__
