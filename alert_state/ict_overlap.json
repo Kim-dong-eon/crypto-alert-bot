@@ -1,62 +1,7 @@
 {
   "version": "ict-two-frame-ob-fvg-v10-external",
   "tracks": {},
-  "delivered": {
-    "53d71d58592d1a72e1a33785": {
-      "symbol": "TSLAUSDT",
-      "stage": "star1",
-      "timestamp": 1794493876360,
-      "message_ids": [
-        2055,
-        2056
-      ]
-    },
-    "9a141b53a0b8bb80f3d8c5b5": {
-      "symbol": "METAUSDT",
-      "stage": "star1",
-      "timestamp": 1794494482247,
-      "message_ids": [
-        2057,
-        2058
-      ]
-    },
-    "fe4a26347d1fe2c6b744754a": {
-      "symbol": "LLYUSDT",
-      "stage": "star1",
-      "timestamp": 1794494488518,
-      "message_ids": [
-        2059,
-        2060
-      ]
-    },
-    "498cda8ef3731fe32e0cc31b": {
-      "symbol": "METAUSDT",
-      "stage": "star2",
-      "timestamp": 1794496293596,
-      "message_ids": [
-        2061,
-        2062
-      ]
-    },
-    "f37b2b5721ed4ac7bcb2823b": {
-      "symbol": "BSPUSDT",
-      "stage": "star1",
-      "timestamp": 1794496592444,
-      "message_ids": [
-        2063,
-        2064
-      ]
-    },
-    "a0dcba94ebd83f78df92e6f6": {
-      "symbol": "AKEUSDT",
-      "stage": "star1",
-      "timestamp": 1794497764583,
-      "message_ids": [
-        2065,
-        2066
-      ]
-    }
-  },
+  "delivered": {},
   "pending": {},
   "locks": {},
   "profile_migration": {
@@ -70,62 +15,7 @@
     ],
     "preserved_medium_long_locks": true
   },
-  "images_delivered": {
-    "53d71d58592d1a72e1a33785": {
-      "symbol": "TSLAUSDT",
-      "stage": "star1",
-      "timestamp": 1794493876360,
-      "message_ids": [
-        2055,
-        2056
-      ]
-    },
-    "9a141b53a0b8bb80f3d8c5b5": {
-      "symbol": "METAUSDT",
-      "stage": "star1",
-      "timestamp": 1794494482247,
-      "message_ids": [
-        2057,
-        2058
-      ]
-    },
-    "fe4a26347d1fe2c6b744754a": {
-      "symbol": "LLYUSDT",
-      "stage": "star1",
-      "timestamp": 1794494488518,
-      "message_ids": [
-        2059,
-        2060
-      ]
-    },
-    "498cda8ef3731fe32e0cc31b": {
-      "symbol": "METAUSDT",
-      "stage": "star2",
-      "timestamp": 1794496293596,
-      "message_ids": [
-        2061,
-        2062
-      ]
-    },
-    "f37b2b5721ed4ac7bcb2823b": {
-      "symbol": "BSPUSDT",
-      "stage": "star1",
-      "timestamp": 1794496592444,
-      "message_ids": [
-        2063,
-        2064
-      ]
-    },
-    "a0dcba94ebd83f78df92e6f6": {
-      "symbol": "AKEUSDT",
-      "stage": "star1",
-      "timestamp": 1794497764583,
-      "message_ids": [
-        2065,
-        2066
-      ]
-    }
-  },
+  "images_delivered": {},
   "structure_migration": {
     "from": "ict-two-frame-ob-fvg-v9",
     "to": "ict-two-frame-ob-fvg-v10-external",
@@ -134,1455 +24,212 @@
   "strategy": "root-ob-pullback-v1",
   "dedup_audits": {
     "BTCUSDT": {
-      "at": 1794534663800,
+      "at": 1794534865449,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "ETHUSDT": {
-      "at": 1794534664933,
+      "at": 1794534866032,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "JCTUSDT": {
-      "at": 1794534665995,
+      "at": 1794534866576,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "AKEUSDT": {
-      "at": 1794534666798,
+      "at": 1794534866979,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "BTWUSDT": {
-      "at": 1794534667509,
+      "at": 1794534867352,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "QUSDT": {
-      "at": 1794534668287,
+      "at": 1794534867761,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "NVDAUSDT": {
-      "at": 1794534669191,
+      "at": 1794534868242,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "TSLAUSDT": {
-      "at": 1794534670126,
+      "at": 1794534868743,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "AAPLUSDT": {
-      "at": 1794534671009,
+      "at": 1794534869202,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "MSFTUSDT": {
-      "at": 1794534671841,
+      "at": 1794534869701,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "AMZNUSDT": {
-      "at": 1794534672774,
+      "at": 1794534870185,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "GOOGLUSDT": {
-      "at": 1794534673598,
+      "at": 1794534870616,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "METAUSDT": {
-      "at": 1794534674520,
+      "at": 1794534871120,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "QQQUSDT": {
-      "at": 1794534675408,
+      "at": 1794534871593,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "SPYUSDT": {
-      "at": 1794534676344,
+      "at": 1794534872071,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "CLUSDT": {
-      "at": 1794534677195,
+      "at": 1794534872558,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "BZUSDT": {
-      "at": 1794534678080,
+      "at": 1794534873088,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "BSPUSDT": {
-      "at": 1794534678921,
+      "at": 1794534873507,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "VUSDT": {
-      "at": 1794534679644,
+      "at": 1794534873928,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "LLYUSDT": {
-      "at": 1794534680458,
+      "at": 1794534874335,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "WENUSDT": {
-      "at": 1794534681318,
+      "at": 1794534874766,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "MCDUSDT": {
-      "at": 1794534682064,
+      "at": 1794534875200,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "POPMARTUSDT": {
-      "at": 1794534682950,
+      "at": 1794534875657,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "UNITREEUSDT": {
-      "at": 1794534683666,
+      "at": 1794534876072,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "TMFUSDT": {
-      "at": 1794534684377,
+      "at": 1794534876414,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "ADBEUSDT": {
-      "at": 1794534685091,
+      "at": 1794534876816,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "MEITUANUSDT": {
-      "at": 1794534685835,
+      "at": 1794534877255,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "EWZUSDT": {
-      "at": 1794534686569,
+      "at": 1794534877610,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     },
     "MRKUSDT": {
-      "at": 1794534687239,
+      "at": 1794534877969,
       "suppressed": 0,
       "one_off_resend": false,
       "locking_enabled": true
     }
   },
   "in_flight": {},
-  "presentations": {
-    "53d71d58592d1a72e1a33785": {
-      "symbol": "TSLAUSDT",
-      "track": "fast",
-      "stage": "star1",
-      "attempt": 1794493876360,
-      "candidate": {
-        "level": 1,
-        "phase": "first_contact",
-        "touch": {
-          "hit": true,
-          "at": 1794493860000,
-          "bar_open": 1794493800000,
-          "valid_from": 1794438000000,
-          "observed_low": 385.58,
-          "observed_high": 392.23,
-          "evidence": "completed_1m_range"
-        },
-        "sources": [
-          {
-            "id": "1h:OB:1794430800000:1794438000000:-1",
-            "timeframe": "1h",
-            "kind": "OB",
-            "direction": -1,
-            "low": 391.03,
-            "high": 391.17,
-            "created": 1794438000000,
-            "origin": 1794430800000,
-            "stop": 392.09,
-            "invalidation": 391.17,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "15m:OB:1794433500000:1794435300000:-1",
-            "timeframe": "15m",
-            "kind": "OB",
-            "direction": -1,
-            "low": 391.11,
-            "high": 391.17,
-            "created": 1794435300000,
-            "origin": 1794433500000,
-            "stop": 391.31,
-            "invalidation": 391.17,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "5m:OB:1794430800000:1794431400000:-1",
-            "timeframe": "5m",
-            "kind": "OB",
-            "direction": -1,
-            "low": 391.03,
-            "high": 391.44,
-            "created": 1794431400000,
-            "origin": 1794430800000,
-            "stop": 392.09,
-            "invalidation": 391.44,
-            "expiry": 9223372036854775807
-          }
-        ],
-        "band": [
-          391.11,
-          391.17
-        ],
-        "score": 3,
-        "formation": {
-          "start": 1794430800000,
-          "end": 1794438000000
-        },
-        "lower_wave": {
-          "points": [
-            {
-              "kind": "low",
-              "index": 964,
-              "price": 388.32,
-              "confirmed_index": 965,
-              "confirmed_at": 1794483600000,
-              "threshold": 0.7416455586526935,
-              "timestamp": 1794483000000
-            },
-            {
-              "kind": "high",
-              "index": 972,
-              "price": 390.76,
-              "confirmed_index": 974,
-              "confirmed_at": 1794486300000,
-              "threshold": 0.8694915717082086,
-              "timestamp": 1794485400000
-            },
-            {
-              "kind": "low",
-              "index": 984,
-              "price": 384.32,
-              "confirmed_index": 985,
-              "confirmed_at": 1794489600000,
-              "threshold": 1.1818011923176113,
-              "timestamp": 1794489000000
-            },
-            {
-              "kind": "high",
-              "index": 995,
-              "price": 387.59,
-              "confirmed_index": 997,
-              "confirmed_at": 1794493200000,
-              "threshold": 1.3140883335900382,
-              "timestamp": 1794492300000
-            }
-          ],
-          "chart_start": 1794483000000,
-          "target": null
-        },
-        "symbol": "TSLAUSDT",
-        "exchange": "bitget",
-        "track": "fast",
-        "path": [
-          "1h",
-          "15m",
-          "5m"
-        ],
-        "pair": [
-          "1h",
-          "15m"
-        ],
-        "refinement_tf": "5m",
-        "direction": -1,
-        "price": 391.39,
-        "now": 1794493876360,
-        "id": "a7a790e9a07b968cbd31a9fe",
-        "context_id": "fast|broad|1h:OB:1794430800000:1794438000000:-1|formation-ob",
-        "lenses": [
-          "broad"
-        ],
-        "parent": {
-          "id": "1h:OB:1794430800000:1794438000000:-1",
-          "timeframe": "1h",
-          "kind": "OB",
-          "direction": -1,
-          "low": 391.03,
-          "high": 391.17,
-          "created": 1794438000000,
-          "origin": 1794430800000,
-          "stop": 392.09,
-          "invalidation": 391.17,
-          "expiry": 9223372036854775807
-        },
-        "arm": 1794493860000,
-        "arm_price": 391.1,
-        "upper": {
-          "points": [
-            {
-              "kind": "low",
-              "index": 992,
-              "price": 353.35,
-              "confirmed_index": 1006,
-              "confirmed_at": 1794229200000,
-              "threshold": 8.83375,
-              "timestamp": 1794175200000
-            },
-            {
-              "kind": "high",
-              "index": 1014,
-              "price": 382.6,
-              "confirmed_index": 1031,
-              "confirmed_at": 1794319200000,
-              "threshold": 9.565000000000001,
-              "timestamp": 1794254400000
-            },
-            {
-              "kind": "low",
-              "index": 1031,
-              "price": 370.79,
-              "confirmed_index": 1038,
-              "confirmed_at": 1794344400000,
-              "threshold": 9.26975,
-              "timestamp": 1794315600000
-            }
-          ],
-          "chart_start": 1794175200000,
-          "target": null
-        },
-        "source_ids": [
-          "1h:OB:1794430800000:1794438000000:-1",
-          "15m:OB:1794433500000:1794435300000:-1",
-          "5m:OB:1794430800000:1794431400000:-1"
-        ],
-        "low": 391.11,
-        "high": 391.17,
-        "alert_policy": "root-ob-pullback-v1",
-        "ruleset": "star-ob-reaction-v1",
-        "context_price_breach": false,
-        "equilibrium": {
-          "eligible": true
-        }
-      },
-      "complete": true,
-      "units": {
-        "broad": {
-          "image_sent": true,
-          "text_sent": true,
-          "image_message_ids": [
-            2055
-          ],
-          "text_message_ids": [
-            2056
-          ]
-        }
-      }
-    },
-    "9a141b53a0b8bb80f3d8c5b5": {
-      "symbol": "METAUSDT",
-      "track": "fast",
-      "stage": "star1",
-      "attempt": 1794494482247,
-      "candidate": {
-        "level": 1,
-        "phase": "first_contact",
-        "touch": {
-          "hit": true,
-          "at": 1794494220000,
-          "bar_open": 1794494160000,
-          "valid_from": 1794463200000,
-          "observed_low": 626.4,
-          "observed_high": 629.91,
-          "evidence": "completed_1m_range"
-        },
-        "sources": [
-          {
-            "id": "1h:OB:1794456000000:1794463200000:-1",
-            "timeframe": "1h",
-            "kind": "OB",
-            "direction": -1,
-            "low": 629.57,
-            "high": 630.0,
-            "created": 1794463200000,
-            "origin": 1794456000000,
-            "stop": 630.09,
-            "invalidation": 630.0,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "15m:OB:1794458700000:1794460500000:-1",
-            "timeframe": "15m",
-            "kind": "OB",
-            "direction": -1,
-            "low": 628.7,
-            "high": 630.0,
-            "created": 1794460500000,
-            "origin": 1794458700000,
-            "stop": 630.09,
-            "invalidation": 630.0,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "5m:OB:1794459300000:1794459900000:-1",
-            "timeframe": "5m",
-            "kind": "OB",
-            "direction": -1,
-            "low": 629.72,
-            "high": 630.0,
-            "created": 1794459900000,
-            "origin": 1794459300000,
-            "stop": 630.09,
-            "invalidation": 630.0,
-            "expiry": 9223372036854775807
-          }
-        ],
-        "band": [
-          629.72,
-          630.0
-        ],
-        "score": 3,
-        "formation": {
-          "start": 1794456000000,
-          "end": 1794463200000
-        },
-        "lower_wave": {
-          "points": [
-            {
-              "kind": "low",
-              "index": 968,
-              "price": 626.53,
-              "confirmed_index": 970,
-              "confirmed_at": 1794485700000,
-              "threshold": 0.9773332984990688,
-              "timestamp": 1794484800000
-            },
-            {
-              "kind": "high",
-              "index": 970,
-              "price": 628.28,
-              "confirmed_index": 972,
-              "confirmed_at": 1794486300000,
-              "threshold": 1.0424455481956243,
-              "timestamp": 1794485400000
-            },
-            {
-              "kind": "low",
-              "index": 983,
-              "price": 621.37,
-              "confirmed_index": 984,
-              "confirmed_at": 1794489900000,
-              "threshold": 1.5845834497912719,
-              "timestamp": 1794489300000
-            },
-            {
-              "kind": "high",
-              "index": 992,
-              "price": 630.9,
-              "confirmed_index": 995,
-              "confirmed_at": 1794493200000,
-              "threshold": 2.6273749897975045,
-              "timestamp": 1794492000000
-            }
-          ],
-          "chart_start": 1794484800000,
-          "target": null
-        },
-        "symbol": "METAUSDT",
-        "exchange": "bitget",
-        "track": "fast",
-        "path": [
-          "1h",
-          "15m",
-          "5m"
-        ],
-        "pair": [
-          "1h",
-          "15m"
-        ],
-        "refinement_tf": "5m",
-        "direction": -1,
-        "price": 628.81,
-        "now": 1794494482247,
-        "id": "be939e1eb4e3f4d2c3d7949c",
-        "context_id": "fast|broad|1h:OB:1794456000000:1794463200000:-1|formation-ob",
-        "lenses": [
-          "broad"
-        ],
-        "parent": {
-          "id": "1h:OB:1794456000000:1794463200000:-1",
-          "timeframe": "1h",
-          "kind": "OB",
-          "direction": -1,
-          "low": 629.57,
-          "high": 630.0,
-          "created": 1794463200000,
-          "origin": 1794456000000,
-          "stop": 630.09,
-          "invalidation": 630.0,
-          "expiry": 9223372036854775807
-        },
-        "arm": 1794492720000,
-        "arm_price": 629.595,
-        "upper": {
-          "points": [
-            {
-              "kind": "high",
-              "index": 937,
-              "price": 626.53,
-              "confirmed_index": 991,
-              "confirmed_at": 1794175200000,
-              "threshold": 15.66325,
-              "timestamp": 1793977200000
-            },
-            {
-              "kind": "low",
-              "index": 992,
-              "price": 606.33,
-              "confirmed_index": 1005,
-              "confirmed_at": 1794225600000,
-              "threshold": 15.158250000000002,
-              "timestamp": 1794175200000
-            },
-            {
-              "kind": "high",
-              "index": 1056,
-              "price": 652.7,
-              "confirmed_index": 1062,
-              "confirmed_at": 1794430800000,
-              "threshold": 16.317500000000003,
-              "timestamp": 1794405600000
-            }
-          ],
-          "chart_start": 1793977200000,
-          "target": null
-        },
-        "source_ids": [
-          "1h:OB:1794456000000:1794463200000:-1",
-          "15m:OB:1794458700000:1794460500000:-1",
-          "5m:OB:1794459300000:1794459900000:-1"
-        ],
-        "low": 629.72,
-        "high": 630.0,
-        "alert_policy": "root-ob-pullback-v1",
-        "ruleset": "star-ob-reaction-v1",
-        "context_price_breach": false,
-        "equilibrium": {
-          "eligible": true
-        }
-      },
-      "complete": true,
-      "units": {
-        "broad": {
-          "image_sent": true,
-          "text_sent": true,
-          "image_message_ids": [
-            2057
-          ],
-          "text_message_ids": [
-            2058
-          ]
-        }
-      }
-    },
-    "fe4a26347d1fe2c6b744754a": {
-      "symbol": "LLYUSDT",
-      "track": "fast",
-      "stage": "star1",
-      "attempt": 1794494488518,
-      "candidate": {
-        "level": 1,
-        "phase": "first_contact",
-        "touch": {
-          "hit": true,
-          "at": 1794494220000,
-          "bar_open": 1794494160000,
-          "valid_from": 1794470400000,
-          "observed_low": 1436.69,
-          "observed_high": 1442.36,
-          "evidence": "completed_1m_range"
-        },
-        "sources": [
-          {
-            "id": "1h:OB:1794430800000:1794438000000:1",
-            "timeframe": "1h",
-            "kind": "OB",
-            "direction": 1,
-            "low": 1438.88,
-            "high": 1439.51,
-            "created": 1794438000000,
-            "origin": 1794430800000,
-            "stop": 1436.89,
-            "invalidation": 1438.88,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "15m:OB:1794433500000:1794435300000:1",
-            "timeframe": "15m",
-            "kind": "OB",
-            "direction": 1,
-            "low": 1438.88,
-            "high": 1438.97,
-            "created": 1794435300000,
-            "origin": 1794433500000,
-            "stop": 1438.88,
-            "invalidation": 1438.88,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "5m:OB:1794430800000:1794431400000:1",
-            "timeframe": "5m",
-            "kind": "OB",
-            "direction": 1,
-            "low": 1437.49,
-            "high": 1439.51,
-            "created": 1794431400000,
-            "origin": 1794430800000,
-            "stop": 1436.89,
-            "invalidation": 1437.49,
-            "expiry": 9223372036854775807
-          }
-        ],
-        "band": [
-          1438.88,
-          1438.97
-        ],
-        "score": 3,
-        "formation": {
-          "start": 1794430800000,
-          "end": 1794438000000
-        },
-        "lower_wave": {
-          "points": [
-            {
-              "kind": "low",
-              "index": 963,
-              "price": 1473.71,
-              "confirmed_index": 968,
-              "confirmed_at": 1794485100000,
-              "threshold": 3.3077304217730115,
-              "timestamp": 1794483300000
-            },
-            {
-              "kind": "high",
-              "index": 971,
-              "price": 1481.15,
-              "confirmed_index": 974,
-              "confirmed_at": 1794486900000,
-              "threshold": 2.6379147300754475,
-              "timestamp": 1794485700000
-            },
-            {
-              "kind": "low",
-              "index": 982,
-              "price": 1461.45,
-              "confirmed_index": 984,
-              "confirmed_at": 1794489900000,
-              "threshold": 3.465908434160197,
-              "timestamp": 1794489000000
-            },
-            {
-              "kind": "high",
-              "index": 987,
-              "price": 1466.56,
-              "confirmed_index": 988,
-              "confirmed_at": 1794491100000,
-              "threshold": 4.409243991054048,
-              "timestamp": 1794490500000
-            }
-          ],
-          "chart_start": 1794483300000,
-          "target": null
-        },
-        "symbol": "LLYUSDT",
-        "exchange": "bitget",
-        "track": "fast",
-        "path": [
-          "1h",
-          "15m",
-          "5m"
-        ],
-        "pair": [
-          "1h",
-          "15m"
-        ],
-        "refinement_tf": "5m",
-        "direction": 1,
-        "price": 1447.52,
-        "now": 1794494488518,
-        "id": "eca1e1cd82346ab520aac3ab",
-        "context_id": "fast|broad|1h:OB:1794430800000:1794438000000:1|formation-ob",
-        "lenses": [
-          "broad"
-        ],
-        "parent": {
-          "id": "1h:OB:1794430800000:1794438000000:1",
-          "timeframe": "1h",
-          "kind": "OB",
-          "direction": 1,
-          "low": 1438.88,
-          "high": 1439.51,
-          "created": 1794438000000,
-          "origin": 1794430800000,
-          "stop": 1436.89,
-          "invalidation": 1438.88,
-          "expiry": 9223372036854775807
-        },
-        "arm": 1794494220000,
-        "arm_price": 1439.1950000000002,
-        "upper": {
-          "points": [
-            {
-              "kind": "low",
-              "index": 863,
-              "price": 1390.57,
-              "confirmed_index": 864,
-              "confirmed_at": 1793718000000,
-              "threshold": 34.76425,
-              "timestamp": 1793710800000
-            },
-            {
-              "kind": "high",
-              "index": 913,
-              "price": 1456.07,
-              "confirmed_index": 914,
-              "confirmed_at": 1793898000000,
-              "threshold": 36.40175,
-              "timestamp": 1793890800000
-            },
-            {
-              "kind": "low",
-              "index": 936,
-              "price": 1334.12,
-              "confirmed_index": 938,
-              "confirmed_at": 1793984400000,
-              "threshold": 33.353,
-              "timestamp": 1793973600000
-            }
-          ],
-          "chart_start": 1793710800000,
-          "target": null
-        },
-        "source_ids": [
-          "1h:OB:1794430800000:1794438000000:1",
-          "15m:OB:1794433500000:1794435300000:1",
-          "5m:OB:1794430800000:1794431400000:1"
-        ],
-        "low": 1438.88,
-        "high": 1438.97,
-        "alert_policy": "root-ob-pullback-v1",
-        "ruleset": "star-ob-reaction-v1",
-        "context_price_breach": false,
-        "equilibrium": {
-          "eligible": true
-        }
-      },
-      "complete": true,
-      "units": {
-        "broad": {
-          "image_sent": true,
-          "text_sent": true,
-          "image_message_ids": [
-            2059
-          ],
-          "text_message_ids": [
-            2060
-          ]
-        }
-      }
-    },
-    "498cda8ef3731fe32e0cc31b": {
-      "symbol": "METAUSDT",
-      "track": "fast",
-      "stage": "star2",
-      "attempt": 1794496293596,
-      "candidate": {
-        "level": 2,
-        "phase": "reaction",
-        "touch": {
-          "hit": true,
-          "at": 1794494220000,
-          "bar_open": 1794494160000,
-          "valid_from": 1794463200000,
-          "observed_low": 626.4,
-          "observed_high": 629.91,
-          "evidence": "completed_1m_range"
-        },
-        "sources": [
-          {
-            "id": "1h:OB:1794456000000:1794463200000:-1",
-            "timeframe": "1h",
-            "kind": "OB",
-            "direction": -1,
-            "low": 629.57,
-            "high": 630.0,
-            "created": 1794463200000,
-            "origin": 1794456000000,
-            "stop": 630.09,
-            "invalidation": 630.0,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "15m:OB:1794458700000:1794460500000:-1",
-            "timeframe": "15m",
-            "kind": "OB",
-            "direction": -1,
-            "low": 628.7,
-            "high": 630.0,
-            "created": 1794460500000,
-            "origin": 1794458700000,
-            "stop": 630.09,
-            "invalidation": 630.0,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "5m:OB:1794459300000:1794459900000:-1",
-            "timeframe": "5m",
-            "kind": "OB",
-            "direction": -1,
-            "low": 629.72,
-            "high": 630.0,
-            "created": 1794459900000,
-            "origin": 1794459300000,
-            "stop": 630.09,
-            "invalidation": 630.0,
-            "expiry": 9223372036854775807
-          }
-        ],
-        "band": [
-          629.72,
-          630.0
-        ],
-        "score": 3,
-        "formation": {
-          "start": 1794456000000,
-          "end": 1794463200000
-        },
-        "lower_wave": {
-          "points": [
-            {
-              "kind": "low",
-              "index": 977,
-              "price": 621.37,
-              "confirmed_index": 978,
-              "confirmed_at": 1794489900000,
-              "threshold": 1.5845834497912719,
-              "timestamp": 1794489300000
-            },
-            {
-              "kind": "high",
-              "index": 986,
-              "price": 630.9,
-              "confirmed_index": 989,
-              "confirmed_at": 1794493200000,
-              "threshold": 2.6273749897975045,
-              "timestamp": 1794492000000
-            },
-            {
-              "kind": "low",
-              "index": 992,
-              "price": 622.8,
-              "confirmed_index": 993,
-              "confirmed_at": 1794494400000,
-              "threshold": 3.2598938602763305,
-              "timestamp": 1794493800000
-            },
-            {
-              "kind": "high",
-              "index": 993,
-              "price": 631.32,
-              "confirmed_index": 994,
-              "confirmed_at": 1794494700000,
-              "threshold": 3.7159728702566,
-              "timestamp": 1794494100000
-            }
-          ],
-          "chart_start": 1794489300000,
-          "target": null
-        },
-        "reaction": {
-          "at": 1794496200000,
-          "bar_open": 1794495900000,
-          "price": 620.37,
-          "level": 621.37
-        },
-        "symbol": "METAUSDT",
-        "exchange": "bitget",
-        "track": "fast",
-        "path": [
-          "1h",
-          "15m",
-          "5m"
-        ],
-        "pair": [
-          "1h",
-          "15m"
-        ],
-        "refinement_tf": "5m",
-        "direction": -1,
-        "price": 622.35,
-        "now": 1794496293596,
-        "id": "be939e1eb4e3f4d2c3d7949c",
-        "context_id": "fast|broad|1h:OB:1794456000000:1794463200000:-1|formation-ob",
-        "lenses": [
-          "broad"
-        ],
-        "parent": {
-          "id": "1h:OB:1794456000000:1794463200000:-1",
-          "timeframe": "1h",
-          "kind": "OB",
-          "direction": -1,
-          "low": 629.57,
-          "high": 630.0,
-          "created": 1794463200000,
-          "origin": 1794456000000,
-          "stop": 630.09,
-          "invalidation": 630.0,
-          "expiry": 9223372036854775807
-        },
-        "arm": 1794492720000,
-        "arm_price": 629.595,
-        "upper": {
-          "points": [
-            {
-              "kind": "high",
-              "index": 936,
-              "price": 626.53,
-              "confirmed_index": 990,
-              "confirmed_at": 1794175200000,
-              "threshold": 15.66325,
-              "timestamp": 1793977200000
-            },
-            {
-              "kind": "low",
-              "index": 991,
-              "price": 606.33,
-              "confirmed_index": 1004,
-              "confirmed_at": 1794225600000,
-              "threshold": 15.158250000000002,
-              "timestamp": 1794175200000
-            },
-            {
-              "kind": "high",
-              "index": 1055,
-              "price": 652.7,
-              "confirmed_index": 1061,
-              "confirmed_at": 1794430800000,
-              "threshold": 16.317500000000003,
-              "timestamp": 1794405600000
-            }
-          ],
-          "chart_start": 1793977200000,
-          "target": null
-        },
-        "source_ids": [
-          "1h:OB:1794456000000:1794463200000:-1",
-          "15m:OB:1794458700000:1794460500000:-1",
-          "5m:OB:1794459300000:1794459900000:-1"
-        ],
-        "low": 629.72,
-        "high": 630.0,
-        "alert_policy": "root-ob-pullback-v1",
-        "ruleset": "star-ob-reaction-v1",
-        "context_price_breach": false,
-        "equilibrium": {
-          "eligible": true
-        }
-      },
-      "complete": true,
-      "units": {
-        "broad": {
-          "image_sent": true,
-          "text_sent": true,
-          "image_message_ids": [
-            2061
-          ],
-          "text_message_ids": [
-            2062
-          ]
-        }
-      }
-    },
-    "f37b2b5721ed4ac7bcb2823b": {
-      "symbol": "BSPUSDT",
-      "track": "fast",
-      "stage": "star1",
-      "attempt": 1794496592444,
-      "candidate": {
-        "level": 1,
-        "phase": "first_contact",
-        "touch": {
-          "hit": true,
-          "at": 1794496380000,
-          "bar_open": 1794496320000,
-          "valid_from": 1794492000000,
-          "observed_low": 40.5,
-          "observed_high": 40.912,
-          "evidence": "completed_1m_range"
-        },
-        "sources": [
-          {
-            "id": "1h:OB:1794484800000:1794492000000:-1",
-            "timeframe": "1h",
-            "kind": "OB",
-            "direction": -1,
-            "low": 40.561,
-            "high": 40.625,
-            "created": 1794492000000,
-            "origin": 1794484800000,
-            "stop": 40.72,
-            "invalidation": 40.625,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "15m:OB:1794484800000:1794486600000:-1",
-            "timeframe": "15m",
-            "kind": "OB",
-            "direction": -1,
-            "low": 40.561,
-            "high": 40.641,
-            "created": 1794486600000,
-            "origin": 1794484800000,
-            "stop": 40.72,
-            "invalidation": 40.641,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "5m:OB:1794488700000:1794489300000:-1",
-            "timeframe": "5m",
-            "kind": "OB",
-            "direction": -1,
-            "low": 40.515,
-            "high": 40.591,
-            "created": 1794489300000,
-            "origin": 1794488700000,
-            "stop": 40.642,
-            "invalidation": 40.591,
-            "expiry": 9223372036854775807
-          }
-        ],
-        "band": [
-          40.561,
-          40.591
-        ],
-        "score": 3,
-        "formation": {
-          "start": 1794484800000,
-          "end": 1794492000000
-        },
-        "lower_wave": {
-          "points": [
-            {
-              "kind": "high",
-              "index": 981,
-              "price": 40.366,
-              "confirmed_index": 988,
-              "confirmed_at": 1794493200000,
-              "threshold": 0.19414531190547807,
-              "timestamp": 1794490800000
-            },
-            {
-              "kind": "low",
-              "index": 991,
-              "price": 39.167,
-              "confirmed_index": 992,
-              "confirmed_at": 1794494400000,
-              "threshold": 0.23619648609049704,
-              "timestamp": 1794493800000
-            },
-            {
-              "kind": "high",
-              "index": 992,
-              "price": 39.991,
-              "confirmed_index": 993,
-              "confirmed_at": 1794494700000,
-              "threshold": 0.297003879941176,
-              "timestamp": 1794494100000
-            },
-            {
-              "kind": "low",
-              "index": 993,
-              "price": 38.836,
-              "confirmed_index": 994,
-              "confirmed_at": 1794495000000,
-              "threshold": 0.37425360280252096,
-              "timestamp": 1794494400000
-            }
-          ],
-          "chart_start": 1794490800000,
-          "target": null
-        },
-        "symbol": "BSPUSDT",
-        "exchange": "bitget",
-        "track": "fast",
-        "path": [
-          "1h",
-          "15m",
-          "5m"
-        ],
-        "pair": [
-          "1h",
-          "15m"
-        ],
-        "refinement_tf": "5m",
-        "direction": -1,
-        "price": 40.519,
-        "now": 1794496592444,
-        "id": "f05f107e4b3404848bcf3c25",
-        "context_id": "fast|recent|1h:OB:1794484800000:1794492000000:-1|formation-ob",
-        "lenses": [
-          "recent"
-        ],
-        "parent": {
-          "id": "1h:OB:1794484800000:1794492000000:-1",
-          "timeframe": "1h",
-          "kind": "OB",
-          "direction": -1,
-          "low": 40.561,
-          "high": 40.625,
-          "created": 1794492000000,
-          "origin": 1794484800000,
-          "stop": 40.72,
-          "invalidation": 40.625,
-          "expiry": 9223372036854775807
-        },
-        "arm": 1794496380000,
-        "arm_price": 40.593,
-        "upper": {
-          "points": [
-            {
-              "kind": "low",
-              "index": 1050,
-              "price": 40.667,
-              "confirmed_index": 1054,
-              "confirmed_at": 1794405600000,
-              "threshold": 1.016675,
-              "timestamp": 1794387600000
-            },
-            {
-              "kind": "high",
-              "index": 1055,
-              "price": 41.833,
-              "confirmed_index": 1056,
-              "confirmed_at": 1794412800000,
-              "threshold": 1.045825,
-              "timestamp": 1794405600000
-            },
-            {
-              "kind": "low",
-              "index": 1063,
-              "price": 39.485,
-              "confirmed_index": 1077,
-              "confirmed_at": 1794488400000,
-              "threshold": 1.1336587826561724,
-              "timestamp": 1794434400000
-            }
-          ],
-          "chart_start": 1794387600000,
-          "target": null
-        },
-        "source_ids": [
-          "1h:OB:1794484800000:1794492000000:-1",
-          "15m:OB:1794484800000:1794486600000:-1",
-          "5m:OB:1794488700000:1794489300000:-1"
-        ],
-        "low": 40.561,
-        "high": 40.591,
-        "alert_policy": "root-ob-pullback-v1",
-        "ruleset": "star-ob-reaction-v1",
-        "context_price_breach": false,
-        "equilibrium": {
-          "eligible": true
-        }
-      },
-      "complete": true,
-      "units": {
-        "recent": {
-          "image_sent": true,
-          "text_sent": true,
-          "image_message_ids": [
-            2063
-          ],
-          "text_message_ids": [
-            2064
-          ]
-        }
-      }
-    },
-    "a0dcba94ebd83f78df92e6f6": {
-      "symbol": "AKEUSDT",
-      "track": "medium",
-      "stage": "star1",
-      "attempt": 1794497764583,
-      "candidate": {
-        "level": 1,
-        "phase": "first_contact",
-        "touch": {
-          "hit": true,
-          "at": 1794497580000,
-          "bar_open": 1794497520000,
-          "valid_from": 1794441600000,
-          "observed_low": 0.0028352,
-          "observed_high": 0.0028959,
-          "evidence": "completed_1m_range"
-        },
-        "sources": [
-          {
-            "id": "1d:OB:1794268800000:1794441600000:-1",
-            "timeframe": "1d",
-            "kind": "OB",
-            "direction": -1,
-            "low": 0.0028623,
-            "high": 0.0029552,
-            "created": 1794441600000,
-            "origin": 1794268800000,
-            "stop": 0.0033394,
-            "invalidation": 0.0029552,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "4h:OB:1794340800000:1794369600000:-1",
-            "timeframe": "4h",
-            "kind": "OB",
-            "direction": -1,
-            "low": 0.0028613,
-            "high": 0.0029552,
-            "created": 1794369600000,
-            "origin": 1794340800000,
-            "stop": 0.0030893,
-            "invalidation": 0.0029552,
-            "expiry": 9223372036854775807
-          },
-          {
-            "id": "1h:OB:1794358800000:1794366000000:-1",
-            "timeframe": "1h",
-            "kind": "OB",
-            "direction": -1,
-            "low": 0.002889,
-            "high": 0.0029479,
-            "created": 1794366000000,
-            "origin": 1794358800000,
-            "stop": 0.0030601,
-            "invalidation": 0.0029479,
-            "expiry": 9223372036854775807
-          }
-        ],
-        "band": [
-          0.002889,
-          0.0029479
-        ],
-        "score": 3,
-        "formation": {
-          "start": 1794268800000,
-          "end": 1794441600000
-        },
-        "lower_wave": {
-          "points": [
-            {
-              "kind": "low",
-              "index": 1688,
-              "price": 0.0023771,
-              "confirmed_index": 1691,
-              "confirmed_at": 1794445200000,
-              "threshold": 0.0002306722825498357,
-              "timestamp": 1794430800000
-            },
-            {
-              "kind": "high",
-              "index": 1691,
-              "price": 0.0027927,
-              "confirmed_index": 1694,
-              "confirmed_at": 1794456000000,
-              "threshold": 0.0002398017874497045,
-              "timestamp": 1794441600000
-            },
-            {
-              "kind": "low",
-              "index": 1695,
-              "price": 0.002424,
-              "confirmed_index": 1699,
-              "confirmed_at": 1794474000000,
-              "threshold": 0.00024426580855245233,
-              "timestamp": 1794456000000
-            },
-            {
-              "kind": "high",
-              "index": 1699,
-              "price": 0.0033889,
-              "confirmed_index": 1700,
-              "confirmed_at": 1794477600000,
-              "threshold": 0.00030327225916458215,
-              "timestamp": 1794470400000
-            }
-          ],
-          "chart_start": 1794430800000,
-          "target": null
-        },
-        "symbol": "AKEUSDT",
-        "exchange": "bitget",
-        "track": "medium",
-        "path": [
-          "1d",
-          "4h",
-          "1h"
-        ],
-        "pair": [
-          "1d",
-          "4h"
-        ],
-        "refinement_tf": "1h",
-        "direction": -1,
-        "price": 0.0029463,
-        "now": 1794497764583,
-        "id": "b178124f8773a4753e2503be",
-        "context_id": "medium|recent|1d:OB:1794268800000:1794441600000:-1|formation-ob",
-        "lenses": [
-          "recent"
-        ],
-        "parent": {
-          "id": "1d:OB:1794268800000:1794441600000:-1",
-          "timeframe": "1d",
-          "kind": "OB",
-          "direction": -1,
-          "low": 0.0028623,
-          "high": 0.0029552,
-          "created": 1794441600000,
-          "origin": 1794268800000,
-          "stop": 0.0033394,
-          "invalidation": 0.0029552,
-          "expiry": 9223372036854775807
-        },
-        "arm": 1794497400000,
-        "arm_price": 0.00287195,
-        "upper": {
-          "points": [
-            {
-              "kind": "high",
-              "index": 18,
-              "price": 0.1614928,
-              "confirmed_index": 19,
-              "confirmed_at": 1790035200000,
-              "threshold": 0.05248748873733845,
-              "timestamp": 1789862400000
-            },
-            {
-              "kind": "low",
-              "index": 50,
-              "price": 0.0210552,
-              "confirmed_index": 51,
-              "confirmed_at": 1792800000000,
-              "threshold": 0.01597244264682884,
-              "timestamp": 1792627200000
-            },
-            {
-              "kind": "high",
-              "index": 51,
-              "price": 0.0406506,
-              "confirmed_index": 55,
-              "confirmed_at": 1793145600000,
-              "threshold": 0.016599082457769636,
-              "timestamp": 1792713600000
-            }
-          ],
-          "chart_start": 1789862400000,
-          "target": null
-        },
-        "source_ids": [
-          "1d:OB:1794268800000:1794441600000:-1",
-          "4h:OB:1794340800000:1794369600000:-1",
-          "1h:OB:1794358800000:1794366000000:-1"
-        ],
-        "low": 0.002889,
-        "high": 0.0029479,
-        "alert_policy": "root-ob-pullback-v1",
-        "ruleset": "star-ob-reaction-v1",
-        "context_price_breach": false,
-        "equilibrium": {
-          "eligible": true
-        }
-      },
-      "complete": true,
-      "units": {
-        "recent": {
-          "image_sent": true,
-          "text_sent": true,
-          "image_message_ids": [
-            2065
-          ],
-          "text_message_ids": [
-            2066
-          ]
-        }
-      }
-    }
-  },
+  "presentations": {},
   "touch_cursors": {
-    "BTCUSDT": 1794534660000,
-    "ETHUSDT": 1794534660000,
-    "JCTUSDT": 1794534660000,
-    "AKEUSDT": 1794534660000,
-    "BTWUSDT": 1794534660000,
-    "QUSDT": 1794534660000,
-    "NVDAUSDT": 1794534660000,
-    "TSLAUSDT": 1794534660000,
-    "AAPLUSDT": 1794534660000,
-    "MSFTUSDT": 1794534660000,
-    "AMZNUSDT": 1794534660000,
-    "GOOGLUSDT": 1794534660000,
-    "METAUSDT": 1794534660000,
-    "QQQUSDT": 1794534660000,
-    "SPYUSDT": 1794534660000,
-    "CLUSDT": 1794534660000,
-    "BZUSDT": 1794534660000,
-    "BSPUSDT": 1794534660000,
-    "VUSDT": 1794534660000,
-    "LLYUSDT": 1794534660000,
-    "WENUSDT": 1794534660000,
-    "MCDUSDT": 1794534660000,
-    "POPMARTUSDT": 1794534660000,
-    "UNITREEUSDT": 1794534660000,
-    "TMFUSDT": 1794534660000,
-    "ADBEUSDT": 1794534660000,
-    "MEITUANUSDT": 1794534660000,
-    "EWZUSDT": 1794534660000,
-    "MRKUSDT": 1794534660000
+    "BTCUSDT": 1794534840000,
+    "ETHUSDT": 1794534840000,
+    "JCTUSDT": 1794534840000,
+    "AKEUSDT": 1794534840000,
+    "BTWUSDT": 1794534840000,
+    "QUSDT": 1794534840000,
+    "NVDAUSDT": 1794534840000,
+    "TSLAUSDT": 1794534840000,
+    "AAPLUSDT": 1794534840000,
+    "MSFTUSDT": 1794534840000,
+    "AMZNUSDT": 1794534840000,
+    "GOOGLUSDT": 1794534840000,
+    "METAUSDT": 1794534840000,
+    "QQQUSDT": 1794534840000,
+    "SPYUSDT": 1794534840000,
+    "CLUSDT": 1794534840000,
+    "BZUSDT": 1794534840000,
+    "BSPUSDT": 1794534840000,
+    "VUSDT": 1794534840000,
+    "LLYUSDT": 1794534840000,
+    "WENUSDT": 1794534840000,
+    "MCDUSDT": 1794534840000,
+    "POPMARTUSDT": 1794534840000,
+    "UNITREEUSDT": 1794534840000,
+    "TMFUSDT": 1794534840000,
+    "ADBEUSDT": 1794534840000,
+    "MEITUANUSDT": 1794534840000,
+    "EWZUSDT": 1794534840000,
+    "MRKUSDT": 1794534840000
   },
   "notification_policy": "star-ob-reaction-v1",
   "delivery_mode": "star-ob-reaction-v1",
@@ -1595,56 +242,55 @@
     "QUSDT": {},
     "NVDAUSDT": {},
     "TSLAUSDT": {
-      "medium|broad|1d:OB:1793577600000:1793750400000:-1|formation-pivot": {
+      "medium|small|1d:OB:1793577600000:1793750400000:-1|atr:formation-pivot": {
         "track": "medium",
-        "lens": "broad",
+        "lens": "small",
         "parent_id": "1d:OB:1793577600000:1793750400000:-1",
         "arm": {
           "hit": true,
-          "at": 1794515160000,
-          "bar_open": 1794515100000,
+          "band_low": 400.79,
+          "band_high": 405.02,
           "valid_from": 1793923200000,
-          "observed_low": 399.23,
-          "observed_high": 401.24,
-          "evidence": "completed_1m_range"
+          "at": 1794534868743,
+          "observed_price": 401.88,
+          "evidence": "current_price"
         },
         "overlap": null
       },
-      "medium|recent|1d:OB:1793577600000:1793750400000:-1|formation-pivot": {
+      "medium|recent|1d:OB:1793577600000:1793750400000:-1|atr:formation-pivot": {
         "track": "medium",
         "lens": "recent",
         "parent_id": "1d:OB:1793577600000:1793750400000:-1",
         "arm": {
           "hit": true,
-          "at": 1794515160000,
-          "bar_open": 1794515100000,
+          "band_low": 400.79,
+          "band_high": 405.02,
           "valid_from": 1793923200000,
-          "observed_low": 399.23,
-          "observed_high": 401.24,
-          "evidence": "completed_1m_range"
+          "at": 1794534868743,
+          "observed_price": 401.88,
+          "evidence": "current_price"
+        },
+        "overlap": null
+      },
+      "medium|broad|1d:OB:1793577600000:1793750400000:-1|atr:formation-pivot": {
+        "track": "medium",
+        "lens": "broad",
+        "parent_id": "1d:OB:1793577600000:1793750400000:-1",
+        "arm": {
+          "hit": true,
+          "band_low": 400.79,
+          "band_high": 405.02,
+          "valid_from": 1793923200000,
+          "at": 1794534868743,
+          "observed_price": 401.88,
+          "evidence": "current_price"
         },
         "overlap": null
       }
     },
     "AAPLUSDT": {},
     "MSFTUSDT": {},
-    "AMZNUSDT": {
-      "fast|recent|1h:OB:1794315600000:1794322800000:1|formation-pivot": {
-        "track": "fast",
-        "lens": "recent",
-        "parent_id": "1h:OB:1794315600000:1794322800000:1",
-        "arm": {
-          "hit": true,
-          "at": 1794514680000,
-          "bar_open": 1794514620000,
-          "valid_from": 1794340800000,
-          "observed_low": 267.84,
-          "observed_high": 268.2,
-          "evidence": "completed_1m_range"
-        },
-        "overlap": null
-      }
-    },
+    "AMZNUSDT": {},
     "GOOGLUSDT": {},
     "METAUSDT": {},
     "QQQUSDT": {},
@@ -1657,18 +303,33 @@
     "WENUSDT": {},
     "MCDUSDT": {},
     "POPMARTUSDT": {
-      "short|recent|4h:OB:1793908800000:1793937600000:1|formation-pivot": {
+      "short|small|4h:OB:1793908800000:1793937600000:1|atr:formation-pivot": {
+        "track": "short",
+        "lens": "small",
+        "parent_id": "4h:OB:1793908800000:1793937600000:1",
+        "arm": {
+          "hit": true,
+          "band_low": 17.927,
+          "band_high": 18.162,
+          "valid_from": 1794196800000,
+          "at": 1794534875657,
+          "observed_price": 18.114,
+          "evidence": "current_price"
+        },
+        "overlap": null
+      },
+      "short|recent|4h:OB:1793908800000:1793937600000:1|atr:formation-pivot": {
         "track": "short",
         "lens": "recent",
         "parent_id": "4h:OB:1793908800000:1793937600000:1",
         "arm": {
           "hit": true,
-          "at": 1794533460000,
-          "bar_open": 1794533400000,
+          "band_low": 17.927,
+          "band_high": 18.162,
           "valid_from": 1794283200000,
-          "observed_low": 18.14,
-          "observed_high": 18.223,
-          "evidence": "completed_1m_range"
+          "at": 1794534875657,
+          "observed_price": 18.114,
+          "evidence": "current_price"
         },
         "overlap": null
       }
@@ -1684,28 +345,7 @@
     "BTCUSDT": {},
     "ETHUSDT": {},
     "JCTUSDT": {},
-    "AKEUSDT": {
-      "b178124f8773a4753e2503be": {
-        "track": "medium",
-        "level": 1,
-        "parent": {
-          "id": "1d:OB:1794268800000:1794441600000:-1",
-          "timeframe": "1d",
-          "kind": "OB",
-          "direction": -1,
-          "low": 0.0028623,
-          "high": 0.0029552,
-          "created": 1794441600000,
-          "origin": 1794268800000,
-          "stop": 0.0033394,
-          "invalidation": 0.0029552,
-          "expiry": 9223372036854775807
-        },
-        "direction": -1,
-        "low": 0.002889,
-        "high": 0.0029479
-      }
-    },
+    "AKEUSDT": {},
     "BTWUSDT": {},
     "QUSDT": {},
     "NVDAUSDT": {},
@@ -1714,28 +354,7 @@
     "MSFTUSDT": {},
     "AMZNUSDT": {},
     "GOOGLUSDT": {},
-    "METAUSDT": {
-      "be939e1eb4e3f4d2c3d7949c": {
-        "track": "fast",
-        "level": 2,
-        "parent": {
-          "id": "1h:OB:1794456000000:1794463200000:-1",
-          "timeframe": "1h",
-          "kind": "OB",
-          "direction": -1,
-          "low": 629.57,
-          "high": 630.0,
-          "created": 1794463200000,
-          "origin": 1794456000000,
-          "stop": 630.09,
-          "invalidation": 630.0,
-          "expiry": 9223372036854775807
-        },
-        "direction": -1,
-        "low": 629.72,
-        "high": 630.0
-      }
-    },
+    "METAUSDT": {},
     "QQQUSDT": {},
     "SPYUSDT": {},
     "CLUSDT": {},
@@ -50216,7 +48835,1249 @@
           ]
         }
       }
+    },
+    "53d71d58592d1a72e1a33785:1794493876360": {
+      "symbol": "TSLAUSDT",
+      "track": "fast",
+      "stage": "star1",
+      "attempt": 1794493876360,
+      "candidate": {
+        "level": 1,
+        "phase": "first_contact",
+        "touch": {
+          "hit": true,
+          "at": 1794493860000,
+          "bar_open": 1794493800000,
+          "valid_from": 1794438000000,
+          "observed_low": 385.58,
+          "observed_high": 392.23,
+          "evidence": "completed_1m_range"
+        },
+        "sources": [
+          {
+            "id": "1h:OB:1794430800000:1794438000000:-1",
+            "timeframe": "1h",
+            "kind": "OB",
+            "direction": -1,
+            "low": 391.03,
+            "high": 391.17,
+            "created": 1794438000000,
+            "origin": 1794430800000,
+            "stop": 392.09,
+            "invalidation": 391.17,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "15m:OB:1794433500000:1794435300000:-1",
+            "timeframe": "15m",
+            "kind": "OB",
+            "direction": -1,
+            "low": 391.11,
+            "high": 391.17,
+            "created": 1794435300000,
+            "origin": 1794433500000,
+            "stop": 391.31,
+            "invalidation": 391.17,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "5m:OB:1794430800000:1794431400000:-1",
+            "timeframe": "5m",
+            "kind": "OB",
+            "direction": -1,
+            "low": 391.03,
+            "high": 391.44,
+            "created": 1794431400000,
+            "origin": 1794430800000,
+            "stop": 392.09,
+            "invalidation": 391.44,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "band": [
+          391.11,
+          391.17
+        ],
+        "score": 3,
+        "formation": {
+          "start": 1794430800000,
+          "end": 1794438000000
+        },
+        "lower_wave": {
+          "points": [
+            {
+              "kind": "low",
+              "index": 964,
+              "price": 388.32,
+              "confirmed_index": 965,
+              "confirmed_at": 1794483600000,
+              "threshold": 0.7416455586526935,
+              "timestamp": 1794483000000
+            },
+            {
+              "kind": "high",
+              "index": 972,
+              "price": 390.76,
+              "confirmed_index": 974,
+              "confirmed_at": 1794486300000,
+              "threshold": 0.8694915717082086,
+              "timestamp": 1794485400000
+            },
+            {
+              "kind": "low",
+              "index": 984,
+              "price": 384.32,
+              "confirmed_index": 985,
+              "confirmed_at": 1794489600000,
+              "threshold": 1.1818011923176113,
+              "timestamp": 1794489000000
+            },
+            {
+              "kind": "high",
+              "index": 995,
+              "price": 387.59,
+              "confirmed_index": 997,
+              "confirmed_at": 1794493200000,
+              "threshold": 1.3140883335900382,
+              "timestamp": 1794492300000
+            }
+          ],
+          "chart_start": 1794483000000,
+          "target": null
+        },
+        "symbol": "TSLAUSDT",
+        "exchange": "bitget",
+        "track": "fast",
+        "path": [
+          "1h",
+          "15m",
+          "5m"
+        ],
+        "pair": [
+          "1h",
+          "15m"
+        ],
+        "refinement_tf": "5m",
+        "direction": -1,
+        "price": 391.39,
+        "now": 1794493876360,
+        "id": "a7a790e9a07b968cbd31a9fe",
+        "context_id": "fast|broad|1h:OB:1794430800000:1794438000000:-1|formation-ob",
+        "lenses": [
+          "broad"
+        ],
+        "parent": {
+          "id": "1h:OB:1794430800000:1794438000000:-1",
+          "timeframe": "1h",
+          "kind": "OB",
+          "direction": -1,
+          "low": 391.03,
+          "high": 391.17,
+          "created": 1794438000000,
+          "origin": 1794430800000,
+          "stop": 392.09,
+          "invalidation": 391.17,
+          "expiry": 9223372036854775807
+        },
+        "arm": 1794493860000,
+        "arm_price": 391.1,
+        "upper": {
+          "points": [
+            {
+              "kind": "low",
+              "index": 992,
+              "price": 353.35,
+              "confirmed_index": 1006,
+              "confirmed_at": 1794229200000,
+              "threshold": 8.83375,
+              "timestamp": 1794175200000
+            },
+            {
+              "kind": "high",
+              "index": 1014,
+              "price": 382.6,
+              "confirmed_index": 1031,
+              "confirmed_at": 1794319200000,
+              "threshold": 9.565000000000001,
+              "timestamp": 1794254400000
+            },
+            {
+              "kind": "low",
+              "index": 1031,
+              "price": 370.79,
+              "confirmed_index": 1038,
+              "confirmed_at": 1794344400000,
+              "threshold": 9.26975,
+              "timestamp": 1794315600000
+            }
+          ],
+          "chart_start": 1794175200000,
+          "target": null
+        },
+        "source_ids": [
+          "1h:OB:1794430800000:1794438000000:-1",
+          "15m:OB:1794433500000:1794435300000:-1",
+          "5m:OB:1794430800000:1794431400000:-1"
+        ],
+        "low": 391.11,
+        "high": 391.17,
+        "alert_policy": "root-ob-pullback-v1",
+        "ruleset": "star-ob-reaction-v1",
+        "context_price_breach": false,
+        "equilibrium": {
+          "eligible": true
+        }
+      },
+      "complete": true,
+      "units": {
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            2055
+          ],
+          "text_message_ids": [
+            2056
+          ]
+        }
+      }
+    },
+    "9a141b53a0b8bb80f3d8c5b5:1794494482247": {
+      "symbol": "METAUSDT",
+      "track": "fast",
+      "stage": "star1",
+      "attempt": 1794494482247,
+      "candidate": {
+        "level": 1,
+        "phase": "first_contact",
+        "touch": {
+          "hit": true,
+          "at": 1794494220000,
+          "bar_open": 1794494160000,
+          "valid_from": 1794463200000,
+          "observed_low": 626.4,
+          "observed_high": 629.91,
+          "evidence": "completed_1m_range"
+        },
+        "sources": [
+          {
+            "id": "1h:OB:1794456000000:1794463200000:-1",
+            "timeframe": "1h",
+            "kind": "OB",
+            "direction": -1,
+            "low": 629.57,
+            "high": 630.0,
+            "created": 1794463200000,
+            "origin": 1794456000000,
+            "stop": 630.09,
+            "invalidation": 630.0,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "15m:OB:1794458700000:1794460500000:-1",
+            "timeframe": "15m",
+            "kind": "OB",
+            "direction": -1,
+            "low": 628.7,
+            "high": 630.0,
+            "created": 1794460500000,
+            "origin": 1794458700000,
+            "stop": 630.09,
+            "invalidation": 630.0,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "5m:OB:1794459300000:1794459900000:-1",
+            "timeframe": "5m",
+            "kind": "OB",
+            "direction": -1,
+            "low": 629.72,
+            "high": 630.0,
+            "created": 1794459900000,
+            "origin": 1794459300000,
+            "stop": 630.09,
+            "invalidation": 630.0,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "band": [
+          629.72,
+          630.0
+        ],
+        "score": 3,
+        "formation": {
+          "start": 1794456000000,
+          "end": 1794463200000
+        },
+        "lower_wave": {
+          "points": [
+            {
+              "kind": "low",
+              "index": 968,
+              "price": 626.53,
+              "confirmed_index": 970,
+              "confirmed_at": 1794485700000,
+              "threshold": 0.9773332984990688,
+              "timestamp": 1794484800000
+            },
+            {
+              "kind": "high",
+              "index": 970,
+              "price": 628.28,
+              "confirmed_index": 972,
+              "confirmed_at": 1794486300000,
+              "threshold": 1.0424455481956243,
+              "timestamp": 1794485400000
+            },
+            {
+              "kind": "low",
+              "index": 983,
+              "price": 621.37,
+              "confirmed_index": 984,
+              "confirmed_at": 1794489900000,
+              "threshold": 1.5845834497912719,
+              "timestamp": 1794489300000
+            },
+            {
+              "kind": "high",
+              "index": 992,
+              "price": 630.9,
+              "confirmed_index": 995,
+              "confirmed_at": 1794493200000,
+              "threshold": 2.6273749897975045,
+              "timestamp": 1794492000000
+            }
+          ],
+          "chart_start": 1794484800000,
+          "target": null
+        },
+        "symbol": "METAUSDT",
+        "exchange": "bitget",
+        "track": "fast",
+        "path": [
+          "1h",
+          "15m",
+          "5m"
+        ],
+        "pair": [
+          "1h",
+          "15m"
+        ],
+        "refinement_tf": "5m",
+        "direction": -1,
+        "price": 628.81,
+        "now": 1794494482247,
+        "id": "be939e1eb4e3f4d2c3d7949c",
+        "context_id": "fast|broad|1h:OB:1794456000000:1794463200000:-1|formation-ob",
+        "lenses": [
+          "broad"
+        ],
+        "parent": {
+          "id": "1h:OB:1794456000000:1794463200000:-1",
+          "timeframe": "1h",
+          "kind": "OB",
+          "direction": -1,
+          "low": 629.57,
+          "high": 630.0,
+          "created": 1794463200000,
+          "origin": 1794456000000,
+          "stop": 630.09,
+          "invalidation": 630.0,
+          "expiry": 9223372036854775807
+        },
+        "arm": 1794492720000,
+        "arm_price": 629.595,
+        "upper": {
+          "points": [
+            {
+              "kind": "high",
+              "index": 937,
+              "price": 626.53,
+              "confirmed_index": 991,
+              "confirmed_at": 1794175200000,
+              "threshold": 15.66325,
+              "timestamp": 1793977200000
+            },
+            {
+              "kind": "low",
+              "index": 992,
+              "price": 606.33,
+              "confirmed_index": 1005,
+              "confirmed_at": 1794225600000,
+              "threshold": 15.158250000000002,
+              "timestamp": 1794175200000
+            },
+            {
+              "kind": "high",
+              "index": 1056,
+              "price": 652.7,
+              "confirmed_index": 1062,
+              "confirmed_at": 1794430800000,
+              "threshold": 16.317500000000003,
+              "timestamp": 1794405600000
+            }
+          ],
+          "chart_start": 1793977200000,
+          "target": null
+        },
+        "source_ids": [
+          "1h:OB:1794456000000:1794463200000:-1",
+          "15m:OB:1794458700000:1794460500000:-1",
+          "5m:OB:1794459300000:1794459900000:-1"
+        ],
+        "low": 629.72,
+        "high": 630.0,
+        "alert_policy": "root-ob-pullback-v1",
+        "ruleset": "star-ob-reaction-v1",
+        "context_price_breach": false,
+        "equilibrium": {
+          "eligible": true
+        }
+      },
+      "complete": true,
+      "units": {
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            2057
+          ],
+          "text_message_ids": [
+            2058
+          ]
+        }
+      }
+    },
+    "fe4a26347d1fe2c6b744754a:1794494488518": {
+      "symbol": "LLYUSDT",
+      "track": "fast",
+      "stage": "star1",
+      "attempt": 1794494488518,
+      "candidate": {
+        "level": 1,
+        "phase": "first_contact",
+        "touch": {
+          "hit": true,
+          "at": 1794494220000,
+          "bar_open": 1794494160000,
+          "valid_from": 1794470400000,
+          "observed_low": 1436.69,
+          "observed_high": 1442.36,
+          "evidence": "completed_1m_range"
+        },
+        "sources": [
+          {
+            "id": "1h:OB:1794430800000:1794438000000:1",
+            "timeframe": "1h",
+            "kind": "OB",
+            "direction": 1,
+            "low": 1438.88,
+            "high": 1439.51,
+            "created": 1794438000000,
+            "origin": 1794430800000,
+            "stop": 1436.89,
+            "invalidation": 1438.88,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "15m:OB:1794433500000:1794435300000:1",
+            "timeframe": "15m",
+            "kind": "OB",
+            "direction": 1,
+            "low": 1438.88,
+            "high": 1438.97,
+            "created": 1794435300000,
+            "origin": 1794433500000,
+            "stop": 1438.88,
+            "invalidation": 1438.88,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "5m:OB:1794430800000:1794431400000:1",
+            "timeframe": "5m",
+            "kind": "OB",
+            "direction": 1,
+            "low": 1437.49,
+            "high": 1439.51,
+            "created": 1794431400000,
+            "origin": 1794430800000,
+            "stop": 1436.89,
+            "invalidation": 1437.49,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "band": [
+          1438.88,
+          1438.97
+        ],
+        "score": 3,
+        "formation": {
+          "start": 1794430800000,
+          "end": 1794438000000
+        },
+        "lower_wave": {
+          "points": [
+            {
+              "kind": "low",
+              "index": 963,
+              "price": 1473.71,
+              "confirmed_index": 968,
+              "confirmed_at": 1794485100000,
+              "threshold": 3.3077304217730115,
+              "timestamp": 1794483300000
+            },
+            {
+              "kind": "high",
+              "index": 971,
+              "price": 1481.15,
+              "confirmed_index": 974,
+              "confirmed_at": 1794486900000,
+              "threshold": 2.6379147300754475,
+              "timestamp": 1794485700000
+            },
+            {
+              "kind": "low",
+              "index": 982,
+              "price": 1461.45,
+              "confirmed_index": 984,
+              "confirmed_at": 1794489900000,
+              "threshold": 3.465908434160197,
+              "timestamp": 1794489000000
+            },
+            {
+              "kind": "high",
+              "index": 987,
+              "price": 1466.56,
+              "confirmed_index": 988,
+              "confirmed_at": 1794491100000,
+              "threshold": 4.409243991054048,
+              "timestamp": 1794490500000
+            }
+          ],
+          "chart_start": 1794483300000,
+          "target": null
+        },
+        "symbol": "LLYUSDT",
+        "exchange": "bitget",
+        "track": "fast",
+        "path": [
+          "1h",
+          "15m",
+          "5m"
+        ],
+        "pair": [
+          "1h",
+          "15m"
+        ],
+        "refinement_tf": "5m",
+        "direction": 1,
+        "price": 1447.52,
+        "now": 1794494488518,
+        "id": "eca1e1cd82346ab520aac3ab",
+        "context_id": "fast|broad|1h:OB:1794430800000:1794438000000:1|formation-ob",
+        "lenses": [
+          "broad"
+        ],
+        "parent": {
+          "id": "1h:OB:1794430800000:1794438000000:1",
+          "timeframe": "1h",
+          "kind": "OB",
+          "direction": 1,
+          "low": 1438.88,
+          "high": 1439.51,
+          "created": 1794438000000,
+          "origin": 1794430800000,
+          "stop": 1436.89,
+          "invalidation": 1438.88,
+          "expiry": 9223372036854775807
+        },
+        "arm": 1794494220000,
+        "arm_price": 1439.1950000000002,
+        "upper": {
+          "points": [
+            {
+              "kind": "low",
+              "index": 863,
+              "price": 1390.57,
+              "confirmed_index": 864,
+              "confirmed_at": 1793718000000,
+              "threshold": 34.76425,
+              "timestamp": 1793710800000
+            },
+            {
+              "kind": "high",
+              "index": 913,
+              "price": 1456.07,
+              "confirmed_index": 914,
+              "confirmed_at": 1793898000000,
+              "threshold": 36.40175,
+              "timestamp": 1793890800000
+            },
+            {
+              "kind": "low",
+              "index": 936,
+              "price": 1334.12,
+              "confirmed_index": 938,
+              "confirmed_at": 1793984400000,
+              "threshold": 33.353,
+              "timestamp": 1793973600000
+            }
+          ],
+          "chart_start": 1793710800000,
+          "target": null
+        },
+        "source_ids": [
+          "1h:OB:1794430800000:1794438000000:1",
+          "15m:OB:1794433500000:1794435300000:1",
+          "5m:OB:1794430800000:1794431400000:1"
+        ],
+        "low": 1438.88,
+        "high": 1438.97,
+        "alert_policy": "root-ob-pullback-v1",
+        "ruleset": "star-ob-reaction-v1",
+        "context_price_breach": false,
+        "equilibrium": {
+          "eligible": true
+        }
+      },
+      "complete": true,
+      "units": {
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            2059
+          ],
+          "text_message_ids": [
+            2060
+          ]
+        }
+      }
+    },
+    "498cda8ef3731fe32e0cc31b:1794496293596": {
+      "symbol": "METAUSDT",
+      "track": "fast",
+      "stage": "star2",
+      "attempt": 1794496293596,
+      "candidate": {
+        "level": 2,
+        "phase": "reaction",
+        "touch": {
+          "hit": true,
+          "at": 1794494220000,
+          "bar_open": 1794494160000,
+          "valid_from": 1794463200000,
+          "observed_low": 626.4,
+          "observed_high": 629.91,
+          "evidence": "completed_1m_range"
+        },
+        "sources": [
+          {
+            "id": "1h:OB:1794456000000:1794463200000:-1",
+            "timeframe": "1h",
+            "kind": "OB",
+            "direction": -1,
+            "low": 629.57,
+            "high": 630.0,
+            "created": 1794463200000,
+            "origin": 1794456000000,
+            "stop": 630.09,
+            "invalidation": 630.0,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "15m:OB:1794458700000:1794460500000:-1",
+            "timeframe": "15m",
+            "kind": "OB",
+            "direction": -1,
+            "low": 628.7,
+            "high": 630.0,
+            "created": 1794460500000,
+            "origin": 1794458700000,
+            "stop": 630.09,
+            "invalidation": 630.0,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "5m:OB:1794459300000:1794459900000:-1",
+            "timeframe": "5m",
+            "kind": "OB",
+            "direction": -1,
+            "low": 629.72,
+            "high": 630.0,
+            "created": 1794459900000,
+            "origin": 1794459300000,
+            "stop": 630.09,
+            "invalidation": 630.0,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "band": [
+          629.72,
+          630.0
+        ],
+        "score": 3,
+        "formation": {
+          "start": 1794456000000,
+          "end": 1794463200000
+        },
+        "lower_wave": {
+          "points": [
+            {
+              "kind": "low",
+              "index": 977,
+              "price": 621.37,
+              "confirmed_index": 978,
+              "confirmed_at": 1794489900000,
+              "threshold": 1.5845834497912719,
+              "timestamp": 1794489300000
+            },
+            {
+              "kind": "high",
+              "index": 986,
+              "price": 630.9,
+              "confirmed_index": 989,
+              "confirmed_at": 1794493200000,
+              "threshold": 2.6273749897975045,
+              "timestamp": 1794492000000
+            },
+            {
+              "kind": "low",
+              "index": 992,
+              "price": 622.8,
+              "confirmed_index": 993,
+              "confirmed_at": 1794494400000,
+              "threshold": 3.2598938602763305,
+              "timestamp": 1794493800000
+            },
+            {
+              "kind": "high",
+              "index": 993,
+              "price": 631.32,
+              "confirmed_index": 994,
+              "confirmed_at": 1794494700000,
+              "threshold": 3.7159728702566,
+              "timestamp": 1794494100000
+            }
+          ],
+          "chart_start": 1794489300000,
+          "target": null
+        },
+        "reaction": {
+          "at": 1794496200000,
+          "bar_open": 1794495900000,
+          "price": 620.37,
+          "level": 621.37
+        },
+        "symbol": "METAUSDT",
+        "exchange": "bitget",
+        "track": "fast",
+        "path": [
+          "1h",
+          "15m",
+          "5m"
+        ],
+        "pair": [
+          "1h",
+          "15m"
+        ],
+        "refinement_tf": "5m",
+        "direction": -1,
+        "price": 622.35,
+        "now": 1794496293596,
+        "id": "be939e1eb4e3f4d2c3d7949c",
+        "context_id": "fast|broad|1h:OB:1794456000000:1794463200000:-1|formation-ob",
+        "lenses": [
+          "broad"
+        ],
+        "parent": {
+          "id": "1h:OB:1794456000000:1794463200000:-1",
+          "timeframe": "1h",
+          "kind": "OB",
+          "direction": -1,
+          "low": 629.57,
+          "high": 630.0,
+          "created": 1794463200000,
+          "origin": 1794456000000,
+          "stop": 630.09,
+          "invalidation": 630.0,
+          "expiry": 9223372036854775807
+        },
+        "arm": 1794492720000,
+        "arm_price": 629.595,
+        "upper": {
+          "points": [
+            {
+              "kind": "high",
+              "index": 936,
+              "price": 626.53,
+              "confirmed_index": 990,
+              "confirmed_at": 1794175200000,
+              "threshold": 15.66325,
+              "timestamp": 1793977200000
+            },
+            {
+              "kind": "low",
+              "index": 991,
+              "price": 606.33,
+              "confirmed_index": 1004,
+              "confirmed_at": 1794225600000,
+              "threshold": 15.158250000000002,
+              "timestamp": 1794175200000
+            },
+            {
+              "kind": "high",
+              "index": 1055,
+              "price": 652.7,
+              "confirmed_index": 1061,
+              "confirmed_at": 1794430800000,
+              "threshold": 16.317500000000003,
+              "timestamp": 1794405600000
+            }
+          ],
+          "chart_start": 1793977200000,
+          "target": null
+        },
+        "source_ids": [
+          "1h:OB:1794456000000:1794463200000:-1",
+          "15m:OB:1794458700000:1794460500000:-1",
+          "5m:OB:1794459300000:1794459900000:-1"
+        ],
+        "low": 629.72,
+        "high": 630.0,
+        "alert_policy": "root-ob-pullback-v1",
+        "ruleset": "star-ob-reaction-v1",
+        "context_price_breach": false,
+        "equilibrium": {
+          "eligible": true
+        }
+      },
+      "complete": true,
+      "units": {
+        "broad": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            2061
+          ],
+          "text_message_ids": [
+            2062
+          ]
+        }
+      }
+    },
+    "f37b2b5721ed4ac7bcb2823b:1794496592444": {
+      "symbol": "BSPUSDT",
+      "track": "fast",
+      "stage": "star1",
+      "attempt": 1794496592444,
+      "candidate": {
+        "level": 1,
+        "phase": "first_contact",
+        "touch": {
+          "hit": true,
+          "at": 1794496380000,
+          "bar_open": 1794496320000,
+          "valid_from": 1794492000000,
+          "observed_low": 40.5,
+          "observed_high": 40.912,
+          "evidence": "completed_1m_range"
+        },
+        "sources": [
+          {
+            "id": "1h:OB:1794484800000:1794492000000:-1",
+            "timeframe": "1h",
+            "kind": "OB",
+            "direction": -1,
+            "low": 40.561,
+            "high": 40.625,
+            "created": 1794492000000,
+            "origin": 1794484800000,
+            "stop": 40.72,
+            "invalidation": 40.625,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "15m:OB:1794484800000:1794486600000:-1",
+            "timeframe": "15m",
+            "kind": "OB",
+            "direction": -1,
+            "low": 40.561,
+            "high": 40.641,
+            "created": 1794486600000,
+            "origin": 1794484800000,
+            "stop": 40.72,
+            "invalidation": 40.641,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "5m:OB:1794488700000:1794489300000:-1",
+            "timeframe": "5m",
+            "kind": "OB",
+            "direction": -1,
+            "low": 40.515,
+            "high": 40.591,
+            "created": 1794489300000,
+            "origin": 1794488700000,
+            "stop": 40.642,
+            "invalidation": 40.591,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "band": [
+          40.561,
+          40.591
+        ],
+        "score": 3,
+        "formation": {
+          "start": 1794484800000,
+          "end": 1794492000000
+        },
+        "lower_wave": {
+          "points": [
+            {
+              "kind": "high",
+              "index": 981,
+              "price": 40.366,
+              "confirmed_index": 988,
+              "confirmed_at": 1794493200000,
+              "threshold": 0.19414531190547807,
+              "timestamp": 1794490800000
+            },
+            {
+              "kind": "low",
+              "index": 991,
+              "price": 39.167,
+              "confirmed_index": 992,
+              "confirmed_at": 1794494400000,
+              "threshold": 0.23619648609049704,
+              "timestamp": 1794493800000
+            },
+            {
+              "kind": "high",
+              "index": 992,
+              "price": 39.991,
+              "confirmed_index": 993,
+              "confirmed_at": 1794494700000,
+              "threshold": 0.297003879941176,
+              "timestamp": 1794494100000
+            },
+            {
+              "kind": "low",
+              "index": 993,
+              "price": 38.836,
+              "confirmed_index": 994,
+              "confirmed_at": 1794495000000,
+              "threshold": 0.37425360280252096,
+              "timestamp": 1794494400000
+            }
+          ],
+          "chart_start": 1794490800000,
+          "target": null
+        },
+        "symbol": "BSPUSDT",
+        "exchange": "bitget",
+        "track": "fast",
+        "path": [
+          "1h",
+          "15m",
+          "5m"
+        ],
+        "pair": [
+          "1h",
+          "15m"
+        ],
+        "refinement_tf": "5m",
+        "direction": -1,
+        "price": 40.519,
+        "now": 1794496592444,
+        "id": "f05f107e4b3404848bcf3c25",
+        "context_id": "fast|recent|1h:OB:1794484800000:1794492000000:-1|formation-ob",
+        "lenses": [
+          "recent"
+        ],
+        "parent": {
+          "id": "1h:OB:1794484800000:1794492000000:-1",
+          "timeframe": "1h",
+          "kind": "OB",
+          "direction": -1,
+          "low": 40.561,
+          "high": 40.625,
+          "created": 1794492000000,
+          "origin": 1794484800000,
+          "stop": 40.72,
+          "invalidation": 40.625,
+          "expiry": 9223372036854775807
+        },
+        "arm": 1794496380000,
+        "arm_price": 40.593,
+        "upper": {
+          "points": [
+            {
+              "kind": "low",
+              "index": 1050,
+              "price": 40.667,
+              "confirmed_index": 1054,
+              "confirmed_at": 1794405600000,
+              "threshold": 1.016675,
+              "timestamp": 1794387600000
+            },
+            {
+              "kind": "high",
+              "index": 1055,
+              "price": 41.833,
+              "confirmed_index": 1056,
+              "confirmed_at": 1794412800000,
+              "threshold": 1.045825,
+              "timestamp": 1794405600000
+            },
+            {
+              "kind": "low",
+              "index": 1063,
+              "price": 39.485,
+              "confirmed_index": 1077,
+              "confirmed_at": 1794488400000,
+              "threshold": 1.1336587826561724,
+              "timestamp": 1794434400000
+            }
+          ],
+          "chart_start": 1794387600000,
+          "target": null
+        },
+        "source_ids": [
+          "1h:OB:1794484800000:1794492000000:-1",
+          "15m:OB:1794484800000:1794486600000:-1",
+          "5m:OB:1794488700000:1794489300000:-1"
+        ],
+        "low": 40.561,
+        "high": 40.591,
+        "alert_policy": "root-ob-pullback-v1",
+        "ruleset": "star-ob-reaction-v1",
+        "context_price_breach": false,
+        "equilibrium": {
+          "eligible": true
+        }
+      },
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            2063
+          ],
+          "text_message_ids": [
+            2064
+          ]
+        }
+      }
+    },
+    "a0dcba94ebd83f78df92e6f6:1794497764583": {
+      "symbol": "AKEUSDT",
+      "track": "medium",
+      "stage": "star1",
+      "attempt": 1794497764583,
+      "candidate": {
+        "level": 1,
+        "phase": "first_contact",
+        "touch": {
+          "hit": true,
+          "at": 1794497580000,
+          "bar_open": 1794497520000,
+          "valid_from": 1794441600000,
+          "observed_low": 0.0028352,
+          "observed_high": 0.0028959,
+          "evidence": "completed_1m_range"
+        },
+        "sources": [
+          {
+            "id": "1d:OB:1794268800000:1794441600000:-1",
+            "timeframe": "1d",
+            "kind": "OB",
+            "direction": -1,
+            "low": 0.0028623,
+            "high": 0.0029552,
+            "created": 1794441600000,
+            "origin": 1794268800000,
+            "stop": 0.0033394,
+            "invalidation": 0.0029552,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "4h:OB:1794340800000:1794369600000:-1",
+            "timeframe": "4h",
+            "kind": "OB",
+            "direction": -1,
+            "low": 0.0028613,
+            "high": 0.0029552,
+            "created": 1794369600000,
+            "origin": 1794340800000,
+            "stop": 0.0030893,
+            "invalidation": 0.0029552,
+            "expiry": 9223372036854775807
+          },
+          {
+            "id": "1h:OB:1794358800000:1794366000000:-1",
+            "timeframe": "1h",
+            "kind": "OB",
+            "direction": -1,
+            "low": 0.002889,
+            "high": 0.0029479,
+            "created": 1794366000000,
+            "origin": 1794358800000,
+            "stop": 0.0030601,
+            "invalidation": 0.0029479,
+            "expiry": 9223372036854775807
+          }
+        ],
+        "band": [
+          0.002889,
+          0.0029479
+        ],
+        "score": 3,
+        "formation": {
+          "start": 1794268800000,
+          "end": 1794441600000
+        },
+        "lower_wave": {
+          "points": [
+            {
+              "kind": "low",
+              "index": 1688,
+              "price": 0.0023771,
+              "confirmed_index": 1691,
+              "confirmed_at": 1794445200000,
+              "threshold": 0.0002306722825498357,
+              "timestamp": 1794430800000
+            },
+            {
+              "kind": "high",
+              "index": 1691,
+              "price": 0.0027927,
+              "confirmed_index": 1694,
+              "confirmed_at": 1794456000000,
+              "threshold": 0.0002398017874497045,
+              "timestamp": 1794441600000
+            },
+            {
+              "kind": "low",
+              "index": 1695,
+              "price": 0.002424,
+              "confirmed_index": 1699,
+              "confirmed_at": 1794474000000,
+              "threshold": 0.00024426580855245233,
+              "timestamp": 1794456000000
+            },
+            {
+              "kind": "high",
+              "index": 1699,
+              "price": 0.0033889,
+              "confirmed_index": 1700,
+              "confirmed_at": 1794477600000,
+              "threshold": 0.00030327225916458215,
+              "timestamp": 1794470400000
+            }
+          ],
+          "chart_start": 1794430800000,
+          "target": null
+        },
+        "symbol": "AKEUSDT",
+        "exchange": "bitget",
+        "track": "medium",
+        "path": [
+          "1d",
+          "4h",
+          "1h"
+        ],
+        "pair": [
+          "1d",
+          "4h"
+        ],
+        "refinement_tf": "1h",
+        "direction": -1,
+        "price": 0.0029463,
+        "now": 1794497764583,
+        "id": "b178124f8773a4753e2503be",
+        "context_id": "medium|recent|1d:OB:1794268800000:1794441600000:-1|formation-ob",
+        "lenses": [
+          "recent"
+        ],
+        "parent": {
+          "id": "1d:OB:1794268800000:1794441600000:-1",
+          "timeframe": "1d",
+          "kind": "OB",
+          "direction": -1,
+          "low": 0.0028623,
+          "high": 0.0029552,
+          "created": 1794441600000,
+          "origin": 1794268800000,
+          "stop": 0.0033394,
+          "invalidation": 0.0029552,
+          "expiry": 9223372036854775807
+        },
+        "arm": 1794497400000,
+        "arm_price": 0.00287195,
+        "upper": {
+          "points": [
+            {
+              "kind": "high",
+              "index": 18,
+              "price": 0.1614928,
+              "confirmed_index": 19,
+              "confirmed_at": 1790035200000,
+              "threshold": 0.05248748873733845,
+              "timestamp": 1789862400000
+            },
+            {
+              "kind": "low",
+              "index": 50,
+              "price": 0.0210552,
+              "confirmed_index": 51,
+              "confirmed_at": 1792800000000,
+              "threshold": 0.01597244264682884,
+              "timestamp": 1792627200000
+            },
+            {
+              "kind": "high",
+              "index": 51,
+              "price": 0.0406506,
+              "confirmed_index": 55,
+              "confirmed_at": 1793145600000,
+              "threshold": 0.016599082457769636,
+              "timestamp": 1792713600000
+            }
+          ],
+          "chart_start": 1789862400000,
+          "target": null
+        },
+        "source_ids": [
+          "1d:OB:1794268800000:1794441600000:-1",
+          "4h:OB:1794340800000:1794369600000:-1",
+          "1h:OB:1794358800000:1794366000000:-1"
+        ],
+        "low": 0.002889,
+        "high": 0.0029479,
+        "alert_policy": "root-ob-pullback-v1",
+        "ruleset": "star-ob-reaction-v1",
+        "context_price_breach": false,
+        "equilibrium": {
+          "eligible": true
+        }
+      },
+      "complete": true,
+      "units": {
+        "recent": {
+          "image_sent": true,
+          "text_sent": true,
+          "image_message_ids": [
+            2065
+          ],
+          "text_message_ids": [
+            2066
+          ]
+        }
+      }
     }
   },
-  "alert_reset_at": 1794491630274
+  "alert_reset_at": 1794534864923
 }
