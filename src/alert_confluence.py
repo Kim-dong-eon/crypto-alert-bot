@@ -6,6 +6,11 @@ from itertools import product
 
 PATHS = {'fast': ('1h', '15m', '5m'), 'short': ('4h', '1h', '15m'),
          'medium': ('1d', '4h', '1h'), 'long': ('1w', '1d', '4h')}
+SOURCE_KINDS = (('OB',), ('OB', 'FVG'), ('OB',))
+
+
+def source_allowed(path, timeframe, kind):
+    return any(timeframe == tf and kind in kinds for tf, kinds in zip(path, SOURCE_KINDS))
 
 
 def _touches(touch, low, high, known):
@@ -36,10 +41,12 @@ def confluence_error(candidate):
         if not all(math.isfinite(v) for v in (low, high)) or low >= high:
             return 'invalid_common_band'
         sources = base.get('sources', [])
+        if any(not source_allowed(path, s['timeframe'], s['kind']) for s in sources):
+            return 'wrong_source_role'
         if not any(s['id'] == parent['id'] and s == parent for s in sources):
             return 'missing_parent_source'
         children = []
-        for tf, kinds in ((path[1], ('OB', 'FVG')), (path[2], ('OB',))):
+        for tf, kinds in zip(path[1:], SOURCE_KINDS[1:]):
             children.append([s for s in sources if s['timeframe'] == tf and s['kind'] in kinds
                              and s['direction'] == parent['direction'] == candidate['direction']
                              and parent['origin'] <= s['origin'] < s['created'] <= parent['created']])
@@ -54,6 +61,16 @@ def confluence_error(candidate):
                 if not _touches(base['touch'], low, high, parent['created']):
                     return 'common_band_not_touched'
                 if base is not candidate:
+                    entry_sources = candidate.get('sources', [])
+                    if any(not source_allowed(path, s['timeframe'], s['kind']) for s in entry_sources):
+                        return 'wrong_source_role'
+                    # Later stair OBs may be outside the original triple band,
+                    # but must still be same-direction final-timeframe OBs.
+                    if not any(s['timeframe'] == path[2] and s['kind'] == 'OB'
+                               and s['direction'] == candidate['direction']
+                               and s['low'] <= candidate['band'][0] <= candidate['band'][1] <= s['high']
+                               for s in entry_sources):
+                        return 'missing_entry_ob'
                     if not _touches(candidate['touch'], *candidate['band'], base['touch']['at']):
                         return 'entry_band_not_touched'
                 return None

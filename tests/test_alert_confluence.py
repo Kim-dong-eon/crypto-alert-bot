@@ -56,11 +56,35 @@ class ConfluenceTests(unittest.TestCase):
         base = contact()
         c = copy.deepcopy(base)
         c.update(level=2, phase='stair_retest', overlap=copy.deepcopy(base),
-                 sources=[c['parent']], band=[120,121],low=120,high=121,
+                 sources=[c['parent'], dict(c['sources'][-1], id='later', low=120, high=121)],
+                 band=[120,121],low=120,high=121,
                  touch=dict(hit=True,at=300,evidence='live_orderbook_mid',observed_price=120.5))
         self.assertIsNone(confluence_error(c))
         c['overlap']['sources'] = [c['parent']]
         self.assertIsNotNone(confluence_error(c))
+
+    def test_source_roles_for_every_track_grade_and_direction(self):
+        for track in PATHS:
+            for direction in (1, -1):
+                for level in (1, 2, 3):
+                    with self.subTest(track=track, direction=direction, level=level):
+                        base = contact(track, direction)
+                        base['sources'][1]['kind'] = 'FVG'
+                        c = copy.deepcopy(base)
+                        c['level'] = level
+                        if level > 1:
+                            c.update(phase='stair_retest', overlap=copy.deepcopy(base),
+                                     sources=[c['parent'], dict(c['sources'][-1], id='later', low=120, high=121)],
+                                     band=[120,121], touch=dict(hit=True, at=300,
+                                     evidence='live_orderbook_mid', observed_price=120.5))
+                        self.assertIsNone(confluence_error(c))
+                        invalid = copy.deepcopy(c)
+                        invalid['sources'][-1]['kind'] = 'FVG'
+                        self.assertIsNotNone(confluence_error(invalid))
+                        invalid = copy.deepcopy(c)
+                        proof = invalid.get('overlap', invalid)
+                        proof['sources'].append(dict(proof['parent'], id='upper-fvg', kind='FVG'))
+                        self.assertEqual(confluence_error(invalid), 'wrong_source_role')
 
     def test_old_single_ob_cannot_be_dispatched_even_with_force_resend(self):
         c = contact()

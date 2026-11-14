@@ -9,6 +9,7 @@ from itertools import product
 
 from src.ict_engine import TF_MS, frame_open
 from src.entry_execution import entry_plan
+from src.alert_confluence import source_allowed
 from src.ict_overlap import LABELS, kst, overlaps
 from src.overlap_entry import MINUTE
 from src.pullback_alerts import POLICY, REFINEMENT, TOP_COUNTS, prepare, rooted_context
@@ -172,7 +173,8 @@ def formation_children(parent, zones, path, *, middle_fvg=False):
     children = defaultdict(list)
     for ob in zones:
         if (ob.timeframe in (middle, final)
-                and (ob.kind == 'OB' or (middle_fvg and ob.timeframe == middle and ob.kind == 'FVG'))
+                and source_allowed(path, ob.timeframe, ob.kind)
+                and (ob.kind != 'FVG' or middle_fvg)
                 and ob.direction == parent.direction
                 and parent.origin <= ob.origin < ob.created <= parent.created
                 and max(parent.low, ob.low) < min(parent.high, ob.high)):

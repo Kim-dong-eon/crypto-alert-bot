@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from src.ict_engine import Bar, TF_MS, frame_open
 from src.ict_overlap import LABELS, kst
 from src.overlap_charts import configure_font
+from src.alert_confluence import source_allowed
 from src.star_alerts import alert_title, atr_label, price_text as fmt, unit_text, is_entry, contact_status
 from config.overlap_settings import TRACK_LABELS
 
@@ -109,7 +110,8 @@ def draw_panel(ax, tf, candles, event):
     zones = event['overlap']['sources'] if is_entry(event) else event['sources']
     core = primary_overlap(event, zones)
     selected_ids = {z['id'] for z in zones}
-    extras = [z for z in event.get('display_zones', []) if z['id'] not in selected_ids]
+    extras = [z for z in event.get('display_zones', []) if z['id'] not in selected_ids
+              and source_allowed(event['path'], z['timeframe'], z['kind'])]
     legend = {}
     overlap = event.get('overlap', event)
     formation = ({'start':event['parent']['origin'], 'end':event['parent']['created']}
