@@ -5,7 +5,7 @@ import copy
 from src.ict_engine import TF_MS
 from src.ict_overlap import alert_eligible
 from src.pullback_delivery import delivery_started, physical_id, POLICY
-from src.star_alerts import RULESET, atr_label
+from src.star_alerts import RULESET, atr_label, is_entry
 from src.staircase_rules import MIN_RR
 from src.structure_alerts import StructureLedger, candidates
 from config.overlap_settings import TRACK_LABELS
@@ -14,7 +14,7 @@ from config.overlap_settings import TRACK_LABELS
 def alert_bands(candidate):
     yield candidate['low'], candidate['high']
     # A ★★★ setup also owns the original confluence shown on its chart.
-    if candidate['level'] == 3 and candidate.get('overlap'):
+    if is_entry(candidate) and candidate.get('overlap'):
         yield tuple(candidate['overlap']['band'])
 
 
@@ -76,16 +76,17 @@ def shadowed_by_higher(candidate, blockers):
 def eligible_contacts(tracks, entry_only=False, require_execution=False):
     return [c for row in tracks.values() for c in candidates(row)
             if alert_eligible(c) and (not entry_only or executable(c))
-            and (not require_execution or c['level'] < 3 or executable(c))]
+            and (not require_execution or not is_entry(c) or executable(c))]
 
 
 def executable(candidate):
-    return candidate.get('level') == 3 and candidate.get('execution') and candidate['rr'] >= MIN_RR - 1e-9
+    return is_entry(candidate) and candidate.get('execution') and candidate['rr'] >= MIN_RR - 1e-9
 
 
 def unique_contacts(tracks, entry_only=False, require_execution=False):
     ranked = sorted(eligible_contacts(tracks, entry_only, require_execution),
-                    key=lambda c: (-c['level'], bool(c.get('stock_reference')), -TF_MS[c['pair'][0]], -c['score'], c['id']))
+                    key=lambda c: (-c['level'], bool(c.get('stock_reference')), -TF_MS[c['pair'][0]],
+                                   -bool(c.get('in_initial_overlap')), -c['score'], c['id']))
     accepted = []
     seen = set()
     for index, candidate in enumerate(ranked):
@@ -108,6 +109,15 @@ class StarAlertLedger(StructureLedger):
         self.state.setdefault('star_locks', {})
         if self.state.get('delivery_mode') == RULESET:
             return
+        old_reaction_mode = self.state.get('delivery_mode') == 'star-ob-reaction-v1'
+        if old_reaction_mode:
+            # A previously sent close-break ★★ is not the new entry ★★. Keep
+            # its first-contact lock and receipt, but allow a genuine upgrade.
+            for locks in self.state['star_locks'].values():
+                for lock in locks.values():
+                    if lock['level'] == 2:
+                        lock['legacy_level'] = 2
+                        lock['level'] = 1
         for old_locks in self.state.get('locks', {}).values():
             for lock in old_locks:
                 c = lock.get('latest') or {}
@@ -116,8 +126,9 @@ class StarAlertLedger(StructureLedger):
         for key, p in list(self.state.get('presentations', {}).items()):
             c = p.get('candidate') or {}
             if c.get('alert_policy') == POLICY and c.get('parent') and (p.get('complete') or delivery_started(p)):
-                self._remember(c, c.get('level', 3))
-            if not p.get('complete'):
+                level = c.get('level', 3)
+                self._remember(c, 1 if old_reaction_mode and level == 2 else level)
+            if old_reaction_mode or not p.get('complete'):
                 self.state.setdefault('retired_presentations', {})[f"{key}:{p.get('attempt', 0)}"] = p
                 del self.state['presentations'][key]
         self.state['pending'] = {}
@@ -136,7 +147,9 @@ class StarAlertLedger(StructureLedger):
                           'score': c.get('score', len(c.get('sources', ())))}
             if c.get('stock_reference'):
                 locks[key]['stock_reference'] = c['stock_reference']
-        if locks[key]['level'] == level == 3 and c.get('overlap'):
+            if c.get('phase'):
+                locks[key]['phase'] = c['phase']
+        if locks[key]['level'] == level and is_entry(c) and c.get('overlap'):
             locks[key].setdefault('overlap', {'band': c['overlap']['band']})
 
     def unlock(self, symbol, track):
@@ -219,7 +232,7 @@ class StarAlertLedger(StructureLedger):
             if not self.force_resend and (same_parent or duplicate_band) and not unfinished:
                 suppressed += 1
                 continue
-            if self.require_execution and c['level'] == 3 and unfinished and not executable(p['candidate']):
+            if self.require_execution and is_entry(c) and unfinished and not executable(p['candidate']):
                 if delivery_started(p):
                     continue
                 del presentations[key]
@@ -233,7 +246,7 @@ class StarAlertLedger(StructureLedger):
             c = p.get('candidate') or {}
             if key in pending or p.get('complete') or c.get('symbol') != symbol or c.get('ruleset') != RULESET:
                 continue
-            if self.require_execution and c['level'] == 3:
+            if self.require_execution and is_entry(c):
                 continue
             source = 'cash' if c.get('stock_reference') else 'bitget'
             if snapshot.get('source_status') is not None and snapshot['source_status'].get(source, {}).get(c['track'], 'data_unavailable') == 'data_unavailable':
@@ -267,10 +280,10 @@ class StarAlertLedger(StructureLedger):
     def dispatch_units(self, image_sender, text_sender, renderer, *, refresh=None):
         for key, event in list(self.state['pending'].items()):
             c = event['candidate']
-            if (self.entry_only or (self.require_execution and c['level'] == 3)) and not executable(c):
+            if (self.entry_only or (self.require_execution and is_entry(c))) and not executable(c):
                 del self.state['pending'][key]
                 continue
-            if refresh is not None and c['level'] == 3:
+            if refresh is not None and is_entry(c):
                 checked = refresh(c)
                 if checked is None:
                     del self.state['pending'][key]

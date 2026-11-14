@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from src.ict_engine import Bar, TF_MS, frame_open
 from src.ict_overlap import LABELS, kst
 from src.overlap_charts import configure_font
-from src.star_alerts import alert_title, atr_label, price_text as fmt, unit_text
+from src.star_alerts import alert_title, atr_label, price_text as fmt, unit_text, is_entry
 from config.overlap_settings import TRACK_LABELS
 
 WHITE = '#edf3fb'
@@ -29,7 +29,7 @@ def overlap_cells(boxes, edge):
 
 def primary_overlap(event, zones):
     """Prefer the middle FVG when showing the actual three-frame intersection."""
-    overlap = event['overlap'] if event['level'] == 3 else event
+    overlap = event['overlap'] if is_entry(event) else event
     if formation := overlap.get('formation'):
         middle = event['path'][1]
         kinds = sorted({z['kind'] for z in zones if z['timeframe'] == middle})
@@ -87,7 +87,7 @@ def draw_panel(ax, tf, candles, event):
     ax.set_axisbelow(True)
     ax.tick_params(colors=MUTED, labelsize=9)
     ax.yaxis.tick_right()
-    zones = event['overlap']['sources'] if level == 3 else event['sources']
+    zones = event['overlap']['sources'] if is_entry(event) else event['sources']
     core = primary_overlap(event, zones)
     legend = {}
     overlap = event.get('overlap', event)
@@ -126,17 +126,19 @@ def draw_panel(ax, tf, candles, event):
         ax.add_patch(Rectangle((start_core, lo), edge - start_core, hi - lo, fill=False,
                                edgecolor=WHITE, linewidth=1.5, zorder=3))
         prices.extend((lo, hi))
-        legend['핵심'] = Patch(facecolor='none', edgecolor=WHITE, label='핵심 3중 겹침')
+        legend['핵심'] = Patch(facecolor='none', edgecolor=WHITE,
+                              label='최초 3중 겹침' if is_entry(event) else '핵심 3중 겹침')
 
     if level >= 2:
-        overlap = event['overlap'] if level == 3 else event
+        overlap = event['overlap'] if is_entry(event) else event
         lo, hi = overlap['band']
         prices.extend((lo, hi))
-    if level == 3 and not is_top:
+    if is_entry(event) and not is_top:
         ob = event['sources'][-1]
         ob_left = max(-.6, position(ob['created']))
         ax.add_patch(Rectangle((ob_left, ob['low']), edge - ob_left, ob['high'] - ob['low'],
                                fill=False, edgecolor=GOLD, linestyle=':', linewidth=.95, zorder=2))
+        legend['후속'] = Patch(facecolor='none', edgecolor=GOLD, linestyle=':', label=f'{LABELS[final]} 후속 OB')
         prices.extend([ob['low'], ob['high']])
         lo, hi = event['band']
         left = max(-.6, position(event['touch']['valid_from']))
@@ -167,18 +169,20 @@ def draw_panel(ax, tf, candles, event):
         ys = [p['price'] for p in points]
         if points:
             ax.plot(xs, ys, color='#78ebff', linewidth=2.05, marker='o', markersize=4, zorder=7)
-        if (level == 2 or event.get('formation') or cash_panel) and points and points[-1]['timestamp'] < candles[-1].timestamp:
+        if (level == 2 or is_entry(event) or event.get('formation') or cash_panel) and points and points[-1]['timestamp'] < candles[-1].timestamp:
             ax.plot([xs[-1], len(candles) - 1], [ys[-1], candles[-1].close],
                     color=GOLD, linestyle='--', linewidth=1.5, zorder=7)
-        goal = risk.get('target', structure['target'])
+        goal = event['target'] if is_entry(event) and is_top else risk.get('target', structure['target'])
         if is_top and goal is not None:
             ax.axhline(goal, color='#88dfa4', linestyle='--', linewidth=1.1, zorder=3)
             extreme = '고점' if event['direction'] == 1 else '저점'
             ax.text(.98, goal, f"{LABELS[top]} 직전 {extreme} · 목표 {fmt(goal)}",
                     transform=ax.get_yaxis_transform(), ha='right', va='top', color='#9eecad', fontsize=10)
             prices.append(goal)
-        elif not is_top and level == 3:
+        elif not is_top and is_entry(event):
             ax.axhline(event['stop'], color='#ff9da9', linestyle='--', linewidth=1, zorder=3)
+            pivot_x = position(event['lower']['origin'])
+            ax.scatter(pivot_x, event['stop'], s=65, facecolors='none', edgecolors='#ff9da9', linewidths=1.5, zorder=9)
             extreme = '저점' if event['direction'] == 1 else '고점'
             ax.text(.02, event['stop'], f"{LABELS[final]} 기준 {extreme} {fmt(event['stop'])}",
                     transform=ax.get_yaxis_transform(), ha='left', va='bottom', color='#ffabb4', fontsize=10,
@@ -230,8 +234,8 @@ def draw_panel(ax, tf, candles, event):
     px = position(frame_open(stamp, tf))
     if not cash_panel and -.6 <= px < edge:
         ax.scatter([px], [price], marker='D', color=GOLD, s=29, zorder=9)
-        label = f'{LABELS[top]} OB 첫 접촉' if is_top else '접촉 확인' if level < 3 else f'{LABELS[final]} OB 재접촉'
-        offset = (-17, -27) if level == 3 and not is_top else (-15, 22)
+        label = f'{LABELS[top]} OB 첫 접촉' if is_top else '접촉 확인' if not is_entry(event) else f'{LABELS[final]} OB 재접촉'
+        offset = (-17, -27) if is_entry(event) and not is_top else (-15, 22)
         ax.annotate(label, (px, price), xytext=offset, textcoords='offset points', ha='right',
                     color=GOLD, fontsize=10, zorder=10, arrowprops={'arrowstyle': '-', 'color': GOLD},
                     bbox={'facecolor': '#152130', 'edgecolor': 'none', 'pad': 3})
@@ -333,13 +337,13 @@ def render(snapshot, alert, frames, prefix):
              color=MUTED, size=12)
     keys = ([Line2D([], [], color='#78ebff', linewidth=2, label='확정 파동'),
              Line2D([], [], color=GOLD, linestyle='--', label='미확정 파동' if reaction else '진행 파동')]
-            if level == 2 or event.get('formation') or event.get('stock_bars') else [Patch(facecolor=color, label=label) for color, label in zip(DENSITY, ('3개 겹침', '4개 겹침', '5개 이상'))])
+            if level == 2 or is_entry(event) or event.get('formation') or event.get('stock_bars') else [Patch(facecolor=color, label=label) for color, label in zip(DENSITY, ('3개 겹침', '4개 겹침', '5개 이상'))])
     fig.legend(handles=keys,
                loc='center right', bbox_to_anchor=(.94, .876), ncol=3, fontsize=10,
                frameon=False, labelcolor=WHITE, handlelength=1.3, columnspacing=1.2)
     if snapshot.get('illustrative'):
         priced = event.get('execution') or (event.get('observation_risk') or {}).get('plan')
-        preview = '과거 캔들 · 비용 예시' if priced else '과거 시세 재생 미리보기'
+        preview = snapshot.get('preview_label') or ('과거 캔들 · 비용 예시' if priced else '과거 시세 재생 미리보기')
         fig.text(.94, .935, preview, color=MUTED, size=11, ha='right')
     try:
         for ax, tf in zip(axes, (top, final)):
@@ -351,7 +355,7 @@ def render(snapshot, alert, frames, prefix):
                 close = kst(candles[-1].timestamp + TF_MS[tf]).split()[1]
                 panel = f"{'상위 구조' if tf == top else '종가 돌파'} · {close} 마감까지"
             else:
-                panel = upper_label if tf == top else '계단 · 진입 확인' if level == 3 else '구조 확대 · 접촉 확인'
+                panel = upper_label if tf == top else '계단 · OB 재접촉' if is_entry(event) else '구조 확대 · 접촉 확인'
             if cash_panel:
                 panel = f"원주식 {event['stock_reference']} 전체 구조 · {atr_label(event['stock_atr'])}"
             elif event.get('stock_reference') and tf == final:
@@ -362,6 +366,9 @@ def render(snapshot, alert, frames, prefix):
         if reaction:
             message = (f"{LABELS[final]}봉 {kst(reaction['at'])} 마감 · 종가 {fmt(reaction['price'])}"
                        f" · 돌파 기준 {fmt(reaction['level'])}")
+        elif event.get('phase') == 'stair_retest':
+            location = '최초 겹침 안' if event['in_initial_overlap'] else '최초 겹침 밖의 후속 OB'
+            message = f"{LABELS[final]} 계단 OB 재접촉 · {location} · 비용 반영 1:{event['rr']:.2f}"
         elif level == 1 and not event.get('formation'):
             message = f'{LABELS[top]} OB 반응 안에서 같은 방향의 {LABELS[final]} OB 접촉'
         elif level <= 2:
@@ -375,7 +382,7 @@ def render(snapshot, alert, frames, prefix):
         fig.text(.035, .112, message, color=WHITE, size=13, weight='bold')
         lo, hi = event['band']
         detail = f'접촉 구간 {fmt(lo)} ~ {fmt(hi)}'
-        if level == 3:
+        if is_entry(event):
             detail = f"진입 {fmt(lo)} ~ {fmt(hi)}     손절 {fmt(event['stop'])}     목표 {fmt(event['target'])}"
             if x := event.get('execution'):
                 detail += f"     편도 슬리피지 {x['slippage_per_side']:.3%} · {x['notional']:,.0f} USDT 기준"

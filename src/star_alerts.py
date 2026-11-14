@@ -14,10 +14,11 @@ from src.overlap_entry import MINUTE
 from src.pullback_alerts import POLICY, REFINEMENT, TOP_COUNTS, prepare, rooted_context
 from src.staircase_rules import band_touch, net_rr, opposing_upper_contact, risk_band, staircases, ote_band
 from src.structure_review import turns
+from src.star_retests import retest_entries, target_at_contact, target_spent_at
 from config.overlap_settings import TRACK_LABELS
 
 
-RULESET = 'star-ob-reaction-v1'
+RULESET = 'star-ob-stair-retest-v2'
 TITLES = {1: '하위 OB 관찰', 2: '3중 겹침 첫 접촉', 3: '진입 조건 충족'}
 UPPER_ATR_SCALES = {
     'small': {'atr_multiple': 1.5, 'min_fraction': 0.},
@@ -349,19 +350,15 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                         choices = [first_overlap]
                 elif anchored:
                     choices = [c for c in choices if c['sources'] == prior_overlap['sources']]
-                prior_reaction = episode.get('reaction')
-                if anchored and episode['overlap'] and prior_reaction is None:
-                    waiting = episode.get('pending_reaction')
-                    reaction = waiting or formation_reaction(episode['overlap'], lower_bars, lower_points, final, direction)
-                    if reaction:
-                        episode = dict(episode)
-                        if prior_overlap is None:
-                            episode['pending_reaction'] = reaction
-                        else:
-                            episode.pop('pending_reaction', None)
-                            episode['reaction'] = reaction
-                            if waiting or reaction['at'] > track_since:
-                                choices.append({**prior_overlap, 'level': 2, 'phase': 'reaction', 'reaction': reaction})
+                # Old reaction records are retained for audit but never create a new ★★.
+                if anchored and episode['overlap'] and 'entry_target' not in episode:
+                    episode = {**episode, 'entry_target': target_at_contact(points, episode['overlap'])}
+                if anchored and not episode.get('target_spent_at'):
+                    spent = target_spent_at(episode['overlap'], episode.get('entry_target'), direction,
+                                            lower_bars, closed_minutes, now)
+                    if spent is not None:
+                        episode = {**episode, 'target_spent_at': spent}
+                prior_reaction = None
                 updated[identity] = episode
                 for ob in (() if anchored else lower_obs):
                     hit = first_contact(ob.low, ob.high, max(ob.created, arm['at']), price, now, recent_minutes, track_since)
@@ -372,7 +369,7 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                 latest_upper = next(reversed(upper_stairs.values()), None)
                 followup = prior_overlap if anchored else episode['overlap']
                 reaction_at = followup['touch']['at'] if anchored and followup else arm['at']
-                if (upper_ready and followup and (not anchored or prior_reaction) and step and not step['invalidated_at']
+                if (not anchored and upper_ready and followup and step and not step['invalidated_at']
                         and direction * (price - latest_upper['protected']) >= 0
                         and step['origin'] >= max(upper['end'], frame_open(reaction_at - 1, final))
                         and step['known_at'] > reaction_at and direction * (price - step['protected']) > 0
@@ -414,8 +411,14 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                         choices.append({'level': 3, 'touch': hit, 'sources': [asdict(parent), asdict(ob)],
                                         'score': episode['overlap']['score'], 'lower': step, 'stop': stop,
                                         'target': target, 'overlap': episode['overlap'], **plan})
+                if anchored and prior_overlap and not episode.get('target_spent_at'):
+                    choices.extend(retest_entries(parent, prior_overlap, step, episode.get('entry_target'),
+                        zones, lower_bars, closed_minutes, now, price, execution_quote, tick_size,
+                        upper_ready=bool(upper_ready and latest_upper
+                            and direction * (price - latest_upper['protected']) >= 0),
+                        require_ote=require_ote))
                 if choices:
-                    best = max(choices, key=lambda c: (c['level'], c['score'], c.get('rr', 0)))
+                    best = max(choices, key=lambda c: (c['level'], c.get('in_initial_overlap', False), c['score'], c.get('rr', 0)))
                     sources = best['sources']
                     upper_wave = overview_wave(upper_bars, points, root, upper if upper_ready else None)
                     if best['level'] == 2 or best.get('formation'):
@@ -426,7 +429,7 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                         best['departure_pivot'] = pivot
                     if upper_atr:
                         best['upper_atr'] = multiplier
-                    if best['level'] < 3 and best.get('phase') != 'first_contact':
+                    if best['level'] < 3 and best.get('phase') not in ('first_contact', 'stair_retest'):
                         target_points = points
                         reference = observation_reference(best, lower_bars, target_points, direction,
                                                           lower_points=lower_points, tick_size=tick_size,
@@ -449,7 +452,13 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
     return result
 
 
+def is_entry(candidate):
+    return candidate.get('level') == 3 or candidate.get('phase') == 'stair_retest'
+
+
 def alert_title(candidate):
+    if candidate.get('phase') == 'stair_retest':
+        return '상위·하위 계단 OB 재접촉' if candidate['level'] == 3 else '하위 계단 OB 재접촉'
     if candidate.get('phase') == 'reaction':
         return '하위 구조 반응 확인'
     if candidate.get('formation'):
@@ -472,7 +481,7 @@ def unit_text(candidate):
     exchange = c.get('exchange', 'bitget').title()
     lines = [f"[{exchange} · {c['symbol']}] {side}", f"{'★' * level} {title} · {label}"]
     if level >= 2 or c.get('formation'):
-        evidence = c['overlap']['sources'] if level == 3 else c['sources']
+        evidence = c['overlap']['sources'] if is_entry(c) else c['sources']
         names = sorted({(z['timeframe'], z['kind']) for z in evidence}, key=lambda key: (-TF_MS[key[0]], key[1]))
         lines.append(' + '.join(f'{LABELS[tf]} {kind}' for tf, kind in names))
         if c.get('reaction'):
@@ -481,12 +490,12 @@ def unit_text(candidate):
         elif c.get('formation'):
             lo, hi = c['band']
             lines.append(f'공통 구간 {price_text(lo)} ~ {price_text(hi)} · 계단은 이후 확인')
-    if level == 3:
+    if is_entry(c):
         edge = '상한' if c['direction'] == 1 else '하한'
         lo, hi = c['band']
         lines.append(f"진입 구간 {price_text(lo)} ~ {price_text(hi)} · {edge} {price_text(c['entry'])}")
         lines.append(f"손절 {price_text(c['stop'])} · {LABELS[c['pair'][0]]} 목표 {price_text(c['target'])}")
-        lines.append(f"상위·하위 계단 · 비용 반영 1:{c['rr']:.2f}")
+        lines.append(f"{'상위·하위 계단' if level == 3 else '하위 계단'} · 비용 반영 1:{c['rr']:.2f}")
         if x := c.get('execution'):
             lines.append(f"{x['notional']:,.0f} USDT 기준 · 편도 수수료 {x['fee_per_side']:.3%} · 예상 슬리피지 {x['slippage_per_side']:.3%}")
             lines.append(f"호가 기준 예상 체결가 {price_text(x['vwap'])} · {kst(x['at'])}")
@@ -506,6 +515,8 @@ def unit_text(candidate):
         lines.append('하위 구조 손절 또는 상위 목표 미확정')
     if level != 2 and not (level == 3 and c.get('execution')):
         lines.append(f"접촉 확인 · {kst(c['touch']['at'])}")
+    if c.get('phase') == 'stair_retest':
+        lines.append('최초 겹침 안의 진입' if c['in_initial_overlap'] else '최초 겹침 밖의 후속 OB 진입')
     if warnings := c.get('cross_track_warnings'):
         lines.append('⚠ ' + ' / '.join(warnings))
     return '\n'.join(lines)
@@ -524,7 +535,7 @@ def compact_atr_text(c):
         lines.append(f"★★ 반응 확인 · 종가 {price_text(reaction['price'])} / 기준 {price_text(reaction['level'])}")
     else:
         lines.append(f"{'★' * level} {title}")
-    evidence = c['overlap']['sources'] if level == 3 else c['sources']
+    evidence = c['overlap']['sources'] if is_entry(c) else c['sources']
     groups = {}
     for z in sorted(evidence, key=lambda z: -TF_MS[z['timeframe']]):
         groups.setdefault(z['kind'], []).append(LABELS[z['timeframe']])
@@ -537,7 +548,7 @@ def compact_atr_text(c):
     else:
         atr = f"ATR {matched}" + (' 모두 충족' if len(c.get('matched_atrs', [])) == 3 else ' 충족')
     lines.append(f'{zones} · {atr}')
-    if level == 3:
+    if is_entry(c):
         lines.append(f"진입 {lo}~{hi} · 손절 {price_text(c['stop'])} · 목표 {price_text(c['target'])} · 순 1:{c['rr']:.2f}")
     elif level == 2:
         risk = c.get('observation_risk') or {}
@@ -547,6 +558,8 @@ def compact_atr_text(c):
         else:
             lines.append('관찰 · 1:3 미충족' if risk.get('costs_checked') else '관찰 · 1:3 미확정')
     lines.append(kst((c.get('reaction') or c['touch'])['at']))
+    if c.get('phase') == 'stair_retest':
+        lines.append('최초 겹침 안의 진입' if c['in_initial_overlap'] else '최초 겹침 밖의 후속 OB 진입')
     if warnings := c.get('cross_track_warnings'):
         lines.append('⚠ ' + ' / '.join(warnings))
     return '\n'.join(lines)

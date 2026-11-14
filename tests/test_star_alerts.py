@@ -185,45 +185,18 @@ class StarAlertsTests(unittest.TestCase):
                 reaction = scan('BTCUSDT', frames, now + 60000, snapshot['price'], touch_since=now,
                                 contexts=first['star_contexts'], execution_quote=lambda: quote,
                                 tick_size='0.1', **options)
-                middle, = ledger.observe(reaction).values()
-                c = middle['candidate']
-                self.assertEqual((c['level'], c['phase']), (2, 'reaction'))
-                risk = c['observation_risk']
-                plan = risk['plan']
-                self.assertGreaterEqual(plan['rr'], 3)
-                self.assertLessEqual(c['low'], plan['band'][0])
-                self.assertLessEqual(plan['band'][1], c['high'])
-                notice = unit_text(c)
-                self.assertIn('직전 고점' if direction == 1 else '직전 저점', notice)
-                self.assertIn('비용 반영 1:', notice)
-                self.assertNotIn('예상 슬리피지', notice)
-                self.assertNotIn('접촉 확인 ·', notice)
-                with patch('src.star_alerts.formation_reaction', return_value=confirmation):
-                    expensive = scan('BTCUSDT', frames, now, snapshot['price'], minute_bars=[minute],
-                                     contexts=first['star_contexts'],
-                                     execution_quote=lambda: {**quote, 'slippage_per_side': .05},
-                                     tick_size='0.1', **options)
-                costly, = unique_contacts(expensive['tracks'])
-                self.assertEqual(costly['level'], 2)
-                self.assertIsNone(costly['observation_risk']['plan'])
-                self.assertIn('비용 반영 1:3 미충족', unit_text(costly))
-                result = ledger.dispatch_units(
-                    lambda _: True, lambda _: True,
-                    lambda unit: render_side_by_side_unit(reaction, unit, frames, Path(tmp) / 'reaction'))
-                self.assertEqual(result['sent'], 1)
+                # A close break alone no longer upgrades a formation alert.
                 self.assertFalse(ledger.observe(reaction))
+                self.assertFalse(any(c['level'] >= 2 for c in reaction['tracks']['short']['candidates']))
 
                 snapshot, frames = timeline[-1]
                 now = snapshot['as_of']
                 minutes = [Bar(*r) if direction == -1 else Bar(r[0], 130000-r[1], 130000-r[3],
                            130000-r[2], 130000-r[4], r[5]) for r in raw['ticks'][-1]['minutes']]
+                # This historic fixture actually wicks through the lower stop.
                 followup = scan('BTCUSDT', frames, now, snapshot['price'], minute_bars=minutes,
                                 touch_since=now - 300000, contexts=reaction['star_contexts'], **options)
-                entry, = ledger.observe(followup).values()
-                c = entry['candidate']
-                self.assertEqual(c['level'], 3)
-                self.assertGreaterEqual(c['rr'], 3)
-                self.assertLess(c['overlap']['touch']['at'], c['lower']['known_at'])
+                self.assertFalse(any(c['level'] >= 2 for c in followup['tracks']['short']['candidates']))
 
     def test_reaction_requires_a_closed_cross_of_a_pivot_known_at_touch(self):
         width = TF_MS['5m']
