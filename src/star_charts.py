@@ -13,7 +13,7 @@ from config.overlap_settings import TRACK_LABELS
 WHITE = '#edf3fb'
 MUTED = '#abb9ca'
 GOLD = '#ffd270'
-DENSITY = ('#3b68bc', '#274393', '#1c2e72')
+CORE_HATCH = '//'
 REFERENCE = '#dfb9fb'
 
 
@@ -117,7 +117,7 @@ def draw_panel(ax, tf, candles, event):
     for z in zones:
         color = '#8bece6' if z['timeframe'] == middle and z['kind'] == 'FVG' else colors[z['timeframe']]
         left = max(-.6, position(z['created']))
-        ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], color=color, alpha=.12, zorder=1))
+        ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], color=color, alpha=.045, zorder=1))
         ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], fill=False, edgecolor=color, linewidth=1, zorder=2))
         boxes.append((left, z['low'], z['high']))
         source = (event.get('source_labels') or {}).get(z['timeframe'], '')
@@ -133,13 +133,12 @@ def draw_panel(ax, tf, candles, event):
                    for left, low, high in boxes if max(low, lo) < min(high, hi)]
         for left, right, low, high, count in overlap_cells(clipped, edge):
             if count >= 3:
-                color = DENSITY[min(count - 3, len(DENSITY) - 1)]
-                ax.add_patch(Rectangle((left, low), right - left, high - low, facecolor=color,
-                                       alpha=.94, edgecolor='none', zorder=1.5))
+                ax.add_patch(Rectangle((left, low), right - left, high - low, facecolor=WHITE,
+                                       alpha=.14, edgecolor='none', zorder=1.5))
         ax.add_patch(Rectangle((start_core, lo), edge - start_core, hi - lo, fill=False,
-                               edgecolor=WHITE, linewidth=1.5, zorder=3))
+                               edgecolor=WHITE, linewidth=1.3, hatch=CORE_HATCH, zorder=3))
         prices.extend((lo, hi))
-        legend['핵심'] = Patch(facecolor='none', edgecolor=WHITE,
+        legend['핵심'] = Patch(facecolor='none', edgecolor=WHITE, hatch=CORE_HATCH,
                               label='최초 3중 겹침' if is_entry(event) else '핵심 3중 겹침')
 
     if level >= 2:
@@ -361,7 +360,7 @@ def render(snapshot, alert, frames, prefix):
     fig.text(.94, .813, contact_status(event), color=GOLD, size=11, ha='right')
     keys = ([Line2D([], [], color='#78ebff', linewidth=2, label='확정 파동'),
              Line2D([], [], color=GOLD, linestyle='--', label='미확정 파동' if reaction else '진행 파동')]
-            if level == 2 or is_entry(event) or event.get('formation') or event.get('stock_bars') else [Patch(facecolor=color, label=label) for color, label in zip(DENSITY, ('3개 겹침', '4개 겹침', '5개 이상'))])
+            if level == 2 or is_entry(event) or event.get('formation') or event.get('stock_bars') else [Patch(facecolor='none', edgecolor=WHITE, hatch=CORE_HATCH, label='핵심 3중 겹침')])
     fig.legend(handles=keys,
                loc='center right', bbox_to_anchor=(.94, .876), ncol=3, fontsize=10,
                frameon=False, labelcolor=WHITE, handlelength=1.3, columnspacing=1.2)
