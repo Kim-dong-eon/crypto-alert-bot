@@ -2,6 +2,8 @@
 
 import copy
 
+from src.alert_confluence import confluence_error
+
 from src.ict_engine import TF_MS
 from src.ict_overlap import alert_eligible
 from src.pullback_delivery import delivery_started, physical_id, POLICY
@@ -73,9 +75,10 @@ def shadowed_by_higher(candidate, blockers):
     return any(other['level'] > candidate['level'] and intersects(candidate, other) for other in blockers)
 
 
-def eligible_contacts(tracks, entry_only=False, require_execution=False):
+def eligible_contacts(tracks, entry_only=False, require_execution=False, require_confluence=True):
     return [c for row in tracks.values() for c in candidates(row)
-            if alert_eligible(c) and (not entry_only or executable(c))
+            if alert_eligible(c) and (not require_confluence or confluence_error(c) is None)
+            and (not entry_only or executable(c))
             and (not require_execution or not is_entry(c) or executable(c))]
 
 
@@ -83,8 +86,8 @@ def executable(candidate):
     return is_entry(candidate) and candidate.get('execution') and candidate['rr'] >= MIN_RR - 1e-9
 
 
-def unique_contacts(tracks, entry_only=False, require_execution=False):
-    ranked = sorted(eligible_contacts(tracks, entry_only, require_execution),
+def unique_contacts(tracks, entry_only=False, require_execution=False, require_confluence=True):
+    ranked = sorted(eligible_contacts(tracks, entry_only, require_execution, require_confluence),
                     key=lambda c: (-c['level'], bool(c.get('stock_reference')), -TF_MS[c['pair'][0]],
                                    -bool(c.get('in_initial_overlap')), -c['score'], c['id']))
     accepted = []
@@ -101,12 +104,31 @@ def unique_contacts(tracks, entry_only=False, require_execution=False):
 
 
 class StarAlertLedger(StructureLedger):
-    def __init__(self, path, *, entry_only=False, require_execution=False, **kwargs):
+    def __init__(self, path, *, entry_only=False, require_execution=False, require_confluence=True, **kwargs):
         super().__init__(path, **kwargs)
+        # Disabling this is only for reproducing obsolete historical strategies.
+        self.require_confluence = require_confluence
         self.entry_only = entry_only
         self.require_execution = require_execution or entry_only
         self.state.setdefault('star_contexts', {})
         self.state.setdefault('star_locks', {})
+        self.state.setdefault('presentations', {})
+        if self.require_confluence:
+            # Retain receipts for audit, but never retry a single-OB presentation
+            # or let its old lock suppress a newly verified three-frame contact.
+            for key, p in list(self.state.get('presentations', {}).items()):
+                if reason := confluence_error(p.get('candidate') or {}):
+                    self.state.setdefault('retired_presentations', {})[f"{key}:{p.get('attempt', 0)}"] = {
+                        **p, 'retired_reason': reason}
+                    del self.state['presentations'][key]
+            for symbol, locks in self.state['star_locks'].items():
+                for key, lock in list(locks.items()):
+                    if lock.get('score', 0) < 3:
+                        self.state.setdefault('retired_star_locks', {}).setdefault(symbol, {})[key] = lock
+                        del locks[key]
+            for key, event in list(self.state.get('pending', {}).items()):
+                if confluence_error(event.get('candidate') or {}):
+                    del self.state['pending'][key]
         if self.state.get('delivery_mode') == RULESET:
             return
         old_reaction_mode = self.state.get('delivery_mode') == 'star-ob-reaction-v1'
@@ -188,7 +210,9 @@ class StarAlertLedger(StructureLedger):
                 del pending[key]
         for p in presentations.values():
             c = p.get('candidate') or {}
-            if c.get('symbol') == symbol and c.get('ruleset') == RULESET and (p.get('complete') or delivery_started(p)):
+            if (c.get('symbol') == symbol and c.get('ruleset') == RULESET
+                    and (not self.require_confluence or confluence_error(c) is None)
+                    and (p.get('complete') or delivery_started(p))):
                 self._remember(c, c['level'])
         for key, lock in list(locks.items()):
             parent = lock['parent']
@@ -200,8 +224,8 @@ class StarAlertLedger(StructureLedger):
             if start is not None and parent['origin'] >= start and parent['id'] not in active_ids:
                 del locks[key]
 
-        contacts = eligible_contacts(snapshot['tracks'], self.entry_only, self.require_execution)
-        selected = unique_contacts(snapshot['tracks'], self.entry_only, self.require_execution)
+        contacts = eligible_contacts(snapshot['tracks'], self.entry_only, self.require_execution, self.require_confluence)
+        selected = unique_contacts(snapshot['tracks'], self.entry_only, self.require_execution, self.require_confluence)
         disabled = set(snapshot.get('disabled_tracks', ()))
         active_locks = [lock for lock in locks.values()
                         if lock['track'] not in disabled and lock['parent']['id'] in active_ids]
@@ -246,6 +270,8 @@ class StarAlertLedger(StructureLedger):
             c = p.get('candidate') or {}
             if key in pending or p.get('complete') or c.get('symbol') != symbol or c.get('ruleset') != RULESET:
                 continue
+            if self.require_confluence and confluence_error(c):
+                continue
             if self.require_execution and is_entry(c):
                 continue
             source = 'cash' if c.get('stock_reference') else 'bitget'
@@ -280,6 +306,11 @@ class StarAlertLedger(StructureLedger):
     def dispatch_units(self, image_sender, text_sender, renderer, *, refresh=None):
         for key, event in list(self.state['pending'].items()):
             c = event['candidate']
+            p = self.state['presentations'].get(key)
+            if self.require_confluence and (confluence_error(c) or
+                    (p and confluence_error(p['candidate']))):
+                del self.state['pending'][key]
+                continue
             if (self.entry_only or (self.require_execution and is_entry(c))) and not executable(c):
                 del self.state['pending'][key]
                 continue

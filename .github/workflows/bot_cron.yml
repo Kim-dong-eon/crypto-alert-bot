@@ -72,7 +72,7 @@ jobs:
           python -m pip install -r requirements-ict.txt
 
       - name: Verify pullback alerts, delivery locks and charts
-        run: python -m unittest tests.test_ict_overlap tests.test_overlap_charts tests.test_overlap_structure tests.test_common_listings tests.test_overlap_diversification tests.test_overlap_status tests.test_structure_review tests.test_structure_alerts tests.test_overlap_entry tests.test_anchored_overlap tests.test_pullback_alerts tests.test_staircase_rules tests.test_star_alerts tests.test_star_retests tests.test_unified_alerts -q
+        run: python -m unittest tests.test_ict_overlap tests.test_overlap_charts tests.test_overlap_structure tests.test_common_listings tests.test_overlap_diversification tests.test_overlap_status tests.test_structure_review tests.test_structure_alerts tests.test_overlap_entry tests.test_anchored_overlap tests.test_pullback_alerts tests.test_staircase_rules tests.test_star_alerts tests.test_star_retests tests.test_unified_alerts tests.test_alert_confluence -q
 
       - name: Restore closed-candle cache
         id: candles

@@ -133,7 +133,11 @@ class UnifiedAlertTests(unittest.TestCase):
             self.assertTrue(all(t == now-300000 for t in ledger.state['track_touch_cursors']['BTCUSDT'].values()))
 
     def test_legacy_cash_lock_does_not_hide_three_frame_signal(self):
-        snapshot = list(replay(-1))[1][0]
+        old_snapshot, frames = list(replay(-1))[2]
+        now = old_snapshot['as_of']
+        snapshot = scan('BTCUSDT', frames, now, 64935., tracks={'short': ('4h', '1h')},
+                        formation_tracks=('short',), minute_bars=[Bar(now-60000, 64935., 64935., 64935., 64935., 1)],
+                        first_touch_cutoff=now)
         normal = copy.deepcopy(snapshot['tracks']['short']['candidates'][0])
         normal.update(level=1,score=3)
         old = copy.deepcopy(normal)
