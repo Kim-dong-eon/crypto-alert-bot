@@ -468,100 +468,54 @@ def alert_title(candidate):
     return TITLES[candidate['level']]
 
 
+def compact_warning(c):
+    """Summarize direction conflicts without repeating ATR lists or extra charts."""
+    import re
+    opposite, overlap = [], []
+    for warning in c.get('cross_track_warnings', ()):
+        label = warning.split()[0]
+        if '구조' in warning:
+            opposite.append(label)
+        elif '겹침' in warning:
+            overlap.append(re.sub(r'\s*\([^)]*\)', '', warning))
+    parts = []
+    if opposite:
+        parts.append('·'.join(dict.fromkeys(opposite)) + ' 반대 방향')
+    if overlap:
+        parts.append(' / '.join(dict.fromkeys(overlap)))
+    return '⚠ ' + ' / '.join(parts) if parts else ''
+
+
 def unit_text(candidate):
-    c = candidate
-    if c.get('stock_reference'):
-        from src.stock_departure import stock_text
-        return stock_text(c)
-    if c.get('upper_atr') is not None:
-        return compact_atr_text(c)
-    level, side = c['level'], 'LONG' if c['direction'] == 1 else 'SHORT'
-    label = f"{LABELS[c['pair'][0]]} {TRACK_LABELS[c['track']]}"
-    title = alert_title(c)
-    exchange = c.get('exchange', 'bitget').title()
-    lines = [f"[{exchange} · {c['symbol']}] {side}", f"{'★' * level} {title} · {label}"]
-    if level >= 2 or c.get('formation'):
-        evidence = c['overlap']['sources'] if is_entry(c) else c['sources']
-        names = sorted({(z['timeframe'], z['kind']) for z in evidence}, key=lambda key: (-TF_MS[key[0]], key[1]))
-        lines.append(' + '.join(f'{LABELS[tf]} {kind}' for tf, kind in names))
-        if c.get('reaction'):
-            r = c['reaction']
-            lines.append(f"{LABELS[c['refinement_tf']]} 종가 {price_text(r['price'])} · 돌파 기준 {price_text(r['level'])}")
-        elif c.get('formation'):
-            lo, hi = c['band']
-            lines.append(f'공통 구간 {price_text(lo)} ~ {price_text(hi)} · 계단은 이후 확인')
-    if is_entry(c):
-        edge = '상한' if c['direction'] == 1 else '하한'
-        lo, hi = c['band']
-        lines.append(f"진입 구간 {price_text(lo)} ~ {price_text(hi)} · {edge} {price_text(c['entry'])}")
-        lines.append(f"손절 {price_text(c['stop'])} · {LABELS[c['pair'][0]]} 목표 {price_text(c['target'])}")
-        lines.append(f"{'상위·하위 계단' if level == 3 else '하위 계단'} · 비용 반영 1:{c['rr']:.2f}")
-        if x := c.get('execution'):
-            lines.append(f"{x['notional']:,.0f} USDT 기준 · 편도 수수료 {x['fee_per_side']:.3%} · 예상 슬리피지 {x['slippage_per_side']:.3%}")
-            lines.append(f"호가 기준 예상 체결가 {price_text(x['vwap'])} · {kst(x['at'])}")
-    elif risk := c.get('observation_risk'):
-        target_kind = '고점' if c['direction'] == 1 else '저점'
-        stop_kind = '구조' if 'pivot_at' in risk else 'OB'
-        lines.append(f"{LABELS[c['refinement_tf']]} {stop_kind} 손절 {price_text(risk['stop'])} · {LABELS[c['pair'][0]]} 직전 {target_kind} {price_text(risk['target'])}")
-        if plan := risk['plan']:
-            lo, hi = plan['band']
-            lines.append(f"참고 진입 {price_text(lo)} ~ {price_text(hi)} · 비용 반영 1:{plan['rr']:.2f}")
-            if level == 1:
-                x = plan['execution']
-                lines.append(f"{x['notional']:,.0f} USDT 기준 · 편도 수수료 {x['fee_per_side']:.3%} · 예상 슬리피지 {x['slippage_per_side']:.3%}")
-        elif level == 2:
-            lines.append('공통 구간 내 비용 반영 1:3 미충족' if risk.get('costs_checked') else '비용 확인 대기 · 1:3 미확정')
-    elif level == 2:
-        lines.append('하위 구조 손절 또는 상위 목표 미확정')
-    if level != 2 and not (level == 3 and c.get('execution')):
-        lines.append(f"접촉 확인 · {kst(c['touch']['at'])}")
-    if c.get('phase') == 'stair_retest':
-        lines.append('최초 겹침 안의 진입' if c['in_initial_overlap'] else '최초 겹침 밖의 후속 OB 진입')
-    if warnings := c.get('cross_track_warnings'):
-        lines.append('⚠ ' + ' / '.join(warnings))
-    return '\n'.join(lines)
+    return compact_atr_text(candidate)
 
 
 def compact_atr_text(c):
+    """One chart and at most five short text rows for every instrument."""
     level = c['level']
     side = '롱' if c['direction'] == 1 else '숏'
     label = f"{LABELS[c['pair'][0]]} {TRACK_LABELS[c['track']]}"
+    exchange = c.get('exchange', 'bitget').title()
     lo, hi = map(price_text, c['band'])
-    lines = [f"[{c['symbol']}] {side} · {label}"]
-    title = alert_title(c)
-    if level == 1:
-        lines.append(f"★ {title} · {lo}~{hi}")
-    elif level == 2 and (reaction := c.get('reaction')):
-        lines.append(f"★★ 반응 확인 · 종가 {price_text(reaction['price'])} / 기준 {price_text(reaction['level'])}")
-    else:
-        lines.append(f"{'★' * level} {title}")
-    evidence = c['overlap']['sources'] if is_entry(c) else c['sources']
-    groups = {}
-    for z in sorted(evidence, key=lambda z: -TF_MS[z['timeframe']]):
-        groups.setdefault(z['kind'], []).append(LABELS[z['timeframe']])
-    zones = ' + '.join(f"{'·'.join(dict.fromkeys(tfs))} {kind}" for kind, tfs in groups.items())
-    matched = '/'.join(f'{n:g}' for n in c.get('matched_atrs', [c['upper_atr']]))
-    directions = sorted((float(n), d) for n, d in c.get('atr_directions', {}).items())
-    if directions and len({d for _, d in directions}) > 1:
-        checks = ' '.join(f"{n:g}{'↑' if d == 1 else '↓' if d == -1 else '—'}" for n, d in directions)
-        atr = f'ATR {checks} (신호 {matched})'
-    else:
-        atr = f"ATR {matched}" + (' 모두 충족' if len(c.get('matched_atrs', [])) == 3 else ' 충족')
-    lines.append(f'{zones} · {atr}')
+    lines = [f"[{exchange} · {c['symbol']}] {side} · {label} {'★' * level}", alert_title(c)]
     if is_entry(c):
-        lines.append(f"진입 {lo}~{hi} · 손절 {price_text(c['stop'])} · 목표 {price_text(c['target'])} · 순 1:{c['rr']:.2f}")
-    elif level == 2:
-        risk = c.get('observation_risk') or {}
+        lines.append(f"진입 {lo}~{hi} / 손절 {price_text(c['stop'])} / 목표 {price_text(c['target'])}")
+        detail = f"순손익비 1:{c['rr']:.2f}"
+        if c.get('phase') == 'stair_retest':
+            detail += ' · 최초 겹침 안' if c['in_initial_overlap'] else ' · 최초 겹침 밖 후속 OB'
+        lines.append(detail)
+    elif risk := c.get('observation_risk'):
         if plan := risk.get('plan'):
             a, b = map(price_text, plan['band'])
-            lines.append(f"참고 {a}~{b} · 손절 {price_text(risk['stop'])} · 목표 {price_text(risk['target'])} · 순 1:{plan['rr']:.2f}")
+            lines.append(f"참고 {a}~{b} / 손절 {price_text(risk['stop'])} / 목표 {price_text(risk['target'])}")
+            lines.append(f"관찰 · 순손익비 1:{plan['rr']:.2f}")
         else:
+            lines.append(f"접촉 구간 {lo}~{hi}")
             lines.append('관찰 · 1:3 미충족' if risk.get('costs_checked') else '관찰 · 1:3 미확정')
-    lines.append(kst((c.get('reaction') or c['touch'])['at']))
-    if c.get('phase') == 'stair_retest':
-        lines.append('최초 겹침 안의 진입' if c['in_initial_overlap'] else '최초 겹침 밖의 후속 OB 진입')
-    if warnings := c.get('cross_track_warnings'):
-        lines.append('⚠ ' + ' / '.join(warnings))
+    else:
+        lines.append(f"접촉 구간 {lo}~{hi}")
+    if warning := compact_warning(c):
+        lines.append(warning)
     return '\n'.join(lines)
 
 

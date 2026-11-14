@@ -85,7 +85,7 @@ class StarAlertsTests(unittest.TestCase):
             event, = pending.values()
             self.assertEqual(event['candidate']['track'], 'short')
             self.assertEqual(event['candidate']['matched_atrs'], [1.5, 2.])
-            self.assertIn('⚠ 초단기 롱 구조 (3 ATR) / 초단기 숏 구간 겹침', unit_text(event['candidate']))
+            self.assertIn('⚠ 초단기 반대 방향 / 초단기 숏 구간 겹침', unit_text(event['candidate']))
             ledger._remember(short, short['level'])
             snapshot['tracks']['short']['candidates'] = []
             self.assertFalse(ledger.observe(copy.deepcopy(snapshot)))
@@ -94,7 +94,7 @@ class StarAlertsTests(unittest.TestCase):
             snapshot['tracks']['fast']['atr_directions'] = {1.5: 1, 2.: 1, 3.: 0}
             event, = ledger.observe(copy.deepcopy(snapshot)).values()
             self.assertEqual(event['candidate']['track'], 'fast')
-            self.assertIn('⚠ 단기 숏 구조 (1.5 ATR, 2 ATR) / 단기 숏 구간 겹침', unit_text(event['candidate']))
+            self.assertIn('⚠ 단기 반대 방향 / 단기 숏 구간 겹침', unit_text(event['candidate']))
 
     def test_live_paths_all_require_the_parent_ob_formation_window(self):
         self.assertEqual(set(FORMATION_TRACKS), set(STAR_TRACKS))
@@ -171,7 +171,7 @@ class StarAlertsTests(unittest.TestCase):
                 c = event['candidate']
                 self.assertEqual((c['level'], c['direction']), (1, direction))
                 self.assertEqual([s['kind'] for s in c['sources']], ['OB'] * 3)
-                self.assertIn('계단은 이후 확인', unit_text(c))
+                self.assertIn('3중 겹침 첫 접촉', unit_text(c))
                 self.assertEqual(primary_overlap(c, c['sources'])[:2], tuple(c['band']))
                 self.assertGreaterEqual(len(c['upper']['points']), 2)
                 self.assertGreaterEqual(len(c['lower_wave']['points']), 2)
@@ -253,7 +253,7 @@ class StarAlertsTests(unittest.TestCase):
                     self.assertFalse(StarAlertLedger(path).observe(snapshot))
                 self.assertEqual(len(sent), 3)
                 self.assertIn('★★★', sent[-1])
-                self.assertIn('LONG' if direction == 1 else 'SHORT', sent[-1])
+                self.assertIn('롱' if direction == 1 else '숏', sent[-1])
                 self.assertEqual(len(list(Path(tmp).glob('chart_star3.png'))), 1)
 
     def test_same_price_highest_grade_then_higher_timeframe_wins(self):
@@ -308,7 +308,7 @@ class StarAlertsTests(unittest.TestCase):
                        execution_quote=lambda: quote, **options)
         c, = unique_contacts(checked['tracks'], entry_only=True)
         self.assertEqual(c['touch']['evidence'], 'live_orderbook_mid')
-        self.assertIn('예상 슬리피지', unit_text(c))
+        self.assertIn('순손익비', unit_text(c))
         with tempfile.TemporaryDirectory() as tmp:
             ledger = StarAlertLedger(Path(tmp) / 'state.json', entry_only=True)
             self.assertEqual(len(ledger.observe(checked)), 1)

@@ -131,7 +131,13 @@ class RetestTests(unittest.TestCase):
                         self.assertIn('OB 재접촉', unit_text(c))
                         self.assertNotIn('종가 돌파', unit_text(c))
                         self.assertGreaterEqual(c['rr'], 3)
+                        c['cross_track_warnings'] = ['중기 롱 구조 (2 ATR)', '장기 롱 구조 (2 ATR, 3 ATR)']
+                        c['cross_track_charts'] = [{'track': 'medium', 'tf': '1d', 'wave': []}]
+                        self.assertLessEqual(len(unit_text(c).splitlines()), 5)
+                        self.assertIn('⚠ 중기·장기 반대 방향', unit_text(c))
+                        self.assertNotIn('ATR', unit_text(c))
                         rendered = render({**result, 'illustrative': True}, event, frames, Path(tmp) / f'g{expected}')
+                        self.assertEqual(len(rendered['images']), 1)
                         self.assertTrue(Path(rendered['images'][0]).exists())
                     ledger._remember(c, expected)
                     if expected == 2:

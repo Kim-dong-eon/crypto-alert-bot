@@ -181,7 +181,4 @@ def stock_contacts(snapshot, ticker, frames, zones, minutes, since, cutoff, *,
 
 def stock_text(candidate):
     from src.star_alerts import compact_atr_text
-    text = compact_atr_text(candidate)
-    age = (candidate.get('price_basis') or {}).get('quote_age_ms', 0) // MINUTE
-    suffix = f' · 환산 기준 {age}분 전 체결' if age else ''
-    return text + f"\n원주식 Nasdaq {candidate['stock_reference']} · 하위/접촉 Bitget · 가격 USDT 환산" + suffix
+    return compact_atr_text(candidate)

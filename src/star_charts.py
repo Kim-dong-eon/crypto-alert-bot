@@ -317,6 +317,11 @@ def render_cross_track(event, comparison, frames, prefix):
         plt.close(fig)
 
 
+def chart_atr(event):
+    values = event.get('matched_atrs') or [event.get('stock_atr', event.get('upper_atr'))]
+    return '/'.join(f'{float(n):g}' for n in values if n is not None) + ' ATR'
+
+
 def render(snapshot, alert, frames, prefix):
     from matplotlib.patches import Patch
     from matplotlib.lines import Line2D
@@ -357,11 +362,11 @@ def render(snapshot, alert, frames, prefix):
             else:
                 panel = upper_label if tf == top else '계단 · OB 재접촉' if is_entry(event) else '구조 확대 · 접촉 확인'
             if cash_panel:
-                panel = f"원주식 {event['stock_reference']} 전체 구조 · {atr_label(event['stock_atr'])}"
+                panel = f"원주식 {event['stock_reference']} 전체 구조 · {chart_atr(event)}"
             elif event.get('stock_reference') and tf == final:
                 panel = 'Bitget 접촉 확대'
             elif tf == top and event.get('upper_atr') is not None:
-                panel += ' · ' + atr_label(event['upper_atr'])
+                panel += ' · ' + chart_atr(event)
             ax.set_title(f'{LABELS[tf]} {panel}', color=WHITE, loc='left', fontsize=13, pad=29)
         if reaction:
             message = (f"{LABELS[final]}봉 {kst(reaction['at'])} 마감 · 종가 {fmt(reaction['price'])}"
@@ -395,6 +400,12 @@ def render(snapshot, alert, frames, prefix):
             elif level == 2:
                 detail += '     ·     ' + ('비용 반영 1:3 미충족' if risk.get('costs_checked') else '비용 확인 대기 · 1:3 미확정')
         fig.text(.035, .064, detail, color=MUTED, size=11)
+        if event.get('stock_reference'):
+            age = (event.get('price_basis') or {}).get('quote_age_ms', 0) // 60000
+            source = '상위 Nasdaq · 하위/접촉 Bitget · USDT 환산'
+            if age:
+                source += f' · 환산 기준 {age}분 전 체결'
+            fig.text(.035, .025, source, color=MUTED, size=9)
         prefix = Path(prefix)
         path = prefix.with_name(f'{prefix.name}_star{level}.png')
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -402,7 +413,4 @@ def render(snapshot, alert, frames, prefix):
     finally:
         plt.close(fig)
     images = [str(path.resolve())]
-    for comparison in event.get('cross_track_charts', ()):
-        if image := render_cross_track(event, comparison, frames, prefix):
-            images.append(image)
     return {'images': images, 'image_captions': [''] * len(images), 'text_after_images': unit_text(event)}
