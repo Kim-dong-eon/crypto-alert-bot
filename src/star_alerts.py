@@ -107,7 +107,7 @@ def observation_reference(choice, lower_bars, points, direction, *, lower_points
                    and p['confirmed_at'] <= known_at), None)
     if target is None:
         return None
-    if choice.get('level') != 2:
+    if choice.get('level') != 2 and choice.get('phase') != 'first_contact':
         origin = next((bar for bar in lower_bars if bar.timestamp == source['origin']), None)
         if origin is None:
             return None
@@ -166,8 +166,8 @@ def overlap_contacts(parent, area, lower_obs, zones, pair, arm, price, now, minu
     return contacts
 
 
-def formation_contacts(parent, zones, path, direction_at, price, now, minutes, since, *, confirmed_only=False, middle_fvg=False):
-    """Both child OBs must have formed fully inside this parent OB's original candles."""
+def formation_children(parent, zones, path, *, middle_fvg=False):
+    """Valid same-direction child zones inside the parent's formation interval."""
     _, middle, final = path
     children = defaultdict(list)
     for ob in zones:
@@ -177,6 +177,13 @@ def formation_contacts(parent, zones, path, direction_at, price, now, minutes, s
                 and parent.origin <= ob.origin < ob.created <= parent.created
                 and max(parent.low, ob.low) < min(parent.high, ob.high)):
             children[ob.timeframe].append(ob)
+    return children
+
+
+def formation_contacts(parent, zones, path, direction_at, price, now, minutes, since, *, confirmed_only=False, middle_fvg=False):
+    """Both child OBs must have formed fully inside this parent OB's original candles."""
+    _, middle, final = path
+    children = formation_children(parent, zones, path, middle_fvg=middle_fvg)
     known = max(parent.created, direction_at)
     contacts = []
     for middle_ob, final_ob in product(children[middle], children[final]):
@@ -429,16 +436,24 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                         best['departure_pivot'] = pivot
                     if upper_atr:
                         best['upper_atr'] = multiplier
-                    if best['level'] < 3 and best.get('phase') not in ('first_contact', 'stair_retest'):
+                    if anchored:
+                        children = formation_children(parent, zones, state['path'], middle_fvg=middle_fvg)
+                        best['display_zones'] = [asdict(z) for values in children.values() for z in values]
+                    if best['level'] < 3 and best.get('phase') != 'stair_retest':
                         target_points = points
                         reference = observation_reference(best, lower_bars, target_points, direction,
                                                           lower_points=lower_points, tick_size=tick_size,
                                                           minute_bars=closed_minutes, price=price)
                         if reference:
-                            quote = execution_quote() if execution_quote else None
+                            try:
+                                quote = execution_quote() if execution_quote else None
+                            except Exception:
+                                quote = None
                             plan = entry_plan(*best['band'], reference['stop'], reference['target'], direction,
-                                              quote, tick_size, require_touch=False)
+                                              quote, tick_size, require_touch=False) if quote and tick_size else None
                             best['observation_risk'] = {**reference, 'plan': plan, 'costs_checked': bool(quote and tick_size)}
+                        else:
+                            best['risk_unavailable'] = '구조 손절·상위 목표 미확정'
                     found.append({**best, 'symbol': symbol, 'exchange': 'bitget', 'track': track, 'path': state['path'],
                                   'pair': state['pair'], 'refinement_tf': final, 'direction': direction, 'price': price,
                                   'now': now, 'id': hashlib.sha256(identity.encode()).hexdigest()[:24],
@@ -525,6 +540,8 @@ def compact_atr_text(c):
             lines.append('관찰 · 1:3 미충족' if risk.get('costs_checked') else '관찰 · 1:3 미확정')
     else:
         lines.append(f"접촉 구간 {lo}~{hi}")
+        if c.get('risk_unavailable'):
+            lines.append('1:3 미확정 · ' + c['risk_unavailable'])
     if warning := compact_warning(c):
         lines.append(warning)
     return '\n'.join(lines)

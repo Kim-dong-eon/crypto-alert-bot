@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 from src.ict_engine import Bar
 from src.star_alerts import scan, unit_text, contact_status
-from src.star_charts import alert_marker, draw_panel, window
+from src.star_charts import alert_marker, draw_panel, window, primary_overlap
 from tests.test_star_alerts import replay
 
 
@@ -22,6 +22,21 @@ def example():
 
 
 class PresentationTests(unittest.TestCase):
+    def test_extra_boxes_do_not_expand_trigger_hatching(self):
+        _, frames, c = example()
+        original = primary_overlap(c, c['sources'])[:2]
+        extra = dict(c['sources'][-1], id='extra', low=c['parent']['low'], high=c['parent']['high'])
+        c['display_zones'] = [*c['sources'][1:], extra]
+        fig, ax = plt.subplots()
+        try:
+            tf = c['path'][-1]
+            draw_panel(ax, tf, window(frames, tf, c, c['now']), c)
+            core, = [p for p in ax.patches if p.get_hatch()]
+            self.assertEqual((core.get_y(), core.get_y() + core.get_height()), original)
+            self.assertTrue(any(p.get_linestyle() == ':' for p in ax.patches))
+        finally:
+            plt.close(fig)
+
     def test_current_location_does_not_reuse_historic_touch_price(self):
         _, _, c = example()
         low, high = c['band']

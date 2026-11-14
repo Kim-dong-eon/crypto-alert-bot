@@ -63,6 +63,12 @@ def primary_overlap(event, zones):
     return None
 
 
+def context_start(event):
+    origin = event['parent']['origin']
+    previous = [p['timestamp'] for p in event['upper'].get('points', []) if p['timestamp'] < origin]
+    return previous[-1] if previous else min(event['upper']['chart_start'], origin)
+
+
 def window(frames, tf, event, current_at):
     reaction = event.get('reaction')
     cutoff = reaction['at'] if reaction else event['now']
@@ -70,7 +76,7 @@ def window(frames, tf, event, current_at):
     bars = [b for b in frames[tf] if b.timestamp + TF_MS[tf] <= cutoff
             or (show_live and b.timestamp <= cutoff)]
     if tf == event['pair'][0]:
-        start = min(event['upper']['chart_start'], event['parent']['origin']) - 4 * TF_MS[tf]
+        start = context_start(event) - 4 * TF_MS[tf]
     elif 'lower' in event:
         start = event['lower']['chart_start'] - 5 * TF_MS[tf]
     elif wave := event.get('lower_wave'):
@@ -102,6 +108,8 @@ def draw_panel(ax, tf, candles, event):
     ax.yaxis.tick_right()
     zones = event['overlap']['sources'] if is_entry(event) else event['sources']
     core = primary_overlap(event, zones)
+    selected_ids = {z['id'] for z in zones}
+    extras = [z for z in event.get('display_zones', []) if z['id'] not in selected_ids]
     legend = {}
     overlap = event.get('overlap', event)
     formation = ({'start':event['parent']['origin'], 'end':event['parent']['created']}
@@ -114,15 +122,19 @@ def draw_panel(ax, tf, candles, event):
     prices = [value for b in candles for value in (b.low, b.high)]
     prices.extend(event['band'])
     boxes = []
-    for z in zones:
+    for z in [*zones, *extras]:
         color = '#8bece6' if z['timeframe'] == middle and z['kind'] == 'FVG' else colors[z['timeframe']]
         left = max(-.6, position(z['created']))
         ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], color=color, alpha=.045, zorder=1))
-        ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], fill=False, edgecolor=color, linewidth=1, zorder=2))
-        boxes.append((left, z['low'], z['high']))
+        selected = z['id'] in selected_ids
+        ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], fill=False, edgecolor=color,
+                               linewidth=1 if selected else .8, linestyle='-' if selected else ':', zorder=2))
+        if selected:
+            boxes.append((left, z['low'], z['high']))
         source = (event.get('source_labels') or {}).get(z['timeframe'], '')
         name = f"{source + ' ' if source else ''}{LABELS[z['timeframe']]} {z['kind']}"
-        legend[name] = Patch(facecolor=color, alpha=.62, label=name)
+        count = sum(x['timeframe'] == z['timeframe'] and x['kind'] == z['kind'] for x in [*zones, *extras])
+        legend[name] = Patch(facecolor=color, alpha=.62, label=name + (f' {count}개' if count > 1 else ''))
         if is_top:
             prices.extend([z['low'], z['high']])
 
@@ -206,7 +218,7 @@ def draw_panel(ax, tf, candles, event):
             ax.text(.98, event['entry'], f"진입 {bound} {fmt(event['entry'])}", transform=ax.get_yaxis_transform(),
                     ha='right', va='bottom', color=GOLD, fontsize=10, zorder=8,
                     bbox={'facecolor': '#152130', 'edgecolor': 'none', 'pad': 2})
-    if level == 2 and not is_top and risk:
+    if not is_top and risk:
         stop = risk['stop']
         ax.axhline(stop, color='#ff9da9', linestyle=':', linewidth=1.3, zorder=4)
         stop_kind = '구조' if 'pivot_at' in risk else 'OB'
@@ -372,6 +384,8 @@ def render(snapshot, alert, frames, prefix):
         for ax, tf in zip(axes, (top, final)):
             cash_panel = tf == top and event.get('stock_bars')
             candles = [Bar(**b) for b in cash_panel] if cash_panel else window(frames, tf, event, snapshot['as_of'])
+            if cash_panel:
+                candles = [b for b in candles if b.timestamp >= context_start(event) - 4 * TF_MS[tf]]
             draw_panel(ax, tf, candles, event)
             upper_label = '계단 · 상위 OB와 목표' if event['upper']['target'] is not None else '상위 구조 · OB 접촉'
             if reaction:
@@ -415,8 +429,11 @@ def render(snapshot, alert, frames, prefix):
                 stop_kind = '구조' if 'pivot_at' in risk else 'OB'
                 detail = (f"참고 진입 {fmt(lo)} ~ {fmt(hi)}     {stop_kind} 손절 {fmt(risk['stop'])}"
                           f"     상위 직전 목표 {fmt(risk['target'])}     비용 반영 1:{plan['rr']:.2f}")
-            elif level == 2:
-                detail += '     ·     ' + ('비용 반영 1:3 미충족' if risk.get('costs_checked') else '비용 확인 대기 · 1:3 미확정')
+            else:
+                detail += f" / 구조 손절 {fmt(risk['stop'])} / 상위 목표 {fmt(risk['target'])}"
+                detail += ' · ' + ('비용 반영 1:3 미충족' if risk.get('costs_checked') else '비용 확인 대기 · 1:3 미확정')
+        elif event.get('risk_unavailable'):
+            detail += ' · 1:3 미확정 · ' + event['risk_unavailable']
         fig.text(.035, .064, detail, color=MUTED, size=11)
         if event.get('stock_reference'):
             age = (event.get('price_basis') or {}).get('quote_age_ms', 0) // 60000
