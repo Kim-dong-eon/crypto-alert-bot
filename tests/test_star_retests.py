@@ -155,8 +155,9 @@ class RetestTests(unittest.TestCase):
                 self.assertEqual(fresh.dispatch_units(fail, fail, fail, refresh=lambda _: None)['sent'], 0)
 
     def test_old_reaction_lock_does_not_block_new_entry_or_resend_first_contact(self):
-        snap, _ = list(replay(-1))[2]
-        c = snap['tracks']['short']['candidates'][0]
+        from tests.test_alert_confluence import contact
+        c = contact('short', -1, False)
+        c.update(symbol='BTCUSDT', level=2, phase='reaction')
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / 'state.json'
             ledger = StarAlertLedger(path); ledger._remember(c, 2)

@@ -72,7 +72,7 @@ class StarAlertsTests(unittest.TestCase):
         for row in available:
             self.assertEqual(set(row['atr_directions']), {1.5, 2., 3.})
 
-    def test_atr_same_direction_overlap_keeps_higher_timeframe(self):
+    def test_atr_same_direction_overlap_keeps_both_timeframes(self):
         # Replay the obsolete policy explicitly; live defaults reject these legacy fixtures.
         snapshot = list(replay(-1))[1][0]
         short = snapshot['tracks']['short']['candidates'][0]
@@ -84,13 +84,15 @@ class StarAlertsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             ledger = StarAlertLedger(Path(tmp) / 'state.json', require_confluence=False)
             pending = ledger.observe(copy.deepcopy(snapshot))
-            event, = pending.values()
+            self.assertEqual({e['candidate']['track'] for e in pending.values()}, {'short', 'fast'})
+            event = next(e for e in pending.values() if e['candidate']['track'] == 'short')
             self.assertEqual(event['candidate']['track'], 'short')
             self.assertEqual(event['candidate']['matched_atrs'], [1.5, 2.])
             self.assertIn('⚠ 초단기 반대 방향 / 초단기 숏 구간 겹침', unit_text(event['candidate']))
             ledger._remember(short, short['level'])
             snapshot['tracks']['short']['candidates'] = []
-            self.assertFalse(ledger.observe(copy.deepcopy(snapshot)))
+            remaining, = ledger.observe(copy.deepcopy(snapshot)).values()
+            self.assertEqual(remaining['candidate']['track'], 'fast')
 
             fast['direction'] = 1
             snapshot['tracks']['fast']['atr_directions'] = {1.5: 1, 2.: 1, 3.: 0}
@@ -259,15 +261,15 @@ class StarAlertsTests(unittest.TestCase):
                 self.assertIn('롱' if direction == 1 else '숏', sent[-1])
                 self.assertEqual(len(list(Path(tmp).glob('chart_star3.png'))), 1)
 
-    def test_same_price_highest_grade_then_higher_timeframe_wins(self):
+    def test_same_price_deduplicates_only_within_each_timeframe(self):
         # Replay the obsolete policy explicitly; live defaults reject these legacy fixtures.
         base = list(replay(-1))[1][0]['tracks']['short']['candidates'][0]
         higher = {**base, 'id': 'higher', 'track': 'medium', 'pair': ['1d', '4h']}
         same_scope = {**base, 'id': 'other-lens', 'lenses': ['broad']}
         tracks = {'short': {'candidates': [base, same_scope]}, 'medium': {'candidates': [higher]}}
-        self.assertEqual(unique_contacts(tracks, require_confluence=False), [higher])
+        self.assertEqual(unique_contacts(tracks, require_confluence=False), [higher, base])
         base['level'] = 3
-        self.assertEqual(unique_contacts(tracks, require_confluence=False), [base])
+        self.assertEqual(unique_contacts(tracks, require_confluence=False), [base, higher])
 
     def test_one_hour_and_four_hour_overlap_deliver_independently(self):
         # Replay the obsolete policy explicitly; live defaults reject these legacy fixtures.
@@ -414,18 +416,18 @@ class StarAlertsTests(unittest.TestCase):
         # A later retest can have a band entirely separate from its confluence.
         high = {**high, 'low': top + 10, 'high': top + 20}
         high_snapshot['tracks']['short']['candidates'] = [high]
-        weaker = {**high, 'track': 'medium', 'pair': ['1d', '4h'], 'level': 2,
+        weaker = {**high, 'track': 'short', 'pair': ['4h', '1h'], 'level': 2,
                   'low': low, 'high': top}
         other_side = {**weaker, 'direction': -weaker['direction']}
         self.assertEqual(unique_contacts({'short': {'candidates': [high]},
-                                         'medium': {'candidates': [weaker, other_side]}}, require_confluence=False), [high, other_side])
+                                         'short-extra': {'candidates': [weaker, other_side]}}, require_confluence=False), [high, other_side])
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / 'state.json'
             ledger = StarAlertLedger(path, require_confluence=False)
             self.assertEqual(len(ledger.observe(high_snapshot)), 1)
             ledger.dispatch_units(lambda _: True, lambda _: True, lambda _: {'images': ['mock.png']})
             later = {**high_snapshot, 'as_of': high_snapshot['as_of'] + 300000,
-                     'tracks': {'medium': {'candidates': [weaker], 'status': 'watching'}}}
+                     'tracks': {'short': {'candidates': [weaker], 'status': 'watching'}}}
             ledger = StarAlertLedger(path, force_resend=True, require_confluence=False)
             self.assertFalse(ledger.observe(later))
             self.assertEqual(ledger.state['dedup_audits']['BTCUSDT']['suppressed'], 1)
@@ -440,7 +442,7 @@ class StarAlertsTests(unittest.TestCase):
             path.write_text(json.dumps({'version': VERSION, 'tracks': {}, 'delivered': {'old': receipt}, 'pending': {},
                                         'locks': {'BTCUSDT|short': [{'latest': c, 'sent': True}]*2}}), encoding='utf-8')
             ledger = StarAlertLedger(path)
-            self.assertEqual(len(ledger.state['star_locks']['BTCUSDT']), 1)
+            self.assertFalse(ledger.state['star_locks'].get('BTCUSDT'))
             self.assertEqual(ledger.state['delivered']['old'], receipt)
             self.assertFalse(ledger.observe(snapshot))
 

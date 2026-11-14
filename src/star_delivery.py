@@ -28,10 +28,11 @@ def bands_overlap(a, b):
 
 
 def intersects(a, b):
-    if b.get('stock_reference') and b.get('score', 1) < 3 and a.get('score', 3) >= 3:
+    # Timeframe tracks are independent. Cross-track overlap is informational,
+    # never a reason to suppress a valid alert (including ATR-based signals).
+    if a.get('track') != b.get('track'):
         return False
-    if ({a.get('track'), b.get('track')} == {'fast', 'short'}
-            and a.get('upper_atr') is None and b.get('upper_atr') is None):
+    if b.get('stock_reference') and b.get('score', 1) < 3 and a.get('score', 3) >= 3:
         return False
     return a['direction'] == b['direction'] and bands_overlap(a, b)
 
@@ -121,11 +122,7 @@ class StarAlertLedger(StructureLedger):
                     self.state.setdefault('retired_presentations', {})[f"{key}:{p.get('attempt', 0)}"] = {
                         **p, 'retired_reason': reason}
                     del self.state['presentations'][key]
-            for symbol, locks in self.state['star_locks'].items():
-                for key, lock in list(locks.items()):
-                    if lock.get('score', 0) < 3:
-                        self.state.setdefault('retired_star_locks', {}).setdefault(symbol, {})[key] = lock
-                        del locks[key]
+            self._validate_locks()
             for key, event in list(self.state.get('pending', {}).items()):
                 if confluence_error(event.get('candidate') or {}):
                     del self.state['pending'][key]
@@ -140,6 +137,8 @@ class StarAlertLedger(StructureLedger):
                     if lock['level'] == 2:
                         lock['legacy_level'] = 2
                         lock['level'] = 1
+                        if lock.get('confluence_proof'):
+                            lock['confluence_proof']['level'] = 1
         for old_locks in self.state.get('locks', {}).values():
             for lock in old_locks:
                 c = lock.get('latest') or {}
@@ -160,6 +159,8 @@ class StarAlertLedger(StructureLedger):
         self.state['strategy'] = POLICY
 
     def _remember(self, c, level):
+        if self.require_confluence and confluence_error(c):
+            return
         locks = self.state['star_locks'].setdefault(c['symbol'], {})
         key = physical_id(c)
         old = locks.get(key)
@@ -173,6 +174,49 @@ class StarAlertLedger(StructureLedger):
                 locks[key]['phase'] = c['phase']
         if locks[key]['level'] == level and is_entry(c) and c.get('overlap'):
             locks[key].setdefault('overlap', {'band': c['overlap']['band']})
+        if locks[key]['level'] == level and self.require_confluence:
+            locks[key]['confluence_proof'] = {**self._proof(c), 'level': level}
+
+    @staticmethod
+    def _proof(c):
+        # Keep only the evidence needed to validate the lock, not chart candles.
+        keys = ('symbol', 'track', 'path', 'direction', 'parent', 'formation', 'sources',
+                'band', 'touch', 'overlap', 'level', 'signal_version', 'stock_reference')
+        return copy.deepcopy({k: c[k] for k in keys if k in c})
+
+    @staticmethod
+    def _matches_lock(c, symbol, key, lock):
+        return (confluence_error(c) is None and c.get('symbol') == symbol
+                and physical_id(c) == key and c.get('track') == lock.get('track')
+                and c.get('direction') == lock.get('direction')
+                and c.get('parent') == lock.get('parent')
+                and list(c.get('band', ())) == [lock.get('low'), lock.get('high')]
+                and c.get('level') == lock.get('level'))
+
+    def _validate_locks(self):
+        # Recover old compact locks only from a matching acknowledged/ambiguous
+        # delivery. A score of 3 by itself is not proof of three-frame contact.
+        receipts = {}
+        reset_at = self.state.get('alert_reset_at', 0)
+        for group in ('presentations', 'retired_presentations'):
+            for p in self.state.get(group, {}).values():
+                c = p.get('candidate') or {}
+                if (c.get('symbol') and p.get('attempt', 0) >= reset_at and (p.get('complete') or delivery_started(p))
+                        and confluence_error(c) is None):
+                    receipts.setdefault((c['symbol'], physical_id(c)), []).append(c)
+        for symbol, locks in self.state['star_locks'].items():
+            for key, lock in list(locks.items()):
+                proof = lock.get('confluence_proof') or {}
+                if self._matches_lock(proof, symbol, key, lock):
+                    continue
+                recovered = next((c for c in receipts.get((symbol, key), ())
+                                  if self._matches_lock(c, symbol, key, lock)), None)
+                if recovered:
+                    lock['confluence_proof'] = self._proof(recovered)
+                else:
+                    self.state.setdefault('retired_star_locks', {}).setdefault(symbol, {})[key] = {
+                        **lock, 'retired_reason': 'unverified_confluence_lock'}
+                    del locks[key]
 
     def unlock(self, symbol, track):
         locks = self.state['star_locks'].get(symbol, {})

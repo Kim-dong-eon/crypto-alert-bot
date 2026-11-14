@@ -490,6 +490,16 @@ def unit_text(candidate):
     return compact_atr_text(candidate)
 
 
+def contact_status(c):
+    """Snapshot location, never substitute the old touch price for current price."""
+    import math
+    price = (c.get('execution') or {}).get('mid') if is_entry(c) else c.get('price')
+    if price is None or not math.isfinite(price):
+        return '현재 위치 미확인'
+    low, high = c['band']
+    return '검사 시 구간 안' if low <= price <= high else '접촉 후 이탈'
+
+
 def compact_atr_text(c):
     """One chart and at most five short text rows for every instrument."""
     level = c['level']
@@ -497,7 +507,8 @@ def compact_atr_text(c):
     label = f"{LABELS[c['pair'][0]]} {TRACK_LABELS[c['track']]}"
     exchange = c.get('exchange', 'bitget').title()
     lo, hi = map(price_text, c['band'])
-    lines = [f"[{exchange} · {c['symbol']}] {side} · {label} {'★' * level}", alert_title(c)]
+    lines = [f"[{exchange} · {c['symbol']}] {side} · {label} {'★' * level}",
+             alert_title(c) + ' · ' + contact_status(c)]
     if is_entry(c):
         lines.append(f"진입 {lo}~{hi} / 손절 {price_text(c['stop'])} / 목표 {price_text(c['target'])}")
         detail = f"순손익비 1:{c['rr']:.2f}"

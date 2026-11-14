@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from src.ict_engine import Bar, TF_MS, frame_open
 from src.ict_overlap import LABELS, kst
 from src.overlap_charts import configure_font
-from src.star_alerts import alert_title, atr_label, price_text as fmt, unit_text, is_entry
+from src.star_alerts import alert_title, atr_label, price_text as fmt, unit_text, is_entry, contact_status
 from config.overlap_settings import TRACK_LABELS
 
 WHITE = '#edf3fb'
@@ -15,6 +15,19 @@ MUTED = '#abb9ca'
 GOLD = '#ffd270'
 DENSITY = ('#3b68bc', '#274393', '#1c2e72')
 REFERENCE = '#dfb9fb'
+
+
+def alert_marker(event):
+    """Both panels show the same triggering observation and the same price."""
+    low, high = event['band']
+    touch = event['touch']
+    stamp = touch.get('bar_open', touch['at'] - 1)
+    price = (touch['observed_price'] if 'observed_price' in touch
+             else (max(low, touch['observed_low']) + min(high, touch['observed_high'])) / 2)
+    if not low <= price <= high:
+        raise ValueError('Alert marker outside its trigger band')
+    label = '이번 알림 · OB 재접촉' if is_entry(event) else '이번 알림 · 3중 접촉'
+    return stamp, price, label
 
 
 def overlap_cells(boxes, edge):
@@ -222,23 +235,28 @@ def draw_panel(ax, tf, candles, event):
                     color=pivot_color, fontsize=10, zorder=10, arrowprops={'arrowstyle': '-', 'color': pivot_color},
                     bbox={'facecolor': '#152130', 'edgecolor': 'none', 'pad': 2})
 
-    lo, hi = (event['parent']['low'], event['parent']['high']) if is_top else event['band']
-    if is_top:
-        stamp = event['arm'] - 1
-        price = event['arm_price']
-    else:
-        touch = event['touch']
-        stamp = touch.get('bar_open', touch['at'] - 1)
-        price = touch['observed_price'] if 'observed_price' in touch else (max(lo, touch['observed_low']) + min(hi, touch['observed_high'])) / 2
-    assert lo <= price <= hi
-    px = position(frame_open(stamp, tf))
-    if not cash_panel and -.6 <= px < edge:
+    stamp, price, label = alert_marker(event)
+    # The cash panel contains only closed stock candles. A later Bitget touch
+    # is placed in the right margin and explicitly identified as exchange data.
+    px = (len(candles) + .5 if stamp > candles[-1].timestamp else position(stamp)) if cash_panel else position(frame_open(stamp, tf))
+    if cash_panel:
+        label = label.replace('이번 알림', '거래소 알림')
+    if -.6 <= px < edge:
         ax.scatter([px], [price], marker='D', color=GOLD, s=29, zorder=9)
-        label = f'{LABELS[top]} OB 첫 접촉' if is_top else '접촉 확인' if not is_entry(event) else f'{LABELS[final]} OB 재접촉'
         offset = (-17, -27) if is_entry(event) and not is_top else (-15, 22)
         ax.annotate(label, (px, price), xytext=offset, textcoords='offset points', ha='right',
                     color=GOLD, fontsize=10, zorder=10, arrowprops={'arrowstyle': '-', 'color': GOLD},
                     bbox={'facecolor': '#152130', 'edgecolor': 'none', 'pad': 3})
+        prices.append(price)
+    # Parent-only contact is supporting context, not the alert trigger.
+    if is_top and not cash_panel and event['arm'] != event['touch']['at']:
+        arm_x = position(frame_open(event['arm'] - 1, tf))
+        if -.6 <= arm_x < edge:
+            ax.scatter([arm_x], [event['arm_price']], marker='o', facecolors='none',
+                       edgecolors=MUTED, s=24, linewidths=.8, zorder=8)
+            ax.annotate('상위 OB 접촉 · 참고', (arm_x, event['arm_price']),
+                        xytext=(8, -22), textcoords='offset points', color=MUTED, fontsize=8,
+                        arrowprops={'arrowstyle': '-', 'color': MUTED}, zorder=8)
     lo, hi = min(prices), max(prices)
     pad = max((hi - lo) * .16, abs(candles[-1].close) * .0005)
     ax.set_ylim(max(0, lo - pad), hi + pad)
@@ -340,6 +358,7 @@ def render(snapshot, alert, frames, prefix):
     exchange = event.get('exchange', 'bitget').title()
     fig.text(.036, .868, f"{exchange} {event['symbol']}  ·  {TRACK_LABELS[event['track']]} {side}  ·  {kst(now)}",
              color=MUTED, size=12)
+    fig.text(.94, .813, contact_status(event), color=GOLD, size=11, ha='right')
     keys = ([Line2D([], [], color='#78ebff', linewidth=2, label='확정 파동'),
              Line2D([], [], color=GOLD, linestyle='--', label='미확정 파동' if reaction else '진행 파동')]
             if level == 2 or is_entry(event) or event.get('formation') or event.get('stock_bars') else [Patch(facecolor=color, label=label) for color, label in zip(DENSITY, ('3개 겹침', '4개 겹침', '5개 이상'))])

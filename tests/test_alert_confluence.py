@@ -5,6 +5,7 @@ from pathlib import Path
 
 from src.alert_confluence import PATHS, confluence_error
 from src.star_delivery import StarAlertLedger, unique_contacts
+from src.pullback_delivery import physical_id
 
 
 def contact(track='long', direction=1, cash=True):
@@ -98,9 +99,48 @@ class ConfluenceTests(unittest.TestCase):
             ledger = StarAlertLedger(path)
             ledger.state['presentations']['old'] = {'candidate':c,'attempt':123,'complete':True,
                                                    'receipt':{'message_ids':[42]}}
-            ledger.state['star_locks']['TESTUSDT'] = {'old':{'score':1},'valid':{'score':3}}
+            ledger._remember(contact(), 1)
+            ledger.state['star_locks']['TESTUSDT'].update(old={'score':1},unproven={'score':3})
             ledger.save()
             restarted = StarAlertLedger(path)
             self.assertNotIn('old',restarted.state['presentations'])
             self.assertEqual(restarted.state['retired_presentations']['old:123']['receipt']['message_ids'],[42])
-            self.assertEqual(list(restarted.state['star_locks']['TESTUSDT']),['valid'])
+            self.assertEqual(list(restarted.state['star_locks']['TESTUSDT']),[physical_id(contact())])
+
+    def test_lock_recovers_evidence_from_matching_receipt_without_resetting_dedup(self):
+        c = contact()
+        key = physical_id(c)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp)/'state.json'
+            ledger = StarAlertLedger(path)
+            ledger._remember(c, 1)
+            del ledger.state['star_locks']['TESTUSDT'][key]['confluence_proof']
+            ledger.state['presentations']['sent'] = {'candidate':c, 'attempt':200,'complete':True}
+            ledger.save()
+            resumed = StarAlertLedger(path)
+            self.assertIsNone(confluence_error(resumed.state['star_locks']['TESTUSDT'][key]['confluence_proof']))
+            self.assertIn('sent', resumed.state['presentations'])
+
+    def test_forged_score_or_mismatched_lock_cannot_suppress_new_contact(self):
+        c = contact()
+        key = physical_id(c)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp)/'state.json'
+            ledger = StarAlertLedger(path)
+            ledger._remember(c,1)
+            ledger.state['star_locks']['TESTUSDT'][key]['low'] = 1
+            ledger.save()
+            resumed = StarAlertLedger(path)
+            self.assertFalse(resumed.state['star_locks']['TESTUSDT'])
+            self.assertEqual(resumed.state['retired_star_locks']['TESTUSDT'][key]['retired_reason'],
+                             'unverified_confluence_lock')
+
+    def test_all_tracks_survive_same_direction_same_price_with_atr(self):
+        tracks = {}
+        for track in PATHS:
+            c = contact(track)
+            c.update(upper_atr=1.5)
+            tracks[track] = {'candidates':[c,{**c,'upper_atr':2.},{**c,'upper_atr':3.}]}
+        selected = unique_contacts(tracks)
+        self.assertEqual({c['track'] for c in selected},set(PATHS))
+        self.assertEqual(len(selected),4)
