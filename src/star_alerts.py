@@ -205,6 +205,62 @@ def formation_contacts(parent, zones, path, direction_at, price, now, minutes, s
     return contacts
 
 
+def formation_map(parent, zones, path, trigger_band, *, middle_fvg=False, assess=None):
+    """All valid triple bands, independent of contact. Never create alert choices here.
+
+    Only identical intersections are deduplicated. Overlapping bands share a
+    chart number but retain their own sources, entry ranges and risk references.
+    """
+    _, middle, final = path
+    children = formation_children(parent, zones, path, middle_fvg=middle_fvg)
+    unique = {}
+    for mid, child in product(children[middle], children[final]):
+        sources = [asdict(z) for z in (parent, mid, child)]
+        low, high = max(z['low'] for z in sources), min(z['high'] for z in sources)
+        if low >= high:
+            continue
+        area = unique.setdefault((low, high), {'band': [low, high], 'alternatives': []})
+        area['alternatives'].append({'sources': sources,
+                                    'risk': assess(sources, [low, high]) if assess else None})
+    # Merge the display outline only, not the constituent entry calculations.
+    groups = []
+    for area in sorted(unique.values(), key=lambda a: a['band']):
+        lo, hi = area['band']
+        if groups and lo < groups[-1]['band'][1]:
+            groups[-1]['band'][1] = max(groups[-1]['band'][1], hi)
+            groups[-1]['areas'].append(area)
+        else:
+            groups.append({'band': [lo, hi], 'areas': [area]})
+    groups.sort(key=lambda g: g['band'][0], reverse=parent.direction == 1)
+    count = 0
+    for group in groups:
+        lo, hi = group['band']
+        if max(lo, trigger_band[0]) < min(hi, trigger_band[1]):
+            group.update(label='접촉 구간', relation='trigger')
+        elif (hi <= trigger_band[0] if parent.direction == 1 else lo >= trigger_band[1]):
+            count += 1
+            name = '지지' if parent.direction == 1 else '저항'
+            group.update(label=f'다음 {name} {count}', relation='next')
+        else:
+            group.update(label='다른 겹침', relation='other')
+        group['areas'].sort(key=lambda a: a['band'][0], reverse=parent.direction == 1)
+    return groups
+
+
+def map_risk(sources, band, lower_bars, upper_points, direction, now, *,
+             lower_points=(), tick_size=None, minute_bars=(), price=None, quote=None):
+    """Hypothetical entry at a mapped band, assessed with information known now."""
+    reference = observation_reference(
+        {'sources': sources, 'phase': 'first_contact', 'touch': {'at': now}},
+        lower_bars, upper_points, direction, lower_points=lower_points,
+        tick_size=tick_size, minute_bars=minute_bars, price=price)
+    if not reference:
+        return None
+    plan = entry_plan(*band, reference['stop'], reference['target'], direction,
+                      quote, tick_size, require_touch=False) if quote and tick_size else None
+    return {**reference, 'plan': plan, 'costs_checked': bool(quote and tick_size)}
+
+
 def formation_reaction(overlap, bars, points, tf, direction):
     touch = overlap['touch']
     cutoff = touch.get('bar_open', touch['at'])
@@ -453,21 +509,30 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                     if anchored:
                         children = formation_children(parent, zones, state['path'], middle_fvg=middle_fvg)
                         best['display_zones'] = [asdict(z) for values in children.values() for z in values]
+                    quote = None
+                    if anchored or (best['level'] < 3 and best.get('phase') != 'stair_retest'):
+                        try:
+                            quote = execution_quote() if execution_quote else None
+                        except Exception:
+                            pass
                     if best['level'] < 3 and best.get('phase') != 'stair_retest':
                         target_points = points
                         reference = observation_reference(best, lower_bars, target_points, direction,
                                                           lower_points=lower_points, tick_size=tick_size,
                                                           minute_bars=closed_minutes, price=price)
                         if reference:
-                            try:
-                                quote = execution_quote() if execution_quote else None
-                            except Exception:
-                                quote = None
                             plan = entry_plan(*best['band'], reference['stop'], reference['target'], direction,
                                               quote, tick_size, require_touch=False) if quote and tick_size else None
                             best['observation_risk'] = {**reference, 'plan': plan, 'costs_checked': bool(quote and tick_size)}
                         else:
                             best['risk_unavailable'] = '구조 손절·상위 목표 미확정'
+                    if anchored:
+                        best['formation_map'] = formation_map(
+                            parent, zones, state['path'], best['band'], middle_fvg=middle_fvg,
+                            assess=lambda sources, band: map_risk(
+                                sources, band, lower_bars, points, direction, now,
+                                lower_points=lower_points, tick_size=tick_size,
+                                minute_bars=closed_minutes, price=price, quote=quote))
                     found.append({**best, 'symbol': symbol, 'exchange': 'bitget', 'track': track, 'path': state['path'],
                                   'pair': state['pair'], 'refinement_tf': final, 'direction': direction, 'price': price,
                                   'now': now, 'id': hashlib.sha256(identity.encode()).hexdigest()[:24],

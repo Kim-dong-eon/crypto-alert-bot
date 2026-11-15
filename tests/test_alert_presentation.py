@@ -24,6 +24,8 @@ def example():
 class PresentationTests(unittest.TestCase):
     def test_extra_boxes_do_not_expand_trigger_hatching(self):
         _, frames, c = example()
+        # Legacy receipts have child outlines but no precomputed formation map.
+        c.pop('formation_map', None)
         original = primary_overlap(c, c['sources'])[:2]
         extra = dict(c['sources'][-1], id='extra', low=c['parent']['low'], high=c['parent']['high'])
         c['display_zones'] = [*c['sources'][1:], extra]

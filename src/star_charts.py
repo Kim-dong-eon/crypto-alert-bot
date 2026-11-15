@@ -127,17 +127,20 @@ def draw_panel(ax, tf, candles, event):
     for z in [*zones, *extras]:
         color = '#8bece6' if z['timeframe'] == middle and z['kind'] == 'FVG' else colors[z['timeframe']]
         left = max(-.6, position(z['created']))
-        ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], color=color, alpha=.045, zorder=1))
         selected = z['id'] in selected_ids
-        ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], fill=False, edgecolor=color,
-                               linewidth=1 if selected else .8, linestyle='-' if selected else ':', zorder=2))
+        # The map shows every triple intersection. Drawing every constituent
+        # rectangle on top of it obscures the distinct support/resistance bands.
+        if selected or 'formation_map' not in event:
+            ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], color=color, alpha=.045, zorder=1))
+            ax.add_patch(Rectangle((left, z['low']), edge - left, z['high'] - z['low'], fill=False, edgecolor=color,
+                                   linewidth=1 if selected else .8, linestyle='-' if selected else ':', zorder=2))
         if selected:
             boxes.append((left, z['low'], z['high']))
         source = (event.get('source_labels') or {}).get(z['timeframe'], '')
         name = f"{source + ' ' if source else ''}{LABELS[z['timeframe']]} {z['kind']}"
         count = sum(x['timeframe'] == z['timeframe'] and x['kind'] == z['kind'] for x in [*zones, *extras])
         legend[name] = Patch(facecolor=color, alpha=.62, label=name + (f' {count}개' if count > 1 else ''))
-        if is_top:
+        if is_top and (selected or 'formation_map' not in event):
             prices.extend([z['low'], z['high']])
 
     if core:
@@ -154,6 +157,25 @@ def draw_panel(ax, tf, candles, event):
         prices.extend((lo, hi))
         legend['핵심'] = Patch(facecolor='none', edgecolor=WHITE, hatch=CORE_HATCH,
                               label='최초 3중 겹침' if is_entry(event) else '핵심 3중 겹침')
+
+    # These are contextual alternatives, never contact markers or new alerts.
+    for group in event.get('formation_map', []):
+        if group['relation'] == 'trigger':
+            continue
+        lo, hi = group['band']
+        known = max(z['created'] for area in group['areas']
+                    for variant in area['alternatives'] for z in variant['sources'])
+        left = max(-.6, position(known))
+        patch = Rectangle((left, lo), edge - left, hi - lo, fill=False,
+                          edgecolor=WHITE, linewidth=.8, linestyle=':',
+                          hatch=CORE_HATCH, alpha=.5, zorder=2.5)
+        patch.set_gid('alternative-confluence')
+        ax.add_patch(patch)
+        prices.extend((lo, hi))
+        if not is_top:
+            ax.text(max(left, 0) + .4, (lo + hi) / 2, group['label'],
+                    va='center', color=WHITE, fontsize=8, zorder=8,
+                    bbox={'facecolor': '#152130', 'edgecolor': 'none', 'pad': 1.5})
 
     if level >= 2:
         overlap = event['overlap'] if is_entry(event) else event
@@ -357,6 +379,76 @@ def chart_atr(event):
     return '/'.join(f'{float(n):g}' for n in values if n is not None) + ' ATR'
 
 
+def map_rows(event):
+    """One row per distinct band/risk reference; never borrow another OB's stop."""
+    rows = []
+    for group in event.get('formation_map', []):
+        for area in group['areas']:
+            choices = {}
+            for variant in area['alternatives']:
+                risk = variant['risk']
+                plan = risk.get('plan') if risk else None
+                stop = fmt(risk['stop']) if risk else '미확정'
+                target = fmt(risk['target']) if risk else '미확정'
+                if plan:
+                    detail = f"{fmt(plan['band'][0])} ~ {fmt(plan['band'][1])} / 1:{plan['rr']:.2f}"
+                else:
+                    detail = ('1:3 미충족' if risk and risk.get('costs_checked') else
+                              '비용 확인 대기' if risk else '구조 손절·목표 미확정')
+                key = stop, target, detail
+                choices.setdefault(key, set()).add(variant['sources'][1]['kind'])
+            for (stop, target, detail), kinds in choices.items():
+                middle = '/'.join(sorted(kinds))
+                lo, hi = area['band']
+                rows.append([group['label'], f'{fmt(lo)} ~ {fmt(hi)}',
+                             f'OB × {middle} × OB', f'{stop} / {target}', detail])
+    return rows
+
+
+def add_map_table(fig, event):
+    if 'formation_map' not in event:
+        return
+    rows = map_rows(event)
+    next_count = sum(g['relation'] == 'next' for g in event['formation_map'])
+    name = '지지' if event['direction'] == 1 else '저항'
+    title = f'같은 상위 OB 안 · 다음 {name} {next_count}곳'
+    if not next_count:
+        title += ' · 추가 3중 겹침 없음'
+    if not rows:
+        rows = [['—', '유효한 공통 구간 없음', '—', '—', '—']]
+    old_height = fig.get_figheight()
+    extra = .8 + .25 * (len(rows) + 1)
+    height = old_height + extra
+    legends = [(legend, legend.get_bbox_to_anchor().transformed(fig.transFigure.inverted()))
+               for legend in fig.legends]
+    positions = [(ax, ax.get_position().bounds) for ax in fig.axes]
+    fig.set_figheight(height)
+    for ax, (x, y, w, h) in positions:
+        ax.set_position([x, (extra + y * old_height) / height, w, h * old_height / height])
+    for text in fig.texts:
+        x, y = text.get_position()
+        text.set_position((x, (extra + y * old_height) / height))
+    for legend, box in legends:
+        legend.set_bbox_to_anchor((box.x0, (extra + box.y0 * old_height) / height,
+                                   box.width, box.height * old_height / height))
+    ax = fig.add_axes([.035, .25 / height, .905, (extra - .65) / height])
+    ax.axis('off')
+    ax.set_title(title, loc='left', color=WHITE, fontsize=12, pad=8)
+    table = ax.table(cellText=rows,
+                     colLabels=['구간', '3중 공통 가격대', '상위 × 중간 × 하위', '구조 손절 / 상위 목표', '비용 반영 1:3 가능 진입 / 손익비'],
+                     colWidths=[.13, .20, .17, .20, .30], cellLoc='left', colLoc='left', bbox=[0, 0, 1, 1])
+    table.auto_set_font_size(False)
+    table.set_fontsize(9)
+    for (row, col), cell in table.get_celld().items():
+        cell.set_facecolor('#223348' if row == 0 else '#152130')
+        cell.set_edgecolor('#334457')
+        cell.set_linewidth(.5)
+        cell.get_text().set_color(WHITE if row == 0 else MUTED)
+    fig.text(.035, .075 / height,
+             '같은 번호의 세부 구간은 겹칠 수 있음 · 다음 구간은 진입 참고용 · 손익비는 재접촉 시 비용과 구조를 다시 계산',
+             color=MUTED, size=8)
+
+
 def render(snapshot, alert, frames, prefix):
     from matplotlib.patches import Patch
     from matplotlib.lines import Line2D
@@ -449,6 +541,7 @@ def render(snapshot, alert, frames, prefix):
             if age:
                 source += f' · 환산 기준 {age}분 전 체결'
             fig.text(.035, .025, source, color=MUTED, size=9)
+        add_map_table(fig, event)
         prefix = Path(prefix)
         path = prefix.with_name(f'{prefix.name}_star{level}.png')
         path.parent.mkdir(parents=True, exist_ok=True)
