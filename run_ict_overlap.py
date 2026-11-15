@@ -139,6 +139,7 @@ def _run_batch(market,instruments,ledger,sender=None,persist=False,snapshot=None
                                 upper_atr=True,
                                 departure_ob_frames=DEPARTURE_OB_FRAMES,
                                 middle_fvg=ALLOW_MIDDLE_FVG, require_ote=REQUIRE_ENTRY_OTE,
+                                live_weekly=True,
                                 first_touch_cutoff=first_touch_cutoff,
                                 execution_quote=lru_cache(maxsize=1)(lambda: get_execution_quote(symbol)) if require_execution else None,
                                 tick_size=tick_sizes[symbol])

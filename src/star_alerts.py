@@ -10,6 +10,7 @@ from itertools import product
 from src.ict_engine import TF_MS, frame_open
 from src.entry_execution import entry_plan
 from src.alert_confluence import source_allowed
+from src.pullback_data import live_frames
 from src.ict_overlap import LABELS, kst, overlaps
 from src.overlap_entry import MINUTE
 from src.pullback_alerts import POLICY, REFINEMENT, TOP_COUNTS, prepare, rooted_context
@@ -235,7 +236,16 @@ def formation_pivot(parent, bars, points, now):
 def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=None, tracks=None,
          formation_tracks=(), origin_tracks=(), execution_quote=None, tick_size=None, upper_atr=False,
          first_touch_cutoff=None, departure_ob_frames=(), session_closes=None, source_prefix=None,
-         middle_fvg=False, require_ote=False):
+         middle_fvg=False, require_ote=False, live_weekly=False):
+    session_closes = dict(session_closes or {})
+    forming_weekly = False
+    if live_weekly and '1w' not in session_closes:
+        live = live_frames(frames, minute_bars, now, price)
+        weekly = live.get('1w', [])
+        if weekly and weekly[-1].timestamp == frame_open(now, '1w'):
+            frames = {**frames, '1w': weekly}
+            session_closes['1w'] = {b.timestamp: min(b.timestamp + TF_MS['1w'], now) for b in weekly}
+            forming_weekly = True
     track_cursors = touch_since if isinstance(touch_since, dict) else {}
     touch_since = min(track_cursors.values(), default=0) if isinstance(touch_since, dict) else touch_since
     closed_minutes = tuple(b for b in minute_bars if b.timestamp + MINUTE <= now)
@@ -249,6 +259,7 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
     result, usable, zones = prepare(symbol, frames, now, price, tracks, build_overlaps=False,
                                     session_closes=session_closes, source_prefix=source_prefix, **scales)
     result['ruleset'] = RULESET
+    result['forming_weekly'] = forming_weekly
     previous = contexts or {}
     updated = {}
     for track, state in result['tracks'].items():
@@ -257,6 +268,7 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
         first_touch_minutes = recent_minutes if first_touch_cutoff is None else tuple(
             b for b in recent_minutes if b.timestamp + MINUTE <= first_touch_cutoff)
         top, middle = state['pair']
+        state['forming_upper'] = forming_weekly and top == '1w'
         final = REFINEMENT[track]
         anchored = track in formation_tracks
         require_origin = anchored and track in origin_tracks
@@ -348,7 +360,7 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                 if anchored:
                     choices = formation_contacts(parent, zones, state['path'], setup_known,
                                                  price, now, first_touch_minutes, track_since,
-                                                 confirmed_only=first_touch_cutoff is not None, middle_fvg=middle_fvg)
+                                                 confirmed_only=first_touch_cutoff is not None and not state['forming_upper'], middle_fvg=middle_fvg)
                 else:
                     choices = overlap_contacts(parent, area, lower_obs, zones, (top, middle), arm,
                                                price, now, recent_minutes, track_since)
@@ -460,6 +472,7 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                                   'pair': state['pair'], 'refinement_tf': final, 'direction': direction, 'price': price,
                                   'now': now, 'id': hashlib.sha256(identity.encode()).hexdigest()[:24],
                                   'context_id': identity, 'lenses': [lens],
+                                  'forming_upper': state['forming_upper'],
                                   'parent': asdict(parent), 'arm': arm['at'], 'arm_price': contact_price(arm, parent.low, parent.high),
                                   'upper': upper_wave, 'source_ids': [z['id'] for z in sources],
                                   'low': best['band'][0], 'high': best['band'][1], 'alert_policy': POLICY, 'ruleset': RULESET,
@@ -526,6 +539,8 @@ def compact_atr_text(c):
     lo, hi = map(price_text, c['band'])
     lines = [f"[{exchange} · {c['symbol']}] {side} · {label} {'★' * level}",
              alert_title(c) + ' · ' + contact_status(c)]
+    if c.get('forming_upper'):
+        lines[1] += ' · 주봉 형성 중'
     if is_entry(c):
         lines.append(f"진입 {lo}~{hi} / 손절 {price_text(c['stop'])} / 목표 {price_text(c['target'])}")
         detail = f"순손익비 1:{c['rr']:.2f}"

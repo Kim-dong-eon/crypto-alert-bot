@@ -194,7 +194,11 @@ def draw_panel(ax, tf, candles, event):
         xs = [position(p['timestamp']) for p in points]
         ys = [p['price'] for p in points]
         if points:
-            ax.plot(xs, ys, color='#78ebff', linewidth=2.05, marker='o', markersize=4, zorder=7)
+            confirmed = next((i for i, p in enumerate(points) if p.get('provisional')), len(points))
+            ax.plot(xs[:confirmed], ys[:confirmed], color='#78ebff', linewidth=2.05, marker='o', markersize=4, zorder=7)
+            if confirmed < len(points):
+                ax.plot(xs[max(0, confirmed-1):], ys[max(0, confirmed-1):], color=GOLD,
+                        linestyle='--', linewidth=1.5, marker='o', markersize=4, zorder=7)
         if (level == 2 or is_entry(event) or event.get('formation') or cash_panel) and points and points[-1]['timestamp'] < candles[-1].timestamp:
             ax.plot([xs[-1], len(candles) - 1], [ys[-1], candles[-1].close],
                     color=GOLD, linestyle='--', linewidth=1.5, zorder=7)
@@ -401,6 +405,8 @@ def render(snapshot, alert, frames, prefix):
                 panel = 'Bitget 접촉 확대'
             elif tf == top and event.get('upper_atr') is not None:
                 panel += ' · ' + chart_atr(event)
+            if tf == top and event.get('forming_upper'):
+                panel += ' · 현재 주봉 형성 중'
             ax.set_title(f'{LABELS[tf]} {panel}', color=WHITE, loc='left', fontsize=13, pad=29)
         if reaction:
             message = (f"{LABELS[final]}봉 {kst(reaction['at'])} 마감 · 종가 {fmt(reaction['price'])}"
