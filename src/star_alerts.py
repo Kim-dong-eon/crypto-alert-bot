@@ -718,24 +718,25 @@ def compact_atr_text(c):
     """One chart and at most five short text rows for every instrument."""
     level = c['level']
     side = '롱' if c['direction'] == 1 else '숏'
-    label = f"{LABELS[c['pair'][0]]} {TRACK_LABELS[c['track']]}"
+    label = LABELS[c['pair'][0]]
     exchange = c.get('exchange', 'bitget').title()
     lo, hi = map(price_text, c['band'])
-    lines = [f"[{exchange} · {c['symbol']}] {side} · {label} {'★' * level}",
-             alert_title(c) + ' · ' + contact_status(c)]
+    title = '3중 겹침 접촉' if c.get('contact_rr_required') and level == 1 else alert_title(c)
+    lines = [f"{'★' * level} {c['symbol']} · {side} · {label} ({exchange})",
+             title + ' · ' + contact_status(c)]
     if c.get('forming_upper'):
         lines[1] += ' · 주봉 형성 중'
     if is_entry(c):
-        lines.append(f"진입 {lo}~{hi} / 손절 {price_text(c['stop'])} / 목표 {price_text(c['target'])}")
-        detail = f"순손익비 1:{c['rr']:.2f}"
+        lines.append(f"진입 {lo}~{hi} · 순손익비 1:{c['rr']:.2f} (비용 반영)")
+        detail = f"손절 {price_text(c['stop'])} · 목표 {price_text(c['target'])}"
         if c.get('phase') == 'stair_retest':
             detail += ' · 최초 겹침 안' if c['in_initial_overlap'] else ' · 최초 겹침 밖 후속 OB'
         lines.append(detail)
     elif risk := c.get('observation_risk'):
         if plan := risk.get('plan'):
             a, b = map(price_text, plan['band'])
-            lines.append(f"참고 {a}~{b} / 손절 {price_text(risk['stop'])} / 목표 {price_text(risk['target'])}")
-            lines.append(f"관찰 · 순손익비 1:{plan['rr']:.2f}")
+            lines.append(f"진입 참고 {a}~{b} · 순손익비 1:{plan['rr']:.2f} (비용 반영)")
+            lines.append(f"손절 {price_text(risk['stop'])} · 목표 {price_text(risk['target'])}")
         else:
             lines.append(f"접촉 구간 {lo}~{hi}")
             values = ' / '.join(f'{label} {price_text(risk[key])}' for key, label in
