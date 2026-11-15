@@ -139,7 +139,7 @@ def _run_batch(market,instruments,ledger,sender=None,persist=False,snapshot=None
                                 upper_atr=True,
                                 departure_ob_frames=DEPARTURE_OB_FRAMES,
                                 middle_fvg=ALLOW_MIDDLE_FVG, require_ote=REQUIRE_ENTRY_OTE,
-                                live_weekly=True,
+                                live_weekly=True, require_contact_rr=True,
                                 first_touch_cutoff=first_touch_cutoff,
                                 execution_quote=lru_cache(maxsize=1)(lambda: get_execution_quote(symbol)) if require_execution else None,
                                 tick_size=tick_sizes[symbol])
@@ -366,7 +366,8 @@ def main(argv=None):
         from dotenv import load_dotenv
         load_dotenv(ROOT/'.env');sender=telegram_sender(os.getenv('TELEGRAM_BOT_TOKEN'),os.getenv('TELEGRAM_CHAT_ID'))
     with single_writer(args.state.with_suffix('.lock')) if args.send or args.watch else nullcontext():
-        ledger=StarAlertLedger(args.state,require_images=args.send,force_resend=args.resend_current,require_execution=True)
+        ledger=StarAlertLedger(args.state,require_images=args.send,force_resend=args.resend_current,require_execution=True,
+                               require_contact_rr=True)
         if args.reset_alerts:
             ledger.reset_alerts(int(time.time()*1000))
         image_sender=None

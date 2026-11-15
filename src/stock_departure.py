@@ -155,6 +155,7 @@ def stock_contacts(snapshot, ticker, frames, zones, minutes, since, cutoff, *,
                   upper_atr=True, departure_ob_frames=MULTIBAR_OB_FRAMES,
                   session_closes=closes, source_prefix=prefix,
                   middle_fvg=ALLOW_MIDDLE_FVG, require_ote=REQUIRE_ENTRY_OTE,
+                  require_contact_rr=True,
                   minute_bars=minutes, touch_since=since, first_touch_cutoff=cutoff,
                   contexts=contexts, execution_quote=execution_quote, tick_size=tick_size)
     snapshot['valid_source_ids'].extend(result['valid_source_ids'])

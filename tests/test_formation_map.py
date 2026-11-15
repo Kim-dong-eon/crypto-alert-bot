@@ -1,16 +1,60 @@
 import unittest
 from dataclasses import replace
+import tempfile
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 
 from src.ict_engine import Bar
 from src.ict_nested import PDZone
-from src.star_alerts import formation_map, formation_contacts, map_risk, upper_risk_reference, assess_reference
+from src.star_alerts import formation_map, formation_contacts, map_risk, upper_risk_reference, assess_reference, qualify_contact
 from src.star_charts import draw_panel, map_rows, window
 from tests.test_alert_presentation import example
+from src.star_delivery import StarAlertLedger, qualified_first_contact
 
 
 class FormationMapTests(unittest.TestCase):
+    def test_delivery_rejects_old_observations_and_preserves_new_rr_proof(self):
+        snapshot, _, c = example()
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'ledger.json'
+            ledger=StarAlertLedger(path,require_contact_rr=True)
+            self.assertFalse(ledger.observe(snapshot))
+            c.update(contact_rr_required=True,observation_risk={
+                'stop_tf':c['path'][0], 'plan':{'band':c['band'],'rr':3.2}})
+            self.assertTrue(qualified_first_contact(c))
+            ledger._remember(c,1)
+            ledger.save()
+            refreshed=StarAlertLedger(path,require_contact_rr=True)
+            self.assertEqual(len(refreshed.state['star_locks'][c['symbol']]),1)
+            # Old observation-only locks are retired, without erasing receipts.
+            c.pop('contact_rr_required')
+            legacy=StarAlertLedger(path)
+            legacy.state['star_locks'][c['symbol']].clear()
+            legacy._remember(c,1)
+            legacy.save()
+            migrated=StarAlertLedger(path,require_contact_rr=True)
+            self.assertFalse(migrated.state['star_locks'][c['symbol']])
+            self.assertTrue(migrated.state['retired_star_locks'][c['symbol']])
+
+    def test_rr_subband_must_be_touched_after_its_structure_was_known(self):
+        reference = {'stop':90,'target':150,'stop_tf':'4h','known_at':0}
+        quote = {'mid':109,'buy_vwap':109,'sell_vwap':109,'slippage_per_side':.0012}
+        choice = {'level':1,'band':[100,110],'touch':{'valid_from':0}}
+        high_touch = [Bar(60000,109,110,108,109,1)]
+        low_touch = [Bar(60000,102,103,101,102,1)]
+        args = choice, reference, 1, quote, '.01', 109, 120000
+        self.assertIsNone(qualify_contact(*args,high_touch,0,confirmed_only=True))
+        qualified = qualify_contact(*args,low_touch,0,confirmed_only=True)
+        self.assertIsNotNone(qualified)
+        self.assertLess(qualified['band'][1],110)
+        self.assertEqual(qualified['structural_band'],[100,110])
+        self.assertGreaterEqual(qualified['observation_risk']['plan']['rr'],3)
+        self.assertIsNone(qualify_contact(choice,{**reference,'known_at':90000},1,quote,'.01',109,
+                                          120000,low_touch,0,confirmed_only=True))
+        self.assertIsNone(qualify_contact(choice,reference,1,None,'.01',109,
+                                          120000,low_touch,0,confirmed_only=True))
+
     def test_star_one_uses_upper_departure_on_all_tracks_and_keeps_partial_values(self):
         for tf in ('1h', '4h', '1d', '1w'):
             for direction in (1, -1):

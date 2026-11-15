@@ -158,6 +158,8 @@ def upper_risk_reference(parent, bars, points, direction, at, *, tick_size=None,
                   and parent.origin <= bars[p['index']].timestamp < parent.created), None)
     result = {'stop': None, 'target': target['price'] if target else None,
               'stop_tf': parent.timeframe, 'as_of': at, 'stop_reason': None,
+              'known_at': max(parent.created, target['confirmed_at'] if target else 0,
+                              pivot['confirmed_at'] if pivot else 0),
               'target_reason': None if target else '상위 목표 미확정'}
     if pivot is None:
         result['stop_reason'] = '상위 출발 저점·고점 미확정'
@@ -211,6 +213,24 @@ def risk_status(risk):
         return '비용 확인 대기 · 1:3 미확정'
     rr = risk.get('rr')
     return (f'1:{rr:.2f} · ' if rr is not None and rr >= 0 else '') + '1:3 미충족'
+
+
+def qualify_contact(choice, reference, direction, quote, tick_size, price, now, minutes, since,
+                    *, confirmed_only=False):
+    """Require contact with the cost-adjusted 3R sub-band, not merely its OB."""
+    risk = assess_reference(reference, choice['band'], direction, quote, tick_size)
+    plan = risk['plan']
+    if not plan:
+        return None
+    low, high = plan['band']
+    if low >= high:
+        return None
+    known = max(choice['touch']['valid_from'], reference['known_at'])
+    touch = first_contact(low, high, known, price, now, minutes, since)
+    if not touch['hit'] or (confirmed_only and touch.get('evidence') != 'completed_1m_range'):
+        return None
+    return {**choice, 'structural_band': choice['band'], 'band': plan['band'],
+            'touch': touch, 'observation_risk': risk, 'contact_rr_required': True}
 
 
 def overlap_contacts(parent, area, lower_obs, zones, pair, arm, price, now, minutes, since):
@@ -294,6 +314,13 @@ def formation_map(parent, zones, path, trigger_band, *, middle_fvg=False, assess
     # Otherwise an overlapping, untouched zone inherits the trigger label and
     # its extension disappears when the chart skips that trigger group.
     current = unique.pop(tuple(trigger_band), None)
+    if current is None:
+        alternatives = [v for area in unique.values()
+                        if area['band'][0] <= trigger_band[0] < trigger_band[1] <= area['band'][1]
+                        for v in area['alternatives']]
+        if alternatives:
+            current = {'band': list(trigger_band), 'alternatives': [
+                {**v, 'risk': assess(v['sources'], trigger_band) if assess else None} for v in alternatives]}
     groups = []
     for area in sorted(unique.values(), key=lambda a: a['band']):
         lo, hi = area['band']
@@ -364,7 +391,7 @@ def formation_pivot(parent, bars, points, now):
 def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=None, tracks=None,
          formation_tracks=(), origin_tracks=(), execution_quote=None, tick_size=None, upper_atr=False,
          first_touch_cutoff=None, departure_ob_frames=(), session_closes=None, source_prefix=None,
-         middle_fvg=False, require_ote=False, live_weekly=False):
+         middle_fvg=False, require_ote=False, live_weekly=False, require_contact_rr=False):
     session_closes = dict(session_closes or {})
     forming_weekly = False
     if live_weekly and '1w' not in session_closes:
@@ -566,6 +593,18 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                         upper_ready=bool(upper_ready and latest_upper
                             and direction * (price - latest_upper['protected']) >= 0),
                         require_ote=require_ote))
+                if choices and anchored and require_contact_rr:
+                    reference = upper_risk_reference(parent, upper_bars, points, direction, now,
+                        tick_size=tick_size, minute_bars=closed_minutes, price=price)
+                    try:
+                        quote = execution_quote() if execution_quote else None
+                    except Exception:
+                        quote = None
+                    choices = [qualified for choice in choices if (qualified := (
+                        qualify_contact(choice, reference, direction, quote, tick_size, price, now,
+                                        first_touch_minutes, track_since,
+                                        confirmed_only=first_touch_cutoff is not None and not state['forming_upper'])
+                        if choice['level'] == 1 else choice)) is not None]
                 if choices:
                     best = max(choices, key=lambda c: (c['level'], c.get('in_initial_overlap', False), c['score'], c.get('rr', 0)))
                     sources = best['sources']
@@ -635,6 +674,8 @@ def alert_title(candidate):
     if candidate.get('phase') == 'reaction':
         return '하위 구조 반응 확인'
     if candidate.get('formation'):
+        if candidate.get('contact_rr_required'):
+            return '3중 겹침 · 1:3 구간 접촉'
         return '3중 겹침 첫 접촉'
     if candidate['level'] == 1:
         return f"{LABELS[candidate['refinement_tf']]} OB 관찰"

@@ -87,6 +87,16 @@ def executable(candidate):
     return is_entry(candidate) and candidate.get('execution') and candidate['rr'] >= MIN_RR - 1e-9
 
 
+def qualified_first_contact(c):
+    if c.get('level') != 1:
+        return True
+    risk = c.get('observation_risk') or {}
+    plan = risk.get('plan') or {}
+    return (c.get('contact_rr_required') is True and risk.get('stop_tf') == c.get('path', [None])[0]
+            and plan.get('rr', -1) >= MIN_RR - 1e-9
+            and plan.get('band') == c.get('band') and confluence_error(c) is None)
+
+
 def unique_contacts(tracks, entry_only=False, require_execution=False, require_confluence=True):
     ranked = sorted(eligible_contacts(tracks, entry_only, require_execution, require_confluence),
                     key=lambda c: (-c['level'], bool(c.get('stock_reference')), -TF_MS[c['pair'][0]],
@@ -105,15 +115,32 @@ def unique_contacts(tracks, entry_only=False, require_execution=False, require_c
 
 
 class StarAlertLedger(StructureLedger):
-    def __init__(self, path, *, entry_only=False, require_execution=False, require_confluence=True, **kwargs):
+    def __init__(self, path, *, entry_only=False, require_execution=False, require_confluence=True,
+                 require_contact_rr=False, **kwargs):
         super().__init__(path, **kwargs)
         # Disabling this is only for reproducing obsolete historical strategies.
         self.require_confluence = require_confluence
         self.entry_only = entry_only
         self.require_execution = require_execution or entry_only
+        self.require_contact_rr = require_contact_rr
         self.state.setdefault('star_contexts', {})
         self.state.setdefault('star_locks', {})
         self.state.setdefault('presentations', {})
+        if require_contact_rr:
+            for key, p in list(self.state['presentations'].items()):
+                if not qualified_first_contact(p.get('candidate') or {}):
+                    self.state.setdefault('retired_presentations', {})[f"{key}:{p.get('attempt', 0)}"] = {
+                        **p, 'retired_reason': 'upper_stop_3r_contact_required'}
+                    del self.state['presentations'][key]
+            for key, event in list(self.state.get('pending', {}).items()):
+                if not qualified_first_contact(event.get('candidate') or {}):
+                    del self.state['pending'][key]
+            for symbol, locks in self.state['star_locks'].items():
+                for key, lock in list(locks.items()):
+                    if lock['level'] == 1 and not qualified_first_contact(lock.get('confluence_proof') or {'level': 1}):
+                        self.state.setdefault('retired_star_locks', {}).setdefault(symbol, {})[key] = {
+                            **lock, 'retired_reason': 'upper_stop_3r_contact_required'}
+                        del locks[key]
         if self.require_confluence:
             # Retain receipts for audit, but never retry a single-OB presentation
             # or let its old lock suppress a newly verified three-frame contact.
@@ -159,6 +186,8 @@ class StarAlertLedger(StructureLedger):
         self.state['strategy'] = POLICY
 
     def _remember(self, c, level):
+        if self.require_contact_rr and not qualified_first_contact(c):
+            return
         if self.require_confluence and confluence_error(c):
             return
         locks = self.state['star_locks'].setdefault(c['symbol'], {})
@@ -181,7 +210,8 @@ class StarAlertLedger(StructureLedger):
     def _proof(c):
         # Keep only the evidence needed to validate the lock, not chart candles.
         keys = ('symbol', 'track', 'path', 'direction', 'parent', 'formation', 'sources',
-                'band', 'touch', 'overlap', 'level', 'signal_version', 'stock_reference')
+                'band', 'touch', 'overlap', 'level', 'signal_version', 'stock_reference',
+                'contact_rr_required', 'observation_risk')
         return copy.deepcopy({k: c[k] for k in keys if k in c})
 
     @staticmethod
@@ -269,6 +299,11 @@ class StarAlertLedger(StructureLedger):
                 del locks[key]
 
         contacts = eligible_contacts(snapshot['tracks'], self.entry_only, self.require_execution, self.require_confluence)
+        if self.require_contact_rr:
+            for row in snapshot['tracks'].values():
+                row['candidates'] = [c for c in candidates(row) if qualified_first_contact(c)]
+                row['candidate'] = next(iter(row['candidates']), None)
+            contacts = [c for c in contacts if qualified_first_contact(c)]
         selected = unique_contacts(snapshot['tracks'], self.entry_only, self.require_execution, self.require_confluence)
         disabled = set(snapshot.get('disabled_tracks', ()))
         active_locks = [lock for lock in locks.values()
