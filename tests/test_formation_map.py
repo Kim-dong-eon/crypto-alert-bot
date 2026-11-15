@@ -5,12 +5,69 @@ import matplotlib.pyplot as plt
 
 from src.ict_engine import Bar
 from src.ict_nested import PDZone
-from src.star_alerts import formation_map, formation_contacts, map_risk
+from src.star_alerts import formation_map, formation_contacts, map_risk, upper_risk_reference, assess_reference
 from src.star_charts import draw_panel, map_rows, window
 from tests.test_alert_presentation import example
 
 
 class FormationMapTests(unittest.TestCase):
+    def test_star_one_uses_upper_departure_on_all_tracks_and_keeps_partial_values(self):
+        for tf in ('1h', '4h', '1d', '1w'):
+            for direction in (1, -1):
+                with self.subTest(tf=tf, direction=direction):
+                    bars = [Bar(0,100,105,90,101), Bar(100,101,115,100,112), Bar(200,112,120,108,110)]
+                    points = [{'index':0,'kind':'low','price':90,'confirmed_at':150},
+                              {'index':2,'kind':'high','price':120,'confirmed_at':300}]
+                    if direction == -1:
+                        bars = [Bar(b.timestamp,200-b.open,200-b.low,200-b.high,200-b.close) for b in bars]
+                        points = [{**p,'kind':'high' if p['kind']=='low' else 'low','price':200-p['price']} for p in points]
+                    parent = PDZone('p',tf,'OB',direction,95,105,100,0,89,89)
+                    risk = upper_risk_reference(parent,bars,points,direction,400,tick_size='.01')
+                    self.assertEqual(risk['stop'],89.99 if direction==1 else 110.01)
+                    self.assertEqual(risk['target'],120 if direction==1 else 80)
+                    self.assertEqual(risk['stop_tf'],tf)
+                    partial = upper_risk_reference(parent,bars,points[1:],direction,400,tick_size='.01')
+                    self.assertIsNone(partial['stop'])
+                    self.assertEqual(partial['target'],risk['target'])
+                    self.assertIsNotNone(partial['stop_reason'])
+                    missing_target = upper_risk_reference(parent,bars,points[:1],direction,400,tick_size='.01')
+                    self.assertEqual(missing_target['stop'],risk['stop'])
+                    self.assertIsNone(missing_target['target'])
+
+    def test_one_asof_reference_for_main_and_all_rows_and_broken_stop_reason(self):
+        parent = PDZone('p','4h','OB',1,95,105,100,0,89,89)
+        bars = [Bar(0,100,105,90,101), Bar(100,101,115,100,112)]
+        points = [{'index':0,'kind':'low','price':90,'confirmed_at':150},
+                  {'index':1,'kind':'high','price':120,'confirmed_at':250},
+                  {'index':1,'kind':'high','price':130,'confirmed_at':390}]
+        ref = upper_risk_reference(parent,bars,points,1,400,tick_size='.01')
+        quote = {'mid':106,'buy_vwap':106,'sell_vwap':106,'slippage_per_side':.0012}
+        main = assess_reference(ref,[100,101],1,quote,'.01')
+        row = assess_reference(ref,[100,101],1,quote,'.01')
+        self.assertEqual(main,row)
+        self.assertEqual(main['target'],130)
+        self.assertEqual(main['as_of'],400)
+        broken = upper_risk_reference(parent,bars,points,1,400,tick_size='.01',
+                                      minute_bars=[Bar(350,95,96,89,95)])
+        broken = assess_reference(broken,[100,101],1,quote,'.01')
+        self.assertEqual(broken['stop'],89.99)
+        self.assertEqual(broken['target'],130)
+        self.assertEqual(broken['stop_reason'],'상위 구조 기준점 이탈')
+        self.assertIsNone(broken['plan'])
+
+    def test_partially_overlapping_next_support_does_not_inherit_touch(self):
+        parent=PDZone('p','4h','OB',1,90,120,100,0,89,89)
+        middle=PDZone('m','1h','OB',1,90,120,60,10,89,89)
+        hit=PDZone('a','15m','OB',1,104,110,80,20,89,89)
+        below=replace(hit,id='b',low=100,high=105)
+        groups=formation_map(parent,[middle,hit,below],('4h','1h','15m'),[104,110])
+        self.assertEqual(len(groups),2)
+        self.assertEqual(groups[0]['band'],[104,110])
+        self.assertEqual(groups[0]['relation'],'trigger')
+        self.assertEqual(groups[1]['band'],[100,105])
+        self.assertEqual(groups[1]['relation'],'next')
+        self.assertNotIn('접촉',groups[1]['label'])
+
     def test_all_paths_keep_untouched_bands_without_creating_contacts(self):
         for path in [('1h', '15m', '5m'), ('4h', '1h', '15m'),
                      ('1d', '4h', '1h'), ('1w', '1d', '4h')]:

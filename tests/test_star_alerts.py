@@ -180,8 +180,12 @@ class StarAlertsTests(unittest.TestCase):
                 self.assertGreaterEqual(len(c['upper']['points']), 2)
                 self.assertGreaterEqual(len(c['lower_wave']['points']), 2)
                 self.assertIn('observation_risk', c)
-                self.assertIn('pivot_at', c['observation_risk'])
-                self.assertGreaterEqual(c['observation_risk']['plan']['rr'], 3)
+                # This legacy formation fixture has no departure pivot on the
+                # upper frame. Star one must not borrow its lower-frame stop.
+                self.assertEqual(c['observation_risk']['stop_tf'], '4h')
+                self.assertIsNone(c['observation_risk']['stop'])
+                self.assertIsNotNone(c['observation_risk']['target'])
+                self.assertIsNone(c['observation_risk']['plan'])
                 result = ledger.dispatch_units(
                     lambda _: True, lambda _: True,
                     lambda unit: render_side_by_side_unit(first, unit, frames, Path(tmp) / 'formation'))

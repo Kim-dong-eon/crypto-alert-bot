@@ -145,6 +145,74 @@ def observation_reference(choice, lower_bars, points, direction, *, lower_points
     return {'stop': stop, 'target': target['price'], 'pivot_at': pivot_at, 'pivot_price': extreme}
 
 
+def upper_risk_reference(parent, bars, points, direction, at, *, tick_size=None, minute_bars=(), price=None):
+    """Star-one risk belongs to the parent's departure swing, not a child OB.
+
+    Retain independent values and failure reasons so a missing stop cannot
+    erase a known target. All display bands share this single as-of snapshot.
+    """
+    target = next((p for p in reversed(points) if p['kind'] == ('high' if direction == 1 else 'low')
+                   and p['confirmed_at'] <= at), None)
+    pivot = next((p for p in reversed(points) if p['kind'] == ('low' if direction == 1 else 'high')
+                  and p['confirmed_at'] <= at
+                  and parent.origin <= bars[p['index']].timestamp < parent.created), None)
+    result = {'stop': None, 'target': target['price'] if target else None,
+              'stop_tf': parent.timeframe, 'as_of': at, 'stop_reason': None,
+              'target_reason': None if target else '상위 목표 미확정'}
+    if pivot is None:
+        result['stop_reason'] = '상위 출발 저점·고점 미확정'
+        return result
+    stamp, extreme = bars[pivot['index']].timestamp, pivot['price']
+    result.update(pivot_at=stamp, pivot_price=extreme)
+    try:
+        tick = Decimal(str(tick_size))
+        if not tick.is_finite() or tick <= 0:
+            raise ValueError('invalid tick')
+        units = (Decimal(str(extreme)) / tick).to_integral_value(
+            rounding=ROUND_CEILING if direction == 1 else ROUND_FLOOR)
+        result['stop'] = float((units - direction) * tick)
+    except (InvalidOperation, ValueError):
+        result['stop_reason'] = '호가 단위 미확인'
+        return result
+    if result['stop'] <= 0:
+        result.update(stop=None, stop_reason='유효한 손절 가격 없음')
+        return result
+    broken = (price is not None and direction * (price - extreme) < 0) or any(
+        stamp < b.timestamp < at
+        and direction * ((b.low if direction == 1 else b.high) - extreme) < 0
+        for b in (*bars[pivot['index'] + 1:], *minute_bars))
+    if broken:
+        result['stop_reason'] = '상위 구조 기준점 이탈'
+    return result
+
+
+def assess_reference(reference, band, direction, quote, tick_size):
+    """A reference is not executable when either structural value is unavailable."""
+    result = {**reference, 'plan': None, 'rr': None, 'costs_checked': False}
+    if (reference.get('stop') is None or reference.get('target') is None
+            or reference.get('stop_reason') or reference.get('target_reason')):
+        return result
+    if not quote or not tick_size or not 0 <= quote.get('slippage_per_side', -1) < 1:
+        return result
+    result['costs_checked'] = True
+    result['plan'] = entry_plan(*band, reference['stop'], reference['target'], direction,
+                                quote, tick_size, require_touch=False)
+    result['rr'] = (result['plan']['rr'] if result['plan'] else
+                    net_rr(band[1] if direction == 1 else band[0], reference['stop'],
+                           reference['target'], direction, slippage=quote['slippage_per_side']))
+    return result
+
+
+def risk_status(risk):
+    reasons = [risk.get(key) for key in ('stop_reason', 'target_reason') if risk.get(key)]
+    if reasons:
+        return ' · '.join(reasons)
+    if not risk.get('costs_checked'):
+        return '비용 확인 대기 · 1:3 미확정'
+    rr = risk.get('rr')
+    return (f'1:{rr:.2f} · ' if rr is not None and rr >= 0 else '') + '1:3 미충족'
+
+
 def overlap_contacts(parent, area, lower_obs, zones, pair, arm, price, now, minutes, since):
     top, middle = pair
     evidence = [parent]
@@ -222,7 +290,10 @@ def formation_map(parent, zones, path, trigger_band, *, middle_fvg=False, assess
         area = unique.setdefault((low, high), {'band': [low, high], 'alternatives': []})
         area['alternatives'].append({'sources': sources,
                                     'risk': assess(sources, [low, high]) if assess else None})
-    # Merge the display outline only, not the constituent entry calculations.
+    # Keep the actual trigger separate before grouping overlapping alternatives.
+    # Otherwise an overlapping, untouched zone inherits the trigger label and
+    # its extension disappears when the chart skips that trigger group.
+    current = unique.pop(tuple(trigger_band), None)
     groups = []
     for area in sorted(unique.values(), key=lambda a: a['band']):
         lo, hi = area['band']
@@ -235,15 +306,16 @@ def formation_map(parent, zones, path, trigger_band, *, middle_fvg=False, assess
     count = 0
     for group in groups:
         lo, hi = group['band']
-        if max(lo, trigger_band[0]) < min(hi, trigger_band[1]):
-            group.update(label='접촉 구간', relation='trigger')
-        elif (hi <= trigger_band[0] if parent.direction == 1 else lo >= trigger_band[1]):
+        if (lo < trigger_band[0] if parent.direction == 1 else hi > trigger_band[1]):
             count += 1
             name = '지지' if parent.direction == 1 else '저항'
             group.update(label=f'다음 {name} {count}', relation='next')
         else:
             group.update(label='다른 겹침', relation='other')
         group['areas'].sort(key=lambda a: a['band'][0], reverse=parent.direction == 1)
+    if current:
+        groups.insert(0, {'band': list(trigger_band), 'areas': [current],
+                          'label': '이번 알림 구간', 'relation': 'trigger'})
     return groups
 
 
@@ -515,7 +587,15 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                             quote = execution_quote() if execution_quote else None
                         except Exception:
                             pass
-                    if best['level'] < 3 and best.get('phase') != 'stair_retest':
+                    upper_reference = None
+                    if anchored:
+                        upper_reference = upper_risk_reference(
+                            parent, upper_bars, points, direction, now, tick_size=tick_size,
+                            minute_bars=closed_minutes, price=price)
+                    if best['level'] == 1 and upper_reference is not None:
+                        best['observation_risk'] = assess_reference(
+                            upper_reference, best['band'], direction, quote, tick_size)
+                    elif best['level'] < 3 and best.get('phase') != 'stair_retest':
                         target_points = points
                         reference = observation_reference(best, lower_bars, target_points, direction,
                                                           lower_points=lower_points, tick_size=tick_size,
@@ -529,10 +609,8 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                     if anchored:
                         best['formation_map'] = formation_map(
                             parent, zones, state['path'], best['band'], middle_fvg=middle_fvg,
-                            assess=lambda sources, band: map_risk(
-                                sources, band, lower_bars, points, direction, now,
-                                lower_points=lower_points, tick_size=tick_size,
-                                minute_bars=closed_minutes, price=price, quote=quote))
+                            assess=lambda sources, band: assess_reference(
+                                upper_reference, band, direction, quote, tick_size))
                     found.append({**best, 'symbol': symbol, 'exchange': 'bitget', 'track': track, 'path': state['path'],
                                   'pair': state['pair'], 'refinement_tf': final, 'direction': direction, 'price': price,
                                   'now': now, 'id': hashlib.sha256(identity.encode()).hexdigest()[:24],
@@ -619,7 +697,9 @@ def compact_atr_text(c):
             lines.append(f"관찰 · 순손익비 1:{plan['rr']:.2f}")
         else:
             lines.append(f"접촉 구간 {lo}~{hi}")
-            lines.append('관찰 · 1:3 미충족' if risk.get('costs_checked') else '관찰 · 1:3 미확정')
+            values = ' / '.join(f'{label} {price_text(risk[key])}' for key, label in
+                                (('stop', '손절'), ('target', '목표')) if risk.get(key) is not None)
+            lines.append((values + ' · ' if values else '') + risk_status(risk))
     else:
         lines.append(f"접촉 구간 {lo}~{hi}")
         if c.get('risk_unavailable'):

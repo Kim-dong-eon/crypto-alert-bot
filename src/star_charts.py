@@ -8,7 +8,7 @@ from src.ict_engine import Bar, TF_MS, frame_open
 from src.ict_overlap import LABELS, kst
 from src.overlap_charts import configure_font
 from src.alert_confluence import source_allowed
-from src.star_alerts import alert_title, atr_label, price_text as fmt, unit_text, is_entry, contact_status
+from src.star_alerts import alert_title, atr_label, price_text as fmt, unit_text, is_entry, contact_status, risk_status
 from config.overlap_settings import TRACK_LABELS
 
 WHITE = '#edf3fb'
@@ -246,11 +246,12 @@ def draw_panel(ax, tf, candles, event):
             ax.text(.98, event['entry'], f"진입 {bound} {fmt(event['entry'])}", transform=ax.get_yaxis_transform(),
                     ha='right', va='bottom', color=GOLD, fontsize=10, zorder=8,
                     bbox={'facecolor': '#152130', 'edgecolor': 'none', 'pad': 2})
-    if not is_top and risk:
+    if risk.get('stop') is not None and (not is_top or risk.get('stop_tf') == top):
         stop = risk['stop']
         ax.axhline(stop, color='#ff9da9', linestyle=':', linewidth=1.3, zorder=4)
         stop_kind = '구조' if 'pivot_at' in risk else 'OB'
-        ax.text(.02, stop, f'{LABELS[final]} {stop_kind} 손절 {fmt(stop)}', transform=ax.get_yaxis_transform(),
+        stop_tf = risk.get('stop_tf', final)
+        ax.text(.02, stop, f'{LABELS[stop_tf]} {stop_kind} 손절 {fmt(stop)}', transform=ax.get_yaxis_transform(),
                 ha='left', va='bottom', color='#ffabb4', fontsize=10, zorder=8)
         if (pivot_at := risk.get('pivot_at')) is not None and start <= pivot_at <= candles[-1].timestamp:
             ax.scatter(position(pivot_at), risk['pivot_price'], s=66, facecolors='none', edgecolors='#ff9da9',
@@ -388,13 +389,12 @@ def map_rows(event):
             for variant in area['alternatives']:
                 risk = variant['risk']
                 plan = risk.get('plan') if risk else None
-                stop = fmt(risk['stop']) if risk else '미확정'
-                target = fmt(risk['target']) if risk else '미확정'
+                stop = fmt(risk['stop']) if risk and risk.get('stop') is not None else '미확정'
+                target = fmt(risk['target']) if risk and risk.get('target') is not None else '미확정'
                 if plan:
                     detail = f"{fmt(plan['band'][0])} ~ {fmt(plan['band'][1])} / 1:{plan['rr']:.2f}"
                 else:
-                    detail = ('1:3 미충족' if risk and risk.get('costs_checked') else
-                              '비용 확인 대기' if risk else '구조 손절·목표 미확정')
+                    detail = risk_status(risk) if risk else '구조 손절·목표 미확정'
                 key = stop, target, detail
                 choices.setdefault(key, set()).add(variant['sources'][1]['kind'])
             for (stop, target, detail), kinds in choices.items():
@@ -412,6 +412,7 @@ def add_map_table(fig, event):
     next_count = sum(g['relation'] == 'next' for g in event['formation_map'])
     name = '지지' if event['direction'] == 1 else '저항'
     title = f'같은 상위 OB 안 · 다음 {name} {next_count}곳'
+    title += f" · ★ 기준 {LABELS[event['path'][0]]} 구조 손절"
     if not next_count:
         title += ' · 추가 3중 겹침 없음'
     if not rows:
@@ -445,7 +446,7 @@ def add_map_table(fig, event):
         cell.set_linewidth(.5)
         cell.get_text().set_color(WHITE if row == 0 else MUTED)
     fig.text(.035, .075 / height,
-             '같은 번호의 세부 구간은 겹칠 수 있음 · 다음 구간은 진입 참고용 · 손익비는 재접촉 시 비용과 구조를 다시 계산',
+             f"계산 시점 {kst(event['now'])} · 겹치는 별도 구간도 전체 표시 · 다음 구간은 참고용, 재접촉 시 재계산",
              color=MUTED, size=8)
 
 
@@ -527,11 +528,14 @@ def render(snapshot, alert, frames, prefix):
             if plan := risk['plan']:
                 lo, hi = plan['band']
                 stop_kind = '구조' if 'pivot_at' in risk else 'OB'
-                detail = (f"참고 진입 {fmt(lo)} ~ {fmt(hi)}     {stop_kind} 손절 {fmt(risk['stop'])}"
+                stop_tf = LABELS[risk.get('stop_tf', final)]
+                detail = (f"참고 진입 {fmt(lo)} ~ {fmt(hi)}     {stop_tf} {stop_kind} 손절 {fmt(risk['stop'])}"
                           f"     상위 직전 목표 {fmt(risk['target'])}     비용 반영 1:{plan['rr']:.2f}")
             else:
-                detail += f" / 구조 손절 {fmt(risk['stop'])} / 상위 목표 {fmt(risk['target'])}"
-                detail += ' · ' + ('비용 반영 1:3 미충족' if risk.get('costs_checked') else '비용 확인 대기 · 1:3 미확정')
+                stop = fmt(risk['stop']) if risk.get('stop') is not None else '미확정'
+                target = fmt(risk['target']) if risk.get('target') is not None else '미확정'
+                detail += f" / {LABELS[risk.get('stop_tf', final)]} 손절 {stop} / 상위 목표 {target}"
+                detail += ' · ' + risk_status(risk)
         elif event.get('risk_unavailable'):
             detail += ' · 1:3 미확정 · ' + event['risk_unavailable']
         fig.text(.035, .064, detail, color=MUTED, size=11)
