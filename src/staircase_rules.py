@@ -11,6 +11,12 @@ STOP_ATR_BUFFER = .10
 MIN_RR = 3.
 
 
+def wick_breach(bars, level, direction, start, end):
+    """First observed breach; equality is a touch, recovery does not erase it."""
+    return next((b.timestamp for b in bars if start <= b.timestamp < end
+                 and direction * ((b.low if direction == 1 else b.high) - level) < 0), None)
+
+
 def staircases(bars, points, tf, direction, close_times=None):
     """Four confirmed alternating turns: higher low + close HH, or inverse.
 
@@ -29,8 +35,10 @@ def staircases(bars, points, tf, direction, close_times=None):
         if broken is None:continue
         tagged=[{**v,'timestamp':bars[v['index']].timestamp} for v in (a,b,p,q)]
         known=max(q['confirmed_at'],p['confirmed_at'],close_at(broken))
+        # Invalidation uses extremes from after the protected pivot, including
+        # breaches before confirmation. A recovered close cannot restore it.
         invalid=next((close_at(x) for x in bars[p['index']+1:]
-                      if close_at(x)>=known and direction*(x.close-p['price'])<0),None)
+                      if direction*((x.low if direction == 1 else x.high)-p['price'])<0),None)
         result.append({'direction':direction,'timeframe':tf,'points':tagged,
                        'origin':tagged[2]['timestamp'],'end':tagged[3]['timestamp'],
                        'chart_start':tagged[0]['timestamp'],'known_at':known,

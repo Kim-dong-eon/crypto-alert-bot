@@ -37,6 +37,32 @@ def replay(direction):
 
 
 class StarAlertsTests(unittest.TestCase):
+    def test_departure_wick_breach_blocks_all_grades_and_cannot_revive(self):
+        for direction, price in ((-1, 64935.), (1, 65065.)):
+            snapshot, frames = list(replay(direction))[2]
+            now = snapshot['as_of']
+            minute = Bar(now-60000, price, price, price, price, 1)
+            options = dict(tracks={'short': ('4h','1h')}, formation_tracks=('short',))
+            clean = scan('BTCUSDT', frames, now, price, minute_bars=[minute], **options)
+            candidate = clean['tracks']['short']['candidates'][0]
+            key = candidate['context_id']
+            # A wick inside the still-open upper candle breaks the old setup;
+            # its close and the current price both recover into the OB.
+            extreme = 100000. if direction == -1 else 10000.
+            broken_minute = Bar(now-60000, price, max(price, extreme), min(price, extreme), price, 1)
+            broken = scan('BTCUSDT', frames, now, price, minute_bars=[broken_minute],
+                          contexts=clean['star_contexts'], **options)
+            self.assertFalse(broken['tracks']['short']['candidates'])
+            self.assertEqual(broken['star_contexts'][key]['invalidated_reason'], 'departure_wick_breach')
+            recovered = scan('BTCUSDT', frames, now, price, minute_bars=[minute],
+                             contexts=broken['star_contexts'], **options)
+            self.assertFalse(recovered['tracks']['short']['candidates'])
+            self.assertEqual(recovered['star_contexts'][key]['invalidated_at'], now-60000)
+            # The rejection is scoped to this old setup, not a permanent ban on
+            # the instrument/direction. An independent clean setup still scans.
+            self.assertTrue(scan('BTCUSDT', frames, now, price, minute_bars=[minute],
+                                 **options)['tracks']['short']['candidates'])
+
     def test_live_text_is_sent_before_chart_and_is_not_resent_on_retry(self):
         # Replay the obsolete policy explicitly; live defaults reject these legacy fixtures.
         snapshot = list(replay(-1))[1][0]

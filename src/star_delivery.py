@@ -359,6 +359,8 @@ class StarAlertLedger(StructureLedger):
             if (not c.get('stock_reference') and c['context_id'] not in episodes
                     or not set(c['source_ids']).issubset(active_ids)):
                 continue
+            if episodes.get(c['context_id'], {}).get('invalidated_at') is not None:
+                continue
             if snapshot['tracks'].get(c['track'], {}).get('status', 'data_unavailable') == 'data_unavailable':
                 continue
             if max(locks.get(c['id'], {}).get('level', 0), selected_grades.get(c['id'], 0)) > c['level']:

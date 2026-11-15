@@ -76,6 +76,29 @@ class StaircaseTests(unittest.TestCase):
         u=[Bar(b.timestamp,min(b.open,level),b.high,b.low,min(b.close,level),b.volume) for b in u]
         self.assertFalse(staircases(u,up,'4h',1))
 
+    def test_protected_wick_breach_survives_recovery_on_both_sides(self):
+        for direction in (1, -1):
+            for before_confirmation in (False, True):
+                _, bars, points, _, _, _ = sample()
+                index = 32 if before_confirmation else len(bars)-2
+                b = bars[index]
+                bars[index] = Bar(b.timestamp, b.open, b.high, points[2]['price']-1,
+                                  b.close, b.volume)
+                if direction == -1:
+                    bars = [Bar(b.timestamp, 250-b.open, 250-b.low, 250-b.high,
+                                250-b.close, b.volume) for b in bars]
+                    points = [{**p, 'kind': 'high' if p['kind']=='low' else 'low',
+                               'price': 250-p['price']} for p in points]
+                stair, = staircases(bars, points, '4h', direction)
+                self.assertEqual(stair['invalidated_at'], bars[index].timestamp+TF_MS['4h'])
+                self.assertGreater(direction*(bars[-1].close-stair['protected']), 0)
+
+    def test_protected_wick_equal_touch_keeps_stair(self):
+        _, bars, points, _, _, _ = sample()
+        b = bars[-1]
+        bars[-1] = Bar(b.timestamp, b.open, b.high, points[2]['price'], b.close, b.volume)
+        self.assertIsNone(staircases(bars, points, '4h', 1)[0]['invalidated_at'])
+
     def test_broken_upper_and_lower_and_live_breach_fail_closed(self):
         c,u,up,l,lp,now=sample()
         self.assertEqual(evaluate(c,u,up,l,now,90,lower_points=lp)['reason'],'upper_live_breach')

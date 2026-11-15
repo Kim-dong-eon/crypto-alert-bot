@@ -14,7 +14,7 @@ from src.pullback_data import live_frames
 from src.ict_overlap import LABELS, kst, overlaps
 from src.overlap_entry import MINUTE
 from src.pullback_alerts import POLICY, REFINEMENT, TOP_COUNTS, prepare, rooted_context
-from src.staircase_rules import band_touch, net_rr, opposing_upper_contact, risk_band, staircases, ote_band
+from src.staircase_rules import band_touch, net_rr, opposing_upper_contact, risk_band, staircases, ote_band, wick_breach
 from src.structure_review import turns
 from src.star_retests import retest_entries, target_at_contact, target_spent_at
 from config.overlap_settings import TRACK_LABELS
@@ -476,6 +476,9 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                 if upper_atr:
                     scope = f'atr:{scope}'
                 identity = f'{track}|{lens}|{parent.id}|{scope}'
+                if previous.get(identity, {}).get('invalidated_at') is not None:
+                    updated[identity] = previous[identity]
+                    continue
                 upper = upper_stairs.get(root) if area or pivot else None
                 protected = parent.stop
                 if pivot:
@@ -483,9 +486,20 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                 elif area:
                     root_bar = next(b for b in upper_bars if b.timestamp == root)
                     protected = root_bar.low if direction == 1 else root_bar.high
-                origin_known = pivot['confirmed_at'] if pivot else area['created'] if area else None
-                if origin_known is not None and any(b.timestamp >= origin_known and direction * (b.close - protected) < 0
-                                                     for b in upper_bars):
+                # The root candle already defines the extreme. Inspect every
+                # later upper wick plus lower candles/minutes in the open upper
+                # candle, without waiting for its close or the next contact.
+                root_end = closes.get(root, root + TF_MS[top]) if closes else root + TF_MS[top]
+                breach = wick_breach(upper_bars, protected, direction, root + 1, now)
+                if breach is None:
+                    breach = wick_breach((*usable.get(middle, ()), *lower_bars, *closed_minutes),
+                                         protected, direction, root_end, now)
+                if breach is None and direction * (price - protected) < 0:
+                    breach = now
+                if breach is not None:
+                    updated[identity] = {**previous.get(identity, {'track': track, 'lens': lens,
+                        'parent_id': parent.id, 'arm': arm_probe, 'overlap': None}),
+                        'invalidated_at': breach, 'invalidated_reason': 'departure_wick_breach'}
                     continue
                 setup_known = max(direction_at, pivot['confirmed_at']) if pivot else direction_at
                 if direction * (price - protected) < 0 or direction * (price - parent.stop) < 0:
@@ -494,6 +508,11 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                     continue
                 upper_ready = upper and not (
                     any(s['invalidated_at'] for s in upper_stairs.values() if s['origin'] >= root)
+                    or any(wick_breach((*usable.get(middle, ()), *lower_bars, *closed_minutes),
+                                       s['protected'], direction,
+                                       closes.get(s['origin'], s['origin'] + TF_MS[top]) if closes
+                                       else s['origin'] + TF_MS[top], now) is not None
+                           for s in upper_stairs.values() if s['origin'] >= root)
                     or any(b.timestamp >= upper['known_at']
                            and direction * ((b.high if direction == 1 else b.low) - upper['target']) >= 0
                            for b in upper_bars))
