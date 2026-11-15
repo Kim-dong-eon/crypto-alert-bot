@@ -292,7 +292,9 @@ def _run_batch(market,instruments,ledger,sender=None,persist=False,snapshot=None
         report['origin_tracks'] = FORMATION_TRACKS
         report['alert_reset_at'] = ledger.state.get('alert_reset_at')
     if require_execution:
-        report.update(entry_only=ledger.entry_only, execution_required_for_grade=3,
+        report.update(entry_only=ledger.entry_only,
+                      execution_required_for_grades=[1, 2, 3] if ledger.require_contact_rr else [2, 3],
+                      contact_rr_required=ledger.require_contact_rr,
                       entry_notional_usdt=entry_notional, execution_checks=execution_checks)
     if snapshot:
         path=Path(snapshot);path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
