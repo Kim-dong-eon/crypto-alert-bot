@@ -274,7 +274,7 @@ class StarAlertLedger(StructureLedger):
         self.state['alert_reset_at'] = now
         self.save()
 
-    def observe(self, snapshot, display_name=None, persist=True):
+    def observe(self, snapshot, display_name=None, persist=True, *, flush=True):
         if snapshot.get('ruleset') != RULESET:
             raise ValueError('Unexpected star policy')
         before = copy.deepcopy(self.state) if not persist else None
@@ -385,10 +385,10 @@ class StarAlertLedger(StructureLedger):
         self.state.setdefault('dedup_audits', {})[symbol] = {'at': now, 'suppressed': suppressed,
                                                            'one_off_resend': self.force_resend, 'locking_enabled': True}
         result = copy.deepcopy(pending)
-        if persist:
-            self.save()
-        else:
+        if not persist:
             self.state = before
+        elif flush:
+            self.save()
         return result
 
     def dispatch_units(self, image_sender, text_sender, renderer, *, refresh=None):

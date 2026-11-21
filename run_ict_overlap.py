@@ -201,7 +201,13 @@ def _run_batch(market,instruments,ledger,sender=None,persist=False,snapshot=None
                     candidate['signal_version'] = 2
                     if candidate['level'] == 1:
                         candidate['first_touch_text'] = True
-        pending=ledger.observe(result,result["display_name"],persist=persist or sender is not None)
+        keep_state = persist or sender is not None
+        if graded:
+            # The cursor checkpoint below saves the observation too. Actual
+            # sends still checkpoint their pending delivery before going out.
+            pending = ledger.observe(result, result['display_name'], persist=keep_state, flush=False)
+        else:
+            pending = ledger.observe(result, result['display_name'], persist=keep_state)
         if errors or minute_error or result.get('stock_reference_error'):
             failures.append({'symbol': symbol, 'reason': 'incomplete_data',
                              'frames': errors, 'minutes': minute_error, 'stock': result.get('stock_reference_error')})
@@ -248,10 +254,11 @@ def _run_batch(market,instruments,ledger,sender=None,persist=False,snapshot=None
                     c=unit['candidate'];item=next(r for r in results if r['symbol']==c['symbol'])
                     prefix=ROOT/'runtime/ict_overlap/charts'/f"{c['symbol']}_{c['track']}_{c['lenses'][0]}_{c['id']}"
                     return render_side_by_side_unit(item,unit,chart_frames[c['symbol']],prefix)
-                if require_execution:
-                    delivery=ledger.dispatch_units(image_sender,unit_text_sender or sender,unit_renderer,refresh=refresh_entry)
-                else:
-                    delivery=ledger.dispatch_units(image_sender,unit_text_sender or sender,unit_renderer)
+                if not graded or ledger.state['pending']:
+                    if require_execution:
+                        delivery=ledger.dispatch_units(image_sender,unit_text_sender or sender,unit_renderer,refresh=refresh_entry)
+                    else:
+                        delivery=ledger.dispatch_units(image_sender,unit_text_sender or sender,unit_renderer)
             else:delivery=ledger.dispatch_symbols(image_sender,renderer,contexts)
             completed={symbol for symbol,keys in before.items() if keys and keys.isdisjoint(ledger.state['pending'])}
             for symbol in status_symbols:
@@ -267,7 +274,9 @@ def _run_batch(market,instruments,ledger,sender=None,persist=False,snapshot=None
                 if ok:status_delivery['sent']+=1;status_delivery['symbols'].append(symbol)
                 else:status_delivery['failed']+=1
         else:delivery=ledger.dispatch(sender,batch=True)
-        ledger.state['pending'].update(held);ledger.save()
+        ledger.state['pending'].update(held)
+        if not graded or not results:
+            ledger.save()
     if results:
         if persist or sender is not None:
             cursors=ledger.state.setdefault('touch_cursors',{})
@@ -311,8 +320,10 @@ def run_once(market, instruments, ledger, sender=None, persist=False, snapshot=N
              image_sender=None, render_previews=False, listing_check=None, status_symbols=(),
              unit_text_sender=None, entry_notional=ENTRY_NOTIONAL_USDT):
     start = time.perf_counter()
-    request_count = getattr(market, 'request_count', 0)
-    request_seconds = getattr(market, 'request_seconds', 0.)
+    public_market = market if isinstance(market, PublicMarket) else getattr(market, 'public', None)
+    meter = public_market if isinstance(public_market, PublicMarket) else None
+    request_count = meter.request_count if meter else 0
+    request_seconds = meter.request_seconds if meter else 0.
     save_count, save_seconds = ledger.save_count, ledger.save_seconds
     reports = []
     resend_current = ledger.force_resend
@@ -350,9 +361,10 @@ def run_once(market, instruments, ledger, sender=None, persist=False, snapshot=N
         path = Path(snapshot)
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+    market_calls = meter.request_count - request_count if meter else 0
+    market_wait = meter.request_seconds - request_seconds if meter else 0.
     print(f'SCAN_PERF symbols={len(instruments)} elapsed={time.perf_counter() - start:.2f}s '
-          f'bitget_calls={getattr(market, "request_count", 0) - request_count} '
-          f'bitget_wait={getattr(market, "request_seconds", 0.) - request_seconds:.2f}s '
+          f'bitget_calls={market_calls} bitget_wait={market_wait:.2f}s '
           f'ledger_saves={ledger.save_count - save_count} '
           f'ledger_save_time={ledger.save_seconds - save_seconds:.2f}s', flush=True)
     return report

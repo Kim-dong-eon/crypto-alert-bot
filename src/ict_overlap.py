@@ -1,5 +1,5 @@
 """Closed-candle observation zones. No entry, OTE, RR or order execution."""
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from datetime import datetime, timezone, timedelta
 import hashlib
 import math
@@ -49,10 +49,17 @@ class Registry:
         return zone
 
     def step(self, tf, bar, closed_at=None):
-        stamp = closed_at if closed_at is not None else bar.timestamp + TF_MS[tf]
         for key, z in list(self.zones.items()):
             if z.timeframe == tf and z.direction * (bar.close - z.invalidation) < 0:
                 del self.zones[key]
+        made = self._form(tf, bar, closed_at)
+        for zone in made:
+            if zone.low < zone.high:
+                self.zones[zone.id] = zone
+        return made
+
+    def _form(self, tf, bar, closed_at):
+        stamp = closed_at if closed_at is not None else bar.timestamp + TF_MS[tf]
         recent = self.recent.get(tf, [])
         made = []
         if recent:
@@ -71,11 +78,35 @@ class Registry:
                 made.append(PDZone(f"{tf}:FVG:{left.timestamp}:{stamp}:{d}", tf, "FVG", d, lo, hi, stamp, left.timestamp, boundary, boundary))
         if tf in self.departure_ob_frames and (departure := self.departure_ob(tf, bar, stamp)):
             made.append(departure)
-        for z in made:
-            if z.low < z.high:
-                self.zones[z.id] = z
         self.recent[tf] = (recent + [bar])[-2:]
         return made
+
+    def replay_frame(self, tf, bars, *, close_times=None, as_of=None):
+        """Build final zones from an already bounded, chronological snapshot.
+
+        Only the final zone set is consumed by these callers. Keep using step()
+        when a caller needs intermediate states. Later closes here are all in
+        the supplied as-of snapshot and cannot change zone formation times.
+        """
+        if tf in self.recent:
+            raise ValueError('History replay requires a fresh timeframe')
+        later_extremes = [None] * len(bars)
+        later_low, later_high = math.inf, -math.inf
+        for i in range(len(bars) - 1, -1, -1):
+            later_extremes[i] = later_low, later_high
+            later_low = min(later_low, bars[i].close)
+            later_high = max(later_high, bars[i].close)
+        for bar, (low, high) in zip(bars, later_extremes):
+            closed_at = close_times[bar.timestamp] if close_times is not None else None
+            for zone in self._form(tf, bar, closed_at):
+                if zone.low >= zone.high:
+                    continue
+                if (zone.direction == 1 and low < zone.invalidation
+                        or zone.direction == -1 and high > zone.invalidation):
+                    continue
+                if tf == '1w' and as_of is not None and bar.timestamp + TF_MS[tf] > as_of:
+                    zone = replace(zone, id=f'{tf}:{zone.kind}:{zone.origin}:forming:{bar.timestamp}:{zone.direction}')
+                self.zones[zone.id] = zone
 
 
 def overlaps(zones, pair, anchor):

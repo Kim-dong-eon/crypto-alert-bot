@@ -79,15 +79,7 @@ def prepare(symbol,frames,now,price,tracks=None,*,build_overlaps=True,scales=Non
         if closes is None and any(b.timestamp-a.timestamp!=TF_MS[tf] for a,b in zip(values,values[1:])):raise ValueError('Gapped history')
         if any(b.timestamp <= a.timestamp for a,b in zip(values,values[1:])):raise ValueError('Unordered history')
         usable[tf]=values
-        for b in values:
-            made = registry.step(tf,b,closes[b.timestamp] if closes is not None else None)
-            if tf == '1w' and b.timestamp + TF_MS[tf] > now:
-                # Keep a provisional weekly zone's identity stable between polls.
-                # Its availability timestamp still reflects the current observation.
-                for zone in made:
-                    registry.zones.pop(zone.id, None)
-                    stable = replace(zone, id=f'{tf}:{zone.kind}:{zone.origin}:forming:{b.timestamp}:{zone.direction}')
-                    registry.zones[stable.id] = stable
+        registry.replay_frame(tf, values, close_times=closes, as_of=now)
     registry.zones = {source_prefix.get(z.timeframe, '') + z.id:
                       replace(z, id=source_prefix.get(z.timeframe, '') + z.id)
                       for z in registry.zones.values()}

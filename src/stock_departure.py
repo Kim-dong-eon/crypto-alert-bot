@@ -59,8 +59,7 @@ def stock_zones(rows, now=None):
                                 min(b.low for b in bars), bars[-1].close, sum(b.volume for b in bars)))
     registry = Registry(frames)
     for tf, bars in frames.items():
-        for bar in bars:
-            registry.step(tf, bar)
+        registry.replay_frame(tf, bars)
     zones = [replace(z, created=cash_close(z.created - TF_MS[z.timeframe], z.timeframe))
              for z in registry.zones.values() if z.kind == 'OB']
     return frames, zones

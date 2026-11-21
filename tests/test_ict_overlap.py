@@ -1,6 +1,8 @@
 import copy
+from dataclasses import replace
 import json
 from pathlib import Path
+import random
 import tempfile
 import unittest
 from unittest.mock import Mock,patch
@@ -24,6 +26,31 @@ def snapshot(price=120,identifier='one',low=100,high=110,stamp=1000):
 
 
 class ZoneTests(unittest.TestCase):
+    def test_history_replay_matches_bar_by_bar_invalidation_and_weekly_ids(self):
+        rng = random.Random(85)
+        frames = ('1h', '4h', '1w')
+        sequential = Registry(frames)
+        replayed = Registry(frames)
+        for tf in frames:
+            step = TF_MS[tf]
+            bars = []
+            price = 100
+            for i in range(200):
+                opened = price + rng.randint(-5, 5)
+                price = opened + rng.randint(-4, 4)
+                bars.append(Bar(i * step, opened, max(opened, price) + 1, min(opened, price) - 1, price))
+            as_of = bars[-1].timestamp + step // 2
+            closes = {bar.timestamp: min(bar.timestamp + step, as_of) for bar in bars}
+            for bar in bars:
+                formed = sequential.step(tf, bar, closes[bar.timestamp])
+                if tf == '1w' and bar.timestamp + step > as_of:
+                    for zone in formed:
+                        sequential.zones.pop(zone.id, None)
+                        stable = replace(zone, id=f'{tf}:{zone.kind}:{zone.origin}:forming:{bar.timestamp}:{zone.direction}')
+                        sequential.zones[stable.id] = stable
+            replayed.replay_frame(tf, bars, close_times=closes, as_of=as_of)
+        self.assertEqual(list(replayed.zones.items()), list(sequential.zones.items()))
+
     def test_cash_parent_alone_cannot_generate_an_alert(self):
         week = TF_MS['1w']
         now = 20 * week

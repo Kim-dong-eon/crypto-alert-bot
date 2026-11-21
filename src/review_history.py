@@ -14,15 +14,15 @@ def history_frame(market, symbol, tf, now_ms, count):
     exhausted=False
     if path.exists():
         old = json.loads(path.read_text(encoding='utf-8'))
-        for b in closed_bars(old['data'], tf, min(now_ms, old['fetched_at'])):
-            rows[b.timestamp] = [b.timestamp,b.open,b.high,b.low,b.close,b.volume]
+        cached = closed_bars(old['data'], tf, min(now_ms, old['fetched_at']))
         # Exhaustion applies only to the retained oldest timestamp. A smaller
         # request must not truncate the file and then make a wider request
         # falsely believe that the exchange has no older history.
         exhausted=old.get('history_exhausted',False)
-        if (rows and max(rows)+TF_MS[tf]==expected and
-                (min(rows)<=start or exhausted)):
-            return closed_bars([rows[t] for t in sorted(rows) if start<=t<expected],tf,now_ms)
+        if (cached and cached[-1].timestamp+TF_MS[tf]==expected and
+                (cached[0].timestamp<=start or exhausted)):
+            return [bar for bar in cached if bar.timestamp >= start]
+        rows = {b.timestamp: [b.timestamp,b.open,b.high,b.low,b.close,b.volume] for b in cached}
     fresh = market.get('candles', category='USDT-FUTURES', symbol=symbol,
                        interval=INTERVALS[tf], limit='1000')['data']
     for r in fresh:
@@ -128,9 +128,7 @@ def formation_history_starts(frames, tracks, price, minutes=(), contexts=None, s
     registry = Registry(MULTIBAR_OB_FRAMES)
     session_closes = session_closes or {}
     for tf in {path[0] for path in tracks.values()}:
-        for bar in frames.get(tf, ()):
-            closes = session_closes.get(tf)
-            registry.step(tf, bar, closes[bar.timestamp] if closes is not None else None)
+        registry.replay_frame(tf, frames.get(tf, ()), close_times=session_closes.get(tf))
     low = min([price] + [b.low for b in minutes])
     high = max([price] + [b.high for b in minutes])
     armed = {e['parent_id'] for e in (contexts or {}).values()}

@@ -251,6 +251,8 @@ class UnifiedAlertTests(unittest.TestCase):
             scanner.assert_called_once()
             self.assertFalse(report['failures'])
             self.assertEqual(ledger.state['touch_cursors']['BTCUSDT'], last_close)
+            self.assertEqual(ledger.save_count, 1)
+            self.assertEqual(StarAlertLedger(ledger.path).state['touch_cursors']['BTCUSDT'], last_close)
 
     def test_legacy_cash_lock_does_not_hide_three_frame_signal(self):
         old_snapshot, frames = list(replay(-1))[2]
