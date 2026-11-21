@@ -21,7 +21,9 @@ class FormationMapTests(unittest.TestCase):
             ledger=StarAlertLedger(path,require_contact_rr=True)
             self.assertFalse(ledger.observe(snapshot))
             c.update(contact_rr_required=True,observation_risk={
-                'stop_tf':c['path'][0], 'plan':{'band':c['band'],'rr':3.2}})
+                'stop_tf':c['path'][0], 'plan':{'band':c['band'],'rr':4.99}})
+            self.assertFalse(qualified_first_contact(c))
+            c['observation_risk']['plan']['rr'] = 5.
             self.assertTrue(qualified_first_contact(c))
             ledger._remember(c,1)
             ledger.save()
@@ -38,7 +40,7 @@ class FormationMapTests(unittest.TestCase):
             self.assertTrue(migrated.state['retired_star_locks'][c['symbol']])
 
     def test_rr_subband_must_be_touched_after_its_structure_was_known(self):
-        reference = {'stop':90,'target':150,'stop_tf':'4h','known_at':0}
+        reference = {'stop':90,'target':164,'stop_tf':'4h','known_at':0}
         quote = {'mid':109,'buy_vwap':109,'sell_vwap':109,'slippage_per_side':.0012}
         choice = {'level':1,'band':[100,110],'touch':{'valid_from':0}}
         high_touch = [Bar(60000,109,110,108,109,1)]
@@ -49,7 +51,7 @@ class FormationMapTests(unittest.TestCase):
         self.assertIsNotNone(qualified)
         self.assertLess(qualified['band'][1],110)
         self.assertEqual(qualified['structural_band'],[100,110])
-        self.assertGreaterEqual(qualified['observation_risk']['plan']['rr'],3)
+        self.assertGreaterEqual(qualified['observation_risk']['plan']['rr'],5)
         self.assertIsNone(qualify_contact(choice,{**reference,'known_at':90000},1,quote,'.01',109,
                                           120000,low_touch,0,confirmed_only=True))
         self.assertIsNone(qualify_contact(choice,reference,1,None,'.01',109,
@@ -175,11 +177,13 @@ class FormationMapTests(unittest.TestCase):
         groups = formation_map(parent, [PDZone(**z) for z in c['sources'][1:]] + extra,
                                c['path'], c['band'], middle_fvg=True)
         c['formation_map'] = groups
+        c['observation_risk'] = {'plan': {'band': c['band'], 'rr': 5.2}}
         self.assertTrue(map_rows(c))
         fig, ax = plt.subplots()
         try:
             tf = c['path'][-1]
             draw_panel(ax, tf, window(frames, tf, c, c['now']), c)
+            self.assertIn('참고 1:5', [t.get_text() for t in ax.get_legend().get_texts()])
             patches = [p for p in ax.patches if p.get_gid() == 'alternative-confluence']
             self.assertTrue(patches)
             core, = [p for p in ax.patches if p.get_hatch() and p.get_gid() != 'alternative-confluence']

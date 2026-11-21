@@ -13,6 +13,7 @@ from src.split_alert_preview import render_side_by_side_unit
 from src.star_alerts import formation_contacts, formation_pivot, formation_reaction, observation_reference, scan, unit_text
 from src.star_charts import overlap_cells, primary_overlap, window
 from src.star_delivery import StarAlertLedger, unique_contacts
+from src.staircase_rules import FEE_PER_SIDE, MIN_RR
 
 
 FIXTURE = Path(__file__).parent / 'fixtures/star_alert_btc.json'
@@ -355,6 +356,24 @@ class StarAlertsTests(unittest.TestCase):
             sender = lambda _: self.fail('expired plan must not be sent')
             result = ledger.dispatch_units(sender, sender, sender, refresh=lambda _: None)
             self.assertEqual(result['sent'], 0)
+            ledger.force_resend = True
+            self.assertEqual(len(ledger.observe(checked)), 1)
+            result = ledger.dispatch_units(sender, sender, sender, refresh=lambda c: {**c, 'rr': 4.99})
+            self.assertEqual(result['sent'], 0)
+
+            ledger.observe(checked)
+            key, = ledger.state['pending']
+            event = ledger.state['pending'][key]
+            event['candidate']['rr'] = 4.99
+            ledger.state['presentations'][key] = {'candidate': event['candidate'], 'complete': False,
+                                                  'attempt': event['timestamp'], 'units': {}}
+            ledger.save()
+            restarted = StarAlertLedger(ledger.path, entry_only=True, require_confluence=False, force_resend=True)
+            self.assertFalse(restarted.state['pending'])
+            self.assertNotIn(key, restarted.state['presentations'])
+            self.assertEqual(restarted.state['retired_presentations'][f"{key}:{event['timestamp']}"]
+                             ['candidate']['rr'], 4.99)
+            self.assertTrue(restarted.observe(checked))
 
     def test_depth_changes_both_long_and_short_entry_boundaries(self):
         book = {'ts': 1000, 'a': [[100.1, 2], [100.3, 20]], 'b': [[99.9, 2], [99.7, 20]]}
@@ -366,11 +385,30 @@ class StarAlertsTests(unittest.TestCase):
             depth_quote(book, 1000, 10000)
         with self.assertRaisesRegex(ValueError, 'stale_orderbook'):
             depth_quote(book, 40000, 1000)
-        for direction, stop, target in ((1, 98., 110.), (-1, 102., 90.)):
+        for direction, stop, target in ((1, 98., 116.), (-1, 102., 84.)):
             plan = entry_plan(99., 101., stop, target, direction, quote, '.01')
-            self.assertGreaterEqual(plan['rr'], 3.)
+            self.assertGreaterEqual(plan['rr'], MIN_RR)
             self.assertEqual(plan['entry'], plan['band'][1 if direction == 1 else 0])
             self.assertIsNone(entry_plan(99., 101., stop, target, direction, quote, None))
+
+    def test_exact_net_five_r_tick_is_executable_but_4_99_is_not(self):
+        entry, slip = 100., .0002
+        buy = (1 + slip) * (1 + FEE_PER_SIDE)
+        sell = (1 - slip) * (1 - FEE_PER_SIDE)
+        quote = dict(mid=entry, buy_vwap=entry, sell_vwap=entry, slippage_per_side=slip)
+        for direction, stop in ((1, 98.), (-1, 102.)):
+            for ratio in (4.99, 5.):
+                with self.subTest(direction=direction, ratio=ratio):
+                    if direction == 1:
+                        target = (entry * buy + ratio * (entry * buy - stop * sell)) / sell
+                    else:
+                        target = (entry * sell - ratio * (stop * buy - entry * sell)) / buy
+                    plan = entry_plan(99., 101., stop, target, direction, quote, '.01')
+                    if ratio < 5.:
+                        self.assertIsNone(plan)
+                    else:
+                        self.assertEqual(plan['entry'], entry)
+                        self.assertAlmostEqual(plan['rr'], 5.)
 
     def test_one_star_observation_uses_ob_wick_and_only_prior_confirmed_target(self):
         bar = Bar(100, 102, 103, 98, 101, 1)

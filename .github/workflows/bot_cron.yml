@@ -89,6 +89,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          BOT_SCHEDULED: ${{ github.event_name == 'schedule' }}
           BOT_SEND: ${{ github.event_name == 'schedule' || inputs.dry_run == false }}
           UNLOCK_SYMBOL: ${{ inputs.unlock_symbol }}
           UNLOCK_TRACK: ${{ inputs.unlock_track }}
@@ -101,14 +102,18 @@ jobs:
               python run_ict_overlap.py --state alert_state/ict_overlap.json --unlock "$UNLOCK_SYMBOL" "$UNLOCK_TRACK"
             fi
             args=(--send --state alert_state/ict_overlap.json --snapshot runtime/ict_overlap/actions.json)
-            if [ "$BOT_RESEND" = "true" ]; then
-              args+=(--resend-current)
-            fi
-            if [ "$BOT_RESET" = "true" ]; then
-              args+=(--reset-alerts)
-            fi
-            if [ -n "$BOT_INSPECT" ]; then
-              args+=(--inspect-symbol "$BOT_INSPECT")
+            if [ "$BOT_SCHEDULED" = "true" ]; then
+              args+=(--watch --watch-seconds 300)
+            else
+              if [ "$BOT_RESEND" = "true" ]; then
+                args+=(--resend-current)
+              fi
+              if [ "$BOT_RESET" = "true" ]; then
+                args+=(--reset-alerts)
+              fi
+              if [ -n "$BOT_INSPECT" ]; then
+                args+=(--inspect-symbol "$BOT_INSPECT")
+              fi
             fi
             python -u run_ict_overlap.py "${args[@]}"
           else

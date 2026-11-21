@@ -7,6 +7,7 @@ from matplotlib.patches import Rectangle,Patch
 from src.ict_engine import TF_MS
 from src.ict_overlap import LABELS,kst
 from src.overlap_charts import configure_font,box_color
+from src.staircase_rules import MIN_RR_LABEL
 
 
 def wave_window(bars,stair,source_origin=None,leading=5):
@@ -110,7 +111,7 @@ def render(snapshot,event,frames,prefix):
         extra=' · 함께 중첩: '+', '.join(LABELS[n['timeframe']] for n in c.get('also_overlaps',[])) if c.get('also_overlaps') else ''
         fig.suptitle(heading+' · '+lines[1]+'\n'+lines[2]+extra,color='#edf2f8',fontsize=15)
         demo='교육용 가상 예시 · 실제 알림 아님 | ' if snapshot.get('illustrative') else ''
-        fig.supxlabel(demo+kst(now)+'\n청록: 확인된 계단 / 노란 점선: 진행 중 · 미확정 / 흰 박스: OTE·중첩·3R 공통 구간\n'
+        fig.supxlabel(demo+kst(now)+f'\n청록: 확인된 계단 / 노란 점선: 진행 중 · 미확정 / 흰 박스: OTE·중첩·{MIN_RR_LABEL} 공통 구간\n'
                       '비용 가정: 편도 수수료 0.06% + 슬리피지 0.02% · 손절 여유: 하위 ATR의 10% · 주문 실행 없음',color='#bdc9d9',fontsize=10)
         path=Path(prefix).with_name(Path(prefix).name+'_side_by_side.png');path.parent.mkdir(parents=True,exist_ok=True)
         fig.savefig(path,dpi=145,facecolor=fig.get_facecolor())

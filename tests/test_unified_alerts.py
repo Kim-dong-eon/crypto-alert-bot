@@ -8,11 +8,11 @@ from pathlib import Path
 from unittest.mock import patch
 
 from config.overlap_settings import MULTIBAR_OB_FRAMES
-from run_ict_overlap import run_once
-from src.ict_engine import Bar, TF_MS
+from run_ict_overlap import STAR_TRACKS, main, run_once, wait_for_next_scan
+from src.ict_engine import Bar, TF_MS, frame_open
 from src.ict_overlap import Registry, PDZone
 from src.review_history import formation_history_starts, history_frame
-from src.star_alerts import formation_contacts, scan
+from src.star_alerts import RULESET, formation_contacts, scan
 from src.star_delivery import StarAlertLedger
 from src.stock_departure import contract_reference, cash_close, stock_contacts
 from src.pullback_alerts import prepare
@@ -20,6 +20,62 @@ from tests.test_star_alerts import replay
 
 
 class UnifiedAlertTests(unittest.TestCase):
+    def test_watch_waits_only_for_remainder_and_logs_overrun(self):
+        output = io.StringIO()
+        with patch('run_ict_overlap.time.monotonic', side_effect=[142., 175.]), \
+                patch('run_ict_overlap.time.sleep') as sleep, contextlib.redirect_stdout(output):
+            wait_for_next_scan(100.)
+            wait_for_next_scan(100.)
+        sleep.assert_called_once_with(18.)
+        self.assertIn('75.0초', output.getvalue())
+
+    def test_scheduled_watch_starts_five_scans_and_exits_without_extra_sleep(self):
+        now = [100.]
+        started = []
+        instruments = [{'symbol': 'BTCUSDT', 'baseCoin': 'BTC'}]
+
+        def sleep(seconds):
+            now[0] += seconds
+
+        def scan_once(*args, **kwargs):
+            started.append(now[0])
+            now[0] += 42.
+            if len(started) == 1:
+                raise ValueError('temporary market error')
+            return {'failures': [], 'delivery': {'failed': 0}, 'status_delivery': {'failed': 0}}
+
+        with tempfile.TemporaryDirectory() as temp, contextlib.redirect_stdout(io.StringIO()), \
+                patch('run_ict_overlap.HistoricalMarket'), \
+                patch('run_ict_overlap.binance_listings', return_value=([], {'mode': 'test', 'verified_at': 0})), \
+                patch('run_ict_overlap.select_common_instruments', return_value=instruments), \
+                patch('run_ict_overlap.run_once', side_effect=scan_once), \
+                patch('run_ict_overlap.time.monotonic', side_effect=lambda: now[0]), \
+                patch('run_ict_overlap.time.sleep', side_effect=sleep):
+            status = main(['--watch', '--watch-seconds', '300', '--bases', 'BTC',
+                           '--state', str(Path(temp) / 'state.json')])
+
+        self.assertEqual(status, 0)
+        self.assertEqual(started, [100., 160., 220., 280., 340.])
+        self.assertEqual(now[0], 382.)
+
+    def test_one_off_resend_covers_every_symbol_and_resets_after_scan(self):
+        with tempfile.TemporaryDirectory() as temp:
+            ledger = StarAlertLedger(Path(temp) / 'state.json', force_resend=True)
+            checked = []
+
+            def batch(market, instruments, ledger, *args):
+                checked.append((instruments[0]['symbol'], ledger.force_resend))
+                ledger.force_resend = False
+                return dict(instruments=instruments, symbols=[], failures=[],
+                            delivery=dict(sent=0, failed=0), status_delivery=dict(sent=0, failed=0, symbols=[]))
+
+            instruments = [{'symbol': 'BTCUSDT'}, {'symbol': 'ETHUSDT'}]
+            with patch('run_ict_overlap._run_batch', side_effect=batch):
+                run_once(None, instruments, ledger)
+                run_once(None, instruments, ledger)
+        self.assertEqual(checked, [('BTCUSDT', True), ('ETHUSDT', True),
+                                   ('BTCUSDT', False), ('ETHUSDT', False)])
+
     def test_cash_and_exchange_frames_have_identical_triple_contact_decisions(self):
         for side, price in ((-1,64935.),(1,65065.)):
             snapshot, frames = list(replay(side))[2]
@@ -131,6 +187,43 @@ class UnifiedAlertTests(unittest.TestCase):
             self.assertEqual(ledger.state['touch_cursors']['BTCUSDT'],now-300000)
             self.assertTrue(report['failures'])
             self.assertTrue(all(t == now-300000 for t in ledger.state['track_touch_cursors']['BTCUSDT'].values()))
+
+    def test_scan_checks_latest_closed_minute_inside_open_five_minute_candle(self):
+        five_minute_open = 1800000000000
+        last_close = five_minute_open + 120000
+        now = last_close + 10000
+        start = five_minute_open - 60000
+        minutes = [Bar(t, 100, 101, 99, 100, 1) for t in range(start, last_close, 60000)]
+        coverage = {'start': start, 'end': last_close, 'bars': len(minutes), 'truncated': False}
+
+        class Market:
+            def tickers(self):
+                return {'BTCUSDT': {}}, now
+
+            def frame(self, symbol, tf, as_of):
+                stamp = frame_open(as_of, tf) - TF_MS[tf]
+                return [Bar(stamp, 100, 101, 99, 100, 1)]
+
+        def scan(symbol, frames, observed, price, **options):
+            self.assertEqual(options['first_touch_cutoff'], last_close)
+            self.assertEqual(options['minute_bars'][-1].timestamp, last_close - 60000)
+            self.assertEqual(frames['5m'][-1].timestamp, five_minute_open - 300000)
+            return {'symbol': symbol, 'as_of': observed, 'ruleset': RULESET,
+                    'valid_source_ids': [], 'star_contexts': {}, 'history_starts': {},
+                    'tracks': {name: {'status': 'watching', 'candidate': None} for name in STAR_TRACKS}}
+
+        with tempfile.TemporaryDirectory() as temp:
+            ledger = StarAlertLedger(Path(temp) / 'state.json')
+            with patch('run_ict_overlap.time.time', return_value=now / 1000), \
+                    patch('run_ict_overlap.quote_price', return_value=100), \
+                    patch('run_ict_overlap.recent_minutes', return_value=(minutes, coverage)), \
+                    patch('run_ict_overlap.formation_history_starts', return_value={}), \
+                    patch('run_ict_overlap.scan_stars', side_effect=scan) as scanner, \
+                    contextlib.redirect_stdout(io.StringIO()):
+                report = run_once(Market(), [{'symbol': 'BTCUSDT', 'baseCoin': 'BTC'}], ledger, persist=True)
+            scanner.assert_called_once()
+            self.assertFalse(report['failures'])
+            self.assertEqual(ledger.state['touch_cursors']['BTCUSDT'], last_close)
 
     def test_legacy_cash_lock_does_not_hide_three_frame_signal(self):
         old_snapshot, frames = list(replay(-1))[2]

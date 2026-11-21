@@ -19,7 +19,7 @@ from src.star_delivery import StarAlertLedger
 from src.star_alerts import RULESET as STAR_RULESET, scan as scan_stars, unit_text as star_text
 from src.entry_execution import depth_quote, entry_plan
 from src.pullback_data import live_frames
-from src.staircase_rules import RULESET
+from src.staircase_rules import MIN_RR, RULESET
 from src.ict_engine import TF_MS,frame_open
 from src.review_history import HistoricalMarket, formation_history_starts
 from src.overlap_entry import recent_minutes,MINUTE
@@ -129,7 +129,9 @@ def _run_batch(market,instruments,ledger,sender=None,persist=False,snapshot=None
         except (KeyError,ValueError,TypeError):
             failures.append({"symbol":symbol,"reason":"ticker_became_stale_during_scan"});continue
         since = max(touch_since, minute_coverage['start']) if minute_coverage else touch_since
-        first_touch_cutoff = frame_open(observed, '5m')
+        # The structure still uses its configured frames. Touch evidence may
+        # use the latest completed minute, including inside an open 5m candle.
+        first_touch_cutoff = observed // MINUTE * MINUTE
         if graded:
             result = scan_stars(symbol, frames, observed, price, minute_bars=minute_bars,
                                 touch_since={name:max(since, track_cursors.get('bitget:'+name, legacy_since)) for name in STAR_TRACKS},
@@ -293,6 +295,7 @@ def _run_batch(market,instruments,ledger,sender=None,persist=False,snapshot=None
         report['alert_reset_at'] = ledger.state.get('alert_reset_at')
     if require_execution:
         report.update(entry_only=ledger.entry_only,
+                      min_net_rr=MIN_RR,
                       execution_required_for_grades=[1, 2, 3] if ledger.require_contact_rr else [2, 3],
                       contact_rr_required=ledger.require_contact_rr,
                       entry_notional_usdt=entry_notional, execution_checks=execution_checks)
@@ -306,11 +309,17 @@ def run_once(market, instruments, ledger, sender=None, persist=False, snapshot=N
              image_sender=None, render_previews=False, listing_check=None, status_symbols=(),
              unit_text_sender=None, entry_notional=ENTRY_NOTIONAL_USDT):
     reports = []
-    for instrument in instruments:
-        reports.append(_run_batch(market, [instrument], ledger, sender, persist, None,
-                                  image_sender, render_previews, listing_check,
-                                  tuple(s for s in status_symbols if s == instrument["symbol"]),
-                                  unit_text_sender, entry_notional))
+    resend_current = ledger.force_resend
+    try:
+        for instrument in instruments:
+            # Delivery clears the one-shot flag after each symbol's batch.
+            ledger.force_resend = resend_current
+            reports.append(_run_batch(market, [instrument], ledger, sender, persist, None,
+                                      image_sender, render_previews, listing_check,
+                                      tuple(s for s in status_symbols if s == instrument["symbol"]),
+                                      unit_text_sender, entry_notional))
+    finally:
+        ledger.force_resend = False
     if not reports:
         raise ValueError('No instruments to scan')
     report = dict(reports[-1])
@@ -328,9 +337,25 @@ def run_once(market, instruments, ledger, sender=None, persist=False, snapshot=N
     return report
 
 
+def wait_for_next_scan(started_at, *, deadline=None):
+    now = time.monotonic()
+    elapsed = now - started_at
+    delay = POLL_SECONDS - elapsed
+    if delay < 0:
+        print(f'감시 지연: 검사 {elapsed:.1f}초, {POLL_SECONDS}초 간격 초과', flush=True)
+    if deadline is not None and now + max(delay, 0) >= deadline:
+        return False
+    if delay > 0:
+        time.sleep(delay)
+    return deadline is None or time.monotonic() < deadline
+
+
 def main(argv=None):
     parser=argparse.ArgumentParser(description="별점 알림: 초단기1H/15m/5m·단기4H/1H/15m·중기1D/4H/1H·장기1W/1D/4H")
-    parser.add_argument('--send',action='store_true');parser.add_argument('--watch',action='store_true')
+    parser.add_argument('--send',action='store_true')
+    parser.add_argument('--watch', action='store_true', help='검사 시작 기준 60초 간격으로 상시 감시')
+    parser.add_argument('--watch-seconds', type=int,
+                        help='이 시간이 지나면 새 검사를 시작하지 않고 종료 (--watch 전용)')
     parser.add_argument('--resend-current',action='store_true',help='이번 검사만 기존 발송 잠금을 무시하고 현재 조건 충족 구간 재발송')
     parser.add_argument('--reset-alerts', action='store_true', help='모든 알림 잠금과 접촉 이력을 초기화하고 새 검사 시작')
     parser.add_argument('--inspect-symbol',help='이번 실행만 이 공통 상장 종목의 전체 상태 발송. 여러 종목은 쉼표로 구분')
@@ -341,6 +366,8 @@ def main(argv=None):
     parser.add_argument('--snapshot',type=Path,default=ROOT/'runtime/ict_overlap/preview.json')
     parser.add_argument('--unlock',nargs=2,metavar=('SYMBOL','TRACK'),help='특정 종목·단기/중기/장기 잠금만 수동 해제')
     args=parser.parse_args(argv)
+    if args.watch_seconds is not None and (not args.watch or args.watch_seconds <= 0):
+        parser.error('--watch-seconds requires --watch and a positive duration')
     if not math.isfinite(args.entry_notional) or args.entry_notional <= 0:parser.error('--entry-notional must be positive')
     if args.resend_current and args.watch:parser.error('--resend-current is one-shot only; omit --watch')
     if args.reset_alerts and (not args.send or args.resend_current or args.unlock):
@@ -379,19 +406,24 @@ def main(argv=None):
             media=TelegramMedia(os.getenv('TELEGRAM_BOT_TOKEN'),os.getenv('TELEGRAM_CHAT_ID'),min_interval=3.1)
             image_sender=media.send_images;unit_text_sender=media.send_text
         catalog_checked=time.monotonic()
+        started_at = catalog_checked
+        deadline = started_at + args.watch_seconds if args.watch_seconds is not None else None
         while True:
             try:
-                if time.monotonic()-catalog_checked>=3600:
+                if started_at-catalog_checked>=3600:
                     binance_rows,listing_check=binance_listings(ROOT/'config/binance_contracts.json',market.cache/'binance_contracts.json')
                     instruments=select_common_instruments(select_instruments(market.instruments(),bases),binance_rows,exclude_korean_equities=True)
                     catalog_checked=time.monotonic()
                 report=run_once(market,instruments,ledger,sender,persist=args.watch,snapshot=args.snapshot,image_sender=image_sender,render_previews=args.render_preview,listing_check=listing_check,status_symbols=inspect_symbols,unit_text_sender=unit_text_sender,entry_notional=args.entry_notional)
             except Exception as error:
                 if not args.watch:raise
+                failed = True
                 print(f'시세 확인 보류 ({type(error).__name__}); 다음 주기에 재시도',flush=True)
-                time.sleep(POLL_SECONDS);continue
-            if not args.watch:return int(bool(report['failures'] or report['delivery']['failed'] or report['status_delivery']['failed']))
-            time.sleep(POLL_SECONDS)
+            else:
+                failed = bool(report['failures'] or report['delivery']['failed'] or report['status_delivery']['failed'])
+            if not args.watch or not wait_for_next_scan(started_at, deadline=deadline):
+                return int(failed)
+            started_at = time.monotonic()
 
 
 if __name__=='__main__':

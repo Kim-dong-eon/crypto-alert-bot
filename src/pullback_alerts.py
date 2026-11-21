@@ -225,7 +225,7 @@ def scan_overlaps(symbol,frames,now_ms,price,tracks=None,equilibrium_filter=True
 
 
 def scan(symbol,frames,now_ms,price,tracks=None,equilibrium_filter=True,minute_bars=(),touch_since=0):
-    """Production: all segments must pass both stairs, OTE and net 3R."""
+    """All segments must pass both stairs, OTE and the net reward/risk minimum."""
     from src.staircase_rules import RULESET,evaluate,opposing_upper_contact
     result,usable,zones=prepare(symbol,frames,now_ms,price,tracks)
     result['ruleset']=RULESET

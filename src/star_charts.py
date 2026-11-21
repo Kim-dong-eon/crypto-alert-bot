@@ -9,6 +9,7 @@ from src.ict_overlap import LABELS, kst
 from src.overlap_charts import configure_font
 from src.alert_confluence import source_allowed
 from src.star_alerts import alert_title, atr_label, price_text as fmt, unit_text, is_entry, contact_status, risk_status
+from src.staircase_rules import MIN_RR_LABEL
 from config.overlap_settings import TRACK_LABELS
 
 WHITE = '#edf3fb'
@@ -192,13 +193,13 @@ def draw_panel(ax, tf, candles, event):
         left = max(-.6, position(event['touch']['valid_from']))
         ax.add_patch(Rectangle((left, lo), edge - left, hi - lo, facecolor=GOLD, alpha=.29, zorder=3))
         ax.hlines((lo + hi) / 2, left, edge, color=GOLD, linewidth=1.2, zorder=3)
-        legend['재접촉'] = Patch(facecolor=GOLD, alpha=.65, label='1:3 충족 구간')
+        legend['재접촉'] = Patch(facecolor=GOLD, alpha=.65, label=f'{MIN_RR_LABEL} 충족 구간')
     risk = event.get('observation_risk') or {}
     if not is_top and (plan := risk.get('plan')):
         lo, hi = plan['band']
         left = position(frame_open(event['touch'].get('bar_open', event['touch']['at'] - 1), tf))
         ax.hlines(sorted({lo, hi}), max(-.6, left), edge, color=REFERENCE, linestyle='--', linewidth=2, zorder=6)
-        legend['참고'] = Patch(facecolor='none', edgecolor=REFERENCE, linestyle='--', label='참고 1:3')
+        legend['참고'] = Patch(facecolor='none', edgecolor=REFERENCE, linestyle='--', label=f'참고 {MIN_RR_LABEL}')
 
     candle_span = max(b.high for b in candles) - min(b.low for b in candles)
     min_body = max(candle_span * .0015, abs(candles[-1].close) * .000005)
@@ -436,7 +437,7 @@ def add_map_table(fig, event):
     ax.axis('off')
     ax.set_title(title, loc='left', color=WHITE, fontsize=12, pad=8)
     table = ax.table(cellText=rows,
-                     colLabels=['구간', '3중 공통 가격대', '상위 × 중간 × 하위', '구조 손절 / 상위 목표', '비용 반영 1:3 가능 진입 / 손익비'],
+                     colLabels=['구간', '3중 공통 가격대', '상위 × 중간 × 하위', '구조 손절 / 상위 목표', f'비용 반영 {MIN_RR_LABEL} 가능 진입 / 손익비'],
                      colWidths=[.13, .20, .17, .20, .30], cellLoc='left', colLoc='left', bbox=[0, 0, 1, 1])
     table.auto_set_font_size(False)
     table.set_fontsize(9)
@@ -537,7 +538,7 @@ def render(snapshot, alert, frames, prefix):
                 detail += f" / {LABELS[risk.get('stop_tf', final)]} 손절 {stop} / 상위 목표 {target}"
                 detail += ' · ' + risk_status(risk)
         elif event.get('risk_unavailable'):
-            detail += ' · 1:3 미확정 · ' + event['risk_unavailable']
+            detail += f" · {MIN_RR_LABEL} 미확정 · {event['risk_unavailable']}"
         fig.text(.035, .064, detail, color=MUTED, size=11)
         if event.get('stock_reference'):
             age = (event.get('price_basis') or {}).get('quote_age_ms', 0) // 60000

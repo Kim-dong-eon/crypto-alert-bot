@@ -7,7 +7,7 @@ from unittest.mock import patch
 from src.ict_engine import Bar,TF_MS
 from src.ict_nested import PDZone
 from src.ict_overlap import alert_eligible
-from src.staircase_rules import staircases,ote_band,net_rr,risk_band,evaluate,RULESET,band_touch,opposing_upper_contact
+from src.staircase_rules import staircases,ote_band,net_rr,risk_band,evaluate,RULESET,band_touch,opposing_upper_contact,MIN_RR
 
 
 def sample():
@@ -53,8 +53,8 @@ class StaircaseTests(unittest.TestCase):
         self.assertEqual(ote_band({'protected':100,'target':120,'direction':1}),(104.2,107.6))
         self.assertEqual(ote_band({'protected':120,'target':100,'direction':-1}),(112.4,115.8))
 
-    def test_both_confirmed_stairs_and_ote_net_three_are_required(self):
-        s=self.checked();self.assertTrue(s['eligible']);self.assertGreaterEqual(s['rr'],3)
+    def test_both_confirmed_stairs_and_ote_net_minimum_are_required(self):
+        s=self.checked();self.assertTrue(s['eligible']);self.assertAlmostEqual(s['rr'],MIN_RR)
         self.assertLess(s['stop'],s['lower']['protected']);self.assertEqual(s['target'],s['upper']['target'])
         self.assertEqual(s['entry'],s['high'])
         c,u,up,l,lp,now=sample()
@@ -117,11 +117,11 @@ class StaircaseTests(unittest.TestCase):
         self.assertTrue(s['eligible']);self.assertEqual(s['touch']['evidence'],'completed_1m_range')
 
     def test_fee_adjustment_and_clipped_entry_band(self):
-        self.assertLess(net_rr(100,98,106,1),3)
+        self.assertLess(net_rr(100,98,106,1),MIN_RR)
         lo,hi=risk_band(99,101,98,106,1)
-        self.assertLess(hi,100);self.assertAlmostEqual(net_rr(hi,98,106,1),3)
+        self.assertLess(hi,100);self.assertAlmostEqual(net_rr(hi,98,106,1),MIN_RR)
         lo,hi=risk_band(99,101,102,94,-1)
-        self.assertGreater(lo,100);self.assertAlmostEqual(net_rr(lo,102,94,-1),3)
+        self.assertGreater(lo,100);self.assertAlmostEqual(net_rr(lo,102,94,-1),MIN_RR)
 
     def test_latest_lower_source_must_belong_to_lower_stair(self):
         c,u,up,l,lp,now=sample();c['sources'][-1]['origin']=l[10].timestamp

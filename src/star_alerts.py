@@ -14,7 +14,8 @@ from src.pullback_data import live_frames
 from src.ict_overlap import LABELS, kst, overlaps
 from src.overlap_entry import MINUTE
 from src.pullback_alerts import POLICY, REFINEMENT, TOP_COUNTS, prepare, rooted_context
-from src.staircase_rules import band_touch, net_rr, opposing_upper_contact, risk_band, staircases, ote_band, wick_breach
+from src.staircase_rules import (MIN_RR_LABEL, band_touch, meets_min_rr, net_rr,
+                                 opposing_upper_contact, risk_band, staircases, ote_band, wick_breach)
 from src.structure_review import turns
 from src.star_retests import retest_entries, target_at_contact, target_spent_at
 from config.overlap_settings import TRACK_LABELS
@@ -210,14 +211,14 @@ def risk_status(risk):
     if reasons:
         return ' · '.join(reasons)
     if not risk.get('costs_checked'):
-        return '비용 확인 대기 · 1:3 미확정'
+        return f'비용 확인 대기 · {MIN_RR_LABEL} 미확정'
     rr = risk.get('rr')
-    return (f'1:{rr:.2f} · ' if rr is not None and rr >= 0 else '') + '1:3 미충족'
+    return (f'1:{rr:.2f} · ' if rr is not None and rr >= 0 else '') + f'{MIN_RR_LABEL} 미충족'
 
 
 def qualify_contact(choice, reference, direction, quote, tick_size, price, now, minutes, since,
                     *, confirmed_only=False):
-    """Require contact with the cost-adjusted 3R sub-band, not merely its OB."""
+    """Require contact with the part of the OB that meets the net reward/risk minimum."""
     risk = assess_reference(reference, choice['band'], direction, quote, tick_size)
     plan = risk['plan']
     if not plan:
@@ -583,7 +584,7 @@ def scan(symbol, frames, now, price, *, minute_bars=(), touch_since=0, contexts=
                             continue
                         entry = hi if direction == 1 else lo
                         rr = net_rr(entry, stop, target, direction)
-                        if rr < 3 - 1e-9:
+                        if not meets_min_rr(rr):
                             continue
                         known = max(upper['known_at'], step['known_at'], ob.created, episode['overlap']['touch']['at'],
                                     prior_reaction['at'] if prior_reaction else 0)
@@ -692,9 +693,9 @@ def alert_title(candidate):
         return '상위·하위 계단 OB 재접촉' if candidate['level'] == 3 else '하위 계단 OB 재접촉'
     if candidate.get('phase') == 'reaction':
         return '하위 구조 반응 확인'
+    if candidate.get('contact_rr_required'):
+        return f'3중 겹침 · {MIN_RR_LABEL} 구간 접촉'
     if candidate.get('formation'):
-        if candidate.get('contact_rr_required'):
-            return '3중 겹침 · 1:3 구간 접촉'
         return '3중 겹침 첫 접촉'
     if candidate['level'] == 1:
         return f"{LABELS[candidate['refinement_tf']]} OB 관찰"
@@ -740,7 +741,7 @@ def compact_atr_text(c):
     label = LABELS[c['pair'][0]]
     exchange = c.get('exchange', 'bitget').title()
     lo, hi = map(price_text, c['band'])
-    title = '3중 겹침 접촉' if c.get('contact_rr_required') and level == 1 else alert_title(c)
+    title = alert_title(c)
     lines = [f"{'★' * level} {c['symbol']} · {side} · {label} ({exchange})",
              title + ' · ' + contact_status(c)]
     if c.get('forming_upper'):
@@ -764,7 +765,7 @@ def compact_atr_text(c):
     else:
         lines.append(f"접촉 구간 {lo}~{hi}")
         if c.get('risk_unavailable'):
-            lines.append('1:3 미확정 · ' + c['risk_unavailable'])
+            lines.append(f'{MIN_RR_LABEL} 미확정 · ' + c['risk_unavailable'])
     if warning := compact_warning(c):
         lines.append(warning)
     return '\n'.join(lines)

@@ -3,7 +3,7 @@
 from decimal import Decimal, InvalidOperation, ROUND_CEILING, ROUND_FLOOR
 import math
 
-from src.staircase_rules import FEE_PER_SIDE, MIN_RR, SLIPPAGE_PER_SIDE, net_rr, risk_band
+from src.staircase_rules import FEE_PER_SIDE, SLIPPAGE_PER_SIDE, meets_min_rr, net_rr, risk_band
 
 
 def fill_average(levels, quantity):
@@ -69,6 +69,6 @@ def entry_plan(low, high, stop, target, direction, quote, tick_size, *, prior_ba
         return None
     entry = hi if direction == 1 else lo
     rr = net_rr(entry, stop, target, direction, slippage=slip)
-    if rr < MIN_RR - 1e-9:
+    if not meets_min_rr(rr):
         return None
     return {'band': [lo, hi], 'entry': entry, 'rr': rr, 'execution': {**quote, 'vwap': vwap}}

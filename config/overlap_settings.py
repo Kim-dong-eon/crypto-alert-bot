@@ -12,6 +12,7 @@ BASES += DIVERSIFIER_BASES
 BASES += ("BSP", "V", "LLY", "WEN", "MCD", "POPMART", "UNITREE", "TMF", "ADBE", "MEITUAN", "EWZ", "MRK")
 HISTORY_BARS = 400
 POLL_SECONDS = 60
+MIN_RR = 5.0
 MIN_HISTORY_BARS = 8
 # A rolling local dealing range, rather than every small pivot or all-time highs.
 EXTERNAL_LIQUIDITY_BARS = 20

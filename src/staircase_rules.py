@@ -1,14 +1,21 @@
 """Causal staircases, OTE and estimated net reward/risk for observations."""
+import math
+
+from config.overlap_settings import MIN_RR
 from src.ict_engine import TF_MS
 from src.structure_review import atrs, turns
 from src.overlap_entry import MINUTE
 
-RULESET = 'nested-staircase-ote-3r-v1'
+RULESET = 'nested-staircase-ote-5r-v1'
 # Conservative estimates, not a claim about the user's fee tier or actual fills.
 FEE_PER_SIDE = .0006
 SLIPPAGE_PER_SIDE = .0002
 STOP_ATR_BUFFER = .10
-MIN_RR = 3.
+MIN_RR_LABEL = f'1:{MIN_RR:g}'
+
+
+def meets_min_rr(rr):
+    return isinstance(rr, (int, float)) and math.isfinite(rr) and rr >= MIN_RR - 1e-9
 
 
 def wick_breach(bars, level, direction, start, end):
@@ -68,8 +75,15 @@ def net_rr(entry,stop,target,direction,*,slippage=SLIPPAGE_PER_SIDE):
 def risk_band(low,high,stop,target,direction,*,slippage=SLIPPAGE_PER_SIDE):
     buy=(1+slippage)*(1+FEE_PER_SIDE)
     sell=(1-slippage)*(1-FEE_PER_SIDE)
-    if direction==1:high=min(high,(target+MIN_RR*stop)*sell/((1+MIN_RR)*buy))
-    else:low=max(low,(target+MIN_RR*stop)*buy/((1+MIN_RR)*sell))
+    # Keep boundary ticks from being rounded away by one floating-point step.
+    # The final rounded entry is checked against net_rr again before use.
+    weighted_target = target + MIN_RR * stop
+    if direction == 1:
+        limit = weighted_target * sell / ((1 + MIN_RR) * buy)
+        high = min(high, math.nextafter(limit, math.inf))
+    else:
+        limit = weighted_target * buy / ((1 + MIN_RR) * sell)
+        low = max(low, math.nextafter(limit, -math.inf))
     return low,high
 
 
@@ -114,10 +128,10 @@ def evaluate(candidate,upper_bars,upper_points,lower_bars,now,price,minutes=(),s
     atr=atrs(lower_bars)[lower['points'][2]['index']]
     stop=lower['protected']-d*STOP_ATR_BUFFER*atr;target=upper['target']
     low,high=risk_band(low,high,stop,target,d)
-    if low>=high:return {'eligible':False,'reason':'reward_risk_below_three'}
+    if low>=high:return {'eligible':False,'reason':'reward_risk_below_minimum'}
     entry=high if d==1 else low # Worst permissible entry in the notified band.
     rr=net_rr(entry,stop,target,d)
-    if rr<MIN_RR-1e-9 or d*(entry-stop)<=0:return {'eligible':False,'reason':'invalid_risk_band'}
+    if not meets_min_rr(rr) or d*(entry-stop)<=0:return {'eligible':False,'reason':'invalid_risk_band'}
     known=max(candidate['formed_at'],candidate['latest_source'],upper['known_at'],lower['known_at'])
     touch=band_touch(low,high,known,price,now,minutes,since)
     return {'eligible':touch['hit'],'reason':'qualified' if touch['hit'] else 'waiting_for_retest',

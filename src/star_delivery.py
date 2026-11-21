@@ -8,7 +8,7 @@ from src.ict_engine import TF_MS
 from src.ict_overlap import alert_eligible
 from src.pullback_delivery import delivery_started, physical_id, POLICY
 from src.star_alerts import RULESET, atr_label, is_entry
-from src.staircase_rules import MIN_RR
+from src.staircase_rules import meets_min_rr
 from src.structure_alerts import StructureLedger, candidates
 from config.overlap_settings import TRACK_LABELS
 
@@ -84,7 +84,7 @@ def eligible_contacts(tracks, entry_only=False, require_execution=False, require
 
 
 def executable(candidate):
-    return is_entry(candidate) and candidate.get('execution') and candidate['rr'] >= MIN_RR - 1e-9
+    return is_entry(candidate) and bool(candidate.get('execution')) and meets_min_rr(candidate.get('rr'))
 
 
 def qualified_first_contact(c):
@@ -93,7 +93,7 @@ def qualified_first_contact(c):
     risk = c.get('observation_risk') or {}
     plan = risk.get('plan') or {}
     return (c.get('contact_rr_required') is True and risk.get('stop_tf') == c.get('path', [None])[0]
-            and plan.get('rr', -1) >= MIN_RR - 1e-9
+            and meets_min_rr(plan.get('rr'))
             and plan.get('band') == c.get('band') and confluence_error(c) is None)
 
 
@@ -126,20 +126,20 @@ class StarAlertLedger(StructureLedger):
         self.state.setdefault('star_contexts', {})
         self.state.setdefault('star_locks', {})
         self.state.setdefault('presentations', {})
+        for key, p in list(self.state['presentations'].items()):
+            if not p.get('complete') and not self._meets_delivery_rr(p.get('candidate') or {}):
+                self.state.setdefault('retired_presentations', {})[f"{key}:{p.get('attempt', 0)}"] = {
+                    **p, 'retired_reason': 'net_rr_requirement_changed'}
+                del self.state['presentations'][key]
+        for key, event in list(self.state['pending'].items()):
+            if not self._meets_delivery_rr(event.get('candidate') or {}):
+                del self.state['pending'][key]
         if require_contact_rr:
-            for key, p in list(self.state['presentations'].items()):
-                if not qualified_first_contact(p.get('candidate') or {}):
-                    self.state.setdefault('retired_presentations', {})[f"{key}:{p.get('attempt', 0)}"] = {
-                        **p, 'retired_reason': 'upper_stop_3r_contact_required'}
-                    del self.state['presentations'][key]
-            for key, event in list(self.state.get('pending', {}).items()):
-                if not qualified_first_contact(event.get('candidate') or {}):
-                    del self.state['pending'][key]
             for symbol, locks in self.state['star_locks'].items():
                 for key, lock in list(locks.items()):
                     if lock['level'] == 1 and not qualified_first_contact(lock.get('confluence_proof') or {'level': 1}):
                         self.state.setdefault('retired_star_locks', {}).setdefault(symbol, {})[key] = {
-                            **lock, 'retired_reason': 'upper_stop_3r_contact_required'}
+                            **lock, 'retired_reason': 'upper_stop_min_rr_contact_required'}
                         del locks[key]
         if self.require_confluence:
             # Retain receipts for audit, but never retry a single-OB presentation
@@ -184,6 +184,13 @@ class StarAlertLedger(StructureLedger):
         self.state['delivery_mode'] = RULESET
         self.state['notification_policy'] = RULESET
         self.state['strategy'] = POLICY
+
+    def _meets_delivery_rr(self, candidate):
+        if self.require_contact_rr and not qualified_first_contact(candidate):
+            return False
+        if self.entry_only or (self.require_execution and is_entry(candidate)):
+            return executable(candidate)
+        return True
 
     def _remember(self, c, level):
         if self.require_contact_rr and not qualified_first_contact(c):
@@ -392,12 +399,12 @@ class StarAlertLedger(StructureLedger):
                     (p and confluence_error(p['candidate']))):
                 del self.state['pending'][key]
                 continue
-            if (self.entry_only or (self.require_execution and is_entry(c))) and not executable(c):
+            if not self._meets_delivery_rr(c):
                 del self.state['pending'][key]
                 continue
             if refresh is not None and is_entry(c):
                 checked = refresh(c)
-                if checked is None:
+                if checked is None or not self._meets_delivery_rr(checked):
                     del self.state['pending'][key]
                     continue
                 p = self.state['presentations'].get(key)
