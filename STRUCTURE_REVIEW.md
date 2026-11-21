@@ -30,4 +30,4 @@ LONG·SHORT에 대칭 적용한다. 상위와 하위 계단은 확정된 네 전
 .\venv\Scripts\python.exe -u .\run_ict_overlap.py --watch --send --state alert_state/ict_overlap.json
 ```
 
-GitHub Actions의 5분 예약 실행은 `--watch --watch-seconds 300`으로 1분 감시를 시작한다. 감시 시간이 지나면 진행 중인 검사를 마치고 상태를 저장한다. 작업 준비나 예약 지연으로 실행 사이에는 공백이 생길 수 있다. 같은 텔레그램 채팅에서는 GitHub와 PC 중 한 곳에서 발송한다.
+cron-job.org에서 GitHub Actions의 `workflow_dispatch`를 1분마다 호출한다. GitHub는 외부 호출당 한 번 검사하고 발송 기록을 저장한다. 기록 충돌을 막기 위해 작업을 순서대로 처리하므로 실행에 60초 이상 걸리면 실제 검사 간격은 1분을 넘을 수 있다. 같은 텔레그램 채팅에서는 GitHub와 PC 중 한 곳에서 발송한다.

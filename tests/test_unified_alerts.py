@@ -29,7 +29,7 @@ class UnifiedAlertTests(unittest.TestCase):
         sleep.assert_called_once_with(18.)
         self.assertIn('75.0초', output.getvalue())
 
-    def test_scheduled_watch_starts_five_scans_and_exits_without_extra_sleep(self):
+    def test_bounded_watch_starts_five_scans_and_exits_without_extra_sleep(self):
         now = [100.]
         started = []
         instruments = [{'symbol': 'BTCUSDT', 'baseCoin': 'BTC'}]
@@ -63,7 +63,7 @@ class UnifiedAlertTests(unittest.TestCase):
             ledger = StarAlertLedger(Path(temp) / 'state.json', force_resend=True)
             checked = []
 
-            def batch(market, instruments, ledger, *args):
+            def batch(market, instruments, ledger, *args, **kwargs):
                 checked.append((instruments[0]['symbol'], ledger.force_resend))
                 ledger.force_resend = False
                 return dict(instruments=instruments, symbols=[], failures=[],
@@ -75,6 +75,33 @@ class UnifiedAlertTests(unittest.TestCase):
                 run_once(None, instruments, ledger)
         self.assertEqual(checked, [('BTCUSDT', True), ('ETHUSDT', True),
                                    ('BTCUSDT', False), ('ETHUSDT', False)])
+
+    def test_scan_shares_only_fresh_bulk_ticker_snapshot(self):
+        now = [100.]
+        fetched = []
+        received = []
+
+        class Market:
+            def tickers(self):
+                stamp = int(now[0] * 1000)
+                fetched.append(stamp)
+                return {}, stamp
+
+        def batch(market, instruments, ledger, *args, read_tickers):
+            received.append(read_tickers()[1])
+            now[0] += 3.
+            return dict(instruments=instruments, symbols=[], failures=[],
+                        delivery=dict(sent=0, failed=0), status_delivery=dict(sent=0, failed=0, symbols=[]))
+
+        with tempfile.TemporaryDirectory() as temp:
+            ledger = StarAlertLedger(Path(temp) / 'state.json')
+            instruments = [{'symbol': symbol} for symbol in ('BTCUSDT', 'ETHUSDT', 'AAPLUSDT')]
+            with patch('run_ict_overlap.time.time', side_effect=lambda: now[0]), \
+                    patch('run_ict_overlap._run_batch', side_effect=batch):
+                run_once(Market(), instruments, ledger)
+                run_once(Market(), instruments[:1], ledger)
+        self.assertEqual(received, [100000, 100000, 106000, 109000])
+        self.assertEqual(fetched, [100000, 106000, 109000])
 
     def test_cash_and_exchange_frames_have_identical_triple_contact_decisions(self):
         for side, price in ((-1,64935.),(1,65065.)):

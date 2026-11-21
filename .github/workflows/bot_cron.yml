@@ -1,6 +1,7 @@
 name: ICT Overlap Alerts
 
 on:
+  # cron-job.org calls this dispatch endpoint every minute.
   workflow_dispatch:
     inputs:
       dry_run:
@@ -28,8 +29,6 @@ on:
         type: choice
         options: [fast, short, medium, long]
         default: short
-  schedule:
-    - cron: '*/5 * * * *'
 
 permissions:
   contents: write
@@ -50,7 +49,7 @@ jobs:
       - name: Checkout current default branch
         uses: actions/checkout@v7
         with:
-          fetch-depth: 0
+          fetch-depth: 1
           ref: ${{ github.ref_name }}
 
       - name: Synchronize delivery receipts and minute cursors
@@ -72,6 +71,7 @@ jobs:
           python -m pip install -r requirements-ict.txt
 
       - name: Verify pullback alerts, delivery locks and charts
+        if: inputs.dry_run
         run: python -m unittest tests.test_ict_overlap tests.test_overlap_charts tests.test_overlap_structure tests.test_common_listings tests.test_overlap_diversification tests.test_overlap_status tests.test_structure_review tests.test_structure_alerts tests.test_overlap_entry tests.test_anchored_overlap tests.test_pullback_alerts tests.test_staircase_rules tests.test_star_alerts tests.test_star_retests tests.test_unified_alerts tests.test_alert_confluence tests.test_alert_presentation tests.test_live_weekly tests.test_formation_map -q
 
       - name: Restore closed-candle cache
@@ -89,8 +89,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          BOT_SCHEDULED: ${{ github.event_name == 'schedule' }}
-          BOT_SEND: ${{ github.event_name == 'schedule' || inputs.dry_run == false }}
+          BOT_SEND: ${{ inputs.dry_run != true }}
           UNLOCK_SYMBOL: ${{ inputs.unlock_symbol }}
           UNLOCK_TRACK: ${{ inputs.unlock_track }}
           BOT_RESEND: ${{ inputs.resend_current }}
@@ -102,18 +101,14 @@ jobs:
               python run_ict_overlap.py --state alert_state/ict_overlap.json --unlock "$UNLOCK_SYMBOL" "$UNLOCK_TRACK"
             fi
             args=(--send --state alert_state/ict_overlap.json --snapshot runtime/ict_overlap/actions.json)
-            if [ "$BOT_SCHEDULED" = "true" ]; then
-              args+=(--watch --watch-seconds 300)
-            else
-              if [ "$BOT_RESEND" = "true" ]; then
-                args+=(--resend-current)
-              fi
-              if [ "$BOT_RESET" = "true" ]; then
-                args+=(--reset-alerts)
-              fi
-              if [ -n "$BOT_INSPECT" ]; then
-                args+=(--inspect-symbol "$BOT_INSPECT")
-              fi
+            if [ "$BOT_RESEND" = "true" ]; then
+              args+=(--resend-current)
+            fi
+            if [ "$BOT_RESET" = "true" ]; then
+              args+=(--reset-alerts)
+            fi
+            if [ -n "$BOT_INSPECT" ]; then
+              args+=(--inspect-symbol "$BOT_INSPECT")
             fi
             python -u run_ict_overlap.py "${args[@]}"
           else
@@ -121,7 +116,7 @@ jobs:
           fi
 
       - name: Persist delivery receipts and minute cursors
-        if: always() && steps.scan.outcome != 'skipped' && (github.event_name == 'schedule' || inputs.dry_run == false)
+        if: always() && steps.scan.outcome != 'skipped' && inputs.dry_run != true
         env:
           BOT_BRANCH: ${{ github.ref_name }}
         run: |

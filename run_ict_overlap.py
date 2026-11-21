@@ -33,13 +33,14 @@ from src.stock_departure import NasdaqHistory, US_EQUITIES, stock_contacts, cash
 
 ROOT=Path(__file__).resolve().parent
 ENTRY_NOTIONAL_USDT = 1000.
+TICKER_REUSE_MS = 5000
 STAR_TRACKS = TRACKS
 FORMATION_TRACKS = tuple(STAR_TRACKS)
 from config.overlap_settings import MULTIBAR_OB_FRAMES, ALLOW_MIDDLE_FVG, REQUIRE_ENTRY_OTE
 DEPARTURE_OB_FRAMES = MULTIBAR_OB_FRAMES
 
 
-def _run_batch(market,instruments,ledger,sender=None,persist=False,snapshot=None,image_sender=None,render_previews=False,listing_check=None,status_symbols=(),unit_text_sender=None,entry_notional=ENTRY_NOTIONAL_USDT):
+def _run_batch(market,instruments,ledger,sender=None,persist=False,snapshot=None,image_sender=None,render_previews=False,listing_check=None,status_symbols=(),unit_text_sender=None,entry_notional=ENTRY_NOTIONAL_USDT,*,read_tickers=None):
     results=[];failures=[];chart_frames={}
     graded = isinstance(ledger, StarAlertLedger)
     require_execution = graded and ledger.require_execution
@@ -67,10 +68,11 @@ def _run_batch(market,instruments,ledger,sender=None,persist=False,snapshot=None
         lo, hi = plan['band']
         return {**c, **plan, 'low': lo, 'high': hi,
                 'touch': {**c['touch'], 'observed_price': quote['mid']}}
-    tickers,received=market.tickers()
+    read_tickers = read_tickers or market.tickers
+    tickers,received=read_tickers()
     for instrument in instruments:
         symbol=instrument["symbol"];frames={};errors={};now=int(time.time()*1000)
-        if now-received>60000:tickers,received=market.tickers()
+        if now-received>60000:tickers,received=read_tickers()
         try:price=quote_price(tickers[symbol],now)
         except (KeyError,ValueError,TypeError):
             failures.append({"symbol":symbol,"reason":"ticker_unavailable_or_stale"});continue
@@ -124,7 +126,7 @@ def _run_batch(market,instruments,ledger,sender=None,persist=False,snapshot=None
         if minute_coverage and minute_coverage['end']!=observed//MINUTE*MINUTE:
             try:minute_bars,minute_coverage=recent_minutes(market,symbol,min(touch_since,frame_open(observed,'4h')),observed)
             except Exception as error:minute_bars=[];minute_coverage=None;minute_error=type(error).__name__
-        if observed-received>60000:tickers,received=market.tickers()
+        if observed-received>60000:tickers,received=read_tickers()
         try:price=quote_price(tickers[symbol],observed)
         except (KeyError,ValueError,TypeError):
             failures.append({"symbol":symbol,"reason":"ticker_became_stale_during_scan"});continue
@@ -310,6 +312,16 @@ def run_once(market, instruments, ledger, sender=None, persist=False, snapshot=N
              unit_text_sender=None, entry_notional=ENTRY_NOTIONAL_USDT):
     reports = []
     resend_current = ledger.force_resend
+    ticker_snapshot = None
+
+    def read_tickers():
+        nonlocal ticker_snapshot
+        # This endpoint returns all symbols. Share a fresh snapshot between
+        # nearby scans while keeping the separate live orderbook recheck.
+        if ticker_snapshot is None or int(time.time() * 1000) - ticker_snapshot[1] >= TICKER_REUSE_MS:
+            ticker_snapshot = market.tickers()
+        return ticker_snapshot
+
     try:
         for instrument in instruments:
             # Delivery clears the one-shot flag after each symbol's batch.
@@ -317,7 +329,7 @@ def run_once(market, instruments, ledger, sender=None, persist=False, snapshot=N
             reports.append(_run_batch(market, [instrument], ledger, sender, persist, None,
                                       image_sender, render_previews, listing_check,
                                       tuple(s for s in status_symbols if s == instrument["symbol"]),
-                                      unit_text_sender, entry_notional))
+                                      unit_text_sender, entry_notional, read_tickers=read_tickers))
     finally:
         ledger.force_resend = False
     if not reports:

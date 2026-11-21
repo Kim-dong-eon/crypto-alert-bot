@@ -2,7 +2,7 @@
 
 2026-10-29 KST. 사용자가 직접 제시한 박스 중첩 방식으로 변경했다. 실제 중첩이 있고 가격이 상위 파동의 0.5를 지나 그 구간 쪽으로 접근했을 때만 짧게 알린다. 진입·주문을 실행하지 않는다.
 
-GitHub Actions는 5분마다 예약되고, 각 예약 실행 안에서 5분 동안 검사 시작 기준 60초 간격으로 감시한다. 준비 시간, 예약 지연, 검사 지연 때문에 실행 전환 때 공백이 생길 수 있다. 발송은 기존 `TELEGRAM_BOT_TOKEN`과 `TELEGRAM_CHAT_ID`를 사용하고, 상태는 각 검사 중 저장한 뒤 작업 종료 시 저장소에 반영한다. [GitHub 예약 실행 안내](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+cron-job.org가 1분마다 GitHub Actions의 `workflow_dispatch`를 호출한다. 실행 한 건당 한 번 검사하며, 발송은 기존 `TELEGRAM_BOT_TOKEN`과 `TELEGRAM_CHAT_ID`를 사용한다. 발송 기록이 충돌하지 않도록 작업을 동시에 실행하지 않는다. 앞 작업이 길어지면 다음 요청이 대기하고, 이미 대기 중인 요청은 더 최근 요청으로 대체될 수 있다. [GitHub 동시 실행 설정](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#concurrency)
 
 | 구분 | 방향 확인 | 중첩 검사 |
 |---|---|---|
@@ -109,10 +109,10 @@ run_ict_alerts.py의 기본은 v10 외곽 유동성 기준이다. 기존 v8 연�
 .\venv\Scripts\python.exe .\run_ict_alerts.py
 ```
 
-Actions 예약 실행은 아래 명령을 사용한다. 수동 실행은 `--watch --watch-seconds 300` 옵션을 빼고 한 번 검사한다.
+외부 예약 요청과 수동 발송은 아래 명령으로 한 번 검사한다.
 
 ```powershell
-.\venv\Scripts\python.exe -u .\run_ict_overlap.py --send --watch --watch-seconds 300 --state alert_state/ict_overlap.json --snapshot runtime/ict_overlap/actions.json
+.\venv\Scripts\python.exe -u .\run_ict_overlap.py --send --state alert_state/ict_overlap.json --snapshot runtime/ict_overlap/actions.json
 ```
 
 GitHub Actions 화면의 Run workflow에서 dry_run=true로 이미지 미리보기 검사를 할 수 있다. dry_run=false는 실제 발송이다. 선택 사항 unlock_symbol=BTCUSDT, unlock_track=short를 지정하면 해당 종목·단기 잠금만 해제한 뒤 검사한다. 로컬 조작은 아래와 같다.
