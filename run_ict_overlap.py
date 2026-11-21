@@ -310,6 +310,10 @@ def _run_batch(market,instruments,ledger,sender=None,persist=False,snapshot=None
 def run_once(market, instruments, ledger, sender=None, persist=False, snapshot=None,
              image_sender=None, render_previews=False, listing_check=None, status_symbols=(),
              unit_text_sender=None, entry_notional=ENTRY_NOTIONAL_USDT):
+    start = time.perf_counter()
+    request_count = getattr(market, 'request_count', 0)
+    request_seconds = getattr(market, 'request_seconds', 0.)
+    save_count, save_seconds = ledger.save_count, ledger.save_seconds
     reports = []
     resend_current = ledger.force_resend
     ticker_snapshot = None
@@ -346,6 +350,11 @@ def run_once(market, instruments, ledger, sender=None, persist=False, snapshot=N
         path = Path(snapshot)
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+    print(f'SCAN_PERF symbols={len(instruments)} elapsed={time.perf_counter() - start:.2f}s '
+          f'bitget_calls={getattr(market, "request_count", 0) - request_count} '
+          f'bitget_wait={getattr(market, "request_seconds", 0.) - request_seconds:.2f}s '
+          f'ledger_saves={ledger.save_count - save_count} '
+          f'ledger_save_time={ledger.save_seconds - save_seconds:.2f}s', flush=True)
     return report
 
 

@@ -33,8 +33,18 @@ class PublicMarket:
         self.session = requests.Session()
         self.session.trust_env = False
         self.last_request = 0.
+        self.request_count = 0
+        self.request_seconds = 0.
 
     def get(self, path, **params):
+        started = time.perf_counter()
+        try:
+            return self._get(path, **params)
+        finally:
+            self.request_count += 1
+            self.request_seconds += time.perf_counter() - started
+
+    def _get(self, path, **params):
         # <=5 requests/second; no account endpoints or credential headers.
         time.sleep(max(0., .2-(time.monotonic()-self.last_request)))
         self.last_request = time.monotonic()

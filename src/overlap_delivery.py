@@ -28,11 +28,21 @@ class OverlapLedger:
         self.overlap_only=overlap_only
         self.approach_only=approach_only
         self.force_resend=force_resend
+        self.save_count = 0
+        self.save_seconds = 0.
         if overlap_only:
             wanted='approach' if approach_only else 'prepared'
             self.state['pending']={k:e for k,e in self.state['pending'].items() if e['stage']==wanted}
 
     def save(self):
+        started = time.perf_counter()
+        try:
+            self._save()
+        finally:
+            self.save_count += 1
+            self.save_seconds += time.perf_counter() - started
+
+    def _save(self):
         self.path.parent.mkdir(parents=True,exist_ok=True)
         temporary = self.path.with_suffix(self.path.suffix+".tmp")
         temporary.write_text(json.dumps(self.state,ensure_ascii=False,indent=2),encoding="utf-8")
