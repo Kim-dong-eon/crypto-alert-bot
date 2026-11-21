@@ -1,4 +1,6 @@
 """Matched-scope overview/detail photos, plus explicit diagnostic rendering."""
+from functools import lru_cache
+import os
 from pathlib import Path
 import matplotlib
 matplotlib.use('Agg')
@@ -14,7 +16,15 @@ TF_COLORS={'1w':'#b59aff','1d':'#fa81b0','4h':'#4d9dff','1h':'#22d3d3','15m':'#f
 FVG_COLORS={'1w':'#d6c5ff','1d':'#ffc0d9','4h':'#94c5ff','1h':'#93e9e5','15m':'#f6a96c','5m':'#c6e5aa'}
 
 
+@lru_cache(maxsize=1)
+def register_chart_fonts(directory):
+    for font in sorted(Path(directory).glob('*.ttf')):
+        font_manager.fontManager.addfont(font)
+
+
 def configure_font():
+    if directory := os.environ.get('ICT_CHART_FONT_DIR'):
+        register_chart_fonts(directory)
     available={f.name for f in font_manager.fontManager.ttflist}
     for name in ('Malgun Gothic','NanumGothic','Noto Sans CJK KR'):
         if name in available:

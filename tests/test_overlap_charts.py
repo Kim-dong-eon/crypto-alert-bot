@@ -1,10 +1,11 @@
 from pathlib import Path
+import os
 import tempfile
 import unittest
 from unittest.mock import Mock,patch
 from PIL import Image
 from src.ict_engine import Bar,TF_MS
-from src.overlap_charts import render_chart,render_symbol_chart,render_alert_pair,TF_COLORS
+from src.overlap_charts import configure_font, render_chart,render_symbol_chart,render_alert_pair,TF_COLORS
 from src.ict_overlap import compact_notice,equilibrium_gate
 from src.overlap_telegram import TelegramMedia
 from src.overlap_delivery import OverlapLedger
@@ -18,6 +19,16 @@ def chart_example(direction=1):
 
 
 class ChartTests(unittest.TestCase):
+    def test_workflow_chart_fonts_are_registered_once_per_directory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            font = Path(directory) / 'NanumGothic.ttf'
+            font.touch()
+            with patch.dict(os.environ, {'ICT_CHART_FONT_DIR': directory}), \
+                    patch('src.overlap_charts.font_manager.fontManager.addfont') as add_font:
+                configure_font()
+                configure_font()
+            add_font.assert_called_once_with(font)
+
     def test_alert_pair_is_two_separate_full_and_detail_files(self):
         event,frames=chart_example()
         with tempfile.TemporaryDirectory() as directory:
